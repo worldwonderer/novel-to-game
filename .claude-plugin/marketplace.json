@@ -1,0 +1,16 @@
+{
+  "name": "novel-to-game-skills",
+  "owner": {"name": "worldwonderer"},
+  "metadata": {
+    "description": "通过改编策划、智能体构建和质量验证，把小说转成可玩的游戏。",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "novel-to-game",
+      "source": "./",
+      "version": "0.1.0",
+      "description": "把小说转成游戏企划与可完整游玩的网页游戏原型。"
+    }
+  ]
+}

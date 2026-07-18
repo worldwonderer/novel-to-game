@@ -1,0 +1,4 @@
+interface:
+  display_name: "游戏质量验证"
+  short_description: "验证生成游戏能否完整运行和游玩"
+  default_prompt: "使用 $game-qa 测试这个生成游戏并报告阻断问题。"
