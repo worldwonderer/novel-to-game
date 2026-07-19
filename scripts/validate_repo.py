@@ -36,6 +36,7 @@ FIELD_RE = re.compile(r"^([a-zA-Z][a-zA-Z0-9_-]*):\s*(.*)$")
 LINK_RE = re.compile(r"!?\[[^\]]*\]\(([^)]+)\)")
 CHAPTER_HEADING_RE = re.compile(r"^\s*第([〇零○一二三四五六七八九十百]+)回\s+(.+?)\s*$")
 CHAPTER_CITATION_RE = re.compile(r"第(\d{1,3})(?:\s*[-–—至]\s*(\d{1,3}))?回")
+LEVEL_TWO_HEADING_RE = re.compile(r"^##\s+(.+?)\s*$", re.MULTILINE)
 CHINESE_DIGITS = {
     "〇": 0,
     "零": 0,
@@ -95,6 +96,26 @@ def extract_chapters(source: Path) -> list[tuple[int, str, int]]:
                 (parse_chinese_number(match.group(1)), match.group(2), line_number)
             )
     return chapters
+
+
+def markdown_section(text: str, heading: str) -> str | None:
+    matches = list(LEVEL_TWO_HEADING_RE.finditer(text))
+    for index, match in enumerate(matches):
+        if match.group(1) != heading:
+            continue
+        end = matches[index + 1].start() if index + 1 < len(matches) else len(text)
+        return text[match.end() : end].strip()
+    return None
+
+
+def chapter_citation_coverage(text: str) -> set[int]:
+    coverage: set[int] = set()
+    for match in CHAPTER_CITATION_RE.finditer(text):
+        first = int(match.group(1))
+        last = int(match.group(2) or first)
+        if first <= last:
+            coverage.update(range(first, last + 1))
+    return coverage
 
 
 def validate_skill(skill_dir: Path) -> list[str]:
@@ -174,6 +195,23 @@ def validate_example(example_dir: Path) -> list[str]:
         return issues
 
     known_chapters = set(chapter_numbers)
+    source_bible = example_dir / "analysis/SOURCE_BIBLE.md"
+    if source_bible.is_file():
+        coverage_section = markdown_section(
+            source_bible.read_text(encoding="utf-8"), "全书覆盖"
+        )
+        if coverage_section is None:
+            issues.append(f"{example_dir.name}: source bible missing full-book coverage")
+        else:
+            coverage = chapter_citation_coverage(coverage_section)
+            missing = known_chapters - coverage
+            extra = coverage - known_chapters
+            if missing or extra:
+                issues.append(
+                    f"{example_dir.name}: source bible chapter coverage mismatch; "
+                    f"missing={sorted(missing)} extra={sorted(extra)}"
+                )
+
     for relative_path in sorted(EXAMPLE_PLANNING_FILES & actual_planning_files):
         markdown = example_dir / relative_path
         for match in CHAPTER_CITATION_RE.finditer(markdown.read_text(encoding="utf-8")):

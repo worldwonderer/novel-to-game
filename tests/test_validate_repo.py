@@ -15,8 +15,10 @@ from validate_repo import (  # noqa: E402
     EXAMPLE_PLANNING_FILES,
     EXPECTED_SKILLS,
     PLUGIN_MANIFESTS,
+    chapter_citation_coverage,
     extract_chapters,
     manifest_skill_root,
+    markdown_section,
     validate_example,
     validate_repository,
     validate_skill,
@@ -117,6 +119,18 @@ class RepositoryValidationTests(unittest.TestCase):
             sorted(chapter[2] for chapter in chapters),
         )
         self.assertEqual(validate_example(example), [])
+
+    def test_example_source_bible_accounts_for_every_source_chapter(self) -> None:
+        example = ROOT / "examples/journey-to-the-west"
+        source = next((example / "source").glob("*.txt"))
+        known_chapters = {number for number, _, _ in extract_chapters(source)}
+        source_bible = (example / "analysis/SOURCE_BIBLE.md").read_text(
+            encoding="utf-8"
+        )
+
+        coverage_section = markdown_section(source_bible, "全书覆盖")
+        self.assertIsNotNone(coverage_section)
+        self.assertEqual(chapter_citation_coverage(coverage_section or ""), known_chapters)
 
     def test_runtime_markdown_headings_use_chinese(self) -> None:
         cjk = re.compile(r"[\u3400-\u9fff]")

@@ -1,34 +1,49 @@
 # NovelToGame
 
-> Turn any novel into a playable game.
+> Turn any novel into a playable web game.
 
-NovelToGame is an open-source novel-to-game and story-to-game skill set for
-Claude Code, Codex, and Kimi Code. It extracts gameable truth from fiction,
-chooses a strong adaptation concept, designs the playable world and visual
-experience, then hands a bounded build brief to capable coding agents.
+NovelToGame is an open-source skill set that turns novels into playable web
+games, for Claude Code, Codex, and Kimi Code. It reads the source for what is
+actually playable, picks a strong adaptation direction, designs the world and
+the on-screen experience, then hands a bounded build brief to a coding agent and
+checks that the result runs.
 
-[Chinese README](README_ZH.md)
+[中文](README_ZH.md)
 
 ## Why It Exists
 
-Frontier coding models already know how to build web games. The scarce work
-is deciding what the novel should become: who the player is, what they do, how
-the world reacts, what the game looks like, and what a complete playable prototype
-must prove. NovelToGame captures that adaptation know-how without teaching the
-model framework syntax it already knows.
+Frontier coding models already know how to build web games. The hard part is
+deciding what the novel should *become*: who the player is, what they do, how the
+world reacts, what the game looks like, and what a complete playable prototype
+has to prove. NovelToGame carries that adaptation judgment and leaves the
+framework syntax to the model, which already has it.
 
-## Workflow
+## Pipeline
 
-```text
-novel or oh-story project
-  -> game-oriented source bible
-  -> three materially different concepts
-  -> selected player fantasy and core loop
-  -> playable systems and level rhythm
-  -> art direction and signature frames
-  -> provider-neutral build brief
-  -> agentic implementation with visual feedback
-  -> deterministic game QA
+One orchestrator drives six specialist stages, from raw text to a verified,
+playable prototype.
+
+```mermaid
+flowchart LR
+    classDef entry fill:#eef2ff,color:#1e1b4b,stroke:#6366f1,stroke-width:1px
+    classDef stage fill:#e8f4fd,color:#0f172a,stroke:#4a9be8,stroke-width:1px
+    classDef ship fill:#fce4ec,color:#333,stroke:#e57373,stroke-width:1px
+
+    novel{{"novel / oh-story project"}}:::entry
+    orch(["novel-to-game<br/>orchestrator"]):::entry
+
+    a["novel-game-analyze<br/>source bible"]:::stage
+    c["game-concept<br/>3 concepts, 1 chosen"]:::stage
+    w["game-world-design<br/>systems and levels"]:::stage
+    art["game-art-direction<br/>visual identity"]:::stage
+    b["game-build<br/>build brief → prototype"]:::stage
+    qa["game-qa<br/>evidence-based QA"]:::ship
+
+    game(["playable web game"]):::ship
+
+    novel --> orch
+    orch --> a --> c --> w --> art --> b --> qa --> game
+    qa -.->|fails| b
 ```
 
 ## Skills
@@ -36,8 +51,8 @@ novel or oh-story project
 | Skill | Purpose |
 |---|---|
 | `novel-to-game` | Orchestrate the complete pipeline in quick or director mode |
-| `novel-game-analyze` | Extract canon, verbs, systems, spaces, agents, and signature moments |
-| `game-concept` | Propose, reject, and choose between genuinely different games |
+| `novel-game-analyze` | Extract canon, verbs, systems, spaces, agents, and signature moments into a source bible |
+| `game-concept` | Propose, reject, and choose between three genuinely different games |
 | `game-world-design` | Define player experience, world behavior, systems, levels, and the playable prototype |
 | `game-art-direction` | Define visual pillars, camera, world grammar, HUD, feedback, and signature frames |
 | `game-build` | Produce the build brief and drive an implementation agent to a verified build |
@@ -98,21 +113,9 @@ The player should enter the world as an original character rather than replay
 the protagonist's exact plot.
 ```
 
-Use `director` mode when you want to choose between three concept directions
-before world design begins.
-
-## Language And Culture
-
-- Source novels can be in any language.
-- Planning artifacts follow the requested language, or the conversation language
-  when unspecified. NovelToGame does not duplicate every document bilingually.
-- Source quotations stay in the original language, with a consistent terminology
-  table when translation or transliteration is needed.
-- Benchmark research covers both the source culture and the target-language game
-  market. Mechanics may transfer; cultural symbols, humor, values, and market
-  assumptions require separate evidence.
-- Game design declares the launch UI language and any additional locales. Build
-  and QA keep player-facing text replaceable, readable, and culturally accurate.
+`quick` is the default and auto-selects the best-evidenced concept. Use
+`director` when you want to pick between three concept directions before world
+design begins.
 
 ## Output
 
@@ -130,40 +133,51 @@ game-adaptations/<project>/
   _progress.md
 ```
 
-The build is model-neutral. Provider choice changes how the approved brief is
-executed, not the game vision.
+The build is model-neutral: any capable model can implement the approved brief,
+and the game it produces stays the same.
 
-## Example
+## Worked Example — Journey to the West
 
-[Journey to the West](examples/journey-to-the-west/) demonstrates the complete
-novel-to-game planning handoff from the full 100-chapter public-domain Chinese
+[Journey to the West](examples/journey-to-the-west/) shows the complete
+novel-to-game planning handoff: from the full 100-chapter public-domain Chinese
 text to **Three Borrowings of the Banana Fan**, a deterministic turn-based
-stealth tactics prototype. The example includes genre positioning,
-gameplay benchmarks, game and art direction, and a provider-neutral build brief.
+stealth-tactics prototype. It carries genre positioning, gameplay benchmarks,
+game and art direction, and a provider-neutral build brief.
+
+<details>
+<summary>Show the example's output tree</summary>
+
+```text
+examples/journey-to-the-west/
+├── source/
+│   ├── 西游记.txt          # Full 100-chapter public-domain source novel
+│   └── SOURCE.md           # Provenance + how the source was imported
+├── analysis/
+│   └── SOURCE_BIBLE.md     # Gameable canon: rules, verbs, spaces, agents, signature moments
+├── concepts/
+│   └── CONCEPT.md          # Three materially different concepts, with the chosen one and trade-offs
+├── design/
+│   ├── GAME_DESIGN.md      # Player fantasy, core loop, systems, levels, fail/restart, prototype scope
+│   └── ART_DIRECTION.md    # Visual pillars, camera, world grammar, HUD, signature frames
+├── build/
+│   └── BUILD_BRIEF.md      # Provider-neutral, bounded brief handed to a coding agent
+└── _progress.md            # Pipeline run log tracking each stage's state
+```
+
+This example is a planning handoff, so it stops at the build brief. A full run
+continues into `build/app/` (the implemented prototype) and `qa/QA_REPORT.md`
+(the evidence-based verification), as shown under [Output](#output).
+
+</details>
 
 ## Current Scope
 
-The first release targets complete, short web game prototypes. It verifies that
-a game runs, responds, reaches a designed outcome, and restarts; it does not claim to measure long-term fun, economy balance,
-or commercial readiness. Imported fiction must be content the user is allowed
-to adapt, especially before publishing generated assets or builds.
-
-## Validate
-
-```bash
-python3 scripts/validate_repo.py
-python3 -m unittest discover -s tests -v
-```
+The first release targets complete, short web game prototypes. It checks that a
+game runs, responds, reaches a designed outcome, and restarts. Long-term fun,
+economy balance, and commercial readiness are out of scope for now. Imported
+fiction must be content you are allowed to adapt, especially before publishing
+generated assets or builds.
 
 ## License
 
 MIT
-
-## Design References
-
-NovelToGame's compact planning gates were cross-checked against the design roles
-and templates in [Claude Code Game Studios](https://github.com/Donchitos/Claude-Code-Game-Studios)
-and the player-facing design, game-feel, UI, and visual review methods in
-[threejs-game-skills](https://github.com/majidmanzarpour/threejs-game-skills).
-NovelToGame deliberately excludes their engine architecture, implementation recipes,
-large studio-agent hierarchy, and asset-provider pipelines.
