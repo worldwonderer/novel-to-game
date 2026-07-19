@@ -12,11 +12,10 @@ checks that the result runs.
 
 ## Why It Exists
 
-Frontier coding models already know how to build web games. The hard part is
-deciding what the novel should *become*: who the player is, what they do, how the
-world reacts, what the game looks like, and what a complete playable prototype
-has to prove. NovelToGame carries that adaptation judgment and leaves the
-framework syntax to the model, which already has it.
+Hand a novel to a model and ask for a game, and you usually get a generic reskin.
+NovelToGame solves the hard part: turning the book's own rules and drama into
+player verbs and a core loop, deciding what game it should become, and driving
+that all the way to a playable prototype.
 
 ## Pipeline
 
@@ -169,14 +168,6 @@ continues into `build/app/` (the implemented prototype) and `qa/QA_REPORT.md`
 (the evidence-based verification), as shown under [Output](#output).
 
 </details>
-
-## Current Scope
-
-The first release targets complete, short web game prototypes. It checks that a
-game runs, responds, reaches a designed outcome, and restarts. Long-term fun,
-economy balance, and commercial readiness are out of scope for now. Imported
-fiction must be content you are allowed to adapt, especially before publishing
-generated assets or builds.
 
 ## License
 
