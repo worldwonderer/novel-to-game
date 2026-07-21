@@ -159,6 +159,65 @@ examples/journey-to-the-west/
 
 </details>
 
+## Complete example — Jin Ping Mei
+
+The [Jin Ping Mei](examples/jin-ping-mei/) example runs the same pipeline into a
+completely different genre: from the public-domain 100-chapter 崇祯本 recension to
+*Two Ledgers*, a turn-based household-politics strategy game.
+
+**Play it: [jinpingmei.vibecoco.ai](https://jinpingmei.vibecoco.ai)**
+
+![Title screen](examples/jin-ping-mei/screenshots/title.jpg)
+
+| Act II — you rank sixth | Chapter 79 — the visible ledger is wiped |
+|---|---|
+| ![Board](examples/jin-ping-mei/screenshots/board.jpg) | ![Clearing](examples/jin-ping-mei/screenshots/clearing.jpg) |
+
+You play 孟玉楼, who marries into the 西门 household with her own dowry. The most
+prominent thing on screen is a gold **rank table** of the six wives, reshuffled
+every festival turn, forever telling you to climb. Folded into the bottom-left
+corner is an ink-black **hidden ledger** — private silver, favours owed to you,
+and ways out. It never appears on the leaderboard and is never given a total.
+
+Of the five actions, only 藏 (*hoard*) feeds the hidden ledger — and on the
+leaderboard, hoarding always looks like a wasted turn. Then chapter 79 arrives,
+西门庆 dies, rank and face and favour are struck out, the leaderboard is removed
+from the interface entirely, and the ending scores **only** the ledger you were
+ignoring — while stating outright that your best-ever rank contributed nothing.
+The novel's own preface says it is written as a warning, not an encouragement;
+here the mechanics say it instead of a narrator.
+
+Roughly 60–90 minutes: 24 festival turns, three acts, five endings. Includes an
+imperfect-information servant rumour network (rumours carry a confidence tier and
+may be false), a scheme system with progress and named accomplices, six rival AI
+agents with their own goals, and 21 original Ming-dynasty illustrations plus a
+cutaway of the compound rendered in three states, so the household's decline is
+directly legible. Code produced by driving Kimi K3, art by gpt-image-2, with 60
+engine assertions and a 38-assertion Playwright walkthrough, zero console errors.
+
+> Content boundary: the source novel contains extensive explicit material, and
+> this adaptation uses **none** of it. The text in the repository is a reproducibly
+> generated expurgated edition (see
+> [`source/SOURCE.md`](examples/jin-ping-mei/source/SOURCE.md)); "favour" appears
+> only as a social signal — seating order, gifts, assigned duties, forms of
+> address — and nothing sexual is depicted or implied.
+
+<details>
+<summary>Show the example's output tree</summary>
+
+```text
+examples/jin-ping-mei/
+├── source/金瓶梅.txt + SOURCE.md   # Public-domain 崇祯本 (expurgated) + reproducible expurgate.py
+├── analysis/SOURCE_BIBLE.md        # Gameable canon: rank vs favour, private capital, information, calendar
+├── concepts/CONCEPT.md             # Three materially different concepts, with hard vetoes
+├── design/GAME_DESIGN.md           # Systems: two ledgers, five actions, suspicion, five endings
+├── design/ART_DIRECTION.md         # Illustration style, compound cutaway, functional colour, signature frames
+├── build/BUILD_BRIEF.md            # Provider-neutral, bounded brief handed to the coding agent
+└── build/app/                      # The built, playable game — see build/app/RUN.md to run it
+```
+
+</details>
+
 ## Acknowledgments
 
 [linux.do](https://linux.do)

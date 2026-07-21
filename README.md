@@ -146,6 +146,53 @@ examples/journey-to-the-west/
 
 </details>
 
+## 完整示例 —— 《金瓶梅》
+
+[《金瓶梅》](examples/jin-ping-mei/) 示例用同一条流程做出完全不同的品类：从公版崇祯本
+百回原著，提炼成《大宅两本账》——一款回合制家宅经营策略（宅斗）。
+
+**在线试玩：[jinpingmei.vibecoco.ai](https://jinpingmei.vibecoco.ai)**
+
+![标题画面](examples/jin-ping-mei/screenshots/title.jpg)
+
+| 第二幕·争锋（你排第六） | 第七十九回·明账清零 |
+|---|---|
+| ![棋盘](examples/jin-ping-mei/screenshots/board.jpg) | ![清零](examples/jin-ping-mei/screenshots/clearing.jpg) |
+
+你扮演孟玉楼，带着自己的嫁妆嫁进西门家。全屏最显眼的是金色的**六房位次榜**，
+它每个节令翻一次牌，一直提醒你往上爬。左下角折叠着一本墨色的**暗账**——私房、人情、
+退路，不上榜，不给总分。
+
+五类行动只有「藏」能喂暗账，而「藏」在榜上看起来永远像是在浪费回合。
+到第七十九回，西门庆暴亡，位分、体面、宠一笔勾销，排行榜从界面上被抹掉，
+结算只清算你偷偷攒下的那一本——并且直接告诉你，你的历史最高位次对结局毫无增益。
+原著序言写「蓋為世戒，非為世勸」，这句话由玩法本身讲出来，不靠旁白。
+
+约 60-90 分钟、24 个节令、三幕、五种结局。含不完全情报的仆役传闻网（传闻带可信度且
+可能为假）、有进度与知情者的谋算系统、六位各有目标的 AI 对手，以及 21 张原创明代绣像
+立绘与宅院剖面图（同一构图三幕三态，家道由盛转衰直接可读）。代码由 Kimi K3 生成、
+美术由 gpt-image-2 生成，自带 60 项引擎断言 + 38 项 Playwright 全程走查，控制台 0 报错。
+
+> 内容边界：原著含大量露骨描写，本示例**完全不改编该部分**。仓库内原文为可复现生成的
+> 删节洁本（见 [`source/SOURCE.md`](examples/jin-ping-mei/source/SOURCE.md)）；「宠」只作为
+> 席位、赏赐、差事、称谓等社会信号出现，不描写也不暗示任何性内容。
+
+<details>
+<summary>展开示例的产出目录树</summary>
+
+```text
+examples/jin-ping-mei/
+├── source/金瓶梅.txt + SOURCE.md   # 公版崇祯本百回原著（删节洁本）+ expurgate.py 可复现生成
+├── analysis/SOURCE_BIBLE.md        # 游戏化设定集：名分与恩宠、私财、情报网、节令时钟
+├── concepts/CONCEPT.md             # 三个真正不同的概念，含入选方案与硬否决
+├── design/GAME_DESIGN.md           # 系统：明暗两账、五类行动、风声与发落、五种结局
+├── design/ART_DIRECTION.md         # 绣像视觉风格、宅院剖面、功能三色、招牌画面
+├── build/BUILD_BRIEF.md            # 交给编码智能体的、不挑模型、范围明确的构建说明
+└── build/app/                      # 已构建的可玩游戏——运行方式见 build/app/RUN.md
+```
+
+</details>
+
 ## 致谢
 
 [linux.do](https://linux.do)
