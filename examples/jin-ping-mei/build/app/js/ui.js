@@ -19,10 +19,13 @@ export function toast(container, text, ms = 2600) {
 }
 
 // 双色浮字:金=明账,墨=暗账,朱=风声。同屏弹出,强化此消彼长。
+// 摆位用确定性游标(约束:全局禁 Math.random,画面也保持同种子同观感)。
+let floatX = 0;
 export function spawnFloats(container, floats) {
   for (const f of floats) {
+    floatX = (floatX * 7 + 13) % 31;
     const n = el('div', `float-text ${f.k}`, f.t);
-    n.style.left = `${30 + Math.random() * 30}%`;
+    n.style.left = `${28 + floatX}%`;
     container.appendChild(n);
     setTimeout(() => n.remove(), 2400);
   }

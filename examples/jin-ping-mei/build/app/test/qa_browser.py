@@ -82,6 +82,20 @@ class QA:
             return True
         return False
 
+    def handle_visit(self, choice_idx=0):
+        """上门事件:有人来时当场表态。返回是否处理过。"""
+        if self.p.locator("#modal-visit").count() == 0:
+            return False
+        ch = self.p.locator("#modal-visit .choice-btn")
+        n = ch.count()
+        for i in range(n):
+            b = ch.nth(min(choice_idx, n - 1))
+            if b.is_enabled():
+                b.click()
+                self.p.wait_for_timeout(250)
+                return True
+        return False
+
     def seal(self, name, picks):
         """打开一枚印章子面板,按序点选并确认。印章不可用则直接返回 False。"""
         btn = self.p.locator(f'[data-seal="{name}"]')
@@ -102,6 +116,7 @@ class QA:
         """行动阶段按策略消耗行动点;返回实际执行的动作数。"""
         n = 0
         while self.ev("__game.state().ap") > 0 and n < limit:
+            self.handle_visit()
             ap0 = self.ev("__game.state().ap")
             policy(n)
             n += 1
@@ -110,8 +125,10 @@ class QA:
         return n
 
     def submit(self):
+        self.handle_visit()  # 上门的人不应对,门闩着,提交点不动
         self.p.locator("#btn-submit").click()
         self.p.wait_for_timeout(1800)
+        self.handle_visit()
         self.settle()
         self.p.wait_for_timeout(300)
 
@@ -122,6 +139,7 @@ class QA:
         ch = self.p.locator("#modal-event .choice-btn")
         ch.nth(min(choice_idx, ch.count() - 1)).click()
         self.p.wait_for_timeout(300)
+        self.handle_visit()
         return True
 
     def wait_special(self, timeout_s=60):
@@ -143,6 +161,8 @@ class QA:
                 return "epilogue"
             if self.p.locator("#modal-event").count() > 0:
                 return "event"
+            if self.p.locator("#modal-visit").count() > 0:
+                return "visit"
             self.p.wait_for_timeout(300)
         return None
 
@@ -166,6 +186,7 @@ def main():
             page.goto(URL)
             page.wait_for_selector("#btn-start", timeout=10000)
             ok("大宅两本账" in page.locator(".title-logo h1").inner_text(), "标题文案")
+            ok("17" in page.locator(".title-rating").inner_text(), "标题含 17+ 内容提示")
             qa.shot("title")
             page.click("#btn-howto")
             page.wait_for_selector("#modal-help")
@@ -209,12 +230,31 @@ def main():
             ok(page.locator(".rumor-card").count() >= 1, "传闻卡出现")
             qa.shot("f1_actions")
             ok(asym.get('m0') == asym.get('m1') and asym.get('si1', 0) > asym.get('si0', 0), "「藏」只涨暗账不涨明账")
+            sky1 = qa.ev("document.querySelector('.tint-layer')?.dataset.sky ?? ''")
             qa.submit()
             ok(qa.festival() == 2, "进入节令2")
+            # 留宿灯光:剖面图上只有被留宿那一房的窗亮着,且与引擎判定一致
+            ok(page.locator(".room-glow.lit").count() == 1, "留宿灯光:只有一房的窗亮着")
+            house = qa.ev("document.querySelector('.room-glow.lit')?.dataset.lodging ?? ''")
+            ok(house != "" and house == qa.ev("__game.state().lodging"), f"亮灯的一房与引擎留宿一致({house})")
             # F2-F6:走完第一幕
             first_false_seen = False
             for f in range(2, 7):
-                qa.handle_event(0)
+                if f == 3:
+                    # 上门事件:节令中途有人主动来找你,要求当场表态(掷定走 seedRNG,节令3必来)
+                    page.locator('#modal-event .choice-btn').first.click()
+                    page.wait_for_timeout(400)
+                    ok(page.locator("#modal-visit").count() > 0, "节令中途有人上门")
+                    qa.shot("visit")
+                    sf0 = qa.ev("__game.state().player.sifang")
+                    page.locator('#modal-visit .choice-btn').first.click()
+                    page.wait_for_timeout(300)
+                    ok(qa.ev("__game.state().visit") is None, "上门事件当场表态")
+                    paid = qa.ev("__game.state().player.sifang") != sf0
+                    owed = qa.ev("__game.state().player.renqing.xuee") > 0
+                    ok(paid or owed, "上门选择有代价(没有安全选项)")
+                else:
+                    qa.handle_event(0)
                 def pol(i):
                     if i == 0: qa.seal("tan", ["servant:xuemei", "target:yue"])
                     else: qa.seal("cang", ["mode:save"])
@@ -232,6 +272,8 @@ def main():
             section("第二幕 · 争锋")
             ok(qa.ev("__game.state().flags.mou") == True, "第30回解锁谋算")
             qa.handle_event(0)  # 节令7 冬至(无选择)
+            sky7 = qa.ev("document.querySelector('.tint-layer')?.dataset.sky ?? ''")
+            ok(sky7 != "" and sky7 != sky1, f"节令天色变化生效({sky1} → {sky7})")
             # 谋:散布流言对潘金莲
             def pol_mou(i):
                 if i < 2: qa.seal("mou", ["scheme:sanbu", "target:pan"])

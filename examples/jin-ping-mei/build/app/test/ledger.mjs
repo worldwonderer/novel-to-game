@@ -5,6 +5,7 @@
 import {
   newGame, applyAction, actionError, submitTurn, applyEventChoice, skipEventIfNoChoice,
   leaderboard, festivalDef, computeEnding, serialize, deserialize, mingDead, playerRank,
+  applyVisitChoice, visitDef,
 } from '../js/engine.js';
 
 let passed = 0, failed = 0;
@@ -79,6 +80,7 @@ section('明暗两账的不对称(全程扫描)');
   const acts = (f) => [
     { type: 'tan', servant: 'xuemei', target: 'yue' },
     { type: 'jie', target: 'ximen', size: 'small', fund: 'si' },
+    { type: 'ye' },
     { type: 'chi', duty: 'yanyan' },
     { type: 'cang', mode: 'save' },
     { type: 'mou', scheme: 'sanbu', target: 'xuee' },
@@ -354,6 +356,116 @@ section('策略分叉');
   ok(b.ending.key === 'liyanei' || b.ending.key === 'niangjia', '早藏者全身而退');
   ok(a.ending.key === 'shoufu' || a.ending.key === 'liuluo' || a.ending.key === 'faluo', '追榜者留在塌宅或更差');
   ok(typeof a.bestRank === 'number' && a.bestRank <= 3, `追榜者最高位次靠前(${a.bestRank})`);
+}
+
+// ================= 12. 留宿与「争夜」 =================
+section('留宿与争夜');
+{
+  const s = newGame(42);
+  applyEventChoice(s, 'si');
+  const si0 = s.player.sifang, ap0 = s.ap, hao0 = s.player.hao;
+  let r = applyAction(s, { type: 'ye' });
+  ok(r.ok && s.ap === ap0 - 1 && s.player.sifang === si0 - 60, '争夜 耗1行动+60私房');
+  ok(s.player.hao > hao0 && s.yeTonight, '争夜 涨耗并记下布置');
+  ok(!applyAction(s, { type: 'ye' }).ok, '一夜只能布置一次');
+  const rep = submitTurn(s);
+  ok(typeof s.lodging === 'string' && s.lodgingHistory[1] === s.lodging, '节令结算判定留宿并记录');
+  ok(rep.notes.some((n) => n.includes('灯')), '结算里有灯的去向');
+  // 同种子 A/B:争夜显著抬高留宿归己(布置不走 RNG,抽签位置一致,差异全在权重)
+  let yeWins = 0, noWins = 0;
+  for (let seed = 100; seed < 130; seed++) {
+    const run = (ye) => {
+      const g = newGame(seed);
+      for (let f = 1; f <= 5; f++) {
+        if (g.phase === 'event') { if (g.event.choices?.length) applyEventChoice(g, g.event.choices[0].id); else skipEventIfNoChoice(g); }
+        if (g.visit) applyVisitChoice(g, visitDef(g).choices[0].id);
+        if (f === 5) { g.player.chong = 55; g.player.sifang = 500; if (ye) applyAction(g, { type: 'ye' }); }
+        submitTurn(g);
+      }
+      return g.lodgingHistory[5];
+    };
+    if (run(true) === 'player') yeWins++;
+    if (run(false) === 'player') noWins++;
+  }
+  ok(yeWins > noWins, `争夜显著抬高中签(${yeWins} vs ${noWins})`);
+  // 清零后争夜不可用
+  const late = newGame(42);
+  for (let f = 1; f <= 18; f++) runFestival(late, f === 1 ? { choice: 'gong' } : {});
+  skipEventIfNoChoice(late);
+  submitTurn(late);
+  if (late.event.choices?.length) applyEventChoice(late, late.event.choices.at(-1).id);
+  else skipEventIfNoChoice(late);
+  ok(!applyAction(late, { type: 'ye' }).ok, '第79回后「夜」不可用');
+}
+
+// ================= 13. 「耗」的累积与对结局的影响 =================
+section('耗与结局降档');
+{
+  const mk = (hao, mut = null) => {
+    const g = newGame(1);
+    g.player.sifang = 900; g.player.tuilu = ['niangjia', 'guanmei']; g.player.fengsheng = 10;
+    g.player.hao = hao;
+    mut?.(g);
+    return computeEnding(g);
+  };
+  ok(mk(0).key === 'liyanei', '无耗 → 改嫁李衙内');
+  ok(mk(54).key === 'liyanei', '耗54 未过线 → 不降档');
+  ok(mk(55).key === 'niangjia', '耗55 → 降一档(改嫁→归娘家)');
+  ok(mk(84).key === 'niangjia', '耗84 → 仍只降一档');
+  ok(mk(85).key === 'shoufu', '耗85 → 降两档(改嫁→守寡留府)');
+  ok(mk(90, (g) => { g.player.faluoEver = true; g.player.fengsheng = 70; }).key === 'faluo', '耗不推翻发落判定');
+  ok(mk(85).haoWeak && !mk(0).haoWeak, '结局携回耗的成色(供结算文案)');
+  // 耗只涨不减:争夜与迎灯都往里添
+  const g = newGame(42);
+  applyEventChoice(g, 'si');
+  const h0 = g.player.hao;
+  applyAction(g, { type: 'ye' });
+  submitTurn(g);
+  ok(g.player.hao > h0, '耗随争夜累积');
+}
+
+// ================= 14. 上门事件分支 =================
+section('上门事件分支');
+{
+  const s = newGame(42);
+  applyEventChoice(s, 'si');
+  s.visit = { id: 'xuee_jieqian' };
+  const si0 = s.player.sifang;
+  let r = applyVisitChoice(s, 'give');
+  ok(r.ok && s.player.sifang === si0 - 60 && s.player.renqing.xuee === 15, '孙雪娥借钱:给 → −60私房 +人情');
+  s.visit = { id: 'xuee_jieqian' };
+  const h0 = s.rivals.xuee.hostility;
+  r = applyVisitChoice(s, 'refuse');
+  ok(r.ok && s.rivals.xuee.hostility === h0 + 20, '孙雪娥借钱:不给 → 记恨');
+  s.visit = { id: 'pan_chai' };
+  r = applyVisitChoice(s, 'accept');
+  ok(r.ok && !!s.flags.panChai, '收下潘金莲的钗 → 记下这笔债');
+  s.visit = { id: 'pan_collect' };
+  const si1 = s.player.sifang;
+  r = applyVisitChoice(s, 'pay');
+  ok(r.ok && s.player.sifang === si1 - 100 && !s.flags.panChai, '她日后来收账 → 两清');
+  s.visit = { id: 'daian_menkan' };
+  const w0 = s.player.fengsheng;
+  r = applyVisitChoice(s, 'ignore');
+  ok(r.ok && s.player.fengsheng === w0 + 8, '不理玳安 → 风声起');
+  s.visit = { id: 'ximen_ye' };
+  const hh0 = s.player.hao;
+  r = applyVisitChoice(s, 'open');
+  ok(r.ok && s.player.hao === hh0 + 8 && s.lodgingOverride === 'player', '开门迎灯 → +耗,灯定在你院');
+  submitTurn(s);
+  ok(s.lodging === 'player', '迎灯当夜留宿归己(不走抽签)');
+  ok(s.visit === null, '节令一过,未应的门自己走了');
+  // 频次:每 2-3 令至少一次(掷定走 seedRNG)
+  const g = newGame(42);
+  let count = 0, last = 0, maxGap = 0;
+  for (let f = 1; f <= 22 && !g.over; f++) {
+    if (g.phase === 'event') { if (g.event.choices?.length) applyEventChoice(g, g.event.choices[0].id); else skipEventIfNoChoice(g); }
+    if (g.visit) { applyVisitChoice(g, visitDef(g).choices[0].id); count++; maxGap = Math.max(maxGap, f - last); last = f; }
+    while (g.ap > 0) { if (!applyAction(g, { type: 'cang', mode: 'save' }).ok) break; }
+    submitTurn(g);
+  }
+  ok(count >= 6, `全程上门 ${count} 次(≥6)`);
+  ok(maxGap <= 3, `上门间隔不超过 3 令(最大 ${maxGap})`);
 }
 
 console.log(`\n结果: ${passed} 通过, ${failed} 失败`);

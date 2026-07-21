@@ -9,7 +9,8 @@
 import { createRNG, next, rint, chance, pick } from './rng.js';
 import {
   RIVALS, SERVANTS, CRED_TRUTH, RUMOR_TEXTS, SCHEMES, SCHEME_STEP, SCHEME_WIND,
-  DUTIES, TUILU, FESTIVALS, ENDING, YANXI,
+  DUTIES, TUILU, FESTIVALS, ENDING, YANXI, YE_WEIGHT, YE_COST, YE_HAO, YE_BONUS,
+  HAO, LODGING_TEXTS, VISITS,
 } from './data.js';
 
 export const ACTS = { 1: 'act1', 2: 'act2', 3: 'act3' };
@@ -33,7 +34,7 @@ export function newGame(seed) {
     };
   }
   return {
-    version: 1,
+    version: 2,
     seed, rng,
     festival: 1,
     phase: 'event',                          // event → actions → (clear/ending/epilogue)
@@ -43,6 +44,7 @@ export function newGame(seed) {
       sifang: 0, renqing: { yue: 0, pan: 0, pinger: 0, xuee: 0, chunmei: 0 },
       tuilu: [], gongzhong: 0,
       fengsheng: 0, jinzu: 0,
+      hao: 0,                                // 耗:不上榜的暗指标,暗账负债项
       faluoEver: false, faluoCount: 0,
       duty: null,
     },
@@ -53,6 +55,11 @@ export function newGame(seed) {
     schemeSeq: 0,
     flags: {},         // 剧情标记(揭发/换取好处等)
     sightings: [],     // 本令结算产生的仆役动线 {servant,from,to,note}
+    lodging: 'yue',    // 家主今夜歇在谁院里(开局依礼在正房)
+    lodgingHistory: {},// festival → houseId
+    yeTonight: false,  // 本令玩家是否已布置「争夜」
+    visit: null,       // 本令上门事件(见 VISITS),进行动阶段时掷定
+    lastVisit: 0,      // 上次有人上门的节令(保证每2-3令至少一次)
     bestRank: null,
     lastRank: null,
     log: [],           // 结算记录 [{festival, text}]
@@ -112,6 +119,14 @@ export function actionError(state, a) {
   const cost = a.type === 'chi' ? 2 : 1;
   if (state.ap < cost) return '行动点不足';
   switch (a.type) {
+    case 'ye': {
+      // 「争夜」是「结」的高风险高回报版本:只涨明账与耗,绝不涨暗账。
+      // 银子只能从私房出——置办今夜的一桌酒菜、一副头面,走不得公中的账。
+      if (mingDead(state)) return '明账已清,无人可争';
+      if (state.yeTonight) return '今夜已布置下了';
+      if (p.sifang < YE_COST) return '私房不够置办';
+      return null;
+    }
     case 'tan': {
       const sv = SERVANTS[a.servant];
       if (!sv) return '没有这个人';
@@ -186,6 +201,7 @@ export function applyAction(state, a) {
     case 'mou': return doMou(state, a);
     case 'chi': return doChi(state, a);
     case 'cang': return doCang(state, a);
+    case 'ye': return doYe(state);
     case 'verify': return doVerify(state, a);
   }
   return { ok: false, msg: '不识此令' };
@@ -222,7 +238,13 @@ function makeRumor(state, servant, target, cred, truth) {
   }
   const others = Object.values(state.rivals).filter((r) => r.id !== target && r.joined && r.alive && !r.offBoard);
   const other = others.length ? pick(state.rng, others).name : '别';
-  let text = pick(state.rng, RUMOR_TEXTS[kind]).replaceAll('{name}', t.name).replaceAll('{other}', other);
+  // 同一对象已在手的传闻不重复投放同一句:三张一样的卡片看起来像 bug,不像情报。
+  // 仍然只消耗一次 rng 抽取,同种子同操作逐字节可复现不受影响。
+  const sub = (s) => s.replaceAll('{name}', t.name).replaceAll('{other}', other);
+  const used = new Set(state.rumors.filter((r) => r.target === target).map((r) => r.text));
+  const all = RUMOR_TEXTS[kind];
+  const fresh = all.filter((s) => !used.has(sub(s)));
+  let text = sub(pick(state.rng, fresh.length ? fresh : all));
   if (!truth) {
     // 假传闻:内容虚构,与事实无关(甚至可能矛盾)
   }
@@ -237,6 +259,18 @@ function doVerify(state, a) {
   const r = state.rumors.find((x) => x.id === a.rumorId);
   r.verified = r.truth;
   return { ok: true, rumor: r };
+}
+
+// 「争夜」:置办今夜,争家主歇在自己院里。成败在节令结算的留宿抽签里定。
+// 只涨明账与「耗」,绝不涨任何暗账——它是「结」的高风险高回报版本,不是第六类行动的例外。
+function doYe(state) {
+  const p = state.player;
+  p.sifang -= YE_COST;
+  pushFloat(state, 'ink', '私房', -YE_COST);
+  p.hao = Math.min(100, p.hao + YE_HAO);
+  pushFloat(state, 'ink', '耗', YE_HAO);
+  state.yeTonight = true;
+  return { ok: true };
 }
 
 function doJie(state, a, dead) {
@@ -353,6 +387,7 @@ export function applyEventChoice(state, choiceId) {
   if (choice.effects?.flag) state.flags[choice.effects.flag] = true;
   state.phase = 'actions';
   state.ap = state.player.jinzu > 0 ? 0 : 3;
+  rollVisit(state);
   return { ok: true, choice };
 }
 
@@ -360,7 +395,47 @@ export function skipEventIfNoChoice(state) {
   if (state.event.choices?.length) return false;
   state.phase = 'actions';
   state.ap = state.player.jinzu > 0 || state.event.clear || state.event.ending || state.event.epilogue ? 0 : 3;
+  rollVisit(state);
   return true;
+}
+
+// ---------- 上门事件 ----------
+// 进入行动阶段时掷定:距上次满 3 令必有人来,否则四成概率。每令至多一次。
+// 掷定走 seedRNG;不应答的人,节令一过就自己走了(advance 里清掉)。
+function rollVisit(state) {
+  const ev = state.event;
+  if (ev.clear || ev.ending || ev.epilogue || mingDead(state)) return;
+  if (state.phase !== 'actions' || state.ap <= 0) return;
+  if (state.festival < 2) return;
+  const due = state.festival - state.lastVisit >= 3;
+  if (!due && !chance(state.rng, 0.4)) return;
+  const pool = VISITS.filter((v) => state.festival >= v.min && (!v.cond || v.cond(state)));
+  if (!pool.length) return;
+  let total = 0;
+  for (const v of pool) total += v.weight ?? 2;
+  let roll = next(state.rng) * total;
+  let sel = pool[0];
+  for (const v of pool) { roll -= v.weight ?? 2; if (roll <= 0) { sel = v; break; } }
+  state.visit = { id: sel.id };
+}
+
+export function visitDef(state) {
+  return VISITS.find((v) => v.id === state.visit?.id) ?? null;
+}
+
+export function applyVisitChoice(state, choiceId) {
+  const def = visitDef(state);
+  if (!def) return { ok: false, msg: '没有人来' };
+  const choice = def.choices.find((c) => c.id === choiceId);
+  if (!choice) return { ok: false, msg: '没有这条路' };
+  const err = eventChoiceError(state, choice);
+  if (err) return { ok: false, msg: err };
+  applyEffects(state, choice.effects ?? {});
+  if (choice.effects?.flag) state.flags[choice.effects.flag] = state.festival;
+  if (choice.effects?.unflag) delete state.flags[choice.effects.unflag];
+  state.lastVisit = state.festival;
+  state.visit = null;
+  return { ok: true, choice, def };
 }
 
 function applyEffects(state, fx) {
@@ -370,6 +445,20 @@ function applyEffects(state, fx) {
   if (fx.sifang) { p.sifang = Math.max(0, p.sifang + fx.sifang); pushFloat(state, 'ink', '私房', fx.sifang); }
   if (fx.feng) { p.fengsheng = cap100(p.fengsheng + fx.feng); pushFloat(state, 'red', '风声', fx.feng); }
   if (fx.gong) { p.gongzhong = clamp(p.gongzhong + fx.gong, 0, 400); }
+  if (fx.hao) { p.hao = Math.min(100, p.hao + fx.hao); pushFloat(state, 'ink', '耗', fx.hao); }
+  if (fx.lodging === 'player') state.lodgingOverride = 'player'; // 家主迎灯:今夜留宿直接落定
+  if (fx.hostility) {
+    for (const [who, d] of Object.entries(fx.hostility)) {
+      const r = state.rivals[who];
+      if (r) r.hostility = Math.max(0, r.hostility + d); // 敌意是隐藏状态,不弹浮字
+    }
+  }
+  if (fx.affection) {
+    for (const [who, d] of Object.entries(fx.affection)) {
+      const r = state.rivals[who];
+      if (r) r.affection = Math.max(0, r.affection + d); // 暗好同理
+    }
+  }
   if (fx.renqing) {
     for (const [who, d] of Object.entries(fx.renqing)) {
       p.renqing[who] = cap100((p.renqing[who] ?? 0) + d);
@@ -391,6 +480,8 @@ export function submitTurn(state) {
   }
   // 玩家谋算:泄密判定与生效
   settleSchemes(state, report);
+  // 留宿:家主今夜歇在谁院里(争夜的成败在此落定)
+  settleLodging(state, report);
   // 差事反噬
   if (p.duty && ev.dutyRisk && chance(state.rng, 0.5)) {
     p.tiyan = cap100(p.tiyan - 8);
@@ -449,6 +540,69 @@ export function submitTurn(state) {
   report.sightings = state.sightings;
   advance(state, report);
   return report;
+}
+
+// 留宿判定:各房按脾性权重与当前明账加权抽签(走 seedRNG,同种子逐字节可复现)。
+// 中签者涨明账;玩家中签另添三分耗——承宠本身也耗人。争夜落败则起风声、结怨。
+function settleLodging(state, report) {
+  if (mingDead(state)) return;
+  const p = state.player;
+  // 家主深夜迎灯:上门事件里已把今夜的灯定下,不走抽签
+  if (state.lodgingOverride === 'player') {
+    state.lodging = 'player';
+    state.lodgingHistory[state.festival] = 'player';
+    p.chong = cap100(p.chong + 10);
+    p.tiyan = cap100(p.tiyan + 3);
+    pushFloat(state, 'gold', '宠', 10);
+    pushFloat(state, 'gold', '体面', 3);
+    report.notes.push(LODGING_TEXTS.playerWin);
+    report.lodging = { house: 'player', ye: false };
+    return;
+  }
+  const bids = [{ id: 'player', w: Math.max(1, p.chong) * (state.yeTonight ? 2.2 : 1) + (state.yeTonight ? YE_BONUS : 0) }];
+  for (const r of Object.values(state.rivals)) {
+    if (!r.joined || !r.alive) continue;
+    // 李娇儿从不经营家主的心:她的明账是坐出来的体面,换不成灯
+    const w = (YE_WEIGHT[r.id] ?? 4) + (r.id === 'lijiaoer' ? 0 : r.ming * 0.1);
+    bids.push({ id: r.id, w });
+  }
+  let total = 0;
+  for (const b of bids) total += b.w;
+  let roll = next(state.rng) * total;
+  let win = bids[0];
+  for (const b of bids) { roll -= b.w; if (roll <= 0) { win = b; break; } }
+  state.lodging = win.id;
+  state.lodgingHistory[state.festival] = win.id;
+  if (win.id === 'player') {
+    p.chong = cap100(p.chong + 10);
+    p.tiyan = cap100(p.tiyan + 3);
+    p.hao = Math.min(100, p.hao + 3);
+    pushFloat(state, 'gold', '宠', 10);
+    pushFloat(state, 'gold', '体面', 3);
+    if (state.yeTonight) {
+      // 争来的夜,满宅都看见了:各房敌意直线上升
+      for (const r of Object.values(state.rivals)) if (r.joined && r.alive) r.hostility += 12;
+      report.notes.push(LODGING_TEXTS.playerYeWin);
+      report.lodging = { house: 'player', ye: true };
+    } else {
+      report.notes.push(LODGING_TEXTS.playerWin);
+      report.lodging = { house: 'player', ye: false };
+    }
+  } else {
+    const r = state.rivals[win.id];
+    r.ming = cap100(r.ming + 6);
+    if (state.yeTonight) {
+      p.fengsheng = cap100(p.fengsheng + 5);
+      pushFloat(state, 'red', '风声', 5);
+      r.hostility += 8;
+      report.notes.push(LODGING_TEXTS.yeFail.replaceAll('{name}', r.name));
+      report.lodging = { house: r.id, ye: 'fail' };
+    } else {
+      const key = win.id === 'pan' ? 'rivalPan' : 'rival';
+      report.notes.push(LODGING_TEXTS[key].replaceAll('{name}', r.name));
+      report.lodging = { house: r.id, ye: false };
+    }
+  }
 }
 
 function applyFaluo(state, report) {
@@ -525,9 +679,10 @@ function rivalOneAct(state, r, report) {
       break;
     }
     case 'climber': {
-      // 庞春梅:不上榜,暗中跃迁;后期暴起
+      // 庞春梅:不上榜,暗中跃迁;后期暴起。开罪过她的人,箱笼更常被动。
       r.ming = cap100(r.ming + rint(state.rng, 4, 10));
-      if (f >= 12 && chance(state.rng, 0.25) && p.sifang > 0) {
+      const stealP = 0.25 + Math.min(0.25, r.hostility / 200);
+      if (f >= 12 && chance(state.rng, stealP) && p.sifang > 0) {
         const steal = Math.min(30, p.sifang);
         p.sifang -= steal;
         pushFloat(state, 'ink', '私房', -steal);
@@ -616,7 +771,9 @@ function enterFestival(state) {
   if (ev.unlockMou) state.flags.mou = true;
   if (ev.grantRumor) makeGrantedRumor(state, ev.grantRumor);
   if (ev.clear) {
-    // 第79回明账清零:位分/体面/宠归零,排行榜撤下,公中散尽
+    // 第79回明账清零:位分/体面/宠归零,排行榜撤下,公中散尽。
+    // 清零前的三值暂存,供演出逐项褪色(体面→宠→位次,三拍)。
+    state.flags.lastMing = { tiyan: state.player.tiyan, chong: state.player.chong, rank: state.lastRank };
     state.player.tiyan = 0;
     state.player.chong = 0;
     state.player.gongzhong = 0;
@@ -633,6 +790,9 @@ function advance(state, report) {
   state.sightings = [];
   for (const r of Object.values(state.rivals)) r.recent = [];
   p.duty = null;
+  state.yeTonight = false;
+  state.lodgingOverride = null;
+  state.visit = null; // 没应声的人,节令一过就自己走了
   if (p.jinzu > 0) p.jinzu -= 1;
 
   if (state.festival >= 24) {
@@ -671,8 +831,14 @@ export function computeEnding(state) {
   else if (tl >= 1 && si >= ENDING.siMid) key = 'niangjia';
   else if (tl >= 1 || si >= ENDING.siMid) key = 'shoufu';
   else key = 'liuluo';
+  // 耗是暗账的负债项:长期争宠的人,到分家时已经病了,走不远。
+  // 耗≥55 出路降一档,≥85 降两档;不推翻发落判定,只削弱出路。
+  const DOWN = { liyanei: 'niangjia', niangjia: 'shoufu', shoufu: 'shoufu', liuluo: 'liuluo', faluo: 'faluo' };
+  if (p.hao >= HAO.grave) key = DOWN[DOWN[key]];
+  else if (p.hao >= HAO.weak) key = DOWN[key];
   return {
     key, sifang: si, tuilu: tl, wind,
+    hao: p.hao, haoWeak: p.hao >= HAO.weak,
     bestRank: state.bestRank,
     faluoCount: p.faluoCount,
   };
@@ -685,6 +851,6 @@ export function serialize(state) {
 
 export function deserialize(json) {
   const s = JSON.parse(json);
-  if (s.version !== 1) return null;
+  if (s.version !== 2) return null;
   return s;
 }

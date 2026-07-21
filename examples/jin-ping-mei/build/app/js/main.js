@@ -2,7 +2,7 @@
 // 引擎在 engine.js(纯逻辑);此文件只做呈现与输入。
 
 import { TEXT } from './text.js';
-import { SERVANTS, SCHEMES, DUTIES, TUILU, ENDING } from './data.js';
+import { SERVANTS, SCHEMES, DUTIES, TUILU, ENDING, YE_COST, ACTION_ECHO } from './data.js';
 import * as E from './engine.js';
 import { loadAssets, coverURL, portraitURL, compoundStyle } from './assets.js';
 import { el, clear, toast, spawnFloats, showModal, closeModal, sealButton } from './ui.js';
@@ -88,6 +88,7 @@ function renderTitle() {
   btns.append(bCont, bStart, bHow);
   side.appendChild(btns);
   side.appendChild(el('div', 'title-seed', `种子 ${SEED} · 明代绣像风 · 约莫半个至一个时辰`));
+  side.appendChild(el('div', 'title-rating', TEXT.rating));
   t.append(cover, side);
   app.appendChild(t);
 }
@@ -184,19 +185,24 @@ function renderWind() {
   els.wind.appendChild(el('div', 'wind-num', `${w}`));
 }
 
+let lastRanks = {}; // 位次记忆:变动的那一块木牌要翻,不是数字跳
 function renderLeaderboard() {
   clear(els.lb);
   if (E.mingDead(state)) { els.lb.style.display = 'none'; return; }
   els.lb.style.display = '';
   els.lb.appendChild(el('div', 'lb-title', TEXT.ui.leaderboard));
+  const ranks = {};
   for (const row of E.leaderboard(state)) {
     const r = el('div', `lb-row${row.you ? ' you' : ''}`);
     r.dataset.house = row.id;
+    if (lastRanks[row.id] !== undefined && lastRanks[row.id] !== row.rank) r.classList.add('plank-flip');
     r.appendChild(el('span', 'lb-rank', `${row.rank}`));
     r.appendChild(el('span', 'lb-name', row.name));
     r.appendChild(el('span', 'lb-score', `${row.score}`));
     els.lb.appendChild(r);
+    ranks[row.id] = row.rank;
   }
+  lastRanks = ranks;
 }
 
 function renderAnledger(fullscreenLines = null) {
@@ -212,6 +218,7 @@ function renderAnledger(fullscreenLines = null) {
     }
     for (const t of p.tuilu) lines.appendChild(el('div', '', `退路 · ${TUILU[t].name}`));
     if (!p.tuilu.length) lines.appendChild(el('div', 'dim', '退路 · 无'));
+    if (p.hao > 0) lines.appendChild(el('div', 'dim', `耗 · ${haoText(p.hao)}`));
     body.appendChild(lines);
     els.an.appendChild(body);
     return;
@@ -232,8 +239,16 @@ function renderAnledger(fullscreenLines = null) {
     for (const [who, v] of rq) body.appendChild(anRow(`　${TEXT.rivals[who]?.name ?? who}`, `${v}`, 'an-sub'));
   }
   body.appendChild(anRow('退路', p.tuilu.length ? p.tuilu.map((t) => TUILU[t].name).join('、') : '无'));
+  if (p.hao > 0) body.appendChild(anRow('耗', haoText(p.hao), 'an-row hao'));
   body.appendChild(el('div', 'an-hint', '不上榜,不给总分。散场时只清算这本。'));
   els.an.appendChild(body);
+}
+// 耗不用数字示人——它不是账面上的数,是身上的亏
+function haoText(h) {
+  if (h >= 85) return '沉疴';
+  if (h >= 55) return '亏损';
+  if (h >= 25) return '有亏';
+  return '尚可';
 }
 function anRow(k, v, cls = 'an-row') {
   const r = el('div', cls);
@@ -290,14 +305,20 @@ function renderBar() {
   for (let i = 0; i < 3; i++) dots.appendChild(el('span', `ap-dot${i < ap ? ' on' : ''}`));
   els.bar.appendChild(dots);
   const defs = [
-    ['tan', '探', '买传闻'], ['jie', '结', '送礼'], ['mou', '谋', '起谋算'],
-    ['chi', '持', '担差事'], ['cang', '藏', '存退路'],
+    ['tan', '探', '买传闻'], ['jie', '结', '送礼'], ['ye', '夜', '争夜'],
+    ['mou', '谋', '起谋算'], ['chi', '持', '担差事'], ['cang', '藏', '存退路'],
   ];
   for (const [type, char, label] of defs) {
     const b = sealButton(char, label, () => openSub(type));
     b.dataset.seal = type;
-    b.disabled = !inActions || ap <= 0 || (type === 'mou' && !state.flags.mou);
+    b.disabled = !inActions || ap <= 0 || (type === 'mou' && !state.flags.mou)
+      || (type === 'ye' && (E.mingDead(state) || state.yeTonight || state.player.sifang < YE_COST));
     if (type === 'mou' && !state.flags.mou) b.title = '第二幕解锁';
+    if (type === 'ye') {
+      if (E.mingDead(state)) b.title = '明账已清';
+      else if (state.yeTonight) b.title = '今夜已布置下了';
+      else if (state.player.sifang < YE_COST) b.title = '私房不够置办';
+    }
     els.bar.appendChild(b);
   }
   const sub = el('button', 'submit-btn', TEXT.btn.submit);
@@ -312,6 +333,7 @@ let subSel = {};
 function openSub(type) {
   closeSub();
   subSel = {};
+  els.bar.querySelector(`[data-seal="${type}"]`)?.classList.add('active');
   const panel = el('div', 'subpanel');
   panel.id = 'subpanel';
   const rows = [];
@@ -327,6 +349,7 @@ function openSub(type) {
         row.querySelectorAll('.pick-btn').forEach((x) => x.classList.remove('sel'));
         b.classList.add('sel');
         if (key === 'scheme' && o.id === 'zuoshi') pickZuoshiRumor(panel);
+        if (key === 'target') compound?.setFocus(o.id); // 被针对的那一房高亮前推
       });
       row.appendChild(b);
     }
@@ -338,7 +361,11 @@ function openSub(type) {
       .map((r) => ({ id: r.id, text: r.name }));
 
   let title = '';
-  if (type === 'tan') {
+  if (type === 'ye') {
+    title = '夜 · 争夜';
+    rows.push(el('div', 'sub-note', TEXT.ui.yeDesc));
+    rows.push(el('div', 'sub-note dim', TEXT.ui.yeWarn));
+  } else if (type === 'tan') {
     title = `${TEXT.ui.chooseServant} · ${TEXT.ui.chooseTarget}`;
     rows.push(pickRow('仆役', Object.entries(SERVANTS).map(([id, s]) => ({
       id, text: `${TEXT.servants[id].name}${s.price ? ` ${s.price}两` : ' 不收钱'}`,
@@ -403,10 +430,13 @@ function pickZuoshiRumor(panel) {
 
 function closeSub() {
   els.stage?.querySelector('#subpanel')?.remove();
+  els.bar?.querySelectorAll('.seal-btn.active').forEach((b) => b.classList.remove('active'));
+  compound?.setFocus(null);
 }
 
 function confirmSub(type) {
   let a = null;
+  if (type === 'ye') a = { type: 'ye' };
   if (type === 'tan') a = { type, servant: subSel.servant, target: subSel.target };
   if (type === 'jie') a = { type, target: subSel.target, size: subSel.size ?? 'small', fund: subSel.fund ?? 'si' };
   if (type === 'mou') {
@@ -441,7 +471,20 @@ function doAction(a) {
   } else if (a.type === 'mou') audio.sfx('mou', { progress: r.scheme?.progress });
   else audio.sfx('click');
   renderAll();
+  echoFor(a);
   save();
+}
+
+// 行动的即时世情反馈:浮字给数值,短句给意义。
+// 选句按(节令×行动序×传闻数)定选——确定性,不走 RNG 流,不破坏逐字节可复现。
+function echoFor(a) {
+  const pool = ACTION_ECHO[a.type];
+  if (!pool) return;
+  els.floats.querySelectorAll('.echo-line').forEach((n) => n.remove()); // 一句说完再一句
+  const idx = (state.festival * 5 + (3 - state.ap) * 2 + state.rumorSeq) % pool.length;
+  const n = el('div', 'echo-line', pool[idx]);
+  els.floats.appendChild(n);
+  setTimeout(() => n.remove(), FAST ? 700 : 2900);
 }
 
 // ---------- 提交节令 ----------
@@ -456,11 +499,8 @@ async function doSubmit() {
   if (rep.rankBefore && rep.rankAfter && rep.rankBefore !== rep.rankAfter) audio.sfx('plank');
   if (rep.faluo) audio.sfx('faluo');
   await wait(300);
-  if (rep.faluo) {
-    await showNotes(rep.notes, '发落');
-  } else if (rep.notes?.length) {
-    await showNotes(rep.notes);
-  }
+  // 结算不弹窗、不设「继续」:顶部短条按时间轴自动推进,玩家只在需要决策时才点
+  if (rep.notes?.length) await showSettleStrip(rep.notes, !!rep.faluo);
   audio.sfx('watch'); // 更漏:节令推进
   if (rep.reveal) {
     const t = state.rivals[rep.reveal.target];
@@ -471,14 +511,26 @@ async function doSubmit() {
   showEvent();
 }
 
-function showNotes(notes, title) {
+// 顶部滑入短条:逐条亮起,自行熄灭,不阻断画面
+function showSettleStrip(notes, danger = false) {
   return new Promise((resolve) => {
-    showModal(app, {
-      id: 'modal-settle', title: title ?? '节令结算',
-      body: notes.join('\n'),
-      choices: [{ id: 'ok', text: TEXT.btn.next }],
-      onPick: () => { closeModal(app); resolve(); },
-    });
+    const strip = el('div', `settle-strip${danger ? ' danger' : ''}`);
+    strip.id = 'settle-strip';
+    els.stage.appendChild(strip);
+    requestAnimationFrame(() => strip.classList.add('on'));
+    let i = 0;
+    const stepMs = FAST ? 240 : 1600;
+    const tick = () => {
+      if (i >= notes.length) {
+        strip.classList.remove('on');
+        setTimeout(() => { strip.remove(); resolve(); }, FAST ? 60 : 450);
+        return;
+      }
+      clear(strip);
+      strip.appendChild(el('div', 'settle-line', notes[i++]));
+      setTimeout(tick, stepMs);
+    };
+    tick();
   });
 }
 
@@ -491,6 +543,11 @@ function showEvent() {
   if (ev.ending) return endingScreen();
   if (ev.epilogue) return epilogueScreen();
   renderAll();
+  // 读档回到行动阶段:事件已定,直接复原画面(顺带修掉重复应用事件效果的老问题)
+  if (state.phase !== 'event') {
+    if (state.visit) showVisitModal();
+    return;
+  }
   const choices = (ev.choices ?? []).map((c) => ({
     id: c.id, text: c.text, hint: c.hint,
     disabled: !!E.eventChoiceError(state, c), reason: E.eventChoiceError(state, c),
@@ -516,6 +573,34 @@ function showEvent() {
       }
       renderAll();
       save();
+      // 节令中途,有人主动找上门
+      if (state.visit) showVisitModal();
+    },
+  });
+}
+
+// ---------- 上门事件:有人站在你门口,要求当场表态 ----------
+function showVisitModal() {
+  const def = E.visitDef(state);
+  if (!def) return;
+  audio.sfx('watch'); // 更漏一下,当作叩门
+  const choices = def.choices.map((c) => ({
+    id: c.id, text: c.text, hint: c.hint,
+    disabled: !!E.eventChoiceError(state, c), reason: E.eventChoiceError(state, c),
+  }));
+  showModal(app, {
+    id: 'modal-visit', title: def.title, sub: '有人上门',
+    body: def.text,
+    portrait: def.portrait ? { src: portraitURL(def.portrait, '') } : null,
+    choices,
+    onPick: (id) => {
+      const r = E.applyVisitChoice(state, id);
+      if (!r.ok) { toast(app, r.msg); return; }
+      audio.sfx('click');
+      closeModal(app);
+      toast(app, r.choice.result, 3200);
+      renderAll();
+      save();
     },
   });
 }
@@ -530,12 +615,35 @@ async function clearSequence() {
   const overlay = el('div', 'clear-overlay');
   overlay.id = 'clear-overlay';
   els.stage.appendChild(overlay);
+  // 全作最重要的四秒:行动栏、传闻卡、谋算盘、风声全部退场,不许和演出抢注意力
+  els.stage.classList.add('in-clearing');
   const lines = [TEXT.clear.title, TEXT.clear.line1, TEXT.clear.line2, TEXT.clear.line3].map((t) => {
     const n = el('div', 'clear-line', t);
     overlay.appendChild(n);
     return n;
   });
   for (const n of lines) { n.classList.add('on'); await cw(1100); }
+  // 金色逐项褪色,不是一次消失:体面 → 宠 → 位次,三拍
+  const lm = state.flags.lastMing ?? { tiyan: 0, chong: 0, rank: null };
+  const beats = [
+    `${TEXT.ui.tiyan} ${lm.tiyan}`,
+    `${TEXT.ui.chong} ${lm.chong}`,
+    `${TEXT.ui.weifen} ${rankText(lm.rank)}`,
+  ].map((t) => {
+    const n = el('div', 'clear-line gold stat', t);
+    overlay.appendChild(n);
+    return n;
+  });
+  for (const b of beats) b.classList.add('on');
+  await cw(1400);
+  for (const b of beats) {
+    b.classList.remove('gold');
+    b.classList.add('fadegray');
+    b.textContent = '— 熄 —';
+    await cw(900);
+  }
+  await cw(600);
+  for (const b of beats) b.classList.remove('on');
   // 灯火逐间熄灭
   compound.lightsOut();
   await cw(2100);
@@ -543,11 +651,12 @@ async function clearSequence() {
   const rows = [...els.lb.querySelectorAll('.lb-row')];
   for (const r of rows) { r.classList.add('plank-fall'); await cw(240); }
   els.lb.classList.add('gone');
-  await cw(700);
+  // 静默要足够长:木牌落尽之后,什么也不发生,这也是演出的一部分
+  await cw(1600);
   overlay.querySelectorAll('.clear-line').forEach((n) => n.classList.remove('on'));
-  // 墨色暗账面板展开占满全屏
+  // 墨色暗账面板从左下角缓慢展开,占满全屏
   renderAnledger(true);
-  await cw(2000);
+  await cw(2400);
   // 历史最高位次:金字浮出 → 褪灰 → 墨字
   const best = el('div', 'clear-line gold', `${TEXT.ui.historyBest}:${rankText(state.bestRank)}`);
   overlay.appendChild(best);
@@ -561,6 +670,7 @@ async function clearSequence() {
   await cw(2000);
   // 收尾:暗账面板收回角落,进入第三幕
   overlay.remove();
+  els.stage.classList.remove('in-clearing');
   compound.clearLights();
   compound.setAct('act3');
   els.an.className = 'anledger open';
@@ -588,6 +698,7 @@ function endingScreen() {
   panel.appendChild(el('div', 'ending-line', def.line));
   const stats = el('div', 'ending-stats');
   stats.appendChild(el('div', '', `私房 ${e.sifang} 两 · 退路 ${e.tuilu} 条 · 风声 ${e.wind}`));
+  if (e.haoWeak) stats.appendChild(el('div', 'zero', TEXT.ui.haoLine));
   stats.appendChild(el('div', '', `${TEXT.ui.historyBest}:${rankText(e.bestRank)}`));
   stats.appendChild(el('div', 'zero', TEXT.ui.bestUseless));
   panel.appendChild(stats);

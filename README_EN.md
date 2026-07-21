@@ -123,6 +123,8 @@ to end: from the full 100-chapter public-domain Chinese text to **三借芭蕉�
 Borrowings of the Banana Fan)** — a playable turn-based command RPG in the tradition
 of 《梦幻西游》/《问道》.
 
+**Play it: [xiyouji.vibecoco.ai](https://xiyouji.vibecoco.ai)**
+
 ![Title screen](examples/journey-to-the-west/screenshots/title.jpg)
 
 | Multi-foe command battle | Underwater heist (碧波潭) |
@@ -139,9 +141,14 @@ three-stage true fan that quenches the fire. It carries the instantly recognizab
 回合制西游 grammar — speed-ordered turns, a command menu, five-element (五行)
 counters, summon pets, formations, 悟空's seventy-two transformations — plus
 level-up point allocation, skill mastery, story-drop gear and rule-based
-treasures, all in an original Ming-dynasty woodblock style. The code was produced
-by driving Kimi K3 and the art by gpt-image-2, and it self-verifies: 146 engine
-assertions plus a Playwright walkthrough, zero console errors.
+treasures, all in an original Ming-dynasty woodblock style. Hovering a command
+previews its **damage range, five-element multiplier and hit chance**; turn order
+is a visual timeline; and a counter-element hit stamps a three-character seal
+(金克木) on the target — a turn-based game should lay its numbers out rather than
+make you guess. The code was produced by driving Kimi K3 and the art by
+gpt-image-2, and it self-verifies: 199 engine assertions plus a 78-assertion
+Playwright walkthrough (including a full keyboard-only run and both 1280×800 and
+1920×1080 viewports), zero console errors.
 
 <details>
 <summary>Show the example's output tree</summary>
@@ -179,7 +186,7 @@ every festival turn, forever telling you to climb. Folded into the bottom-left
 corner is an ink-black **hidden ledger** — private silver, favours owed to you,
 and ways out. It never appears on the leaderboard and is never given a total.
 
-Of the five actions, only 藏 (*hoard*) feeds the hidden ledger — and on the
+Of the six actions, only 藏 (*hoard*) feeds the hidden ledger — and on the
 leaderboard, hoarding always looks like a wasted turn. Then chapter 79 arrives,
 西门庆 dies, rank and face and favour are struck out, the leaderboard is removed
 from the interface entirely, and the ending scores **only** the ledger you were
@@ -187,20 +194,34 @@ ignoring — while stating outright that your best-ever rank contributed nothing
 The novel's own preface says it is written as a warning, not an encouragement;
 here the mechanics say it instead of a narrator.
 
+Favour is not an abstract score. It has a body: **whose courtyard the master
+sleeps in tonight**. On the cutaway, exactly one window is lit and the rest are
+dark. You can spend an action and silver to contest the night — at the cost of
+耗 (*depletion*), a figure that never appears on any leaderboard. Whoever spends
+years competing for favour is already ill by the time the household is divided.
+Contesting raises the visible ledger and raises depletion, and feeds the hidden
+ledger not at all: that asymmetry is the whole design.
+
 Roughly 60–90 minutes: 24 festival turns, three acts, five endings. Includes an
 imperfect-information servant rumour network (rumours carry a confidence tier and
-may be false), a scheme system with progress and named accomplices, six rival AI
-agents with their own goals, and 21 original Ming-dynasty illustrations plus a
-cutaway of the compound rendered in three states, so the household's decline is
-directly legible. Code produced by driving Kimi K3, art by gpt-image-2, with 60
-engine assertions and a 38-assertion Playwright walkthrough, zero console errors.
+may be false), a scheme system with progress and named accomplices, callers who
+turn up unannounced and force you to answer on the spot, six rival AI agents with
+their own goals, and 21 original Ming-dynasty illustrations plus a cutaway of the
+compound rendered in three states — with sky and ambient particles tracking all
+24 solar terms — so the household's decline is directly legible. Code produced by
+driving Kimi K3, art by gpt-image-2, with 85 engine assertions and a 45-assertion
+Playwright walkthrough, zero console errors, byte-reproducible under a fixed seed.
 
-> Content boundary: the source novel contains extensive explicit material, and
-> this adaptation uses **none** of it. The text in the repository is a reproducibly
-> generated expurgated edition (see
-> [`source/SOURCE.md`](examples/jin-ping-mei/source/SOURCE.md)); "favour" appears
-> only as a social signal — seating order, gifts, assigned duties, forms of
-> address — and nothing sexual is depicted or implied.
+> **Rated mature (17+).** Desire is the engine of the source novel; strip it out
+> and household politics is just bookkeeping. So this adaptation writes eroticism
+> as **a currency of power**: nights granted, favour lost, and what contesting
+> them costs. The prose follows the elliptical manner of late-Ming domestic
+> fiction — lamps, watch-drums, seating order, the scent of clothes — and the
+> camera always stops at the moment the bed-curtain falls. **No sexual act is
+> described, there is no explicit dialogue, and every figure is fully clothed.**
+> The text in the repository remains a reproducibly generated expurgated edition
+> (see [`source/SOURCE.md`](examples/jin-ping-mei/source/SOURCE.md)); the explicit
+> passages of the original are not adapted.
 
 <details>
 <summary>Show the example's output tree</summary>
