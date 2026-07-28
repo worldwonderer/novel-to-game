@@ -4,7 +4,11 @@
 Boot -> title -> cold open -> nights -> restart, driven twice (mouse-primary and
 keyboard-only; BUILD_BRIEF requires every action to be reachable by keyboard alone),
 then a third, full campaign: seed 42, played through nights 1-7 to the walk, the
-door, an ending, the epilogue, afterRun and restart (GAME_DESIGN §10, §12).
+door, an ending, the epilogue, afterRun and restart (GAME_DESIGN §10, §12) — and a
+fourth pass that repeats that campaign mouse-only: title buttons, click-to-move,
+click-to-exit, hotspot walk-and-act (queuedAction), the lesson window, the knock,
+the door exchanges, the epilogue cards and the restart button, all by click/hold
+with no keyboard input anywhere (QA_REPORT F6).
 
 Evidence lands in the workspace at qa/evidence/browser/ as JPEG. The qa contract treats
 paths outside the workspace (and system temp dirs) as no evidence at all.
@@ -174,14 +178,43 @@ def run_once(page, mode: str) -> dict:
     out["title_shot"] = shot(page, f"{mode}_title")
     frame_stats(page, f"{mode}_title")
 
+    if mode == "mouse":
+        # The three title verbs are click targets (drawTitle hit boxes, low-centre).
+        section("[mouse] title buttons: about and options plates")
+        page.mouse.click(640, 756)   # third verb: about
+        page.wait_for_timeout(400)
+        check(phase(page) == "about", "clicking the third title verb opens the about card")
+        page.mouse.click(640, 400)   # anywhere: back (main.js step 'about')
+        page.wait_for_timeout(400)
+        check(phase(page) == "title", "clicking the about card returns to the title")
+        # Coming back resets phaseTick, so the verbs fade in again with the beat.
+        page.wait_for_function("window.__game.state.phaseTick >= 280", timeout=10000)
+        page.mouse.click(640, 722)   # second verb: options
+        page.wait_for_timeout(400)
+        check(phase(page) == "options", "clicking the second title verb opens the options plate")
+        before = page.evaluate(
+            "(JSON.parse(localStorage.getItem('hovel.options') || '{}').textScale) || 1")
+        page.mouse.click(640, 400)   # toggles the focused row (text size)
+        page.wait_for_timeout(300)
+        after = page.evaluate(
+            "(JSON.parse(localStorage.getItem('hovel.options') || '{}').textScale) || 1")
+        check(after != before, f"clicking an options row toggles it (textScale {before} -> {after})")
+        # Options has no mouse-driven way back (focus moves on arrows only), so
+        # reload for a clean title; the reveal must run again for the hit boxes.
+        page.evaluate("localStorage.removeItem('hovel.options')")
+        page.goto(URL, wait_until="networkidle")
+        page.wait_for_timeout(6000)
+        check(phase(page) == "title", "back on a clean title after the options detour")
+
     section(f"[{mode}] enter the run")
     if mode == "keyboard":
         page.keyboard.press("Enter")
     else:
-        page.mouse.click(640, 700)          # first title verb sits low-centre
+        out["title_button_shot"] = shot(page, "mouseclick_title_button")
+        page.mouse.click(640, 688)          # first title verb sits low-centre
         page.wait_for_timeout(200)
-        if phase(page) == "title":
-            page.keyboard.press("Enter")     # fall back so the pass still completes
+        check(phase(page) == "coldOpen",
+              "the first title verb is clickable (no keyboard fallback)")
     page.wait_for_timeout(600)
     check(phase(page) != "title", f"leaving the title works ({mode})")
     out["cold_open_shot"] = shot(page, f"{mode}_cold_open")
@@ -348,8 +381,8 @@ def wait_dawn(page, timeout_s: float = 0) -> dict:
 def drive_to(page, tx: int, ty: int, radius: int = 14, timeout_s: float = 0,
              phases=("night",)):
     """Keyboard click-to-move: poll the creature and hold arrows toward the point.
-    (Mouse clicks never reach the sim — main.js consumeEdges drops mouse.clicked —
-    so the campaign drives with keys, which BUILD_BRIEF requires to suffice.)"""
+    The keyboard campaign drives with keys because BUILD_BRIEF requires the whole
+    path to be reachable by keyboard alone; the mouse campaign below clicks."""
     timeout_s = timeout_s or 12 * SPEED
     held: set[str] = set()
 
@@ -591,6 +624,268 @@ def run_campaign(page) -> dict:
     return out
 
 
+# ---------------------------------------------------------------- mouse campaign
+#
+# QA_REPORT F6: the same campaign as run_campaign, but every input is a mouse
+# click or hold — no keyboard anywhere. Click-to-move goes through the game's
+# own click path (main.js yardClick / scene.queuedAction): a click on a
+# hotspot walks the creature there and acts on arrival, so the outhouse, the
+# door pile, the hovel mouth and the cottage door are clicked directly at the
+# ends of the same safe lanes the keyboard campaign drives.
+
+START_LESSON_MOUSE_JS = """
+() => new Promise((res) => {
+  const canvas = document.getElementById('plate');
+  const r = canvas.getBoundingClientRect();
+  // (640, 400) on the plate: the chink, off the exit slot.
+  const cx = r.left + r.width * (640 / 1280);
+  const cy = r.top + r.height * (400 / 800);
+  const click = () => {
+    canvas.dispatchEvent(new MouseEvent('mousedown', { clientX: cx, clientY: cy, bubbles: true }));
+    window.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+  };
+  click();  // advance the dawn read
+  let guard = 0;
+  const pump = () => {
+    const g = window.__game;
+    const a = g.state.tonight && g.state.tonight.action;
+    if (a && a.kind === 'lesson') { res('lesson'); return; }
+    if (g.phase === 'night' && g.state.minute > 0.5) { res('missed'); return; }
+    if (++guard > 600) { res('timeout'); return; }
+    // One fresh click edge per frame — the same concession as the keyboard
+    // pump: the engine accepts a lesson start only at minute <= 0.03, which
+    // is 1-2 ticks at any speed.
+    click();
+    requestAnimationFrame(pump);
+  };
+  requestAnimationFrame(pump);
+})
+"""
+
+
+def click_arrive(page, x: int, y: int, phase_want: str = "night",
+                 radius: int = 14, timeout_s: float = 0) -> dict:
+    """Click a plain (non-hotspot) spot and poll until the creature gets there."""
+    page.mouse.click(x, y)
+    s = wait_cond(page, lambda s: s["phase"] != phase_want
+                  or math.hypot(x - s["x"], y - s["y"]) <= radius,
+                  timeout_s or 15 * SPEED, 100)
+    need(s is not None and s["phase"] == phase_want
+         and math.hypot(x - s["x"], y - s["y"]) <= radius,
+         f"[mouse-campaign] click-to-move reaches ({x},{y}) (last={s})")
+    return s
+
+
+def mouse_carry(page, out: dict, tag: str) -> None:
+    """The carry, clicked: waypoints move, the hotspots act on arrival
+    (outhouse -> take the load, door -> put it down, mouth -> slip inside)."""
+    f0 = qa_state(page)["firing"]
+    x0, y0 = qa_state(page)["x"], qa_state(page)["y"]
+    s = click_arrive(page, 585, 258)
+    if "move_shot" not in out:  # first carry: evidence that click-to-move moves
+        out["move_shot"] = shot(page, "mouseclick_yard_move")
+        need(math.hypot(s["x"] - x0, s["y"] - y0) > 40,
+             f"[mouse-campaign] click-to-move actually moves the creature "
+             f"(({x0},{y0}) -> ({s['x']},{s['y']}))")
+    click_arrive(page, 455, 330)
+    page.mouse.click(310, 485)  # the outhouse: walk there and take the load on arrival
+    s = wait_cond(page, lambda s: s["carrying"] or s["phase"] != "night", 15 * SPEED, 100)
+    need(s and s["phase"] == "night" and s["carrying"],
+         f"[mouse-campaign] {tag}: the outhouse click walks over and takes the load (last={s})")
+    click_arrive(page, 450, 462)
+    click_arrive(page, 748, 462)
+    click_arrive(page, 748, 425)
+    page.mouse.click(700, 425)  # their door: put the load down on arrival
+    s = wait_cond(page, lambda s: not s["carrying"] or s["phase"] != "night", 15 * SPEED, 100)
+    need(s and s["phase"] == "night" and not s["carrying"] and s["firing"] == f0 + 1,
+         f"[mouse-campaign] {tag}: the door click puts the load down "
+         f"(firing {f0} -> {s and s['firing']})")
+    out[f"{tag}_shot"] = shot(page, f"mousecampaign_{tag}")
+    click_arrive(page, 748, 410)
+    click_arrive(page, 748, 290)
+    click_arrive(page, 684, 290)
+    page.mouse.click(630, 265)  # the hovel mouth: slip back inside on arrival
+    s = wait_cond(page, lambda s: s["inHovel"] or s["phase"] != "night", 15 * SPEED, 100)
+    need(s and s["inHovel"],
+         f"[mouse-campaign] {tag}: the mouth click slips back inside (last={s})")
+
+
+def run_mouse_campaign(page) -> dict:
+    """The F6 done-criterion pass: the full campaign to an ending, mouse only.
+    Mirrors run_campaign beat for beat; every input above is page.mouse or an
+    in-page MouseEvent through the real canvas listener (the lesson pump)."""
+    out = {"plan": "as [campaign], but no keyboard input anywhere; hotspots "
+                   "carry the context actions (walk-and-act on arrival)"}
+    try:
+        section("[mouse-campaign] boot, title, cold open")
+        page.goto(URL, wait_until="networkidle")
+        page.wait_for_timeout(600)
+        need(phase(page) == "title", "[mouse-campaign] boots into the title phase")
+        page.wait_for_timeout(6000)  # the verb hit boxes exist only at beat 6
+        out["title_button_shot"] = shot(page, "mousecampaign_title_button")
+        page.mouse.click(640, 688)   # the first verb: into the run
+        need(wait_cond(page, lambda s: s["phase"] == "coldOpen", 5) is not None,
+             "[mouse-campaign] clicking the first title verb enters the run")
+        page.mouse.move(640, 400)
+        page.mouse.down()
+        t0 = time.time()
+        while phase(page) == "coldOpen" and time.time() - t0 < 40:
+            page.wait_for_timeout(500)
+        page.mouse.up()
+        s = qa_state(page)
+        need(s["phase"] == "night" and s["night"] == 1,
+             "[mouse-campaign] cold open completes into night 1 (held mouse)")
+
+        section("[mouse-campaign] nights 1-2: listening, clicked at the chink")
+        page.mouse.click(640, 400)
+        need(wait_cond(page, lambda s: s["listening"], 5) is not None,
+             "[mouse-campaign] night 1: a click at the chink starts listening")
+        s = wait_dawn(page)
+        out["words_after_n1"] = s["words"]
+        need(s["words"] >= 10, f"[mouse-campaign] night 1 banks words by listening ({s['words']})")
+        page.mouse.click(640, 400)   # let the day pass: dawn read advanced by click
+        need(wait_cond(page, lambda s: s["phase"] == "night" and s["night"] == 2, 5),
+             "[mouse-campaign] night 2 begins (dawn read advanced by click)")
+        page.mouse.click(640, 400)
+        s = wait_dawn(page)
+        out["words_after_n2"] = s["words"]
+
+        section("[mouse-campaign] night 3: first carry, clicked")
+        page.mouse.click(640, 400)   # -> night 3
+        need(wait_cond(page, lambda s: s["phase"] == "night" and s["night"] == 3, 5),
+             "[mouse-campaign] night 3 begins")
+        page.mouse.click(640, 400)   # listen through the retiring window
+        need(wait_cond(page, lambda s: s["minute"] >= 5.2, 10 * SPEED),
+             "[mouse-campaign] night 3: the retiring window closes")
+        page.mouse.click(1000, 600)  # the cold slot, lower right: lift the plank
+        need(wait_cond(page, lambda s: not s["inHovel"], 5) is not None,
+             "[mouse-campaign] night 3: clicking the cold slot steps out")
+        mouse_carry(page, out, "n3_carry")
+        page.mouse.click(640, 400)   # listen out the rest
+        wait_dawn(page)
+
+        section("[mouse-campaign] night 4: first lesson by click, second carry")
+        r = page.evaluate(START_LESSON_MOUSE_JS)
+        need(r == "lesson",
+             f"[mouse-campaign] night 4: the lesson starts at minute 0 by click ({r})")
+        need(wait_cond(page, lambda s: s["lessonDone"], 10 * SPEED),
+             "[mouse-campaign] night 4: the first lesson completes (+20 words)")
+        page.mouse.click(1000, 600)
+        need(wait_cond(page, lambda s: not s["inHovel"], 5) is not None,
+             "[mouse-campaign] night 4: steps out after the lesson")
+        mouse_carry(page, out, "n4_carry")
+        page.mouse.click(640, 400)
+        wait_dawn(page)
+
+        section("[mouse-campaign] nights 5-7: the remaining lessons by click")
+        for n in (5, 6, 7):
+            r = page.evaluate(START_LESSON_MOUSE_JS)
+            need(r == "lesson",
+                 f"[mouse-campaign] night {n}: the lesson starts at minute 0 by click ({r})")
+            need(wait_cond(page, lambda s: s["lessonDone"], 10 * SPEED),
+                 f"[mouse-campaign] night {n}: the lesson completes")
+            page.mouse.click(640, 400)   # listen out the rest
+            s = wait_dawn(page)
+        out["nights_completed"] = 7
+        out["words_at_walk"] = s["words"]
+        need(s["lessons"] == 4, f"[mouse-campaign] four lessons attended ({s['lessons']})")
+        need(s["words"] >= 80,
+             f"[mouse-campaign] words {s['words']} >= 80, the fifth exchange gate (GAME_DESIGN §7)")
+        need(s["carries"] >= 1,
+             f"[mouse-campaign] carries {s['carries']} >= 1, the exchange-5 lock (GAME_DESIGN §9)")
+        need(s["night"] == 8,
+             f"[mouse-campaign] seven full nights played before the walk (night counter {s['night']})")
+
+        section("[mouse-campaign] day 8: the walk, clicked")
+        page.mouse.click(640, 400)   # let the day pass -> the walk
+        s = wait_cond(page, lambda s: s["phase"] == "walk", 5)
+        need(s and s["walk"] and s["walk"]["band"] == "long" and s["walk"]["slots"] == 5,
+             f"[mouse-campaign] the long walk, five slots (walk={s and s['walk']})")
+        need(wait_cond(page, lambda s: s["walkStage"] == "cross", 6),
+             "[mouse-campaign] the three go out at the gate")
+        out["walk_shot"] = shot(page, "mousecampaign_walk")
+        page.wait_for_timeout(17000)  # knocking inside 15 s costs a slot; past 30 s another
+        click_arrive(page, 684, 222, "walk", 16)
+        click_arrive(page, 748, 222, "walk", 16)
+        click_arrive(page, 748, 425, "walk", 16)
+        page.mouse.click(700, 425)   # the door: walk up and knock on arrival
+        s = wait_cond(page, lambda s: s["phase"] == "door", 15 * SPEED, 100)
+        need(s and s["door"] and s["door"]["slots"] == 5,
+             f"[mouse-campaign] clicking the door walks up and knocks, keeping all five slots "
+             f"(slots={s and s['door'] and s['door']['slots']})")
+        out["door_shot"] = shot(page, "mousecampaign_door")
+
+        section("[mouse-campaign] the door: five exchanges, clicked")
+        t0 = time.time()
+        while time.time() - t0 < 170:
+            s = qa_state(page)
+            if s["phase"] != "door":
+                break
+            if s["door"] and s["door"]["exchangeTicks"] <= 0 and s["canSpeak"]:
+                page.mouse.click(640, 400)
+                page.wait_for_timeout(60)
+            page.wait_for_timeout(350)
+        s = wait_cond(page, lambda s: s["phase"] == "aftermath", 10)
+        need(s is not None, "[mouse-campaign] the door opens when the walk's clock runs out")
+        need(s["exchanges"] == 5,
+             f"[mouse-campaign] all five exchanges land by click "
+             f"(reached {s['exchanges']}, words {s['words']})")
+        need(s["ending"] in DESIGNED_ENDINGS,
+             f"[mouse-campaign] ending id is a designed one ({s['ending']}; §12: {DESIGNED_ENDINGS})")
+        need(s["ending"] == "door", f"[mouse-campaign] the run ends at the door ({s['ending']})")
+        out["ending"] = s["ending"]
+        out["exchanges"] = s["exchanges"]
+
+        section("[mouse-campaign] aftermath, epilogue, afterRun")
+        page.mouse.move(640, 400)
+        page.mouse.down()            # the withheld hand
+        page.wait_for_timeout(1500)
+        page.mouse.up()
+        need(wait_cond(page, lambda s: s["phase"] == "epilogue", 15) is not None,
+             "[mouse-campaign] the withheld hand holds (mouse.down) into the epilogue")
+        step0 = page.evaluate("window.__game.epilogueStep")
+        page.mouse.click(640, 400)   # a card advance well ahead of its minTicks timer
+        page.wait_for_timeout(700)
+        step1 = page.evaluate("window.__game.epilogueStep")
+        need(step1 == step0 + 1,
+             f"[mouse-campaign] a click advances an epilogue card (step {step0} -> {step1})")
+        out["epilogue_shot"] = shot(page, "mousecampaign_epilogue")
+        page.mouse.click(640, 400)   # the next card too; the moon hold ignores clicks
+        page.wait_for_timeout(700)
+        page.mouse.down()            # the moon hold; fire and closing run on their timers
+        done = None
+        t0 = time.time()
+        while time.time() - t0 < 60:
+            if phase(page) == "afterRun":
+                done = qa_state(page)
+                break
+            page.wait_for_timeout(400)
+        page.mouse.up()
+        need(done is not None, "[mouse-campaign] the epilogue plays out to afterRun")
+        need(done["ending"] == "door" and done["exchanges"] == 5,
+             "[mouse-campaign] the ending is still recorded at afterRun")
+        out["afterrun_shot"] = shot(page, "mousecampaign_afterrun")
+
+        section("[mouse-campaign] restart, clicked")
+        page.mouse.click(640, 493)   # the restart button on the after-run card
+        s = wait_cond(page, lambda s: s["phase"] == "title", 5)
+        need(s and s["night"] == 1 and s["words"] == 0,
+             f"[mouse-campaign] clicking restart restores a valid initial state "
+             f"(phase={s and s['phase']}, night {s and s['night']}, words {s and s['words']})")
+        out["restart_shot"] = shot(page, "mousecampaign_restart")
+        out["completed"] = True
+    except CampaignAbort as e:
+        out["completed"] = False
+        out["abort"] = str(e)
+        check(False, f"[mouse-campaign] {e}")
+        try:
+            out["state_at_abort"] = qa_state(page)
+            out["abort_shot"] = shot(page, "mousecampaign_abort")
+        except Exception:
+            pass
+    return out
+
+
 def main() -> int:
     shutil.rmtree(SHOTS, ignore_errors=True)
     SHOTS.mkdir(parents=True, exist_ok=True)
@@ -610,6 +905,7 @@ def main() -> int:
             result["keyboard"] = run_once(page, "keyboard")
             result["mouse"] = run_once(page, "mouse")
             result["campaign"] = run_campaign(page)
+            result["mouse_campaign"] = run_mouse_campaign(page)
 
             section("determinism")
             def replay():

@@ -5,7 +5,10 @@
 
 import { createRun } from './engine/state.js';
 import * as engine from './engine/sim.js';
-import { MINUTE_TICKS, FAST_MINUTE_TICKS, PLATE, HOVEL_MOUTH, DOOR } from './engine/constants.js';
+import {
+  MINUTE_TICKS, FAST_MINUTE_TICKS, PLATE, HOVEL_MOUTH, DOOR,
+  OUTHOUSE, WELL, MILK_HOUSE, WOOD_EDGE, DOOR_APRON,
+} from './engine/constants.js';
 import { STRINGS, glossWords } from './strings.js';
 import * as R from './render.js';
 import * as skin from './skin.js';
@@ -101,7 +104,9 @@ function inputVector() {
 }
 
 function consumeEdges() {
-  const e = { ...edges };
+  // Read mouse.clicked BEFORE clearing it: one mousedown produces exactly one
+  // edge, consumed by exactly one tick even when a frame runs several ticks.
+  const e = { ...edges, clicked: mouse.clicked };
   edges.action = edges.drop = edges.exit = edges.journal = edges.advance = false;
   mouse.clicked = false;
   return e;
@@ -162,28 +167,41 @@ function clickButtons(e) {
   return false;
 }
 
-// What the mouse click means in the yard: act if it lands on the current
-// actionable, else walk there.
-function yardClick(e) {
-  const a = engine.availableAction(state);
-  if (a) {
-    // If the creature is already in reach, the edge acts now; else queue: walk, then act.
-    engine.applyClick ? null : null;
+// What the mouse click means in the yard (GAME_DESIGN §5: mouse-primary, one
+// context action). A click that lands on a hotspot walks the creature there
+// and acts on arrival; any other click is a plain walk. Radii mirror the
+// engine's interaction reaches (sim.js nearestActionable) so the arrival
+// queue fires inside the reach the engine will honour; the engine still
+// adjudicates the action itself when the injected edge lands.
+const YARD_HOTSPOTS = [
+  { p: DOOR, r: 34 },        // the pile: put the load down
+  { p: OUTHOUSE, r: 40 },    // take the load up
+  { p: WELL, r: 30 },        // draw water
+  { p: DOOR_APRON, r: 30 },  // clear the path
+  { p: MILK_HOUSE, r: 30 },  // take
+  { p: WOOD_EDGE, r: 44 },   // forage / search
+  { p: HOVEL_MOUTH, r: 24 }, // slip back inside
+];
+
+function yardClick(x, y) {
+  for (const h of YARD_HOTSPOTS) {
+    if (Math.hypot(x - h.p.x, y - h.p.y) <= h.r) {
+      scene.queuedAction = { x: h.p.x, y: h.p.y, r: h.r };
+      return { x: h.p.x, y: h.p.y }; // snap the walk target to the hotspot
+    }
   }
-  if (state.creature.inHovel) {
-    // The cold slot, lower right: lift the plank and go out.
-    if (e.x > 860 && e.y > 440) { return { exit: true }; }
-    return { action: true }; // the chink: listen / lesson
-  }
-  return { target: { x: e.x, y: e.y } };
+  scene.queuedAction = null;
+  return { x, y };
 }
 
-// The queued context action: after a click on an actionable object, act when
-// the creature arrives.
+// The queued context action: after a click on a hotspot, act when the
+// creature arrives inside its reach. Keyboard movement or a fresh click
+// elsewhere cancels the queue.
 function maybeQueuedAction(input) {
-  if (!scene.queuedAction) return input;
   const q = scene.queuedAction;
-  if (Math.hypot(state.creature.x - q.x, state.creature.y - q.y) < 8) {
+  if (!q) return input;
+  if (input.kx || input.ky) { scene.queuedAction = null; return input; }
+  if (Math.hypot(state.creature.x - q.x, state.creature.y - q.y) <= q.r - 2) {
     scene.queuedAction = null;
     return { ...input, action: true };
   }
@@ -229,14 +247,14 @@ function tickNight(input) {
   const v = inputVector();
   const e = {
     kx: v.kx, ky: v.ky,
-    target: input.clicked && !state.creature.inHovel ? { x: input.x, y: input.y } : null,
+    target: input.clicked && !state.creature.inHovel ? yardClick(input.x, input.y) : null,
     action: input.action,
     drop: input.drop,
     exit: input.exit || (input.clicked && state.creature.inHovel && input.x > 860 && input.y > 440),
     journal: input.journal,
   };
   if (input.clicked && state.creature.inHovel && !(input.x > 860 && input.y > 440)) e.action = true;
-  engine.tick(state, e);
+  engine.tick(state, maybeQueuedAction(e));
   drainEvents();
 }
 
@@ -250,11 +268,22 @@ function tickDawnRead(input) {
 
 function tickWalk(input) {
   const v = inputVector();
-  engine.tick(state, {
+  let target = null;
+  if (input.clicked) {
+    // The door is the walk's one hotspot: a click on it walks over and knocks.
+    if (Math.hypot(input.x - DOOR.x, input.y - DOOR.y) <= 40) {
+      scene.queuedAction = { x: DOOR.x, y: DOOR.y, r: 40 };
+      target = { x: DOOR.x, y: DOOR.y };
+    } else {
+      scene.queuedAction = null;
+      target = { x: input.x, y: input.y };
+    }
+  }
+  engine.tick(state, maybeQueuedAction({
     kx: v.kx, ky: v.ky,
-    target: input.clicked ? { x: input.x, y: input.y } : null,
+    target,
     action: input.action,
-  });
+  }));
 }
 
 function tickDoor(input) {
@@ -658,6 +687,7 @@ window.__game = {
   get phase() { return state.phase; },
   get cones() { return engine.activeCones(state); },
   get interactive() { return interactive; },
+  get epilogueStep() { return scene.epilogueStep; },
   engine,
   restart,
   get pendingKeys() { return skin.pending(); },

@@ -2,7 +2,7 @@
   "url": "http://127.0.0.1:5199/?seed=42&fast=1",
   "normal_speed_run": false,
   "viewport": "1280x800",
-  "passed": 67,
+  "passed": 133,
   "failed": 0,
   "console_errors": [],
   "network_errors": [],
@@ -14,33 +14,33 @@
     "keyboard_title": {
       "p50": 8.3,
       "p95": 9.3,
-      "max": 10.2,
+      "max": 10.4,
       "n": 90
     },
     "keyboard_playing": {
       "p50": 8.3,
-      "p95": 9.7,
-      "max": 10.1,
+      "p95": 10,
+      "max": 10.3,
       "n": 90
     },
     "mouse_title": {
       "p50": 8.3,
-      "p95": 9.4,
-      "max": 10.2,
+      "p95": 9.9,
+      "max": 10.3,
       "n": 90
     },
     "mouse_playing": {
       "p50": 8.3,
-      "p95": 10.1,
-      "max": 10.3,
+      "p95": 9.2,
+      "max": 9.7,
       "n": 90
     }
   },
   "frame_floor_ms": 33.4,
   "stall_gate_ms": 200.0,
   "longtasks_over_50ms": [],
-  "build_bytes": 1571128,
-  "shots": 17,
+  "build_bytes": 1573590,
+  "shots": 27,
   "shots_dir": "qa/evidence/browser",
   "run": {
     "keyboard": {
@@ -61,9 +61,10 @@
     },
     "mouse": {
       "title_shot": "05_mouse_title.jpg",
-      "cold_open_shot": "06_mouse_cold_open.jpg",
-      "cold_open_seconds": 23.2,
-      "playing_shot": "07_mouse_playing.jpg",
+      "title_button_shot": "06_mouseclick_title_button.jpg",
+      "cold_open_shot": "07_mouse_cold_open.jpg",
+      "cold_open_seconds": 23.3,
+      "playing_shot": "08_mouse_playing.jpg",
       "advanced_a_night": true,
       "state_changed": [
         "night",
@@ -72,18 +73,18 @@
         "unease"
       ],
       "night_reached": 2,
-      "restart_shot": "08_mouse_restart.jpg"
+      "restart_shot": "09_mouse_restart.jpg"
     },
     "campaign": {
       "plan": "listen n1-2; carry n3; lesson+carry n4; lesson n5-7; walk day 8 (5 slots); five exchanges; epilogue; restart",
       "words_after_n1": 12,
       "words_after_n2": 21,
-      "n3_carry_shot": "09_campaign_n3_carry.jpg",
-      "n4_carry_shot": "10_campaign_n4_carry.jpg",
+      "n3_carry_shot": "10_campaign_n3_carry.jpg",
+      "n4_carry_shot": "11_campaign_n4_carry.jpg",
       "nights_completed": 7,
       "words_at_walk": 96,
-      "walk_shot": "11_campaign_walk.jpg",
-      "door_shot": "12_campaign_door.jpg",
+      "walk_shot": "12_campaign_walk.jpg",
+      "door_shot": "13_campaign_door.jpg",
       "ending": "door",
       "exchanges": 5,
       "epilogue_model": {
@@ -100,9 +101,28 @@
         "seenBy": null,
         "seenContext": null
       },
-      "epilogue_shot": "13_campaign_epilogue.jpg",
-      "afterrun_shot": "14_campaign_afterrun.jpg",
-      "restart_shot": "15_campaign_restart.jpg",
+      "epilogue_shot": "14_campaign_epilogue.jpg",
+      "afterrun_shot": "15_campaign_afterrun.jpg",
+      "restart_shot": "16_campaign_restart.jpg",
+      "completed": true
+    },
+    "mouse_campaign": {
+      "plan": "as [campaign], but no keyboard input anywhere; hotspots carry the context actions (walk-and-act on arrival)",
+      "title_button_shot": "17_mousecampaign_title_button.jpg",
+      "words_after_n1": 12,
+      "words_after_n2": 20,
+      "move_shot": "18_mouseclick_yard_move.jpg",
+      "n3_carry_shot": "19_mousecampaign_n3_carry.jpg",
+      "n4_carry_shot": "20_mousecampaign_n4_carry.jpg",
+      "nights_completed": 7,
+      "words_at_walk": 96,
+      "walk_shot": "21_mousecampaign_walk.jpg",
+      "door_shot": "22_mousecampaign_door.jpg",
+      "ending": "door",
+      "exchanges": 5,
+      "epilogue_shot": "23_mousecampaign_epilogue.jpg",
+      "afterrun_shot": "24_mousecampaign_afterrun.jpg",
+      "restart_shot": "25_mousecampaign_restart.jpg",
       "completed": true
     }
   }
