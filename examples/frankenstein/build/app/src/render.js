@@ -37,7 +37,7 @@ function disc(ctx, x, y, r, fill) {
   ctx.fillStyle = fill;
   ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
 }
-function wedge(ctx, x, y, angle, halfAngle, reach, fill) {
+export function wedge(ctx, x, y, angle, halfAngle, reach, fill) {
   ctx.fillStyle = fill;
   ctx.beginPath();
   ctx.moveTo(x, y);

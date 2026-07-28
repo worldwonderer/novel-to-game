@@ -8,7 +8,10 @@ door, an ending, the epilogue, afterRun and restart (GAME_DESIGN §10, §12) —
 fourth pass that repeats that campaign mouse-only: title buttons, click-to-move,
 click-to-exit, hotspot walk-and-act (queuedAction), the lesson window, the knock,
 the door exchanges, the epilogue cards and the restart button, all by click/hold
-with no keyboard input anywhere (QA_REPORT F6).
+with no keyboard input anywhere (QA_REPORT F6) — and a fifth pass that gets the
+creature seen on night 1 by standing still in the yard until Agatha's retiring
+patrol finds him, asserting the seen phase renders console-clean and the SEEN
+failure card lands after the 2 s hold (QA_REPORT F7).
 
 Evidence lands in the workspace at qa/evidence/browser/ as JPEG. The qa contract treats
 paths outside the workspace (and system temp dirs) as no evidence at all.
@@ -43,6 +46,9 @@ URL = f"{BASE}/?seed=42" + ("" if SLOW else "&fast=1")
 # Real-second timeouts scale with the speed: at normal speed a night-minute is
 # 8 s and the creature walks 36 px/s; at ?fast=1 they are 1 s and 290 px/s.
 SPEED = 8 if SLOW else 1
+# Arrival tolerance for click-to-move polling. Shared so the assertion that a
+# click really moved the creature is derived from the same number the poll uses.
+ARRIVE_R = 14
 
 # Canvas game with a 60 Hz rAF loop, so frame-time distribution is the right measure.
 # PRODUCT_BRIEF names a >=30 FPS floor => 33.4 ms; absolute stall gate 200 ms.
@@ -345,7 +351,7 @@ def qa_state(page) -> dict:
         words: s.words, firing: s.firing, store: s.store, unease: s.unease,
         x: Math.round(s.creature.x), y: Math.round(s.creature.y),
         carrying: s.creature.carrying, inHovel: s.creature.inHovel,
-        ending: s.ending, seenBy: s.seenBy, exchanges: s.exchangesReached,
+        ending: s.ending, seenBy: s.seenBy, seenCtx: s.seenContext, exchanges: s.exchangesReached,
         carries: s.carriesTotal, lessons: s.lessonsAttended, listens: s.listensCompleted,
         slipped: s.walkSlipped, walk: s.walk,
         door: s.door && { index: s.door.index, exchangeTicks: s.door.exchangeTicks,
@@ -664,7 +670,7 @@ START_LESSON_MOUSE_JS = """
 
 
 def click_arrive(page, x: int, y: int, phase_want: str = "night",
-                 radius: int = 14, timeout_s: float = 0) -> dict:
+                 radius: int = ARRIVE_R, timeout_s: float = 0) -> dict:
     """Click a plain (non-hotspot) spot and poll until the creature gets there."""
     page.mouse.click(x, y)
     s = wait_cond(page, lambda s: s["phase"] != phase_want
@@ -684,9 +690,21 @@ def mouse_carry(page, out: dict, tag: str) -> None:
     s = click_arrive(page, 585, 258)
     if "move_shot" not in out:  # first carry: evidence that click-to-move moves
         out["move_shot"] = shot(page, "mouseclick_yard_move")
-        need(math.hypot(s["x"] - x0, s["y"] - y0) > 40,
+        # Bound the travel by the geometry, not by a hand-picked number. The leg
+        # is d0 long and click_arrive stops polling inside ARRIVE_R, so a real
+        # walk covers at least d0 - ARRIVE_R; standing still covers 0. A fixed
+        # bar cannot work here: the creature moves WALK_SPEED (290 px) per
+        # *night-minute*, so it covers 290 px/s at ?fast=1 but only 36 px/s at
+        # normal speed, and the 100 ms poll overshoots the arrival ring by ~29 px
+        # accelerated against ~3.6 px at normal speed. The old `> 40` bar sat
+        # above the guaranteed floor of 31.5 px, so it failed outright under
+        # QA_SLOW and was a coin-flip at fast.
+        d0 = math.hypot(585 - x0, 258 - y0)
+        moved = math.hypot(s["x"] - x0, s["y"] - y0)
+        need(moved >= d0 - ARRIVE_R - 2,
              f"[mouse-campaign] click-to-move actually moves the creature "
-             f"(({x0},{y0}) -> ({s['x']},{s['y']}))")
+             f"(({x0},{y0}) -> ({s['x']},{s['y']}); moved {moved:.1f} px of the "
+             f"{d0:.1f} px leg, floor {d0 - ARRIVE_R - 2:.1f})")
     click_arrive(page, 455, 330)
     page.mouse.click(310, 485)  # the outhouse: walk there and take the load on arrival
     s = wait_cond(page, lambda s: s["carrying"] or s["phase"] != "night", 15 * SPEED, 100)
@@ -886,6 +904,79 @@ def run_mouse_campaign(page) -> dict:
     return out
 
 
+# ---------------------------------------------------------------- seen ending
+#
+# QA_REPORT F7: the seen ending, reached by real play on the fixed seed — no
+# state injection. Night 1, lift the plank and stand still in the yard: Agatha's
+# retiring patrol finds the creature at minute ~= 1.38 (a designed risk). The
+# pass exists to prove renderSeen runs console-clean end to end — the frozen
+# wedges, the shadow under the seer, and the failure card after the 2 s hold.
+# F7's symptom was exactly a console flood from this phase, so the segment gets
+# its own zero-new-errors assertion on top of the run-wide console gate.
+
+def run_seen(page) -> dict:
+    out = {"plan": "night 1: step out of the mouth, stand still; Agatha's "
+                   "retiring patrol sees the creature at minute ~= 1.38"}
+    try:
+        section("[seen] boot, title, cold open")
+        page.goto(URL, wait_until="networkidle")
+        page.wait_for_timeout(600)
+        need(phase(page) == "title", "[seen] boots into the title phase")
+        page.keyboard.press("Enter")
+        need(wait_cond(page, lambda s: s["phase"] == "coldOpen", 5) is not None,
+             "[seen] leaving the title works")
+        page.keyboard.down(" ")
+        t0 = time.time()
+        while phase(page) == "coldOpen" and time.time() - t0 < 40:
+            page.wait_for_timeout(500)
+        page.keyboard.up(" ")
+        s = qa_state(page)
+        need(s["phase"] == "night" and s["night"] == 1,
+             "[seen] cold open completes into night 1")
+
+        section("[seen] night 1: out of the mouth, standing still")
+        err0 = len(errors)
+        press(page, "x")  # lift the plank; then no input at all
+        s = wait_cond(page, lambda s: s["phase"] == "seen", 30 * SPEED)
+        need(s is not None, "[seen] Agatha's retiring patrol finds the creature")
+        need(s["ending"] == "seen" and s["seenBy"] == "agatha" and s["seenCtx"] == "night",
+             f"[seen] the night sighting is recorded (ending={s['ending']}, "
+             f"seenBy={s['seenBy']}, context={s['seenCtx']}, minute {s['minute']})")
+        need(s["minute"] < 5,
+             f"[seen] seen inside the retiring window (minute {s['minute']} < 5)")
+        cones = page.evaluate("window.__game.cones.map(c => c.owner)")
+        need(s["seenBy"] in cones,
+             f"[seen] the seer's cone is still live in the freeze (cones={cones})")
+        out["freeze_shot"] = shot(page, "seen_freeze")
+
+        section("[seen] the failure card after the 2 s hold")
+        try:
+            page.wait_for_function("window.__game.epilogueStep >= 1", timeout=10000)
+            held = True
+        except Exception:
+            held = False
+        need(held, "[seen] the 2 s hold elapses into the failure card")
+        page.wait_for_timeout(300)  # let the card draw for a few frames
+        out["card_shot"] = shot(page, "seen_card")
+        need(len(errors) == err0,
+             f"[seen] console clean through the seen phase ({len(errors) - err0} new errors)")
+        press(page)
+        s = wait_cond(page, lambda s: s["phase"] == "epilogue", 5)
+        need(s is not None and s["ending"] == "seen",
+             "[seen] any key moves on to the epilogue, the ending still recorded")
+        out["completed"] = True
+    except CampaignAbort as e:
+        out["completed"] = False
+        out["abort"] = str(e)
+        check(False, f"[seen] {e}")
+        try:
+            out["state_at_abort"] = qa_state(page)
+            out["abort_shot"] = shot(page, "seen_abort")
+        except Exception:
+            pass
+    return out
+
+
 def main() -> int:
     shutil.rmtree(SHOTS, ignore_errors=True)
     SHOTS.mkdir(parents=True, exist_ok=True)
@@ -906,6 +997,7 @@ def main() -> int:
             result["mouse"] = run_once(page, "mouse")
             result["campaign"] = run_campaign(page)
             result["mouse_campaign"] = run_mouse_campaign(page)
+            result["seen"] = run_seen(page)
 
             section("determinism")
             def replay():

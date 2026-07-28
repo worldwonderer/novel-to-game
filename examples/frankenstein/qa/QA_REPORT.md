@@ -1,18 +1,19 @@
 # QA_REPORT · Frankenstein — The Hovel
 
 - Date: 2026-07-28
-- Round: **third**. Round 1 was the first independent QA (before it the example had no `qa/`
+- Round: **fourth**. Round 1 was the first independent QA (before it the example had no `qa/`
   stage at all). Round 2 drove the harness through a complete campaign to an ending. Round 3
-  repaired the mouse input path that round 2 exposed, and proved it with a mouse-only campaign.
+  repaired the mouse input path that round 2 exposed. Round 4 made the `seen` ending render, and
+  fixed a QA assertion of my own that could not hold at normal speed (F9).
 - Verdict: **not `PASS`** — the slice is **completable by either input scheme**: full eight-night
   campaigns reach the `door` ending at exchange 5 and restart clean, one driven entirely by
-  keyboard and one entirely by mouse. Still open: two release gates (Caslon fonts, audio set)
-  and one of the four designed endings crashing the renderer (see *Findings*, *Release gate*,
-  *Not verified*).
+  keyboard and one entirely by mouse, and the `seen` ending now renders and is played to its
+  failure card. Still open: two release gates (Caslon fonts, audio set), and `want` and `silence`
+  remain unplayed (see *Findings*, *Release gate*, *Not verified*).
 - `blocker`: 0 (1 found in round 1, **fixed**, with a regression check)
-- `major`: 3 — 1 partly cleared (images done; fonts and audio outstanding), 1 **fixed** (F6,
-  mouse input), 1 open (F7, the `seen` ending)
-- `minor`: 3 fixed, 3 open
+- `major`: 3 — 1 partly cleared (images done; fonts and audio outstanding), 2 **fixed**
+  (F6 mouse input, F7 the `seen` ending)
+- `minor`: 4 fixed, 3 open
 - Deliverable name: **completable vertical slice, both input schemes, plates in, two gates open**
 
 The automated result says this build boots, plays seven nights, takes the long walk, opens the
@@ -47,10 +48,13 @@ Full run log: `qa/evidence/qa_browser_last.log`.
 Frame sampling sits on the two heaviest live screens (title reveal, night play), not an idle
 screen, and reports the distribution rather than a mean.
 
-**Timing evidence is now valid.** Round 1's figures came from an accelerated run and were not
-usable for pacing. The campaign has since been played at normal speed under `QA_SLOW=1` — full
-run green, p50 8.3 / p95 10.1 / worst 10.3 ms, 0 in-game long tasks — so the numbers above stand
-as pacing evidence rather than as a smoke test. The door scene runs on a real-time clock
+**Timing evidence is valid for the keyboard campaign; the mouse campaign's normal-speed run is
+still owed.** Round 1's figures came from an accelerated run and were not usable for pacing. The
+keyboard campaign has since been played at normal speed under `QA_SLOW=1` — green, p50 8.3 /
+p95 10.1 / worst 10.3 ms, 0 in-game long tasks. Round 3's blanket claim that timing evidence was
+valid was **too broad**: F9 aborted the mouse campaign under `QA_SLOW`, so that pass had never
+completed at normal speed. F9 is fixed; a clean `QA_SLOW` run covering both campaigns is the
+outstanding item. The door scene runs on a real-time clock
 (5 slots × 30 s) at either speed, so a full campaign takes ~6 min accelerated and ~15 min normal.
 
 ## Findings and reflow
@@ -64,7 +68,8 @@ as pacing evidence rather than as a smoke test. The door scene runs on a real-ti
 | F4 | `minor` | `design` | The cold open requires **23 s of continuously held input** before the first night, and `?fast=1` does not shorten it (`coldTime` counts real seconds, not night-minutes). It is a deliberate paced scene, but it is also 23 s before any interactive verb, and it makes every automated pass slow | **Open** — flagged to `game-world-design`; not changed unilaterally because the pacing is an explicit authored beat |
 | F5 | `minor` | `product` | `qa/` did not exist: no harness, no evidence, no report. `GAME_DESIGN` §14 named the acceptance path but nothing executed it | **Fixed** — `qa/qa_browser.py` added, following the repo convention (evidence in-workspace at `qa/evidence/browser/`, JPEG, never `/tmp`) |
 | F6 | `major` | `build` | **Every mouse click was dead.** `src/main.js:66` declares `edges` with `action / drop / exit / journal / advance` and no `clicked`; line 104 does `const e = { ...edges }`, so `e.clicked` is permanently `undefined`, and line 106 clears `mouse.clicked` having never read it. Nine call sites depend on `input.clicked` — title buttons, click-to-move, exit-by-click, the knock, the door. All are unreachable. `mouse.down` is read as a *level* (lines 219 / 279 / 297), so held-mouse still drives the cold open and the context action, which is why round 1's "mouse-primary" pass went green: it exercised holds and silently fell through to Enter for everything else | **Fixed.** Three dead pieces, not one: (a) `consumeEdges` now reads `mouse.clicked` *before* clearing it, so one `mousedown` yields exactly one edge consumed by exactly one tick; (b) `scene.queuedAction` was declared, reset and read but **never assigned a value**, so `maybeQueuedAction` was a permanent no-op — a restored `clicked` alone would have walked the creature to a hotspot and left it standing there; (c) `yardClick` was defined at `main.js:167` and **never called**, its body carrying the no-op expression `engine.applyClick ? null : null;`. All three are wired, and the hotspot radii mirror `nearestActionable`'s per-object reaches exactly (DOOR 34, OUTHOUSE 40, WELL 30, DOOR_APRON 30, MILK_HOUSE 30, WOOD_EDGE 44, HOVEL_MOUTH 24). Verified by a **complete mouse-only campaign** to the `door` ending. The harness's silent `keyboard.press("Enter")` fallback — what let this hide in round 1 — is deleted |
-| F7 | `major` | `build` | **The `seen` ending crashes the renderer.** `src/main.js:497` calls `R.wedge(...)`; `src/render.js:40` defines `wedge` as a module-local function and never exports it (the export list has no `wedge`). Once the `seen` phase begins, every frame throws `R.wedge is not a function` — the frozen cone and the failure card never draw and the console fills. The sim keeps ticking, so a keypress still advances to the epilogue over a dead screen. One of the four designed endings (§12) is unshippable | **Open** — a `seen`-ending pass cannot be console-clean until this is fixed, so the campaign deliberately avoids the phase |
+| F7 | `major` | `build` | **The `seen` ending crashes the renderer.** `src/main.js:497` calls `R.wedge(...)`; `src/render.js:40` defines `wedge` as a module-local function and never exports it (the export list has no `wedge`). Once the `seen` phase begins, every frame throws `R.wedge is not a function` — the frozen cone and the failure card never draw and the console fills. The sim keeps ticking, so a keypress still advances to the epilogue over a dead screen. One of the four designed endings (§12) is unshippable | **Fixed** — `wedge` is now exported; it was the only one of the fifteen symbols `renderSeen` touches that `render.js` withheld. Verified by a dedicated `seen` pass: seed 42, night 1, the plank lifted through the real input path and the creature left standing in the yard until Agatha's retiring patrol finds him at minute 1.38 — no state injection. The pass asserts the sighting is the designed one (`ending=seen`, `seenBy=agatha`, `seenCtx=night`, inside the retiring window, seer's cone still live in the freeze), then the 2 s hold, the SEEN card, and the advance to the epilogue. Console-clean is asserted **segment-scoped** — zero *new* errors through the phase — on top of the untouched run-wide gate, so a run that never enters `seen` cannot pass it by default. Frames: `26_seen_freeze.jpg` (both whitened wedges, the creature inside Agatha's, the shadow across the seer), `27_seen_card.jpg` |
+| F9 | `minor` | `product` | **A QA assertion could not hold at normal speed.** `[mouse-campaign] click-to-move actually moves the creature` (added in round 3, by me) demanded >40 px of travel on a leg only 45.5 px long, while `click_arrive` stops polling inside a 14 px arrival radius — so the guaranteed floor is 31.5 px and the bar sat above it. The creature moves `WALK_SPEED` = 290 px per *night-minute*, i.e. 290 px/s at `?fast=1` but 36 px/s at normal speed, and the 100 ms poll therefore overshoots the arrival ring by ~29 px accelerated against ~3.6 px at normal speed. The assertion was a coin-flip at `fast` (observed both 43.6 px pass and 33.4 px fail) and unpassable under `QA_SLOW`. It aborted the mouse campaign, so **the round-3 claim that timing evidence was valid covered the keyboard campaign only** | **Fixed** — the bar is now derived from the geometry rather than hand-picked: travel must be at least the leg length minus the shared `ARRIVE_R` constant (which `click_arrive` also uses, so the two cannot drift). Standing still still fails it |
 | F8 | `minor` | `build` | **The ending card's text overflows its plate and becomes unreadable.** `drawCard` (`src/render.js:348`) paints the card from `0.22w` to `0.78w` and then draws each line centred on `PLATE.w/2` with no wrapping and no fit-to-width. The epilogue's first line renders at 30 px display and is wider than the card, so it spills onto the `nightDeep` background still in `PAL.ink` — dark on dark. In `13_campaign_epilogue.jpg` the words "At da…" and "…sking." are effectively invisible. This is the payoff text of the whole slice | **Open** — found by looking at the frame, not by an assertion; the harness verifies the epilogue *plays*, nothing verifies it can be *read* |
 
 ## What was actually verified
@@ -101,8 +106,8 @@ writing further automation against this build has to hold.
 
 ## Not verified this round
 
-- **Three of the four endings.** Only `door` has been played. `want` and `silence` are untested;
-  `seen` cannot be tested cleanly until F7 is fixed.
+- **Two of the four endings.** `door` and `seen` are played end to end; `want` and `silence`
+  are untested.
 - **Endings by mouse other than `door`** — the mouse campaign reaches `door` only, same as the
   keyboard one.
 - **Signature frames**: now judgeable for the first time — the plates are in — but no frame-by-frame

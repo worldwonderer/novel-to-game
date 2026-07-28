@@ -2,7 +2,7 @@
   "url": "http://127.0.0.1:5199/?seed=42&fast=1",
   "normal_speed_run": false,
   "viewport": "1280x800",
-  "passed": 133,
+  "passed": 143,
   "failed": 0,
   "console_errors": [],
   "network_errors": [],
@@ -14,33 +14,33 @@
     "keyboard_title": {
       "p50": 8.3,
       "p95": 9.3,
-      "max": 10.4,
+      "max": 10.2,
       "n": 90
     },
     "keyboard_playing": {
       "p50": 8.3,
-      "p95": 10,
+      "p95": 9.5,
       "max": 10.3,
       "n": 90
     },
     "mouse_title": {
       "p50": 8.3,
-      "p95": 9.9,
+      "p95": 9.8,
       "max": 10.3,
       "n": 90
     },
     "mouse_playing": {
       "p50": 8.3,
-      "p95": 9.2,
-      "max": 9.7,
+      "p95": 9.8,
+      "max": 10.1,
       "n": 90
     }
   },
   "frame_floor_ms": 33.4,
   "stall_gate_ms": 200.0,
   "longtasks_over_50ms": [],
-  "build_bytes": 1573590,
-  "shots": 27,
+  "build_bytes": 1574825,
+  "shots": 29,
   "shots_dir": "qa/evidence/browser",
   "run": {
     "keyboard": {
@@ -63,7 +63,7 @@
       "title_shot": "05_mouse_title.jpg",
       "title_button_shot": "06_mouseclick_title_button.jpg",
       "cold_open_shot": "07_mouse_cold_open.jpg",
-      "cold_open_seconds": 23.3,
+      "cold_open_seconds": 23.2,
       "playing_shot": "08_mouse_playing.jpg",
       "advanced_a_night": true,
       "state_changed": [
@@ -82,7 +82,7 @@
       "n3_carry_shot": "10_campaign_n3_carry.jpg",
       "n4_carry_shot": "11_campaign_n4_carry.jpg",
       "nights_completed": 7,
-      "words_at_walk": 96,
+      "words_at_walk": 97,
       "walk_shot": "12_campaign_walk.jpg",
       "door_shot": "13_campaign_door.jpg",
       "ending": "door",
@@ -115,7 +115,7 @@
       "n3_carry_shot": "19_mousecampaign_n3_carry.jpg",
       "n4_carry_shot": "20_mousecampaign_n4_carry.jpg",
       "nights_completed": 7,
-      "words_at_walk": 96,
+      "words_at_walk": 97,
       "walk_shot": "21_mousecampaign_walk.jpg",
       "door_shot": "22_mousecampaign_door.jpg",
       "ending": "door",
@@ -123,6 +123,12 @@
       "epilogue_shot": "23_mousecampaign_epilogue.jpg",
       "afterrun_shot": "24_mousecampaign_afterrun.jpg",
       "restart_shot": "25_mousecampaign_restart.jpg",
+      "completed": true
+    },
+    "seen": {
+      "plan": "night 1: step out of the mouth, stand still; Agatha's retiring patrol sees the creature at minute ~= 1.38",
+      "freeze_shot": "26_seen_freeze.jpg",
+      "card_shot": "27_seen_card.jpg",
       "completed": true
     }
   }
