@@ -1,7 +1,7 @@
 # QA_REPORT · Frankenstein — The Hovel
 
 - Date: 2026-07-28
-- Round: **fourth**. Round 1 was the first independent QA (before it the example had no `qa/`
+- Round: **fifth**. Round 1 was the first independent QA (before it the example had no `qa/`
   stage at all). Round 2 drove the harness through a complete campaign to an ending. Round 3
   repaired the mouse input path that round 2 exposed. Round 4 made the `seen` ending render, and
   fixed a QA assertion of my own that could not hold at normal speed (F9). Round 5 made card text
