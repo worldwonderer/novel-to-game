@@ -2,6 +2,19 @@
 
 > 把任何小说变成可玩的网页游戏。
 
+**在线试玩**（都是从公版原著跑完整条流程做出来的）：
+[《西游记·三借芭蕉扇》](https://xiyouji.vibecoco.ai) 回合制指令 RPG ·
+[《金瓶梅·风月总账》](https://jinpingmei.vibecoco.ai) 六日关系模拟（18+）
+
+[![《西游记·三借芭蕉扇》实机片段](examples/journey-to-the-west/screenshots/demo.gif)](https://xiyouji.vibecoco.ai)
+
+<sub>常速录制的真实对局，不是摆拍：飘字、「克!」印章和行动顺序条都来自引擎实际结算。录制脚本
+`examples/journey-to-the-west/qa/capture_demo_gif.py`，种子 42，可复跑。</sub>
+
+```bash
+npx skills add worldwonderer/novel-to-game -g -y -a claude-code -s '*'
+```
+
 NovelToGame 是一套把小说改编成网页游戏的开源技能，适配 Claude Code、Codex 和 Kimi Code。
 它先从原著里找出真正能玩的部分，挑一个合适的改编方向，设计出可玩的世界和画面，再把一份
 范围明确的构建说明交给编码智能体去实现，最后验证成品能不能跑起来。
@@ -28,7 +41,7 @@ flowchart LR
     验证 -.->|未通过| 构建
 ```
 
-「需求」是第一步：拿到小说先和用户明确**平台（客户端/网页/小程序）、游戏类型与对标名作（按小说语言对应的市场找）、美术画风、内容分级/NSFW、核心幻想、游戏引擎**等产品框架，锁进 `PRODUCT_BRIEF.md`，下游各阶段一律遵守、不得静默改写。对标与引擎都要 WebSearch 联网核实，不凭记忆。
+「需求」是第一步：拿到小说先和用户明确**平台（客户端/网页/小程序）、游戏类型与对标名作（按小说语言对应的市场找）、美术画风、内容分级/NSFW、核心幻想、游戏引擎**等产品框架，锁进 `PRODUCT_BRIEF.md`，下游各阶段一律遵守、不得静默改写。对标与引擎都要 WebSearch 联网核实，不凭记忆——这是当前契约的要求；两个示例早于该契约建成，`CONCEPT.md` 里逐行标注了核实状态，未核实条目不作为选择依据。
 
 ## 技能
 
@@ -115,7 +128,7 @@ game-adaptations/<project>/
 
 ## 完整示例 —— 《西游记》
 
-从完整公版百回本提炼的《三借芭蕉扇》——一款《梦幻西游》风格的回合制指令 RPG。**在线试玩：[xiyouji.vibecoco.ai](https://xiyouji.vibecoco.ai)**
+从完整公版百回本提炼的《三借芭蕉扇》——一款《梦幻西游》风格的回合制指令 RPG。**在线试玩：[xiyouji.vibecoco.ai](https://xiyouji.vibecoco.ai)**　·　质量验证：`PASS`（零 blocker、零 major，四项独立检查可复跑，见 [qa/QA_REPORT.md](examples/journey-to-the-west/qa/QA_REPORT.md)）
 
 ![标题画面](examples/journey-to-the-west/screenshots/title.jpg)
 
@@ -138,7 +151,7 @@ examples/journey-to-the-west/
 
 ## 完整示例 —— 《金瓶梅》
 
-从公版崇祯本重制的《风月总账》——一款 6 日男性第一人称成人后宫关系模拟：白日经营钱、势与秘密，也会碰上孟玉楼、孙雪娥、李娇儿递来的三桩事；夜里推进吴月娘、潘金莲、李瓶儿三条独立深线，天亮便有人来敲门。**18+；关系与明确意愿门控亲密场景；3 种可达收束；永久场景册。** **在线试玩：[jinpingmei.vibecoco.ai](https://jinpingmei.vibecoco.ai)**
+从公版崇祯本重制的《风月总账》——一款 6 日男性第一人称成人后宫关系模拟：白日经营钱、势与秘密，也会碰上孟玉楼、孙雪娥、李娇儿递来的三桩事；夜里推进吴月娘、潘金莲、李瓶儿三条独立深线，天亮便有人来敲门。**18+；关系与明确意愿门控亲密场景；3 种可达收束；永久场景册。** **在线试玩：[jinpingmei.vibecoco.ai](https://jinpingmei.vibecoco.ai)**　·　质量验证：`PASS`（见 [qa/QA_REPORT.md](examples/jin-ping-mei/qa/QA_REPORT.md)，含裁决沿革与两条 minor 已知缺口）
 
 ![标题画面](examples/jin-ping-mei/screenshots/title.jpg)
 

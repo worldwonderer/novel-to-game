@@ -2,18 +2,25 @@
 """浏览器全程自检(playwright):
 标题 → 序幕(土地对话/阵型/存档) → 战斗1(教学/法术/变化/化虫入腹)
 → 战斗2(携宠/假扇反噬) → BOSS(阵型切换/真扇三段/白牛真身) → 结局 → 读档。
-断言:关键 DOM 存在、控制台 0 报错;截图存 /tmp/xiyou_shots/。
+断言:关键 DOM 存在、控制台 0 报错;截图存示例工作区内 qa/evidence/browser/。
 
 用法: python3 test/qa_browser.py
-环境变量: BASE_URL(默认 http://127.0.0.1:5173), QA_SLOW=1 关闭加速。
+环境变量: BASE_URL(默认 http://127.0.0.1:5173), QA_SLOW=1 关闭加速,
+          QA_SHOTS 覆盖截图目录。
+
+截图默认落在工作区内的持久路径而非系统临时目录:qa 契约把临时目录路径视为无证据,
+对应检查项不得记通过。
 """
 import os, shutil, socket, subprocess, sys, time
 from playwright.sync_api import sync_playwright
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+EXAMPLE_ROOT = os.path.dirname(os.path.dirname(ROOT))
 BASE = os.environ.get("BASE_URL", "http://127.0.0.1:5173")
 URL = BASE + "/?seed=42" + ("" if os.environ.get("QA_SLOW") else "&fast=1")
-SHOTS = "/tmp/xiyou_shots"
+SHOTS = os.environ.get(
+    "QA_SHOTS", os.path.join(EXAMPLE_ROOT, "qa", "evidence", "browser")
+)
 
 passed, failed = 0, 0
 errors = []
@@ -61,8 +68,9 @@ class QA:
         self.n = 0
 
     def shot(self, name):
+        # 存 JPEG:证据要长期留在仓库里,48 张 PNG 约 71MB、JPEG 约 6MB,且不影响判读。
         self.n += 1
-        self.p.screenshot(path=f"{SHOTS}/{self.n:02d}_{name}.png")
+        self.p.screenshot(path=f"{SHOTS}/{self.n:02d}_{name}.jpg", type="jpeg", quality=80)
 
     def click_dialogs(self, max_clicks=20):
         """点完当前剧情对话;返回点击次数。"""
@@ -304,12 +312,14 @@ def run():
         ok("吹" in page.locator("#dialog").inner_text() or "扇" in page.locator("#dialog").inner_text(), "第3回合剧情吹飞(非失败)")
         qa.shot("battle1_blowaway")
         # 吹飞过场 → 灵吉授定风丹
+        shot_lingji = False
         for _ in range(20):
             if page.locator("#dialog").count() == 0:
                 break
             page.wait_for_timeout(250)
-            if "定风丹" in page.locator("#dialog").inner_text():
-                qa.shot("battle1_lingji")
+            if not shot_lingji and "定风丹" in page.locator("#dialog").inner_text():
+                qa.shot("battle1_lingji")  # 只截一次:这段对白跨多屏,原来会存三张同名重复帧
+                shot_lingji = True
             page.locator("#dialog").click()
         ok(page.evaluate("__game.campaign().treasure") == "dingfengdan", "获得法宝·定风丹")
         # 再战前对话 → 再战
@@ -370,6 +380,9 @@ def run():
         caught = False
         fan_used = False
         healed = False
+        # 注意:假扇反噬不在这条通关路径里演示。实测把它插进战斗二会让火敌攻击 +30%,
+        # 直接把该战翻成必败重试循环——反噬强度本身是设计意图。规则层由
+        # test/battle.mjs 的固定种子断言覆盖;浏览器证据帧缺失记 QA_REPORT F9。
         summon_shot = False
         for _ in range(500):
             if qa.defeat_retry():
@@ -407,14 +420,6 @@ def run():
                     # 捕捉前队友守势,防误杀
                     page.click('.cmd-btn[data-cmd="defend"]')
                     page.wait_for_timeout(150)
-                elif uid == "p0" and not fan_used:
-                    # 假扇演示(反噬)
-                    page.click('.cmd-btn[data-cmd="item"]')
-                    page.wait_for_selector('[data-item="fakefan"]')
-                    page.click('[data-item="fakefan"]')
-                    fan_used = True
-                    page.wait_for_timeout(500)
-                    qa.shot("battle2_fakefan")
                 elif uid == "p0" and low and low["hp"] / low["maxHp"] < 0.35 and st["items"].get("jinchuang", 0) > 0:
                     page.click('.cmd-btn[data-cmd="item"]')
                     page.wait_for_selector('[data-item="jinchuang"]')

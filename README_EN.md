@@ -2,6 +2,20 @@
 
 > Turn any novel into a playable web game.
 
+**Play them** — both built end to end by this pipeline from public-domain sources:
+[Journey to the West · Three Borrowings of the Banana Fan](https://xiyouji.vibecoco.ai), a turn-based command RPG ·
+[Jin Ping Mei · Ledger of Desire](https://jinpingmei.vibecoco.ai), a six-day relationship sim (18+)
+
+[![Journey to the West — a real battle, recorded at normal speed](examples/journey-to-the-west/screenshots/demo.gif)](https://xiyouji.vibecoco.ai)
+
+<sub>A real seeded battle at normal speed, not a mockup: the damage numbers, the 「克!」 counter
+stamp and the turn-order bar all come from the engine's own settlement. Recorded by
+`examples/journey-to-the-west/qa/capture_demo_gif.py`, seed 42, re-runnable.</sub>
+
+```bash
+npx skills add worldwonderer/novel-to-game -g -y -a claude-code -s '*'
+```
+
 NovelToGame is an open-source skill set that turns novels into playable web
 games, for Claude Code, Codex, and Kimi Code. It reads the source for what is
 actually playable, picks a strong adaptation direction, designs the world and
@@ -32,7 +46,7 @@ flowchart LR
     qa -.->|fails| build
 ```
 
-`intake` is the first gate: before deconstructing anything, pin down the product frame with the user — **platform (client / web / mini-program), genre and benchmark titles (found in the market that matches the novel's language), art style, content rating / NSFW, core fantasy, game engine** — and lock it into `PRODUCT_BRIEF.md`, which every downstream stage must honor and may not silently rewrite. Both benchmarks and engine are WebSearch-verified, not recalled from memory.
+`intake` is the first gate: before deconstructing anything, pin down the product frame with the user — **platform (client / web / mini-program), genre and benchmark titles (found in the market that matches the novel's language), art style, content rating / NSFW, core fantasy, game engine** — and lock it into `PRODUCT_BRIEF.md`, which every downstream stage must honor and may not silently rewrite. Both benchmarks and engine are WebSearch-verified, not recalled from memory — that is what the current contract requires. Both shipped examples predate it and label their verification status per row in `CONCEPT.md`; unverified rows are not used as grounds for the choice.
 
 ## Skills
 
@@ -121,7 +135,7 @@ game-adaptations/<project>/
 
 ## Worked Example — Journey to the West
 
-**三借芭蕉扇 (Three Borrowings of the Banana Fan)** — a turn-based command RPG in the 《梦幻西游》 tradition, distilled from the full 100-chapter public-domain text. **Play it: [xiyouji.vibecoco.ai](https://xiyouji.vibecoco.ai)**
+**三借芭蕉扇 (Three Borrowings of the Banana Fan)** — a turn-based command RPG in the 《梦幻西游》 tradition, distilled from the full 100-chapter public-domain text. **Play it: [xiyouji.vibecoco.ai](https://xiyouji.vibecoco.ai)**　·　QA: `PASS` — zero blocker, zero major, four independent checks you can re-run ([qa/QA_REPORT.md](examples/journey-to-the-west/qa/QA_REPORT.md))
 
 ![Title screen](examples/journey-to-the-west/screenshots/title.jpg)
 
@@ -144,7 +158,7 @@ examples/journey-to-the-west/
 
 ## Complete example — Jin Ping Mei
 
-*Ledger of Desire* — a six-day, male-POV adult harem relationship sim adapted from the public-domain 崇祯本. Manage money, influence, and secrets by day while 孟玉楼, 孙雪娥, and 李娇儿 bring their own household problems; pursue full routes for 吴月娘, 潘金莲, and 李瓶儿 by night; then face whoever knocks the next morning. **18+; intimacy is gated by relationship choices and explicit consent; three reachable outcomes and a persistent scene gallery.** **Play it: [jinpingmei.vibecoco.ai](https://jinpingmei.vibecoco.ai)**
+*Ledger of Desire* — a six-day, male-POV adult harem relationship sim adapted from the public-domain 崇祯本. Manage money, influence, and secrets by day while 孟玉楼, 孙雪娥, and 李娇儿 bring their own household problems; pursue full routes for 吴月娘, 潘金莲, and 李瓶儿 by night; then face whoever knocks the next morning. **18+; intimacy is gated by relationship choices and explicit consent; three reachable outcomes and a persistent scene gallery.** **Play it: [jinpingmei.vibecoco.ai](https://jinpingmei.vibecoco.ai)**　·　QA: `PASS` ([qa/QA_REPORT.md](examples/jin-ping-mei/qa/QA_REPORT.md), including the verdict history and two open minors)
 
 ![Title screen](examples/jin-ping-mei/screenshots/title.jpg)
 

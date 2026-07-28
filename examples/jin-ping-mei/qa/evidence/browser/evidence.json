@@ -1,0 +1,38 @@
+{
+  "url": "http://127.0.0.1:5173/?seed=42&fast=1",
+  "passed": 130,
+  "failed": 0,
+  "console_errors": [],
+  "network_errors": [],
+  "http_errors": [],
+  "performance": {
+    "local_load_ms": 22.6,
+    "average_frame_interval_ms": 8.3
+  },
+  "safe_screenshots": [
+    "01_age_gate.jpg",
+    "02_title.jpg",
+    "03_opening_choice_done.jpg",
+    "04_delayed_yue_morning.jpg",
+    "06_banquet_conflict.jpg",
+    "07_exclusive_ending.jpg",
+    "08_gallery_after_yue.jpg",
+    "09_jealousy_chain.jpg",
+    "household_li_jiaoer.jpg",
+    "household_meng_yulou.jpg",
+    "household_sun_xuee.jpg"
+  ],
+  "adult_screenshots": [
+    "gallery_replay_yue_prelude.jpg",
+    "pan_explicit.jpg",
+    "pan_prelude.jpg",
+    "pinger_explicit.jpg",
+    "pinger_prelude.jpg",
+    "yue_day1_prelude.jpg",
+    "yue_day2_prelude.jpg",
+    "yue_day3_explicit.jpg",
+    "yue_day4_explicit.jpg",
+    "yue_day5_explicit.jpg",
+    "yue_day6_explicit.jpg"
+  ]
+}

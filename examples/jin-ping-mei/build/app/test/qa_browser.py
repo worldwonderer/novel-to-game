@@ -15,7 +15,10 @@ from playwright.sync_api import sync_playwright
 ROOT = Path(__file__).resolve().parent.parent
 BASE = os.environ.get("BASE_URL", "http://127.0.0.1:5173")
 URL = f"{BASE}/?seed=42&fast=1"
-SHOTS = Path(os.environ.get("JPM_QA_SHOTS", "/tmp/jpm_qa"))
+# 证据落工作区内的持久路径:qa 契约把系统临时目录视为无证据,对应检查项不得记通过。
+# 本示例上一轮复审正是因为 /tmp 证据失效而不得 PASS。
+_EXAMPLE_ROOT = Path(__file__).resolve().parents[3]
+SHOTS = Path(os.environ.get("JPM_QA_SHOTS", _EXAMPLE_ROOT / "qa" / "evidence" / "browser"))
 SAFE = SHOTS / "safe"
 ADULT = SHOTS / "adult"
 passed = failed = 0
@@ -74,7 +77,7 @@ def state(page) -> dict:
 
 
 def shot(page, folder: Path, name: str) -> None:
-    page.screenshot(path=str(folder / f"{name}.png"))
+    page.screenshot(path=str(folder / f"{name}.jpg"), type="jpeg", quality=80)
 
 
 def click(page, selector: str) -> None:
@@ -297,7 +300,7 @@ def main() -> int:
             check(page.locator(".gallery-card.locked").count() == 0, "已解锁页不再显示剪影")
             click(page, "#btn-gallery-close")
             page.evaluate("localStorage.setItem('jpm_save_v1', JSON.stringify({version:2,player:{name:'孟玉楼'}}))")
-            check(state(page)["version"] == 4, "旧孟玉楼存档键不污染新周目")
+            check(state(page)["version"] == 5, "旧孟玉楼存档键不污染新周目")
 
             section("双视口、键盘与资源")
             for width, height in [(1280, 800), (1920, 1080)]:
@@ -354,7 +357,7 @@ def main() -> int:
             adult_names = {p.name for p in ADULT.glob("*.png")}
             check(safe_names.isdisjoint(adult_names), "安全与 18+ 导出文件名清单互不重叠")
             readme = (ROOT.parents[3] / "README.md").read_text(encoding="utf-8")
-            check(not any(name in readme for name in ["yue_explicit.webp", "pan_explicit.webp", "pinger_explicit.webp", "/tmp/jpm_qa/adult"]), "README 未嵌入 18+ 路线资产或内部证据")
+            check(not any(name in readme for name in ["yue_explicit.webp", "pan_explicit.webp", "pinger_explicit.webp", "qa/evidence/browser/adult"]), "README 未嵌入 18+ 路线资产或内部证据")
 
             context.close()
             browser.close()
@@ -374,8 +377,8 @@ def main() -> int:
             "local_load_ms": round(load_ms, 1),
             "average_frame_interval_ms": round(frame_ms, 1),
         },
-        "safe_screenshots": sorted(p.name for p in SAFE.glob("*.png")),
-        "adult_screenshots": sorted(p.name for p in ADULT.glob("*.png")),
+        "safe_screenshots": sorted(p.name for p in SAFE.glob("*.jpg")),
+        "adult_screenshots": sorted(p.name for p in ADULT.glob("*.jpg")),
     }
     (SHOTS / "evidence.json").write_text(json.dumps(evidence, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"\n控制台错误: {len(errors)}；资源失败: {len(network_errors)}")

@@ -1,6 +1,6 @@
 ---
 name: game-art-direction
-description: "游戏美术与创意方向。把 GAME_DESIGN 转成策划级 ART_DIRECTION，定义可辨识视觉风格、镜头构图、世界与角色语法、功能性色光材质、界面反馈、运动与转场规格、声音方向和每个界面/模式的签名游戏时刻。用于判断游戏应该长什么样、制定游戏美术方向等需求。"
+description: "Direct game art and creative vision. Turn GAME_DESIGN into a production-level ART_DIRECTION defining a recognizable visual style, camera and composition, world and character grammar, functional colour/light/material, HUD feedback, motion and transition specs, audio direction, and a signature moment for every screen and mode. Use for what should the game look like, set the art direction, define the visual style. 游戏美术与创意方向。把 GAME_DESIGN 转成策划级 ART_DIRECTION，定义可辨识视觉风格、镜头构图、世界与角色语法、功能性色光材质、界面反馈、运动与转场规格、声音方向和每个界面/模式的签名游戏时刻。用于判断游戏应该长什么样、制定游戏美术方向等需求。"
 ---
 # 游戏美术与创意方向
 
@@ -8,6 +8,8 @@ description: "游戏美术与创意方向。把 GAME_DESIGN 转成策划级 ART_
 
 读取 [art-direction-method.md](references/art-direction-method.md)。必须已有批准的
 `GAME_DESIGN.md`；视觉服务玩法，不能用漂亮参考图重写游戏。
+
+产物语言由 `PRODUCT_BRIEF.md` 锁定；未锁定时跟随对话语言，不默认产出中文。
 
 画风与目标平台已由 `PRODUCT_BRIEF.md` 在 intake 锁定（像素/2.5D/写实3D/水墨工笔…、
 客户端/网页/小程序/移动、竖屏或横屏、内容分级）。在这个既定画风与平台内定义视觉语言，
@@ -37,7 +39,8 @@ description: "游戏美术与创意方向。把 GAME_DESIGN 转成策划级 ART_
    **芯色 + 描边或底衬 + 验证帧**。同时定义**声音与音乐方向**（核心动作 / 命中 / 状态变化 /
    转场 / 胜负各自的声音形制：音色来源、文化依据、功能层级、与画风同源）——运动与声音
    都是一等交付，不推给构建即兴补。
-8. 定义界面语言对应的字体、排版密度、阅读顺序和文化符号边界；CJK 功能文本设字号地板。
+8. 定义界面语言对应的字体、排版密度、阅读顺序和文化符号边界；功能文本设字号地板，
+   地板值按文字系统取（CJK 高于拉丁），见 art-direction-method.md。
 9. 为每个不同交互界面 / 模式各描述一张招牌**时刻**（标题 / 主菜单、大地图 / 探索、核心动作、
    转场、高潮 / 结果），每帧附节拍表（拍序 | 谁入场 / 什么在动 | 时长 ms 或帧数 | 镜头 / 转场
    动作）与保护区矩形（视口百分比 + 有意叠放：是 / 否），不固定三张。

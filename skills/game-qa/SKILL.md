@@ -1,12 +1,14 @@
 ---
 name: game-qa
-description: "网页游戏证据化质量验证。启动生成游戏，检查构建、控制台、真实画面、输入与状态变化、核心循环、设计要求的结果、重开、目标视口、界面语言、首次上手与核心幻想是否被演出来，不把主观趣味包装成确定性结论。用于测试生成游戏、检查游戏能否完整游玩等需求。"
+description: "Verify a web game with evidence. Launch the game and check the build, console, real rendering, input and state changes, the core loop, designed outcomes, restart, target viewport, interface language, first-time onboarding, and whether the core fantasy is actually performed — without dressing subjective fun up as a certain verdict. Use for test this web game, QA a generated game, check whether the game is fully playable, verify the build. 网页游戏证据化质量验证。启动生成游戏，检查构建、控制台、真实画面、输入与状态变化、核心循环、设计要求的结果、重开、目标视口、界面语言、首次上手与核心幻想是否被演出来，不把主观趣味包装成确定性结论。用于测试生成游戏、检查游戏能否完整游玩等需求。"
 ---
 # 游戏质量验证
 
 验证游戏能否可靠运行和完成，不给“好玩”伪造客观分数。
 
-读取 [qa-contract.md](references/qa-contract.md)。
+读取 [qa-contract.md](references/qa-contract.md) 定判据，读 [test-design-method.md](references/test-design-method.md) 定怎么设计这些检查。
+
+产物语言由 `PRODUCT_BRIEF.md` 锁定；未锁定时跟随对话语言，不默认产出中文。
 
 ## 执行
 
