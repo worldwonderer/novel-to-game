@@ -8,6 +8,7 @@ import * as engine from './engine/sim.js';
 import { MINUTE_TICKS, FAST_MINUTE_TICKS, PLATE, HOVEL_MOUTH, DOOR } from './engine/constants.js';
 import { STRINGS, glossWords } from './strings.js';
 import * as R from './render.js';
+import * as skin from './skin.js';
 
 const params = new URLSearchParams(location.search);
 const seed = params.get('seed') || 'hovel-01';
@@ -646,6 +647,10 @@ function fitCanvas() {
 window.addEventListener('resize', fitCanvas);
 fitCanvas();
 
+// Kick off the skin layer. Nothing waits on it: each plate appears the frame after
+// it decodes, and any key that never arrives stays a greybox carrying its key name.
+skin.load();
+
 // The test hook: current state, the tick index, and the active cone set.
 window.__game = {
   get state() { return state; },
@@ -655,6 +660,7 @@ window.__game = {
   get interactive() { return interactive; },
   engine,
   restart,
+  get pendingKeys() { return skin.pending(); },
 };
 
 requestAnimationFrame(frame);

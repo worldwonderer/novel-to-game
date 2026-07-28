@@ -1,9 +1,9 @@
 # Progress
 
 > `qa` gate not passed: the slice is playable and mechanically clean (28/28 browser assertions,
-> engine invariants hold), but all 6 release-gated image keys are still grey boxes, so the
-> release gate in `ART_DIRECTION` §16.1 cannot be met. This is a working greybox milestone,
-> not a finished game.
+> engine invariants hold) and all 6 release-gated **image** keys are now generated and wired.
+> Two release gates remain open — the Caslon font subset and the audio set — and no ending has
+> been reached yet, so this is not a release build.
 
 - Source: Project Gutenberg, *Frankenstein; or, The Modern Prometheus* (1818), public domain
 - Mode: `quick`
@@ -16,8 +16,9 @@
 - gate:design pass
 - gate:art pass
 - gate:build pass
-- gate:qa fail(1 `major`: 6 release-gated image keys absent, all on grey-box fallback;
-  2 `minor` open: 23 s held cold open before the first interactive verb, no ending reached yet)
+- gate:qa fail(1 `major` partly cleared: 6 gated image keys now present, but the Caslon fonts and
+  the audio set are still absent; 2 `minor` open: 23 s held cold open before the first interactive
+  verb, no ending reached yet; integration debt: cold slot and tally plank still flat greybox)
 - Reflow record: 2026-07-28 first independent QA. 1 `blocker` found and fixed —
   `step()`'s `title` case never called `engine.tick()`, so `phaseTick` stayed 0, `titleBeat`
   stayed 0, and the title text and all three verbs were never drawn; the first screen was two
@@ -31,8 +32,10 @@
 - Not verified: no ending reached (walk / door / endings untested); timing evidence invalid
   (accelerated run, needs a `QA_SLOW=1` pass); signature frames undecidable while every plate is
   a grey box; no clean-context onboarding judgement; no audio; no human playtest protocol yet
-- Assets: image generation attempted 2026-07-28 and did not return inside a 180 s bound, so all
-  15 generated keys stay pending on their grey-box / degraded expression, per
-  `ART_DIRECTION` §15. Not a blocker for running; is a blocker for release.
+- Assets: all 6 release-gated plates generated 2026-07-28 (`plate/paper|title|room|hovel|door|fire`),
+  sized to draw size and shipped as WebP — 17 MB PNG → 1.4 MB, total build 1.50 MB against a
+  25 MB budget. They enter through `src/skin.js`; a key that fails to load still draws a grey box
+  with its key name and the run continues. The 9 degradable keys remain on their named lesser
+  expression. Fonts and audio still absent.
 - Licence: `public_domain_source`
 - Updated: 2026-07-28

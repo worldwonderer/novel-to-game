@@ -4,6 +4,7 @@
 // plates in underneath the drawn figures on each image's own onload.
 
 import { STRINGS } from './strings.js';
+import * as skin from './skin.js';
 import {
   COTTAGE, DOOR, STY, POOL, MILK_HOUSE, WELL, OUTHOUSE, WOODPILE, GARDEN,
   WOOD_EDGE, LANE_GATE, HOVEL_MOUTH, DOOR_APRON, PLATE, OBSTACLES,
@@ -203,11 +204,14 @@ export function drawPrompt(ctx, str, opts) {
 // The hovel interior is the read-out screen: aperture with the room, the
 // slot with the pile, the heap, the plank of scratches.
 export function drawHovel(ctx, state, view, opts) {
-  rect(ctx, 0, 0, PLATE.w, PLATE.h, PAL.nightDeep);
-  // low roof line
-  rect(ctx, 0, 0, PLATE.w, 90, '#0c1220');
-  // straw
-  rect(ctx, 0, 560, PLATE.w, PLATE.h, '#1a2338');
+  if (!skin.drawPlate(ctx, 'plate/hovel', 0, 0, PLATE.w, PLATE.h)) {
+    rect(ctx, 0, 0, PLATE.w, PLATE.h, PAL.nightDeep);
+    // low roof line
+    rect(ctx, 0, 0, PLATE.w, 90, '#0c1220');
+    // straw
+    rect(ctx, 0, 560, PLATE.w, PLATE.h, '#1a2338');
+    skin.stampKey(ctx, 'plate/hovel', 0, 96);
+  }
   // The aperture (the chink) with the room inside.
   const ax = 160, ay = 150, aw = 430, ah = 330;
   drawRoom(ctx, state, ax, ay, aw, ah, view, opts);
@@ -259,44 +263,84 @@ function drawScratches(ctx, words, x0, y0) {
 
 // The room through the chink. One composition; state reads as substitution.
 function drawRoom(ctx, state, ax, ay, aw, ah, view, opts) {
-  // grey-box room plate; the skin layer swaps plate/room under this later
-  rect(ctx, ax, ay, ax + aw, ay + ah, '#efe6d2', PAL.ink);
+  // plate/room is the empty stage; every figure and state object is drawn on top.
+  if (skin.drawPlate(ctx, 'plate/room', ax, ay, aw, ah)) {
+    ctx.strokeStyle = PAL.ink; ctx.lineWidth = 1.5;
+    ctx.strokeRect(ax, ay, aw, ah);
+  } else {
+    rect(ctx, ax, ay, ax + aw, ay + ah, '#efe6d2', PAL.ink);
+    skin.stampKey(ctx, 'plate/room', ax, ay);
+  }
   const dawn = view === 'dawn';
-  // The hearth and the fire that scales with Firing.
-  const hx = ax + 40, hy = ay + ah - 90;
-  rect(ctx, hx - 10, hy - 40, hx + 60, hy + 40, '#c9bda6', PAL.ink2);
-  const big = state.firing >= 2;
-  ctx.fillStyle = PAL.amber;
-  ctx.beginPath();
-  ctx.moveTo(hx + 10, hy + 30);
-  ctx.lineTo(hx + 40, hy + 30);
-  ctx.lineTo(hx + 25, hy + (big ? -30 : 5));
-  ctx.closePath(); ctx.fill();
-  // The board, carrying Store alone.
-  const bx = ax + 190, by = ay + ah - 120;
-  rect(ctx, bx, by, bx + 180, by + 16, '#b8a888', PAL.ink2);
+  // Anchors are fractions of the aperture so the drawn state objects register on
+  // plate/room's real features (hearth mouth, board, window) instead of on the
+  // positions the greybox happened to use. Measured off the plate itself.
+  const A = (fx, fy) => ({ x: ax + fx * aw, y: ay + fy * ah });
+  const HEARTH = { mouth: A(0.21, 0.62), floor: A(0.21, 0.79), w: aw * 0.23 };
+  const BOARD = { left: A(0.55, 0.60), right: A(0.93, 0.60), top: A(0.55, 0.585) };
+  const STOOL = A(0.715, 0.80);
+  const WINDOW = A(0.81, 0.33);
+
+  // The fire in the hearth mouth, scaling with Firing. Nothing is drawn when the
+  // hearth is cold: the empty mouth is already on the plate.
+  if (state.firing > 0) {
+    const big = state.firing >= 2;
+    const fw = HEARTH.w * (big ? 0.62 : 0.4);
+    const fh = ah * (big ? 0.20 : 0.10);
+    const g = ctx.createRadialGradient(HEARTH.floor.x, HEARTH.floor.y, 2,
+      HEARTH.floor.x, HEARTH.floor.y, fw * 1.6);
+    g.addColorStop(0, withAlpha(PAL.amber, 0.95));
+    g.addColorStop(1, withAlpha(PAL.amber, 0));
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.ellipse(HEARTH.floor.x, HEARTH.floor.y, fw * 1.6, fh * 1.3, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = PAL.amber;
+    ctx.beginPath();
+    ctx.moveTo(HEARTH.floor.x - fw / 2, HEARTH.floor.y);
+    ctx.lineTo(HEARTH.floor.x + fw / 2, HEARTH.floor.y);
+    ctx.lineTo(HEARTH.floor.x, HEARTH.floor.y - fh);
+    ctx.closePath(); ctx.fill();
+  }
+  // The board carries Store alone: plates stand on the real table top.
   const plates = state.store >= 5 ? 4 : state.store >= 3 ? 3 : 2;
-  for (let i = 0; i < plates; i++) disc(ctx, bx + 25 + i * 45, by - 6, 12, '#efe6d2');
-  // Figures (blobs at fixed positions; attitudes come with the engraved layer).
-  // De Lacey: chair by the hearth, always present.
-  disc(ctx, hx + 80, hy + 10, 14, PAL.cottager);
-  // Agatha at his feet, or at the board.
-  disc(ctx, state.night >= 4 ? bx + 40 : hx + 110, state.night >= 4 ? by - 30 : hy + 35, 12, '#7a6a58');
-  // Felix: absent (stool empty) / at the table / chair at the window (unease 3).
-  if (state.walkSlipped) { disc(ctx, ax + aw - 70, ay + 80, 13, '#6a5a48'); rect(ctx, ax + aw - 90, ay + 92, ax + aw - 78, ay + 96, '#6a5a48'); }
-  else if (state.felixFreeToday) disc(ctx, bx + 150, by - 30, 13, '#6a5a48');
-  // Safie from night 4: the only solid black head-mass.
-  if (state.night >= 4) disc(ctx, bx + 90, by - 30, 12, '#1a1512');
-  // The taper on the sill (unease >= 2) and the stick (unease 3, latched).
-  if (state.unease >= 2) disc(ctx, ax + aw - 30, ay + 40, 6, PAL.taper);
+  const span = BOARD.right.x - BOARD.left.x;
+  for (let i = 0; i < plates; i++) {
+    const px = BOARD.left.x + span * ((i + 0.5) / plates);
+    disc(ctx, px, BOARD.top.y, Math.max(4, aw * 0.018), '#efe6d2');
+    ctx.strokeStyle = PAL.ink2; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.arc(px, BOARD.top.y, Math.max(4, aw * 0.018), 0, Math.PI * 2); ctx.stroke();
+  }
+  // Figures, at room scale. De Lacey never walks alone; Agatha moves to the board
+  // once Safie is in the house.
+  const headR = Math.max(5, aw * 0.026);
+  const figure = (pt, fill, r = headR) => {
+    disc(ctx, pt.x, pt.y, r, fill);
+    ctx.fillStyle = fill;
+    ctx.fillRect(pt.x - r * 0.8, pt.y + r * 0.6, r * 1.6, r * 2.2);
+  };
+  figure(A(0.33, 0.62), PAL.cottager);                       // De Lacey, chair by the hearth
+  figure(state.night >= 4 ? A(0.62, 0.66) : A(0.40, 0.72), '#7a6a58', headR * 0.9); // Agatha
+  if (state.walkSlipped) figure({ x: WINDOW.x, y: WINDOW.y + ah * 0.20 }, '#6a5a48'); // Felix at the window
+  else if (state.felixFreeToday) figure(A(0.86, 0.66), '#6a5a48');                    // Felix at the table
+  if (state.night >= 4) figure(A(0.74, 0.66), '#1a1512', headR * 0.9);                // Safie
+  // The taper on the sill (unease >= 2) and the latched stick (unease 3).
+  if (state.unease >= 2) {
+    disc(ctx, WINDOW.x, WINDOW.y, Math.max(3, aw * 0.012), PAL.taper);
+  }
   if (state.walkSlipped) {
     ctx.strokeStyle = PAL.ink; ctx.lineWidth = 3;
-    ctx.beginPath(); ctx.moveTo(hx + 100, hy + 30); ctx.lineTo(hx + 106, hy - 20); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(STOOL.x, STOOL.y);
+    ctx.lineTo(STOOL.x + aw * 0.02, STOOL.y - ah * 0.14);
+    ctx.stroke();
   }
   // The bundle of firing inside the door (Firing >= 2).
-  if (state.firing >= 2) rect(ctx, ax + aw - 60, ay + ah - 60, ax + aw - 20, ay + ah - 44, '#a08c68', PAL.ink);
+  if (state.firing >= 2) {
+    rect(ctx, ax + aw * 0.90, ay + ah * 0.80, ax + aw * 0.99, ay + ah * 0.86, '#a08c68', PAL.ink);
+  }
   // The first white flower (the thaw) — degradable, drawn as a dot here.
-  if (state.night >= 5) disc(ctx, bx + 165, by - 8, 5, PAL.snow);
+  if (state.night >= 5) disc(ctx, BOARD.right.x - aw * 0.03, BOARD.top.y - ah * 0.02, Math.max(3, aw * 0.011), PAL.snow);
 }
 
 // ---------------------------------------------------------------- cards & title
@@ -325,16 +369,25 @@ export function drawCard(ctx, lines, opts, buttons = []) {
 }
 
 export function drawTitle(ctx, state, opts, beat, buttons) {
-  // grey box for plate/title: the skin layer swaps the generated plate in.
-  rect(ctx, 0, 0, PLATE.w, PLATE.h, PAL.paper);
+  // plate/title through the skin layer; greybox with the key name until it loads.
+  if (!skin.drawPlate(ctx, 'plate/paper', 0, 0, PLATE.w, PLATE.h)) {
+    rect(ctx, 0, 0, PLATE.w, PLATE.h, PAL.paper);
+  }
   // The plate stops at 0.72h so the title block below it clears the platemark.
   // At PLATE.h-180 the 30 px title sat on the border line and the rule cut the
   // letterforms — §3.3 puts occlusion tolerance at zero.
-  rect(ctx, 80, 60, PLATE.w - 80, PLATE.h * 0.72, PAL.plate, PAL.ink);
-  // The cottage at night with one lit window, in flat shapes.
-  rect(ctx, 480, 260, 800, 460, PAL.nightMid, PAL.ink);
-  if (beat >= 4) rect(ctx, 600, 320, 640, 360, PAL.amber, PAL.ink);
-  rect(ctx, 140, 380, 240, 440, PAL.nightDeep, PAL.ink); // the hovel, bottom-left
+  const tx = 80, ty = 60, tw = PLATE.w - 160, th = PLATE.h * 0.72 - 60;
+  if (skin.drawPlate(ctx, 'plate/title', tx, ty, tw, th)) {
+    ctx.strokeStyle = PAL.ink; ctx.lineWidth = 1.5;
+    ctx.strokeRect(tx, ty, tw, th);
+  } else {
+    rect(ctx, tx, ty, PLATE.w - 80, PLATE.h * 0.72, PAL.plate, PAL.ink);
+    // The cottage at night with one lit window, in flat shapes.
+    rect(ctx, 480, 260, 800, 460, PAL.nightMid, PAL.ink);
+    if (beat >= 4) rect(ctx, 600, 320, 640, 360, PAL.amber, PAL.ink);
+    rect(ctx, 140, 380, 240, 440, PAL.nightDeep, PAL.ink); // the hovel, bottom-left
+    skin.stampKey(ctx, 'plate/title', tx, ty);
+  }
   if (beat >= 5) {
     text(ctx, STRINGS.title.book, PLATE.w / 2, PLATE.h * 0.78, 30, PAL.ink, 'center', fontDisp(30));
     text(ctx, STRINGS.title.slice, PLATE.w / 2, PLATE.h * 0.825, 20, PAL.ink2, 'center');
@@ -357,9 +410,12 @@ export function drawTitle(ctx, state, opts, beat, buttons) {
 // ---------------------------------------------------------------- the door
 
 export function drawDoorScene(ctx, state, opts, subtitle) {
-  // grey box for plate/door: elevation, the room from the doorway.
-  rect(ctx, 0, 0, PLATE.w, PLATE.h, '#3a2f22');
-  rect(ctx, 300, 100, 980, 700, '#efe6d2', PAL.ink);
+  // plate/door: the room from the doorway. Figures and the clock draw over it.
+  if (!skin.drawPlate(ctx, 'plate/door', 0, 0, PLATE.w, PLATE.h)) {
+    rect(ctx, 0, 0, PLATE.w, PLATE.h, '#3a2f22');
+    rect(ctx, 300, 100, 980, 700, '#efe6d2', PAL.ink);
+    skin.stampKey(ctx, 'plate/door', 300, 100);
+  }
   // firelight behind De Lacey
   rect(ctx, 340, 480, 430, 620, PAL.amber, PAL.ink2);
   disc(ctx, 385, 555, 26, '#e8a84c');
