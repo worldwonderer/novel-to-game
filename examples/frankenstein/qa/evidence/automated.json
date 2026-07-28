@@ -1,0 +1,78 @@
+{
+  "url": "http://127.0.0.1:5199/?seed=42&fast=1",
+  "normal_speed_run": false,
+  "viewport": "1280x800",
+  "passed": 28,
+  "failed": 0,
+  "console_errors": [],
+  "network_errors": [],
+  "request_hosts": [
+    "127.0.0.1:5199"
+  ],
+  "external_hosts": [],
+  "frame_ms": {
+    "keyboard_title": {
+      "p50": 8.3,
+      "p95": 10.2,
+      "max": 10.4,
+      "n": 90
+    },
+    "keyboard_playing": {
+      "p50": 8.3,
+      "p95": 9.4,
+      "max": 9.9,
+      "n": 90
+    },
+    "mouse_title": {
+      "p50": 8.3,
+      "p95": 9.9,
+      "max": 10.3,
+      "n": 90
+    },
+    "mouse_playing": {
+      "p50": 8.3,
+      "p95": 10.3,
+      "max": 10.4,
+      "n": 90
+    }
+  },
+  "frame_floor_ms": 33.4,
+  "stall_gate_ms": 200.0,
+  "longtasks_over_50ms": [],
+  "build_bytes": 96322,
+  "shots": 10,
+  "shots_dir": "qa/evidence/browser",
+  "run": {
+    "keyboard": {
+      "title_shot": "01_keyboard_title.jpg",
+      "cold_open_shot": "02_keyboard_cold_open.jpg",
+      "cold_open_seconds": 23.2,
+      "playing_shot": "03_keyboard_playing.jpg",
+      "advanced_a_night": true,
+      "state_changed": [
+        "night",
+        "minute",
+        "words",
+        "store",
+        "unease"
+      ],
+      "night_reached": 2,
+      "restart_shot": "04_keyboard_restart.jpg"
+    },
+    "mouse": {
+      "title_shot": "05_mouse_title.jpg",
+      "cold_open_shot": "06_mouse_cold_open.jpg",
+      "cold_open_seconds": 23.2,
+      "playing_shot": "07_mouse_playing.jpg",
+      "advanced_a_night": true,
+      "state_changed": [
+        "night",
+        "minute",
+        "store",
+        "unease"
+      ],
+      "night_reached": 2,
+      "restart_shot": "08_mouse_restart.jpg"
+    }
+  }
+}

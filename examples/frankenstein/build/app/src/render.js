@@ -217,24 +217,28 @@ export function drawHovel(ctx, state, view, opts) {
   for (let i = 0; i < state.firing; i++) {
     rect(ctx, sx + 150, sy + sh - 14 - i * 10, sx + 200, sy + sh - 8 - i * 10, '#a08c68', PAL.ink);
   }
+  // Everything on the straw sits above the prompt band (0.88h = 704). The band is
+  // opaque paper; anything drawn under it is simply not readable, and §3.3 puts
+  // occlusion tolerance at zero. Heap, plank and bundle are raised to clear it.
+  const FLOOR = 690;
   // The heap of his own food on the straw.
   const heap = Math.min(12, state.ownFood);
   if (heap > 0) {
     ctx.fillStyle = '#6a5a3c';
     ctx.beginPath();
-    ctx.moveTo(220, 720);
-    ctx.lineTo(220 + 30 + heap * 8, 720);
-    ctx.lineTo(220 + 15 + heap * 4, 720 - 10 - heap * 6);
+    ctx.moveTo(220, FLOOR);
+    ctx.lineTo(220 + 30 + heap * 8, FLOOR);
+    ctx.lineTo(220 + 15 + heap * 4, FLOOR - 10 - heap * 6);
     ctx.closePath(); ctx.fill();
   }
   // The plank, and the scratches that ARE Words: grouped in fives, five groups to a row.
-  rect(ctx, 460, 620, 860, 730, '#3a3020', PAL.ink2);
-  drawScratches(ctx, state.words, 480, 640);
+  rect(ctx, 460, FLOOR - 130, 860, FLOOR - 20, '#3a3020', PAL.ink2);
+  drawScratches(ctx, state.words, 480, FLOOR - 110);
   // The journal bundle.
   if (state.words >= 62 && !state.journalRead) {
-    rect(ctx, 880, 660, 930, 700, '#8a7a5c', PAL.ink);
+    rect(ctx, 880, FLOOR - 90, 930, FLOOR - 50, '#8a7a5c', PAL.ink);
   }
-  if (state.journalRead) rect(ctx, 880, 660, 930, 700, '#b0a37e', PAL.ink);
+  if (state.journalRead) rect(ctx, 880, FLOOR - 90, 930, FLOOR - 50, '#b0a37e', PAL.ink);
 }
 
 function drawScratches(ctx, words, x0, y0) {
@@ -323,7 +327,10 @@ export function drawCard(ctx, lines, opts, buttons = []) {
 export function drawTitle(ctx, state, opts, beat, buttons) {
   // grey box for plate/title: the skin layer swaps the generated plate in.
   rect(ctx, 0, 0, PLATE.w, PLATE.h, PAL.paper);
-  rect(ctx, 80, 60, PLATE.w - 80, PLATE.h - 180, PAL.plate, PAL.ink);
+  // The plate stops at 0.72h so the title block below it clears the platemark.
+  // At PLATE.h-180 the 30 px title sat on the border line and the rule cut the
+  // letterforms — §3.3 puts occlusion tolerance at zero.
+  rect(ctx, 80, 60, PLATE.w - 80, PLATE.h * 0.72, PAL.plate, PAL.ink);
   // The cottage at night with one lit window, in flat shapes.
   rect(ctx, 480, 260, 800, 460, PAL.nightMid, PAL.ink);
   if (beat >= 4) rect(ctx, 600, 320, 640, 360, PAL.amber, PAL.ink);

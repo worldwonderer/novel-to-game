@@ -617,7 +617,11 @@ function frame(now) {
 
 function step(input) {
   switch (state.phase) {
-    case 'title': tickTitle(input); break;
+    // engine.tick owns state.phaseTick, and the title reveal is paced off it
+    // (titleBeat = phaseTick/45). Without this call the beat stays 0 forever:
+    // the title text and the three verbs are never drawn and the first screen
+    // is two blank shapes with no way in.
+    case 'title': engine.tick(state, {}); tickTitle(input); break;
     case 'options': tickOptions(input); break;
     case 'about': if (input.advance || input.action || input.clicked) { state.phase = 'title'; state.phaseTick = 0; } engine.tick(state, {}); break;
     case 'coldOpen': engine.tick(state, {}); tickColdOpen(input); break;
