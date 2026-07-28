@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Frankenstein slice — real-browser QA.
 
-Boot -> title -> cold open -> nights -> the walk -> the door -> an ending -> restart,
-driven twice: mouse-primary and keyboard-only (BUILD_BRIEF requires every action to be
-reachable by keyboard alone).
+Boot -> title -> cold open -> nights -> restart, driven twice (mouse-primary and
+keyboard-only; BUILD_BRIEF requires every action to be reachable by keyboard alone),
+then a third, full campaign: seed 42, played through nights 1-7 to the walk, the
+door, an ending, the epilogue, afterRun and restart (GAME_DESIGN §10, §12).
 
 Evidence lands in the workspace at qa/evidence/browser/ as JPEG. The qa contract treats
 paths outside the workspace (and system temp dirs) as no evidence at all.
@@ -15,6 +16,7 @@ Env:    BASE_URL, QA_SLOW=1 (normal speed; timing evidence is only valid here),
 from __future__ import annotations
 
 import json
+import math
 import os
 import shutil
 import socket
@@ -34,6 +36,9 @@ PORT = 5199
 BASE = os.environ.get("BASE_URL", f"http://127.0.0.1:{PORT}")
 SLOW = bool(os.environ.get("QA_SLOW"))
 URL = f"{BASE}/?seed=42" + ("" if SLOW else "&fast=1")
+# Real-second timeouts scale with the speed: at normal speed a night-minute is
+# 8 s and the creature walks 36 px/s; at ?fast=1 they are 1 s and 290 px/s.
+SPEED = 8 if SLOW else 1
 
 # Canvas game with a 60 Hz rAF loop, so frame-time distribution is the right measure.
 # PRODUCT_BRIEF names a >=30 FPS floor => 33.4 ms; absolute stall gate 200 ms.
@@ -235,6 +240,357 @@ def run_once(page, mode: str) -> dict:
     return out
 
 
+# ---------------------------------------------------------------- full campaign
+#
+# One genuinely played run to an ending (GAME_DESIGN §10 beats 1-5, §12, §15):
+#   night 1-2  listen at the chink (words, and the trigger that fires once at
+#              firing-0 dawns: unease 1, decays the next incident-free night)
+#   night 3    listen, then after the retiring window carry the load to the door
+#   night 4    the first lesson at minute 0, then the second carry
+#   night 5-7  lesson at minute 0, listen out the rest
+#   day 8      the long walk (Store 3 at dawn 6 -> 5 slots), knock inside the
+#              15-30 s band, five exchanges (words >= 80 and carries >= 1), the
+#              withheld hand, the moon hold, afterRun, restart.
+# Nothing here pokes run state: minutes pass in real time, every action goes
+# through the game's own input path (key/mouse events), and the cones, costs
+# and gates all apply. The single concession is the lesson start: the engine
+# accepts it only inside the first 0.03 night-minutes (availableAction), which
+# is 1-2 ticks at any speed, so it is dispatched in-page, rAF-aligned, as an
+# ordinary KeyboardEvent through the real keydown listener.
+
+DESIGNED_ENDINGS = ("seen", "want", "silence", "door")  # GAME_DESIGN §12 "No dead end"
+
+START_LESSON_JS = """
+() => new Promise((res) => {
+  const key = () => {
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'e' }));
+    window.dispatchEvent(new KeyboardEvent('keyup', { key: 'e' }));
+  };
+  key();  // advance the dawn read
+  let guard = 0;
+  const pump = () => {
+    const g = window.__game;
+    const a = g.state.tonight && g.state.tonight.action;
+    if (a && a.kind === 'lesson') { res('lesson'); return; }
+    if (g.phase === 'night' && g.state.minute > 0.5) { res('missed'); return; }
+    if (++guard > 600) { res('timeout'); return; }
+    // One fresh edge per frame: the dawn read consumes the first of them; the
+    // very next one lands on the first night tick (minute 1/mt <= 0.03), which
+    // is the only moment the engine accepts a lesson start.
+    key();
+    requestAnimationFrame(pump);
+  };
+  requestAnimationFrame(pump);
+})
+"""
+
+
+class CampaignAbort(Exception):
+    pass
+
+
+def need(cond: bool, name: str) -> None:
+    """PASS lines print as they land; a failure is reported once, by the
+    run_campaign handler, together with the state snapshot."""
+    if cond:
+        check(True, name)
+    else:
+        raise CampaignAbort(name)
+
+
+def press(page, key: str = "e", ms: int = 90) -> None:
+    page.keyboard.down(key)
+    page.wait_for_timeout(ms)
+    page.keyboard.up(key)
+
+
+def qa_state(page) -> dict:
+    return page.evaluate("""(() => {
+      const g = window.__game; const s = g.state;
+      return { phase: g.phase, night: s.night, day: s.day,
+        minute: Math.round(s.minute * 100) / 100, length: s.nightLength,
+        words: s.words, firing: s.firing, store: s.store, unease: s.unease,
+        x: Math.round(s.creature.x), y: Math.round(s.creature.y),
+        carrying: s.creature.carrying, inHovel: s.creature.inHovel,
+        ending: s.ending, seenBy: s.seenBy, exchanges: s.exchangesReached,
+        carries: s.carriesTotal, lessons: s.lessonsAttended, listens: s.listensCompleted,
+        slipped: s.walkSlipped, walk: s.walk,
+        door: s.door && { index: s.door.index, exchangeTicks: s.door.exchangeTicks,
+                          clockTicks: s.door.clockTicks, slots: s.door.slots },
+        canSpeak: g.engine.doorCanSpeak(s),
+        lessonDone: !!(s.tonight && s.tonight.lessonDone),
+        listening: !!(s.tonight && s.tonight.listening),
+        action: (s.tonight && s.tonight.action) ? s.tonight.action.kind : null,
+        walkStage: s.walkScene ? s.walkScene.stage : null }; })()""")
+
+
+def wait_cond(page, pred, timeout_s: float, poll_ms: int = 150):
+    t0 = time.time()
+    s = qa_state(page)
+    while not pred(s):
+        if time.time() - t0 > timeout_s:
+            return None
+        page.wait_for_timeout(poll_ms)
+        s = qa_state(page)
+    return s
+
+
+def wait_dawn(page, timeout_s: float = 0) -> dict:
+    """The night plays out to the dawn read; being seen aborts the campaign."""
+    s = wait_cond(page, lambda s: s["phase"] in ("dawnRead", "seen"), timeout_s or 30 * SPEED)
+    if s is None:
+        raise CampaignAbort("night did not reach the dawn read")
+    if s["phase"] == "seen":
+        raise CampaignAbort(f"seen by {s['seenBy']} on night {s['night']}, minute {s['minute']}")
+    return s
+
+
+def drive_to(page, tx: int, ty: int, radius: int = 14, timeout_s: float = 0,
+             phases=("night",)):
+    """Keyboard click-to-move: poll the creature and hold arrows toward the point.
+    (Mouse clicks never reach the sim — main.js consumeEdges drops mouse.clicked —
+    so the campaign drives with keys, which BUILD_BRIEF requires to suffice.)"""
+    timeout_s = timeout_s or 12 * SPEED
+    held: set[str] = set()
+
+    def release():
+        for k in held:
+            page.keyboard.up(k)
+        held.clear()
+
+    t0 = time.time()
+    s = qa_state(page)
+    while math.hypot(tx - s["x"], ty - s["y"]) > radius:
+        if s["phase"] not in phases:
+            release()
+            return s
+        if time.time() - t0 > timeout_s:
+            release()
+            return None
+        want: set[str] = set()
+        if tx - s["x"] > 6:
+            want.add("ArrowRight")
+        elif tx - s["x"] < -6:
+            want.add("ArrowLeft")
+        if ty - s["y"] > 6:
+            want.add("ArrowDown")
+        elif ty - s["y"] < -6:
+            want.add("ArrowUp")
+        for k in want - held:
+            page.keyboard.down(k)
+        for k in held - want:
+            page.keyboard.up(k)
+        held.clear()
+        held.update(want)
+        page.wait_for_timeout(70)
+        s = qa_state(page)
+    release()
+    return s
+
+
+# Keyboard routes around the obstacle rectangles (engine constants.js). The
+# drive controller walks 45-degree diagonals until an axis enters its deadzone,
+# which pins it against rectangle faces it meets mid-diagonal; these legs are
+# axis-aligned or diagonal-safe, verified at both speeds in Node against the
+# engine itself. The lanes follow the designed CARRY_ROUTE.
+ROUTE_OUT = [(585, 258), (455, 330), (310, 458)]   # mouth -> below the outhouse
+ROUTE_DOOR = [(450, 462), (748, 462), (748, 425), (700, 425)]  # outhouse -> door, south lane
+ROUTE_HOME = [(748, 410), (748, 290), (684, 290), (630, 265)]  # door -> mouth, east lane
+ROUTE_CROSS = [(684, 222), (748, 222), (748, 425), (700, 425)]  # the walk, daylight
+
+
+def carry_load(page, out: dict, tag: str) -> None:
+    """Outhouse -> door -> hovel mouth, inside the cone-free minutes. The caller
+    has already stepped out; ends back inside with firing one higher."""
+    f0 = qa_state(page)["firing"]
+    for wx, wy in ROUTE_OUT:
+        s = drive_to(page, wx, wy, 12)
+        if s is None or s["phase"] != "night":
+            raise CampaignAbort(f"{tag}: the walk to the outhouse failed (last={s})")
+    press(page)  # take the load (instant context action, in reach of the outhouse)
+    need(qa_state(page)["carrying"], f"[campaign] {tag}: the load is taken up")
+    for wx, wy in ROUTE_DOOR:
+        s = drive_to(page, wx, wy, 16)
+        if s is None or s["phase"] != "night":
+            raise CampaignAbort(f"{tag}: the carry to the door failed (last={s})")
+    press(page)  # put it down at their door
+    s = qa_state(page)
+    need(not s["carrying"] and s["firing"] == f0 + 1,
+         f"[campaign] {tag}: put down at their door (firing {f0} -> {s['firing']})")
+    out[f"{tag}_shot"] = shot(page, f"campaign_{tag}")
+    for wx, wy in ROUTE_HOME:
+        s = drive_to(page, wx, wy, 12)
+        if s is None or s["phase"] != "night":
+            raise CampaignAbort(f"{tag}: the walk home failed (last={s})")
+    press(page)  # slip back inside
+    need(qa_state(page)["inHovel"], f"[campaign] {tag}: back inside ahead of the dawn window")
+
+
+def start_lesson(page, night: int) -> None:
+    r = page.evaluate(START_LESSON_JS)
+    need(r == "lesson", f"night {night}: the lesson starts at minute 0 ({r})")
+
+
+def run_campaign(page) -> dict:
+    """The full path the docstring promises: played, on the fixed seed, to a
+    designed ending, then restarted to a valid initial state."""
+    out = {"plan": "listen n1-2; carry n3; lesson+carry n4; lesson n5-7; "
+                   "walk day 8 (5 slots); five exchanges; epilogue; restart"}
+    try:
+        section("[campaign] boot, title, cold open")
+        page.goto(URL, wait_until="networkidle")
+        page.wait_for_timeout(600)
+        need(phase(page) == "title", "[campaign] boots into the title phase")
+        page.keyboard.press("Enter")
+        need(wait_cond(page, lambda s: s["phase"] == "coldOpen", 5),
+             "[campaign] leaving the title works")
+        page.keyboard.down(" ")
+        t0 = time.time()
+        while phase(page) == "coldOpen" and time.time() - t0 < 40:
+            page.wait_for_timeout(500)
+        page.keyboard.up(" ")
+        s = qa_state(page)
+        need(s["phase"] == "night" and s["night"] == 1,
+             "[campaign] cold open completes into night 1")
+
+        section("[campaign] nights 1-2: listening at the chink")
+        press(page)  # start listening; blocks mint every 2 night-minutes
+        s = wait_dawn(page)
+        out["words_after_n1"] = s["words"]
+        need(s["words"] >= 10, f"[campaign] night 1 banks words by listening ({s['words']})")
+        press(page)  # let the day pass -> night 2
+        need(wait_cond(page, lambda s: s["phase"] == "night" and s["night"] == 2, 5),
+             "[campaign] night 2 begins")
+        press(page)
+        s = wait_dawn(page)
+        out["words_after_n2"] = s["words"]
+
+        section("[campaign] night 3: first carry after the retiring window")
+        press(page)  # -> night 3
+        need(wait_cond(page, lambda s: s["phase"] == "night" and s["night"] == 3, 5),
+             "[campaign] night 3 begins")
+        press(page)  # listen through minutes 0-5
+        need(wait_cond(page, lambda s: s["minute"] >= 5.2, 10 * SPEED),
+             "[campaign] night 3: the retiring window closes")
+        press(page)  # come away from the chink
+        press(page, "x")  # lift the plank
+        need(wait_cond(page, lambda s: not s["inHovel"], 5),
+             "[campaign] night 3: steps out once the yard is empty")
+        carry_load(page, out, "n3_carry")
+        press(page)  # listen out the rest
+        wait_dawn(page)
+
+        section("[campaign] night 4: first lesson, second carry")
+        start_lesson(page, 4)
+        need(wait_cond(page, lambda s: s["lessonDone"], 10 * SPEED),
+             "[campaign] night 4: the first lesson completes (+20 words)")
+        press(page, "x")
+        need(wait_cond(page, lambda s: not s["inHovel"], 5),
+             "[campaign] night 4: steps out after the lesson")
+        carry_load(page, out, "n4_carry")
+        press(page)
+        s = wait_dawn(page)
+
+        section("[campaign] nights 5-7: the remaining lessons")
+        for n in (5, 6, 7):
+            start_lesson(page, n)
+            need(wait_cond(page, lambda s: s["lessonDone"], 10 * SPEED),
+                 f"[campaign] night {n}: the lesson completes")
+            press(page)  # listen out the rest
+            s = wait_dawn(page)
+        out["nights_completed"] = 7
+        out["words_at_walk"] = s["words"]
+        need(s["lessons"] == 4, f"[campaign] four lessons attended ({s['lessons']})")
+        need(s["words"] >= 80,
+             f"[campaign] words {s['words']} >= 80, the fifth exchange gate (GAME_DESIGN §7)")
+        need(s["carries"] >= 1,
+             f"[campaign] carries {s['carries']} >= 1, the exchange-5 lock (GAME_DESIGN §9)")
+        need(s["night"] == 8,
+             f"[campaign] seven full nights played before the walk (now at dawn 8, night counter {s['night']})")
+
+        section("[campaign] day 8: the walk")
+        press(page)  # let the day pass -> the walk
+        s = wait_cond(page, lambda s: s["phase"] == "walk", 5)
+        need(s and s["walk"] and s["walk"]["band"] == "long" and s["walk"]["slots"] == 5,
+             f"[campaign] the long walk, five slots (walk={s and s['walk']})")
+        need(wait_cond(page, lambda s: s["walkStage"] == "cross", 6),
+             "[campaign] the three go out at the gate")
+        out["walk_shot"] = shot(page, "campaign_walk")
+        page.wait_for_timeout(17000)  # knocking inside 15 s costs a slot; past 30 s another
+        for wx, wy in ROUTE_CROSS:
+            s = drive_to(page, wx, wy, 16, phases=("walk",))
+            if s is None or s["phase"] != "walk":
+                raise CampaignAbort(f"the daylight crossing failed (last={s})")
+        need(True, "[campaign] crosses the yard in daylight")
+        press(page, "e", 120)
+        s = wait_cond(page, lambda s: s["phase"] == "door", 5)
+        need(s and s["door"] and s["door"]["slots"] == 5,
+             f"[campaign] the knock keeps all five slots (slots={s and s['door'] and s['door']['slots']})")
+        out["door_shot"] = shot(page, "campaign_door")
+
+        section("[campaign] the door: five exchanges")
+        t0 = time.time()
+        while time.time() - t0 < 170:
+            s = qa_state(page)
+            if s["phase"] != "door":
+                break
+            if s["door"] and s["door"]["exchangeTicks"] <= 0 and s["canSpeak"]:
+                press(page, "e", 60)
+            page.wait_for_timeout(350)
+        s = wait_cond(page, lambda s: s["phase"] == "aftermath", 10)
+        need(s is not None, "[campaign] the door opens when the walk's clock runs out")
+        need(s["exchanges"] == 5,
+             f"[campaign] all five exchanges land (reached {s['exchanges']}, words {s['words']})")
+        need(s["ending"] in DESIGNED_ENDINGS,
+             f"[campaign] ending id is a designed one ({s['ending']}; §12: {DESIGNED_ENDINGS})")
+        need(s["ending"] == "door", f"[campaign] the run ends at the door ({s['ending']})")
+        out["ending"] = s["ending"]
+        out["exchanges"] = s["exchanges"]
+
+        section("[campaign] aftermath, epilogue, afterRun")
+        model = page.evaluate("(() => { const g = window.__game; return g.engine.epilogueModel(g.state); })()")
+        need(model["ending"] == "door" and model["exchange5"],
+             f"[campaign] the epilogue model agrees (ending={model['ending']}, "
+             f"exchange5={model['exchange5']}, storeAtFlight={model['storeAtFlight']}, beds={model['beds']})")
+        out["epilogue_model"] = model
+        page.keyboard.down("e")  # the withheld hand, then the moon hold
+        done = None
+        t0 = time.time()
+        while time.time() - t0 < 60:
+            ph = phase(page)
+            if ph == "epilogue" and "epilogue_shot" not in out:
+                page.wait_for_timeout(800)  # the lane card, the run's ending text
+                out["epilogue_shot"] = shot(page, "campaign_epilogue")
+            if ph == "afterRun":
+                done = qa_state(page)
+                break
+            page.wait_for_timeout(400)
+        page.keyboard.up("e")
+        need(done is not None, "[campaign] the epilogue plays out to afterRun")
+        need(done["ending"] == "door" and done["exchanges"] == 5,
+             "[campaign] the ending is still recorded at afterRun")
+        out["afterrun_shot"] = shot(page, "campaign_afterrun")
+
+        section("[campaign] restart")
+        page.keyboard.press("Enter")
+        s = wait_cond(page, lambda s: s["phase"] == "title", 5)
+        need(s and s["night"] == 1 and s["words"] == 0,
+             f"[campaign] restart restores a valid initial state "
+             f"(phase={s and s['phase']}, night {s and s['night']}, words {s and s['words']})")
+        out["restart_shot"] = shot(page, "campaign_restart")
+        out["completed"] = True
+    except CampaignAbort as e:
+        out["completed"] = False
+        out["abort"] = str(e)
+        check(False, f"[campaign] {e}")
+        try:
+            out["state_at_abort"] = qa_state(page)
+            out["abort_shot"] = shot(page, "campaign_abort")
+        except Exception:
+            pass
+    return out
+
+
 def main() -> int:
     shutil.rmtree(SHOTS, ignore_errors=True)
     SHOTS.mkdir(parents=True, exist_ok=True)
@@ -253,6 +609,7 @@ def main() -> int:
 
             result["keyboard"] = run_once(page, "keyboard")
             result["mouse"] = run_once(page, "mouse")
+            result["campaign"] = run_campaign(page)
 
             section("determinism")
             def replay():

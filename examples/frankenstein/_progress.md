@@ -1,9 +1,10 @@
 # Progress
 
-> `qa` gate not passed: the slice is playable and mechanically clean (28/28 browser assertions,
-> engine invariants hold) and all 6 release-gated **image** keys are now generated and wired.
-> Two release gates remain open — the Caslon font subset and the audio set — and no ending has
-> been reached yet, so this is not a release build.
+> `qa` gate not passed: the slice is **completable** — a full eight-night campaign reaches the
+> `door` ending at exchange 5 and restarts clean (67/67 browser assertions at both game speeds,
+> engine invariants hold) — and all 6 release-gated **image** keys are generated and wired.
+> Still open: the Caslon font subset and the audio set, plus two `major` defects found by the
+> campaign (every mouse click is dead; the `seen` ending crashes the renderer). Not a release build.
 
 - Source: Project Gutenberg, *Frankenstein; or, The Modern Prometheus* (1818), public domain
 - Mode: `quick`
@@ -16,22 +17,29 @@
 - gate:design pass
 - gate:art pass
 - gate:build pass
-- gate:qa fail(1 `major` partly cleared: 6 gated image keys now present, but the Caslon fonts and
-  the audio set are still absent; 2 `minor` open: 23 s held cold open before the first interactive
-  verb, no ending reached yet; integration debt: cold slot and tally plank still flat greybox)
+- gate:qa fail(3 `major`: F1 partly cleared — 6 gated image keys present, Caslon fonts and audio
+  still absent; F6 every mouse click is dead — `edges` has no `clicked` field, so `input.clicked`
+  is always undefined; F7 the `seen` ending throws `R.wedge is not a function` every frame.
+  3 `minor` open: 23 s held cold open before the first interactive verb; the ending card's text
+  overflows its plate into dark-on-dark; integration debt — cold slot and tally plank still flat
+  greybox)
 - Reflow record: 2026-07-28 first independent QA. 1 `blocker` found and fixed —
   `step()`'s `title` case never called `engine.tick()`, so `phaseTick` stayed 0, `titleBeat`
   stayed 0, and the title text and all three verbs were never drawn; the first screen was two
   blank shapes with no way in. Also fixed 2 `minor` occlusion defects (title crossing the
   platemark; the prompt band covering the tally plank and food heap).
-- Evidence: `qa/evidence/automated.json` (28 passed / 0 failed, 0 console errors, 0 external
-  request domains, frame p95 10.3 ms, build 0.09 MB), `qa/evidence/browser/` 10 frames,
+- Evidence: `qa/evidence/automated.json` (67 passed / 0 failed, 0 console errors, 0 external
+  request domains, frame p95 10.1 ms, build 1.50 MB), `qa/evidence/browser/` 17 frames,
   `node qa/design_invariants.mjs` all sections hold
-- Verified path: boot → title → cold open → night → night 2 → restart, run twice —
-  mouse-primary and keyboard-only. Determinism confirmed under a fixed seed.
-- Not verified: no ending reached (walk / door / endings untested); timing evidence invalid
-  (accelerated run, needs a `QA_SLOW=1` pass); signature frames undecidable while every plate is
-  a grey box; no clean-context onboarding judgement; no audio; no human playtest protocol yet
+- Verified path: the full campaign — boot → title → cold open → nights 1–7 (2 carries, 4 lessons,
+  96 words) → the day-8 long walk → the door → five exchanges → ending `door` → epilogue →
+  `afterRun` → restart. Played through the real input path, no state injection. Reproduced at
+  both game speeds (`?fast=1` and `QA_SLOW=1`), so timing evidence is now valid. Plus the round-1
+  keyboard-only and held-mouse passes. Determinism confirmed under a fixed seed.
+- Not verified: three of the four endings (`want` and `silence` untested; `seen` untestable until
+  F7 is fixed); mouse-primary play (F6 — no click reaches the sim); signature frames not yet
+  judged against `ART_DIRECTION` now that the plates are in; no clean-context onboarding
+  judgement; no audio; no human playtest protocol yet
 - Assets: all 6 release-gated plates generated 2026-07-28 (`plate/paper|title|room|hovel|door|fire`),
   sized to draw size and shipped as WebP — 17 MB PNG → 1.4 MB, total build 1.50 MB against a
   25 MB budget. They enter through `src/skin.js`; a key that fails to load still draws a grey box

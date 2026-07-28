@@ -1,0 +1,120 @@
+
+== [keyboard] boot and title ==
+  PASS  boots into the title phase
+  PASS  title fully revealed (phaseTick 416 >= 270)
+  frame keyboard_title: p50 8.3 / p95 9.8 / worst 10.1 ms
+
+== [keyboard] enter the run ==
+  PASS  leaving the title works (keyboard)
+
+== [keyboard] cold open (23 s held) ==
+  PASS  cold open completes into the night (23.2 s held, phase=night)
+
+== [keyboard] the nights ==
+  frame keyboard_playing: p50 8.3 / p95 10.1 / worst 10.3 ms
+  PASS  the simulation advances under input
+  PASS  observable state changes: ['minute']
+
+== [keyboard] restart ==
+  PASS  restart returns to the title
+  PASS  restart restores a valid initial state (night 1, words 0)
+
+== [mouse] boot and title ==
+  PASS  boots into the title phase
+  PASS  title fully revealed (phaseTick 414 >= 270)
+  frame mouse_title: p50 8.3 / p95 9.4 / worst 10.1 ms
+
+== [mouse] enter the run ==
+  PASS  leaving the title works (mouse)
+
+== [mouse] cold open (23 s held) ==
+  PASS  cold open completes into the night (23.2 s held, phase=night)
+
+== [mouse] the nights ==
+  frame mouse_playing: p50 8.3 / p95 9.4 / worst 10.2 ms
+  PASS  the simulation advances under input
+  PASS  observable state changes: ['minute']
+
+== [mouse] restart ==
+  PASS  restart returns to the title
+  PASS  restart restores a valid initial state (night 1, words 0)
+
+== [campaign] boot, title, cold open ==
+  PASS  [campaign] boots into the title phase
+  PASS  [campaign] leaving the title works
+  PASS  [campaign] cold open completes into night 1
+
+== [campaign] nights 1-2: listening at the chink ==
+  PASS  [campaign] night 1 banks words by listening (14)
+  PASS  [campaign] night 2 begins
+
+== [campaign] night 3: first carry after the retiring window ==
+  PASS  [campaign] night 3 begins
+  PASS  [campaign] night 3: the retiring window closes
+  PASS  [campaign] night 3: steps out once the yard is empty
+  PASS  [campaign] n3_carry: the load is taken up
+  PASS  [campaign] n3_carry: put down at their door (firing 0 -> 1)
+  PASS  [campaign] n3_carry: back inside ahead of the dawn window
+
+== [campaign] night 4: first lesson, second carry ==
+  PASS  night 4: the lesson starts at minute 0 (lesson)
+  PASS  [campaign] night 4: the first lesson completes (+20 words)
+  PASS  [campaign] night 4: steps out after the lesson
+  PASS  [campaign] n4_carry: the load is taken up
+  PASS  [campaign] n4_carry: put down at their door (firing 1 -> 2)
+  PASS  [campaign] n4_carry: back inside ahead of the dawn window
+
+== [campaign] nights 5-7: the remaining lessons ==
+  PASS  night 5: the lesson starts at minute 0 (lesson)
+  PASS  [campaign] night 5: the lesson completes
+  PASS  night 6: the lesson starts at minute 0 (lesson)
+  PASS  [campaign] night 6: the lesson completes
+  PASS  night 7: the lesson starts at minute 0 (lesson)
+  PASS  [campaign] night 7: the lesson completes
+  PASS  [campaign] four lessons attended (4)
+  PASS  [campaign] words 100 >= 80, the fifth exchange gate (GAME_DESIGN §7)
+  PASS  [campaign] carries 2 >= 1, the exchange-5 lock (GAME_DESIGN §9)
+  PASS  [campaign] seven full nights played before the walk (now at dawn 8, night counter 8)
+
+== [campaign] day 8: the walk ==
+  PASS  [campaign] the long walk, five slots (walk={'day': 8, 'slots': 5, 'band': 'long'})
+  PASS  [campaign] the three go out at the gate
+  PASS  [campaign] crosses the yard in daylight
+  PASS  [campaign] the knock keeps all five slots (slots=5)
+
+== [campaign] the door: five exchanges ==
+  PASS  [campaign] the door opens when the walk's clock runs out
+  PASS  [campaign] all five exchanges land (reached 5, words 100)
+  PASS  [campaign] ending id is a designed one (door; §12: ('seen', 'want', 'silence', 'door'))
+  PASS  [campaign] the run ends at the door (door)
+
+== [campaign] aftermath, epilogue, afterRun ==
+  PASS  [campaign] the epilogue model agrees (ending=door, exchange5=True, storeAtFlight=3, beds=1)
+  PASS  [campaign] the epilogue plays out to afterRun
+  PASS  [campaign] the ending is still recorded at afterRun
+
+== [campaign] restart ==
+  PASS  [campaign] restart restores a valid initial state (phase=title, night 1, words 0)
+
+== determinism ==
+  PASS  same seed + same input sequence -> same state ({'night': 1, 'words': 0, 'firing': 0, 'store': 6, 'ownFood': 3, 'unease': 0})
+
+== viewport and readability ==
+  PASS  1280x800 no scroll overflow
+  PASS  1280x800 canvas has non-zero size
+  PASS  1280x720 no scroll overflow
+  PASS  1280x720 canvas has non-zero size
+
+== reduced motion ==
+  PASS  still renders under prefers-reduced-motion
+
+== self-contained and performance ==
+  PASS  no external request domains (saw ['127.0.0.1:5199'])
+  PASS  no failed resource requests (0)
+  PASS  console clean (0 errors)
+  PASS  frame p95 10.1 ms <= 33.4 ms (30 FPS floor)
+  PASS  no >200 ms stall (worst frame 10.3 ms)
+  PASS  no in-game main-thread block > 200 ms (0 over 50 ms)
+
+build: 1.50 MB | external domains: none
+result: 67 passed, 0 failed | 17 frames -> /Users/pite/makemoney/novel-to-game/examples/frankenstein/qa/evidence/browser

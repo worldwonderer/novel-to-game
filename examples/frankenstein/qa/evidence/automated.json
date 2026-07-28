@@ -2,7 +2,7 @@
   "url": "http://127.0.0.1:5199/?seed=42&fast=1",
   "normal_speed_run": false,
   "viewport": "1280x800",
-  "passed": 28,
+  "passed": 67,
   "failed": 0,
   "console_errors": [],
   "network_errors": [],
@@ -14,39 +14,39 @@
     "keyboard_title": {
       "p50": 8.3,
       "p95": 9.3,
-      "max": 9.4,
+      "max": 10.2,
       "n": 90
     },
     "keyboard_playing": {
       "p50": 8.3,
-      "p95": 9.1,
-      "max": 9.2,
+      "p95": 9.7,
+      "max": 10.1,
       "n": 90
     },
     "mouse_title": {
       "p50": 8.3,
-      "p95": 8.9,
-      "max": 9.3,
+      "p95": 9.4,
+      "max": 10.2,
       "n": 90
     },
     "mouse_playing": {
       "p50": 8.3,
-      "p95": 9.4,
-      "max": 9.4,
+      "p95": 10.1,
+      "max": 10.3,
       "n": 90
     }
   },
   "frame_floor_ms": 33.4,
   "stall_gate_ms": 200.0,
   "longtasks_over_50ms": [],
-  "build_bytes": 1571560,
-  "shots": 10,
+  "build_bytes": 1571128,
+  "shots": 17,
   "shots_dir": "qa/evidence/browser",
   "run": {
     "keyboard": {
       "title_shot": "01_keyboard_title.jpg",
       "cold_open_shot": "02_keyboard_cold_open.jpg",
-      "cold_open_seconds": 23.3,
+      "cold_open_seconds": 23.2,
       "playing_shot": "03_keyboard_playing.jpg",
       "advanced_a_night": true,
       "state_changed": [
@@ -73,6 +73,37 @@
       ],
       "night_reached": 2,
       "restart_shot": "08_mouse_restart.jpg"
+    },
+    "campaign": {
+      "plan": "listen n1-2; carry n3; lesson+carry n4; lesson n5-7; walk day 8 (5 slots); five exchanges; epilogue; restart",
+      "words_after_n1": 12,
+      "words_after_n2": 21,
+      "n3_carry_shot": "09_campaign_n3_carry.jpg",
+      "n4_carry_shot": "10_campaign_n4_carry.jpg",
+      "nights_completed": 7,
+      "words_at_walk": 96,
+      "walk_shot": "11_campaign_walk.jpg",
+      "door_shot": "12_campaign_door.jpg",
+      "ending": "door",
+      "exchanges": 5,
+      "epilogue_model": {
+        "ending": "door",
+        "exchange5": true,
+        "exchanges": 5,
+        "nothingPutBy": false,
+        "journal": false,
+        "satUp": false,
+        "beds": 1,
+        "storeAtFlight": 3,
+        "firingAtFlight": 1,
+        "fewLessons": false,
+        "seenBy": null,
+        "seenContext": null
+      },
+      "epilogue_shot": "13_campaign_epilogue.jpg",
+      "afterrun_shot": "14_campaign_afterrun.jpg",
+      "restart_shot": "15_campaign_restart.jpg",
+      "completed": true
     }
   }
 }
