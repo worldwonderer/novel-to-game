@@ -43,6 +43,10 @@ EXAMPLE_PLANNING_FILES = {
     "design/ART_DIRECTION.md",
     "build/BUILD_BRIEF.md",
 }
+# Allowed but not required — see the note at the comparison site.
+OPTIONAL_PLANNING_FILES = {
+    "analysis/_coverage.md",
+}
 FRONTMATTER_RE = re.compile(r"^---\n(.*?)\n---", re.DOTALL)
 FIELD_RE = re.compile(r"^([a-zA-Z][a-zA-Z0-9_-]*):\s*(.*)$")
 LINK_RE = re.compile(r"!?\[[^\]]*\]\(([^)]+)\)")
@@ -279,11 +283,16 @@ def validate_example(example_dir: Path) -> list[str]:
         for path in (example_dir / directory).iterdir()
         if path.is_file()
     }
-    if actual_planning_files != EXAMPLE_PLANNING_FILES:
+    # `analysis/_coverage.md` is required by the pipeline contract (minimal workspace,
+    # and "batch state lives in a self-contained analysis/_coverage.md"), but the two
+    # older examples predate that rule. Allow it without demanding it, so a compliant
+    # example is not rejected and a legacy one is not retroactively failed.
+    graded_planning_files = actual_planning_files - OPTIONAL_PLANNING_FILES
+    if graded_planning_files != EXAMPLE_PLANNING_FILES:
         issues.append(
             f"{example_dir.name}: planning artifact mismatch; "
-            f"missing={sorted(EXAMPLE_PLANNING_FILES - actual_planning_files)} "
-            f"extra={sorted(actual_planning_files - EXAMPLE_PLANNING_FILES)}"
+            f"missing={sorted(EXAMPLE_PLANNING_FILES - graded_planning_files)} "
+            f"extra={sorted(graded_planning_files - EXAMPLE_PLANNING_FILES)}"
         )
 
     source_dir = example_dir / "source"

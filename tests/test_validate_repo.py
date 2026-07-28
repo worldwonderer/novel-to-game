@@ -14,6 +14,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 from validate_repo import (  # noqa: E402
     EXAMPLE_MANIFEST,
     EXAMPLE_PLANNING_FILES,
+    OPTIONAL_PLANNING_FILES,
     EXPECTED_SKILLS,
     ORCHESTRATOR_SKILL,
     OUTPUT_LANGUAGE_RULE,
@@ -116,7 +117,9 @@ class RepositoryValidationTests(unittest.TestCase):
                     for path in (example / directory).iterdir()
                     if path.is_file()
                 }
-                self.assertEqual(actual, EXAMPLE_PLANNING_FILES)
+                # `analysis/_coverage.md` is contract-required but the two older
+                # examples predate the rule: allowed, not demanded.
+                self.assertEqual(actual - OPTIONAL_PLANNING_FILES, EXAMPLE_PLANNING_FILES)
 
     def test_example_source_and_citations_are_structurally_valid(self) -> None:
         for name in sorted(visible_directories(ROOT / "examples")):
