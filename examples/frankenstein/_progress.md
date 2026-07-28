@@ -2,7 +2,7 @@
 
 > `qa` gate not passed: the slice is **completable by either input scheme** — full eight-night
 > campaigns reach the `door` ending at exchange 5 and restart clean, one all-keyboard and one
-> all-mouse (143/143 browser assertions, engine invariants hold) — the `seen` ending now renders
+> all-mouse (147/147 browser assertions, engine invariants hold) — the `seen` ending now renders
 > and is played to its failure card, and all 6 release-gated **image** keys are generated and
 > wired. Still open: the Caslon font subset, the audio set, and the `want` / `silence` endings.
 > Not a release build.
@@ -22,17 +22,18 @@
   still absent; F6 **fixed** — the whole mouse click path was dead in three places and is now
   wired, proved by an all-mouse campaign; F7 **fixed** — `wedge` was never exported, so every
   frame of the `seen` phase threw; now exported and the phase plays to its failure card;
-  3 `minor` open: 23 s held cold open before the first interactive verb; the ending card's text
-  overflows its plate into dark-on-dark; integration debt — cold slot and tally plank still flat
-  greybox. F9 `minor` found and fixed: a QA assertion of ours demanded more travel than the
+  3 `minor` open: 23 s held cold open before the first interactive verb; integration debt — cold
+  slot and tally plank still flat greybox; F10 the card shrink ladder undercuts `ART_DIRECTION`
+  §9's type floor, measure and text-size setting. F8 **fixed** — card text now wraps inside its
+  paper, gated over 2898 layouts. F9 `minor` found and fixed: a QA assertion of ours demanded more travel than the
   geometry could deliver, so the mouse campaign could not pass at normal speed)
 - Reflow record: 2026-07-28 first independent QA. 1 `blocker` found and fixed —
   `step()`'s `title` case never called `engine.tick()`, so `phaseTick` stayed 0, `titleBeat`
   stayed 0, and the title text and all three verbs were never drawn; the first screen was two
   blank shapes with no way in. Also fixed 2 `minor` occlusion defects (title crossing the
   platemark; the prompt band covering the tally plank and food heap).
-- Evidence: `qa/evidence/automated.json` (143 passed / 0 failed, 0 console errors, 0 external
-  request domains, build 1.50 MB), `qa/evidence/browser/` 29 frames,
+- Evidence: `qa/evidence/automated.json` (147 passed / 0 failed, 0 console errors, 0 external
+  request domains, build 1.50 MB), `qa/evidence/browser/` 31 frames,
   `qa/evidence/qa_browser_last.log`, `node qa/design_invariants.mjs` all sections hold
 - Verified path: the full campaign — boot → title → cold open → nights 1–7 (2 carries, 4 lessons,
   96 words) → the day-8 long walk → the door → five exchanges → ending `door` → epilogue →

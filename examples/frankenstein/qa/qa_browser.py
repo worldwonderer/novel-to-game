@@ -977,6 +977,120 @@ def run_seen(page) -> dict:
     return out
 
 
+# ---------------------------------------------------------------- card layout
+#
+# QA_REPORT F8: card text must stay on the paper. drawCard now lays out
+# through layoutCard (render.js) — a pure measure, no drawing — which the
+# harness drives through window.__game. Every string in STRINGS is tried as
+# a card body line and as the display line, plus every composite card
+# main.js can build (the options panel at each focus row, the about and SEEN
+# cards, all epilogue sets, the closing triplets, the end card), with and
+# without a foot button, at every reachable textScale. Each wrapped line
+# must measure inside the paper's inner width and the block must clear the
+# paper's foot and the button zone — so a future long string fails here
+# instead of silently spilling ink onto the nightDeep ground.
+
+def run_card_layout(page) -> dict:
+    out = {}
+    section("card layout: no glyph off the paper (F8)")
+    rep = page.evaluate("""(() => {
+      const g = window.__game;
+      const S = g.STRINGS;
+      const all = [];
+      (function walk(o) {
+        if (!o) return;
+        if (typeof o === 'string') { all.push(o); return; }
+        if (typeof o !== 'object') return;
+        for (const v of Object.values(o)) walk(v);
+      })(S);
+      const cards = [];
+      for (const s of all) { cards.push(['SEEN', s]); cards.push([s]); }
+      const O = S.options;
+      const rows = [                       // the longest variant of every row
+        `${O.textSize}: ${O.textSizeValues[2]}`, `${O.ink}: ${O.inkValues[1]}`,
+        `${O.sound}: ${O.onOff[0]}`, `${O.murmur}: ${O.onOff[0]}`,
+        `${O.motion}: ${O.onOff[0]}`, O.back];
+      for (let f = 0; f < rows.length; f++)
+        cards.push([O.title, ...rows.map((r, i) => (i === f ? `— ${r} —` : r))]);
+      cards.push([...S.about]);
+      for (const fl of [S.failure.seenAgatha, S.failure.seenFelix,
+                        S.failure.seenFirstLight, S.failure.seenGarden])
+        cards.push([S.failure.header, fl]);
+      cards.push([S.epilogue.gone.line1, S.epilogue.gone.line2]);
+      cards.push([S.epilogue.darkDay]);
+      cards.push([...S.epilogue.lane]);                       // the F8 frame
+      cards.push([...S.epilogue.lane, S.epilogue.laneSatUp, S.epilogue.laneAnswer]);
+      cards.push([...S.epilogue.lane, S.epilogue.laneSatUp, S.epilogue.laneAnswerProduce]);
+      cards.push([...S.epilogue.lane, S.epilogue.laneAnswer]);
+      const C = S.epilogue.closing;
+      for (const t of [[C.labourTrue, C.theft, C.journal], [C.labourTrue, C.fewWords, C.noJournal],
+                       [C.labourFalse, C.theft, C.noJournal], [C.labourFalse, C.fewWords, C.journal],
+                       [C.labourTrue, C.journal], [C.fed, C.journal], [C.theft, C.noJournal]])
+        cards.push(t);
+      cards.push([S.cards.endOfRun]);
+      const wide = [], tall = [];
+      const shrunk = {};
+      let checked = 0;
+      for (const scale of [1, 1.25, 1.5]) {
+        for (const lines of cards) {
+          for (const btns of [[], [{ id: 'b', label: S.cards.restart, focus: true }]]) {
+            const L = g.layoutCard(lines, { textScale: scale }, btns);
+            checked++;
+            for (const ln of L.lines) {
+              if (ln.width > L.innerW + 0.5)
+                wide.push({ scale, str: ln.str.slice(0, 60),
+                            width: Math.round(ln.width * 10) / 10, innerW: L.innerW });
+            }
+            if (L.textBottom > L.textLimit + 0.5 || L.textTop < L.paperTop - 0.5)
+              tall.push({ scale, first: String(lines[0]).slice(0, 40), logical: lines.length,
+                          buttons: btns.length, bottom: Math.round(L.textBottom),
+                          limit: Math.round(L.textLimit) });
+            if (L.shrink < 1) {
+              const k = `${scale}|${lines.length}|${btns.length}|${String(lines[0]).slice(0, 30)}`;
+              if (!(k in shrunk) || L.shrink < shrunk[k].shrink)
+                shrunk[k] = { scale, shrink: L.shrink, px: L.px, logical: lines.length,
+                              buttons: btns.length, first: String(lines[0]).slice(0, 44) };
+            }
+          }
+        }
+      }
+      return { checked, nStrings: all.length, wide, tall, shrunk: Object.values(shrunk) };
+    })()""")
+    check(not rep["wide"],
+          f"every card line wraps inside the paper's inner width "
+          f"({rep['checked']} layouts over {rep['nStrings']} strings; overflow: {rep['wide'][:3]})")
+    check(not rep["tall"],
+          f"every card block clears the paper's foot and the button zone "
+          f"({rep['checked']} layouts; misfit: {rep['tall'][:3]})")
+    out["layout"] = rep
+    for s in sorted(rep["shrunk"], key=lambda s: (s["scale"], s["first"])):
+        print(f"  note  textScale {s['scale']}: a {s['logical']}-line card "
+              f"({'buttons' if s['buttons'] else 'no buttons'}) fits at shrink {s['shrink']} "
+              f"(body {s['px']} px) — {s['first']!r}")
+
+    # Frames for the record: the about card, and the options panel at
+    # textScale 1.25 — both go through drawCard's new wrapping path.
+    page.goto(URL, wait_until="networkidle")
+    page.wait_for_timeout(6000)
+    page.mouse.click(640, 756)   # third verb: about
+    page.wait_for_timeout(500)
+    check(phase(page) == "about", "the about card opens for the layout frame")
+    out["about_shot"] = shot(page, "card_about")
+    page.mouse.click(640, 400)   # anywhere: back to the title
+    page.wait_for_timeout(400)
+    page.wait_for_function("window.__game.state.phaseTick >= 280", timeout=10000)
+    page.mouse.click(640, 722)   # second verb: options
+    page.wait_for_timeout(400)
+    page.mouse.click(640, 400)   # toggle text size 1 -> 1.25
+    page.wait_for_timeout(400)
+    scale = page.evaluate("(JSON.parse(localStorage.getItem('hovel.options') || '{}').textScale) || 1")
+    check(scale == 1.25, f"the options frame is at textScale 1.25 (got {scale})")
+    out["options_shot"] = shot(page, "card_options_scale125")
+    page.evaluate("localStorage.removeItem('hovel.options')")
+    out["completed"] = True
+    return out
+
+
 def main() -> int:
     shutil.rmtree(SHOTS, ignore_errors=True)
     SHOTS.mkdir(parents=True, exist_ok=True)
@@ -998,6 +1112,7 @@ def main() -> int:
             result["campaign"] = run_campaign(page)
             result["mouse_campaign"] = run_mouse_campaign(page)
             result["seen"] = run_seen(page)
+            result["card_layout"] = run_card_layout(page)
 
             section("determinism")
             def replay():

@@ -681,6 +681,8 @@ fitCanvas();
 skin.load();
 
 // The test hook: current state, the tick index, and the active cone set.
+// layoutCard is the render layer's pure card measure (QA_REPORT F8): the
+// browser harness drives it over every card string and asserts the fit.
 window.__game = {
   get state() { return state; },
   get tick() { return state.tick; },
@@ -690,6 +692,8 @@ window.__game = {
   get epilogueStep() { return scene.epilogueStep; },
   engine,
   restart,
+  STRINGS,
+  layoutCard: (lines, opts, buttons) => R.layoutCard(ctx, lines, opts, buttons),
   get pendingKeys() { return skin.pending(); },
 };
 

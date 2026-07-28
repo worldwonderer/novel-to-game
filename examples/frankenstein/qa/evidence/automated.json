@@ -2,7 +2,7 @@
   "url": "http://127.0.0.1:5199/?seed=42&fast=1",
   "normal_speed_run": false,
   "viewport": "1280x800",
-  "passed": 143,
+  "passed": 147,
   "failed": 0,
   "console_errors": [],
   "network_errors": [],
@@ -14,33 +14,33 @@
     "keyboard_title": {
       "p50": 8.3,
       "p95": 9.3,
-      "max": 10.2,
+      "max": 10.1,
       "n": 90
     },
     "keyboard_playing": {
       "p50": 8.3,
-      "p95": 9.5,
-      "max": 10.3,
+      "p95": 9.9,
+      "max": 10.4,
       "n": 90
     },
     "mouse_title": {
       "p50": 8.3,
-      "p95": 9.8,
+      "p95": 9.9,
       "max": 10.3,
       "n": 90
     },
     "mouse_playing": {
       "p50": 8.3,
-      "p95": 9.8,
-      "max": 10.1,
+      "p95": 9.6,
+      "max": 10.4,
       "n": 90
     }
   },
   "frame_floor_ms": 33.4,
   "stall_gate_ms": 200.0,
   "longtasks_over_50ms": [],
-  "build_bytes": 1574825,
-  "shots": 29,
+  "build_bytes": 1579209,
+  "shots": 31,
   "shots_dir": "qa/evidence/browser",
   "run": {
     "keyboard": {
@@ -63,7 +63,7 @@
       "title_shot": "05_mouse_title.jpg",
       "title_button_shot": "06_mouseclick_title_button.jpg",
       "cold_open_shot": "07_mouse_cold_open.jpg",
-      "cold_open_seconds": 23.2,
+      "cold_open_seconds": 23.3,
       "playing_shot": "08_mouse_playing.jpg",
       "advanced_a_night": true,
       "state_changed": [
@@ -82,7 +82,7 @@
       "n3_carry_shot": "10_campaign_n3_carry.jpg",
       "n4_carry_shot": "11_campaign_n4_carry.jpg",
       "nights_completed": 7,
-      "words_at_walk": 97,
+      "words_at_walk": 98,
       "walk_shot": "12_campaign_walk.jpg",
       "door_shot": "13_campaign_door.jpg",
       "ending": "door",
@@ -129,6 +129,203 @@
       "plan": "night 1: step out of the mouth, stand still; Agatha's retiring patrol sees the creature at minute ~= 1.38",
       "freeze_shot": "26_seen_freeze.jpg",
       "card_shot": "27_seen_card.jpg",
+      "completed": true
+    },
+    "card_layout": {
+      "layout": {
+        "checked": 2898,
+        "nStrings": 229,
+        "wide": [],
+        "tall": [],
+        "shrunk": [
+          {
+            "scale": 1,
+            "shrink": 0.72,
+            "px": 16,
+            "logical": 7,
+            "buttons": 1,
+            "first": "Sound and text"
+          },
+          {
+            "scale": 1,
+            "shrink": 0.78,
+            "px": 17,
+            "logical": 4,
+            "buttons": 0,
+            "first": "At dawn, two men stood in the lane. The othe"
+          },
+          {
+            "scale": 1,
+            "shrink": 0.78,
+            "px": 17,
+            "logical": 4,
+            "buttons": 1,
+            "first": "At dawn, two men stood in the lane. The othe"
+          },
+          {
+            "scale": 1,
+            "shrink": 0.78,
+            "px": 17,
+            "logical": 3,
+            "buttons": 1,
+            "first": "At dawn, two men stood in the lane. The othe"
+          },
+          {
+            "scale": 1.25,
+            "shrink": 0.85,
+            "px": 23,
+            "logical": 7,
+            "buttons": 0,
+            "first": "Sound and text"
+          },
+          {
+            "scale": 1.25,
+            "shrink": 0.66,
+            "px": 18,
+            "logical": 7,
+            "buttons": 1,
+            "first": "Sound and text"
+          },
+          {
+            "scale": 1.25,
+            "shrink": 0.92,
+            "px": 25,
+            "logical": 3,
+            "buttons": 1,
+            "first": "This plate is drawn from the 1831 text, chap"
+          },
+          {
+            "scale": 1.25,
+            "shrink": 0.78,
+            "px": 21,
+            "logical": 4,
+            "buttons": 0,
+            "first": "At dawn, two men stood in the lane. The othe"
+          },
+          {
+            "scale": 1.25,
+            "shrink": 0.66,
+            "px": 18,
+            "logical": 4,
+            "buttons": 1,
+            "first": "At dawn, two men stood in the lane. The othe"
+          },
+          {
+            "scale": 1.25,
+            "shrink": 0.78,
+            "px": 21,
+            "logical": 3,
+            "buttons": 1,
+            "first": "At dawn, two men stood in the lane. The othe"
+          },
+          {
+            "scale": 1.25,
+            "shrink": 0.85,
+            "px": 23,
+            "logical": 3,
+            "buttons": 1,
+            "first": "It was apparent that my conversation had int"
+          },
+          {
+            "scale": 1.25,
+            "shrink": 0.78,
+            "px": 21,
+            "logical": 3,
+            "buttons": 1,
+            "first": "He had heard a stranger at his door, and not"
+          },
+          {
+            "scale": 1.5,
+            "shrink": 0.78,
+            "px": 26,
+            "logical": 7,
+            "buttons": 0,
+            "first": "Sound and text"
+          },
+          {
+            "scale": 1.5,
+            "shrink": 0.6,
+            "px": 20,
+            "logical": 7,
+            "buttons": 1,
+            "first": "Sound and text"
+          },
+          {
+            "scale": 1.5,
+            "shrink": 0.85,
+            "px": 28,
+            "logical": 3,
+            "buttons": 1,
+            "first": "This plate is drawn from the 1831 text, chap"
+          },
+          {
+            "scale": 1.5,
+            "shrink": 0.66,
+            "px": 22,
+            "logical": 4,
+            "buttons": 0,
+            "first": "At dawn, two men stood in the lane. The othe"
+          },
+          {
+            "scale": 1.5,
+            "shrink": 0.6,
+            "px": 20,
+            "logical": 4,
+            "buttons": 1,
+            "first": "At dawn, two men stood in the lane. The othe"
+          },
+          {
+            "scale": 1.5,
+            "shrink": 0.92,
+            "px": 30,
+            "logical": 3,
+            "buttons": 0,
+            "first": "At dawn, two men stood in the lane. The othe"
+          },
+          {
+            "scale": 1.5,
+            "shrink": 0.66,
+            "px": 22,
+            "logical": 3,
+            "buttons": 1,
+            "first": "At dawn, two men stood in the lane. The othe"
+          },
+          {
+            "scale": 1.5,
+            "shrink": 0.66,
+            "px": 22,
+            "logical": 3,
+            "buttons": 1,
+            "first": "It was apparent that my conversation had int"
+          },
+          {
+            "scale": 1.5,
+            "shrink": 0.92,
+            "px": 30,
+            "logical": 3,
+            "buttons": 0,
+            "first": "It was apparent that my conversation had int"
+          },
+          {
+            "scale": 1.5,
+            "shrink": 0.78,
+            "px": 26,
+            "logical": 3,
+            "buttons": 1,
+            "first": "He had heard a stranger at his door, and not"
+          },
+          {
+            "scale": 1.5,
+            "shrink": 0.92,
+            "px": 30,
+            "logical": 3,
+            "buttons": 0,
+            "first": "He had heard a stranger at his door, and not"
+          }
+        ]
+      },
+      "about_shot": "28_card_about.jpg",
+      "options_shot": "29_card_options_scale125.jpg",
       "completed": true
     }
   }

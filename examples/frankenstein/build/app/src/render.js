@@ -345,18 +345,91 @@ function drawRoom(ctx, state, ax, ay, aw, ah, view, opts) {
 
 // ---------------------------------------------------------------- cards & title
 
+// The card's paper, centred on the plate. Card ink must never leave it: the
+// paper is the one light ground on a night-deep plate, so a glyph off its
+// edge is a glyph lost (QA_REPORT F8).
+const CARD = { x0: PLATE.w * 0.22, y0: PLATE.h * 0.30, x1: PLATE.w * 0.78, y1: PLATE.h * 0.70 };
+const CARD_PAD_X = 56;         // inner side margins: ink never nears the deckle
+const CARD_PAD_TOP = 24;
+const CARD_PAD_BOTTOM = 20;
+const CARD_SHRINK = [1, 0.92, 0.85, 0.78, 0.72, 0.66, 0.6, 0.54];
+
+// Wrap one logical line to physical lines measuring <= maxWidth, word by word
+// (the same measureText walk glossText does). A single word wider than the
+// measure stays whole on its own line — the layout reports the overflow
+// rather than breaking the word.
+function wrapCardLine(ctx, str, font, maxWidth) {
+  ctx.font = font;
+  const space = ctx.measureText(' ').width;
+  const out = [];
+  let cur = '', curW = 0;
+  for (const w of str.split(' ')) {
+    const ww = ctx.measureText(w).width;
+    if (cur && curW + space + ww > maxWidth) {
+      out.push({ str: cur, width: curW });
+      cur = w; curW = ww;
+    } else {
+      cur = cur ? cur + ' ' + w : w;
+      curW = curW ? curW + space + ww : ww;
+    }
+  }
+  if (cur) out.push({ str: cur, width: curW });
+  return out;
+}
+
+// Pure layout for drawCard; measures, never draws. Every logical line wraps
+// to the paper's inner width, then the ladder steps leading and type down
+// together until the block clears the paper's foot — and the button zone
+// anchored there. Nothing is truncated and nothing leaves the paper; if the
+// smallest setting still misfits it is returned as-is and the QA gate fails
+// loudly instead of spilling ink onto the night.
+export function layoutCard(ctx, lines, opts = {}, buttons = []) {
+  const scale = opts.textScale || 1;
+  const innerW = (CARD.x1 - CARD.x0) - CARD_PAD_X * 2;
+  const textTop0 = CARD.y0 + CARD_PAD_TOP;
+  // Buttons anchor at the paper's foot (drawCard keeps their geometry); the
+  // text block must end above the topmost button's hit zone.
+  const textLimit = buttons.length
+    ? CARD.y1 - 60 - (buttons.length - 1) * 44 - 30
+    : CARD.y1 - CARD_PAD_BOTTOM;
+  let laid = null;
+  for (const shrink of CARD_SHRINK) {
+    const pxTitle = Math.max(14, Math.round(30 * shrink));
+    const px = Math.max(11, Math.round(22 * scale * shrink));
+    const gap = Math.max(6, Math.round(16 * shrink));
+    const phys = [];
+    lines.forEach((ln, i) => {
+      const disp = i === 0, p = disp ? pxTitle : px;
+      for (const w of wrapCardLine(ctx, ln, disp ? fontDisp(p) : fontBody(p), innerW)) {
+        phys.push({ ...w, px: p, disp });
+      }
+    });
+    let baseline = textTop0 + (phys.length ? phys[0].px : 0);
+    for (const l of phys) { l.baseline = baseline; baseline += l.px + gap; }
+    const textTop = phys.length ? phys[0].baseline - 0.8 * phys[0].px : textTop0;
+    const textBottom = phys.length
+      ? phys[phys.length - 1].baseline + 0.35 * phys[phys.length - 1].px : textTop0;
+    laid = {
+      lines: phys, shrink, px, pxTitle, gap, innerW,
+      paperTop: CARD.y0, paperBottom: CARD.y1, padX: CARD_PAD_X,
+      textTop, textBottom, textLimit,
+      totalH: textBottom - textTop, availH: textLimit - textTop0,
+    };
+    if (textBottom <= textLimit) return laid;
+  }
+  return laid;
+}
+
 export function drawCard(ctx, lines, opts, buttons = []) {
   rect(ctx, 0, 0, PLATE.w, PLATE.h, PAL.nightDeep);
-  const x0 = PLATE.w * 0.22, y0 = PLATE.h * 0.30, x1 = PLATE.w * 0.78, y1 = PLATE.h * 0.70;
-  rect(ctx, x0, y0, x1, y1, PAL.paper, PAL.ink);
-  const px = Math.round(22 * (opts.textScale || 1));
-  lines.forEach((ln, i) => {
-    text(ctx, ln, PLATE.w / 2, y0 + 60 + i * (px + 18), i === 0 ? 30 : px, PAL.ink, 'center',
-      i === 0 ? fontDisp(30) : null);
-  });
+  rect(ctx, CARD.x0, CARD.y0, CARD.x1, CARD.y1, PAL.paper, PAL.ink);
+  for (const ln of layoutCard(ctx, lines, opts, buttons).lines) {
+    text(ctx, ln.str, PLATE.w / 2, ln.baseline, ln.px, PAL.ink, 'center',
+      ln.disp ? fontDisp(ln.px) : null);
+  }
   const bs = [];
   buttons.forEach((b, i) => {
-    const by = y1 - 60 - (buttons.length - 1 - i) * 44;
+    const by = CARD.y1 - 60 - (buttons.length - 1 - i) * 44;
     text(ctx, b.label, PLATE.w / 2, by, Math.round(19 * (opts.textScale || 1)), b.focus ? PAL.ink : PAL.ink2, 'center');
     if (b.focus) {
       ctx.strokeStyle = PAL.ink; ctx.lineWidth = 1.5;
