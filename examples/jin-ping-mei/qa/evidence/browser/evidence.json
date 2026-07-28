@@ -1,14 +1,35 @@
 {
   "url": "http://127.0.0.1:5173/?seed=42&fast=1",
-  "passed": 130,
+  "normal_speed_run": false,
+  "viewport": "1280x800",
+  "passed": 133,
   "failed": 0,
   "console_errors": [],
   "network_errors": [],
   "http_errors": [],
   "performance": {
-    "local_load_ms": 22.6,
-    "average_frame_interval_ms": 8.3
+    "note": "纯 DOM/CSS，无 rAF 渲染循环；帧率对本作无意义，改测转场延迟与主线程长任务",
+    "local_load_ms": 104.6,
+    "transitions": {
+      "banquet_conflict_close": {
+        "transition_to_paint_ms": 8.1
+      }
+    },
+    "transition_budget_ms": 200.0,
+    "longtasks_over_50ms": [
+      {
+        "ms": 298,
+        "at": 712,
+        "phase": "?"
+      }
+    ],
+    "stall_gate_ms": 200.0,
+    "build_bytes": 6264290
   },
+  "request_hosts": [
+    "127.0.0.1:5173"
+  ],
+  "external_hosts": [],
   "safe_screenshots": [
     "01_age_gate.jpg",
     "02_title.jpg",

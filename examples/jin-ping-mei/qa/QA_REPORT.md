@@ -42,16 +42,18 @@ python3 test/qa_browser.py
 # 控制台错误：0；关键资源失败：0
 ```
 
-机器可读摘要落在 `qa/evidence/automated.json`。浏览器逐步截图与当次运行原始摘要当时落在
-`/tmp/jpm_qa/`——按现行契约，工作区外 / 系统临时目录路径视为无证据，该目录现已不存在，
-相关截图证据全部失效；复跑 `python3 test/qa_browser.py` 时截图须落盘 `qa/evidence/`
-（18+ 内部截图放受限子目录并在报告标注）。
+机器可读摘要落在 `qa/evidence/automated.json`。浏览器逐步截图与当次运行原始摘要曾落在
+`/tmp/jpm_qa/`——按现行契约，工作区外 / 系统临时目录路径视为无证据，该目录已随重启消失。
+
+**2026-07-28 复跑已修复该缺陷**：`test/qa_browser.py` 的证据目录默认改为工作区内
+`qa/evidence/`，安全截图落 `qa/evidence/browser/safe/`，18+ 内部截图落受限子目录
+`qa/evidence/browser/adult/`（已 gitignore，不随仓库发布）。加速与正常速度（`QA_SLOW=1`）
+各复跑一轮，均 133 通过 / 0 失败，下表截图证据已重新生成、恢复有效。
 
 ## 关键不变量
 
-复审注（2026-07-26）：下表「证据」列凡仅引用 `safe/*.png`（原 `/tmp/jpm_qa/`）截图者，
-证据已失效，该行按「通过（证据失效·待复跑）」读，不得作为通过依据；仅由可复跑测试断言
-（`test/ledger.mjs`、`test/qa_browser.py`）支撑的行仍可复核。
+复审注（2026-07-28）：下表「证据」列的 `safe/*.jpg` 现指 `qa/evidence/browser/safe/` 下 2026-07-28
+复跑重新生成的截图，路径在工作区内、可由 `python3 test/qa_browser.py` 复现，证据有效。
 
 | 检查 | 结果 | 证据 |
 |---|---|---|
@@ -81,7 +83,9 @@ python3 test/qa_browser.py
 | 缺关键 CG 失败而非灰盒回退 | 通过 | 资产加载器与缺失资产测试 |
 | 同 seed + 同选择可复现 | 通过 | 纯引擎快照比较 |
 | 目标视口无关键遮挡或溢出 | 通过 | 双视口 bounding box 断言 |
-| 首屏、帧率、包体达到预算 | 通过 | 99.3 ms、8.3 ms 平均帧间隔、6.0 MB |
+| 首屏、转场延迟、包体达到预算 | 通过 | 33.2 ms 首屏、最重转场 18.3 ms（正常速度）、6.0 MB |
+| 无外部请求域（切片自包含） | 通过 | 全程请求域仅 `127.0.0.1:5173` |
+| 游戏中无主线程长任务 | 通过 | longtask 观测：游戏中 0 次 >50 ms；启动期 1 次 172 ms（首屏解码） |
 | 最小视口文字达到可读地板 | 通过 | 功能标签 13px、正文 14px、人物原因 12px |
 | 键盘与降运动路径 | 通过 | Tab 聚焦、`prefers-reduced-motion` 断言 |
 | 静音持久化 | 通过 | UI 切换后新页面仍读取 `jpm_mute` |
@@ -121,14 +125,21 @@ python3 test/qa_browser.py
 - `screenshots/ending.jpg`
 - `qa/evidence/automated.json`
 - `qa/evidence/design-invariants.md`（2026-07-26 复审静态对照）
+- `qa/evidence/browser/evidence.json`（2026-07-28 复跑：请求域、转场延迟、长任务、包体）
+- `qa/evidence/browser/safe/` 共 11 张：01_age_gate、02_title、03_opening_choice_done、
+  04_delayed_yue_morning、06_banquet_conflict、07_exclusive_ending、08_gallery_after_yue、
+  09_jealousy_chain，以及 household_meng_yulou / household_sun_xuee / household_li_jiaoer
 
-已失效证据（原引用 `/tmp/jpm_qa/safe/` 下 01_age_gate、02_title、03_opening_choice_done、
-04_delayed_yue_morning、06_banquet_conflict、07_exclusive_ending、08_gallery_after_yue、
-09_jealousy_chain 与三张宅中人截图——系统临时目录已不存在，按契约视为无证据；复跑时
-落盘 `qa/evidence/safe/`）。
+内部 18+ 证据：`qa/evidence/browser/adult/` 共 11 张，受限子目录，已 gitignore（契约要求持久的
+工作区路径，不要求把明确成人画面发布进仓库），不进 README 或公开商店页。
 
-内部 18+ 证据：原 `/tmp/jpm_qa/adult/`，已失效；复跑时落盘 `qa/evidence/adult/`
-受限子目录并在报告标注，不进 README。
+## 性能口径说明
+
+本作是纯 DOM/CSS，全项目零 `requestAnimationFrame`、零 canvas，**没有逐帧渲染循环**。
+采 rAF 间隔只会量到浏览器空闲垂直同步节拍（headless 恒为 ~8.3 ms），无论画面轻重都一样——
+2026-07-26 那版记录的「8.3 ms 平均帧间隔」正是这个数，它对本作**不构成**性能结论，
+换任何一屏都会得到同一个数字。现改测两项对 DOM 应用真正成立的量：一次转场的
+「点击→绘制完成」延迟，以及全程 longtask（>50 ms 主线程阻塞）并按启动期 / 游戏中归因。
 
 视觉裁决状态：原 `.omx/state/jinpingmei/ralph-progress.json`，外部工具状态、未导出为
 evidence 文件，已失效；处置见「招牌帧符合」降级说明。
