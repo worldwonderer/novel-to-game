@@ -11,7 +11,14 @@ the door exchanges, the epilogue cards and the restart button, all by click/hold
 with no keyboard input anywhere (QA_REPORT F6) — and a fifth pass that gets the
 creature seen on night 1 by standing still in the yard until Agatha's retiring
 patrol finds him, asserting the seen phase renders console-clean and the SEEN
-failure card lands after the 2 s hold (QA_REPORT F7).
+failure card lands after the 2 s hold (QA_REPORT F7) — and two more passes that
+play the remaining designed endings for real (GAME_DESIGN §12): the sixth takes
+from the milk-house once a night for five nights until the family leaves for
+want (sim.js STORE_GONE_DAWNS), the seventh draws the store to 1 by dawn 6 so
+the walk is the errand (day 9, two slots), knocks, and never answers — the
+door's real-time clock runs out at index 0, which is the silence ending
+(sim.js:666). Both assert the ending id, a console-clean staging segment,
+afterRun, and a restart to a valid initial state.
 
 Evidence lands in the workspace at qa/evidence/browser/ as JPEG. The qa contract treats
 paths outside the workspace (and system temp dirs) as no evidence at all.
@@ -354,6 +361,7 @@ def qa_state(page) -> dict:
         carrying: s.creature.carrying, inHovel: s.creature.inHovel,
         ending: s.ending, seenBy: s.seenBy, seenCtx: s.seenContext, exchanges: s.exchangesReached,
         carries: s.carriesTotal, lessons: s.lessonsAttended, listens: s.listensCompleted,
+        takes: s.takesTotal, zeroStoreRun: s.zeroStoreRun, familyGone: s.familyGone,
         slipped: s.walkSlipped, walk: s.walk,
         door: s.door && { index: s.door.index, exchangeTicks: s.door.exchangeTicks,
                           clockTicks: s.door.clockTicks, slots: s.door.slots },
@@ -1178,6 +1186,284 @@ def run_seen(page) -> dict:
     return out
 
 
+# ---------------------------------------------------- the milk-house take leg
+#
+# Shared by the want and silence passes: wait out the retiring window inside
+# (Agatha's circuit reaches the milk-house at minute ~= 2.2), step out, walk
+# the 60 px to the milk-house, one take (0.44 night-minutes), walk back, slip
+# in. Minutes 5.2 -> dawnStart carry no cones at firing 0, unease <= 1, so the
+# leg is cone-free; the drive target is the milk-house's west face itself, so
+# the obstacle pin lands the creature on the target instead of overshooting it.
+
+def take_once(page, tag: str, takes_want: int) -> None:
+    need(wait_cond(page, lambda s: s["minute"] >= 5.2, 10 * SPEED) is not None,
+         f"[{tag}] the retiring window closes")
+    press(page, "x")
+    need(wait_cond(page, lambda s: not s["inHovel"], 5),
+         f"[{tag}] steps out once the yard is empty")
+    s = drive_to(page, 688, 252, 7)  # the milk-house west face: any stop in the
+                                     # ring is <= 29 px off the centre (take reach 30)
+    need(s is not None and s["phase"] == "night",
+         f"[{tag}] the walk to the milk-house (last={s})")
+    press(page)  # one edge: the take starts; re-pressing would abort it
+    s = wait_cond(page, lambda s: s["takes"] == takes_want or s["phase"] != "night",
+                  10 * SPEED)
+    need(s and s["phase"] == "night" and s["takes"] == takes_want,
+         f"[{tag}] the take lands (takesTotal={s and s['takes']}, last={s})")
+    s = drive_to(page, 630, 265, 8)
+    need(s is not None and s["phase"] == "night",
+         f"[{tag}] the walk home (last={s})")
+    press(page)  # slip back inside
+    need(wait_cond(page, lambda s: s["inHovel"], 5),
+         f"[{tag}] back inside ahead of the dawn window")
+
+
+def play_epilogue(page, tag: str) -> dict | None:
+    """The epilogue to afterRun by real input: a fresh key edge advances each
+    timed card well ahead of its minTicks; the moon set (step 2 in both the
+    want and the lane variants) is a 5 s hold that ignores edges, so the key
+    is held down until the step passes. Returns the afterRun state or None."""
+    done = None
+    holding = False
+    t0 = time.time()
+    while time.time() - t0 < 45:
+        s = qa_state(page)
+        if s["phase"] == "afterRun":
+            done = s
+            break
+        if s["phase"] != "epilogue":
+            page.wait_for_timeout(200)
+            continue
+        step = page.evaluate("window.__game.epilogueStep")
+        if step == 2:
+            if not holding:
+                page.keyboard.down("e")
+                holding = True
+        else:
+            if holding:
+                page.keyboard.up("e")
+                holding = False
+            press(page, "e", 60)
+        page.wait_for_timeout(250)
+    if holding:
+        page.keyboard.up("e")
+    return done
+
+
+def cold_open_to_night1(page, tag: str) -> None:
+    """The shared entry every campaign pass uses: title -> Enter -> the 23 s
+    held cold open -> night 1."""
+    page.goto(URL, wait_until="networkidle")
+    page.wait_for_timeout(600)
+    need(phase(page) == "title", f"[{tag}] boots into the title phase")
+    page.keyboard.press("Enter")
+    need(wait_cond(page, lambda s: s["phase"] == "coldOpen", 5) is not None,
+         f"[{tag}] leaving the title works")
+    page.keyboard.down(" ")
+    t0 = time.time()
+    while phase(page) == "coldOpen" and time.time() - t0 < 40:
+        page.wait_for_timeout(500)
+    page.keyboard.up(" ")
+    s = qa_state(page)
+    need(s["phase"] == "night" and s["night"] == 1,
+         f"[{tag}] cold open completes into night 1")
+
+
+# ---------------------------------------------------------------- want ending
+#
+# GAME_DESIGN §12 "want": three consecutive dawns at Store 0 and the family
+# leaves (sim.js:149-150, 166-171). Doing nothing never gets there — after the
+# thaw the store pins at 2 — so the pass takes from the milk-house once a
+# night for five nights: store 4, 2, 0, 0, 0, familyGone at dawn 6, and the
+# dawn read advances straight into the epilogue (no aftermath on this path).
+# The want staging (the gone card, the want closing lines, main.js:342/616)
+# had never executed, so the segment from the last dawn read to afterRun gets
+# its own zero-new-errors assertion, as run_seen does for F7.
+
+def run_want(page) -> dict:
+    out = {"plan": "one milk-house take per night, nights 1-5: store 4,2,0,0,0; "
+                   "zeroStoreRun 3 at dawn 6 -> the family is gone (want)"}
+    try:
+        section("[want] boot, title, cold open")
+        cold_open_to_night1(page, "want")
+
+        section("[want] nights 1-5: one take a night")
+        store_want = {1: 4, 2: 2, 3: 0, 4: 0, 5: 0}
+        for n in (1, 2, 3, 4, 5):
+            take_once(page, "want", n)
+            s = wait_dawn(page)
+            need(s["store"] == store_want[n] and s["takes"] == n,
+                 f"[want] night {n}: the take drains the store on schedule "
+                 f"(store {s['store']} == {store_want[n]}, takesTotal {s['takes']})")
+            if n < 5:
+                press(page)  # let the day pass -> the next night
+                need(wait_cond(page, lambda s: s["phase"] == "night" and s["night"] == n + 1, 5),
+                     f"[want] night {n + 1} begins")
+
+        section("[want] dawn 6: the family is gone")
+        out["nights_completed"] = 5
+        need(s["zeroStoreRun"] >= 3 and s["familyGone"],
+             f"[want] three consecutive dawns at store 0 "
+             f"(zeroStoreRun {s['zeroStoreRun']}, familyGone {s['familyGone']})")
+        err0 = len(errors)
+        press(page)  # advance the read -> epilogue (advanceFromDawn, sim.js:167)
+        s = wait_cond(page, lambda s: s["phase"] == "epilogue", 5)
+        need(s is not None, "[want] the dawn read advances into the epilogue")
+        need(s["ending"] in DESIGNED_ENDINGS,
+             f"[want] ending id is a designed one ({s['ending']}; §12: {DESIGNED_ENDINGS})")
+        need(s["ending"] == "want", f"[want] the run ends for want ({s['ending']})")
+        out["ending"] = s["ending"]
+        page.wait_for_timeout(400)  # let the gone card draw for a few frames
+        out["gone_shot"] = shot(page, "want_gone_card")
+        model = page.evaluate("(() => { const g = window.__game; return g.engine.epilogueModel(g.state); })()")
+        need(model["ending"] == "want" and model["nothingPutBy"],
+             f"[want] the epilogue model agrees (ending={model['ending']}, "
+             f"nothingPutBy={model['nothingPutBy']}, storeAtFlight={model['storeAtFlight']})")
+        out["epilogue_model"] = model
+
+        done = play_epilogue(page, "want")
+        need(done is not None, "[want] the epilogue plays out to afterRun")
+        need(done["ending"] == "want",
+             "[want] the ending is still recorded at afterRun")
+        out["afterrun_shot"] = shot(page, "want_afterrun")
+        need(len(errors) == err0,
+             f"[want] console clean through the want staging ({len(errors) - err0} new errors)")
+
+        section("[want] restart")
+        page.keyboard.press("Enter")
+        s = wait_cond(page, lambda s: s["phase"] == "title", 5)
+        need(s and s["night"] == 1 and s["words"] == 0 and s["store"] == 6 and not s["ending"],
+             f"[want] restart restores a valid initial state "
+             f"(phase={s and s['phase']}, night {s and s['night']}, words {s and s['words']}, "
+             f"store {s and s['store']})")
+        out["restart_shot"] = shot(page, "want_restart")
+        out["completed"] = True
+    except CampaignAbort as e:
+        out["completed"] = False
+        out["abort"] = str(e)
+        check(False, f"[want] {e}")
+        try:
+            out["state_at_abort"] = qa_state(page)
+            out["abort_shot"] = shot(page, "want_abort")
+        except Exception:
+            pass
+    return out
+
+
+# ---------------------------------------------------------------- silence ending
+#
+# GAME_DESIGN §12 "silence": the door's clock is real time — 30 s a slot, not
+# accelerated by ?fast=1 — and it ends on whatever is in progress; index 0 is
+# silence (sim.js:664-666). The cheap walk is the errand: store <= 1 at dawn 6
+# selects it (day 9, two slots). One milk-house take on night 1 draws the
+# store curve 4,3,2,1,1,... — never 0, so the family stays — and nights 2-8
+# are simply waited out inside. Words stay 0, so the knock costs one slot
+# (WALK_NOTICE_WORDS): one slot, a 30 s clock, and no answer at all. The door
+# scene running its clock out at index 0 (the sitSilence subtitle) had never
+# executed, so the segment from the knock to afterRun gets its own
+# zero-new-errors assertion, as run_seen does for F7.
+
+def run_silence(page) -> dict:
+    out = {"plan": "take n1 (store 1 at dawn 6 -> the errand walk, day 9, two "
+                   "slots); wait out n2-8 inside; knock in the 15-30 s band "
+                   "(words 0 -> one slot); never answer: the 30 s clock runs "
+                   "out at index 0"}
+    try:
+        section("[silence] boot, title, cold open")
+        cold_open_to_night1(page, "silence")
+
+        section("[silence] night 1: one take; nights 2-8 waited out inside")
+        take_once(page, "silence", 1)
+        s = wait_dawn(page)
+        need(s["store"] == 4 and s["takes"] == 1,
+             f"[silence] night 1: the take lands (store {s['store']} == 4, takesTotal {s['takes']})")
+        for n in (2, 3, 4, 5, 6, 7, 8):
+            press(page)  # let the day pass -> the next night
+            need(wait_cond(page, lambda s: s["phase"] == "night" and s["night"] == n, 5),
+                 f"[silence] night {n} begins")
+            s = wait_dawn(page)  # no input at all: the creature simply hides
+            if n == 5:
+                need(s["store"] == 1 and s["walk"] and s["walk"]["band"] == "errand"
+                     and s["walk"]["day"] == 9 and s["walk"]["slots"] == 2,
+                     f"[silence] store 1 at dawn 6 selects the errand walk "
+                     f"(store {s['store']}, walk={s['walk']})")
+                need(not s["familyGone"] and s["zeroStoreRun"] == 0,
+                     f"[silence] the store never pins at 0, the family stays "
+                     f"(zeroStoreRun {s['zeroStoreRun']}, familyGone {s['familyGone']})")
+
+        section("[silence] day 9: the errand walk")
+        out["nights_completed"] = 8
+        press(page)  # let the day pass -> the walk
+        s = wait_cond(page, lambda s: s["phase"] == "walk", 5)
+        need(s and s["walk"] and s["walk"]["band"] == "errand" and s["walk"]["slots"] == 2,
+             f"[silence] the errand walk, two slots (walk={s and s['walk']})")
+        need(wait_cond(page, lambda s: s["walkStage"] == "cross", 6),
+             "[silence] the three go out at the gate")
+        page.wait_for_timeout(17000)  # knocking inside 15 s costs a slot; past 30 s another
+        for wx, wy in ROUTE_CROSS:
+            s = drive_to(page, wx, wy, 16, phases=("walk",))
+            if s is None or s["phase"] != "walk":
+                raise CampaignAbort(f"the daylight crossing failed (last={s})")
+        err0 = len(errors)
+        press(page, "e", 120)  # the knock — the last input this pass ever sends
+        s = wait_cond(page, lambda s: s["phase"] == "door", 5)
+        need(s and s["door"] and s["door"]["slots"] == 1,
+             f"[silence] the knock with no words costs a slot (slots="
+             f"{s and s['door'] and s['door']['slots']}, words {s and s['words']})")
+
+        section("[silence] the door: no answer, the clock runs out")
+        page.wait_for_timeout(2500)  # a few seconds into the clock for the frame
+        out["door_shot"] = shot(page, "silence_door")
+        s = wait_cond(page, lambda s: s["phase"] == "aftermath", 40)
+        need(s is not None, "[silence] the door opens when the clock runs out with no answer")
+        need(s["ending"] in DESIGNED_ENDINGS,
+             f"[silence] ending id is a designed one ({s['ending']}; §12: {DESIGNED_ENDINGS})")
+        need(s["ending"] == "silence" and s["exchanges"] == 0,
+             f"[silence] the run ends in silence at index 0 "
+             f"(ending={s['ending']}, exchangesReached {s['exchanges']})")
+        out["ending"] = s["ending"]
+        out["exchanges"] = s["exchanges"]
+
+        section("[silence] aftermath, epilogue, afterRun")
+        model = page.evaluate("(() => { const g = window.__game; return g.engine.epilogueModel(g.state); })()")
+        need(model["ending"] == "silence" and model["exchanges"] == 0,
+             f"[silence] the epilogue model agrees (ending={model['ending']}, "
+             f"exchanges={model['exchanges']}, storeAtFlight={model['storeAtFlight']})")
+        out["epilogue_model"] = model
+        page.keyboard.down("e")  # the withheld hand
+        page.wait_for_timeout(1200)
+        page.keyboard.up("e")
+        need(wait_cond(page, lambda s: s["phase"] == "epilogue", 5) is not None,
+             "[silence] the withheld hand holds into the epilogue")
+        done = play_epilogue(page, "silence")
+        need(done is not None, "[silence] the epilogue plays out to afterRun")
+        need(done["ending"] == "silence" and done["exchanges"] == 0,
+             "[silence] the ending is still recorded at afterRun")
+        out["afterrun_shot"] = shot(page, "silence_afterrun")
+        need(len(errors) == err0,
+             f"[silence] console clean through the silence staging ({len(errors) - err0} new errors)")
+
+        section("[silence] restart")
+        page.keyboard.press("Enter")
+        s = wait_cond(page, lambda s: s["phase"] == "title", 5)
+        need(s and s["night"] == 1 and s["words"] == 0 and s["store"] == 6 and not s["ending"],
+             f"[silence] restart restores a valid initial state "
+             f"(phase={s and s['phase']}, night {s and s['night']}, words {s and s['words']}, "
+             f"store {s and s['store']})")
+        out["restart_shot"] = shot(page, "silence_restart")
+        out["completed"] = True
+    except CampaignAbort as e:
+        out["completed"] = False
+        out["abort"] = str(e)
+        check(False, f"[silence] {e}")
+        try:
+            out["state_at_abort"] = qa_state(page)
+            out["abort_shot"] = shot(page, "silence_abort")
+        except Exception:
+            pass
+    return out
+
+
 # ---------------------------------------------------------------- card layout
 #
 # QA_REPORT F8: card text must stay on the paper. drawCard now lays out
@@ -1383,6 +1669,8 @@ def main() -> int:
             result["campaign"] = run_campaign(page)
             result["mouse_campaign"] = run_mouse_campaign(page)
             result["seen"] = run_seen(page)
+            result["want"] = run_want(page)
+            result["silence"] = run_silence(page)
             result["card_layout"] = run_card_layout(page)
             result["fonts"] = run_fonts(page)
 

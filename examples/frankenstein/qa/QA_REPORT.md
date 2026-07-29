@@ -9,8 +9,9 @@
 - Verdict: **not `PASS`** — the slice is **completable by either input scheme**: full eight-night
   campaigns reach the `door` ending at exchange 5 and restart clean, one driven entirely by
   keyboard and one entirely by mouse, and the `seen` ending now renders and is played to its
-  failure card. Still open: one release gate (the audio set), and `want` and `silence`
-  remain unplayed (see *Findings*, *Release gate*, *Not verified*).
+  failure card, and `want` and `silence` are played too — **all four designed endings now have
+  executable evidence**. Still open: one release gate, the audio set (see *Findings*,
+  *Release gate*, *Not verified*).
 - `blocker`: 0 (1 found in round 1, **fixed**, with a regression check)
 - `major`: 4 — 1 partly cleared (images and fonts done; audio outstanding), 3 **fixed**
   (F6 mouse input, F7 the `seen` ending, F12 the hovel plate's composition)
@@ -35,7 +36,7 @@ python3 qa/qa_browser.py        # real Chromium: keyboard, mouse, both campaigns
 | Page | `http://127.0.0.1:5199/?seed=42&fast=1` (and `?seed=42` under `QA_SLOW=1`) |
 | Form | native ES Module + Canvas 2D, zero build |
 | Viewport | 1280×800 (target), 1280×720 (minimum) both tested |
-| Browser assertions | **164 passed, 0 failed** across five passes: keyboard, mouse, keyboard campaign, mouse campaign, `seen` ending, plus a card-layout gate over 2898 layouts and a font gate proving both Caslon faces really render |
+| Browser assertions | **246 passed, 0 failed** across seven passes: keyboard, mouse, keyboard campaign, mouse campaign, and all four designed endings (`door`, `seen`, `want`, `silence`), plus a card-layout gate over 2898 layouts and a font gate proving both Caslon faces really render |
 | Engine invariants | all sections hold |
 | Console errors / failed requests | 0 / 0 |
 | Request domains | `127.0.0.1:5199` only — **no external domain** |
@@ -43,7 +44,7 @@ python3 qa/qa_browser.py        # real Chromium: keyboard, mouse, both campaigns
 | Frame p50 / p95 / worst | 8.3 / 10.0 / 10.4 ms — comfortably inside the 30 FPS floor (33.4 ms) |
 | Main-thread long tasks | 0 in-game, 0 at boot |
 
-Machine-readable summary: `qa/evidence/automated.json`. Frames: `qa/evidence/browser/` (38).
+Machine-readable summary: `qa/evidence/automated.json`. Frames: `qa/evidence/browser/` (44).
 Full run log: `qa/evidence/qa_browser_last.log`.
 
 Frame sampling sits on the two heaviest live screens (title reveal, night play), not an idle
@@ -111,10 +112,12 @@ writing further automation against this build has to hold.
 
 ## Not verified this round
 
-- **Two of the four endings.** `door` and `seen` are played end to end; `want` and `silence`
-  are untested.
-- **Endings by mouse other than `door`** — the mouse campaign reaches `door` only, same as the
-  keyboard one.
+- ~~Endings~~ — **all four designed endings (§12) are now played end to end**: `door` and `seen`,
+  plus `want` (five nights taking from the milk-house until `zeroStoreRun` reaches 3) and
+  `silence` (the door clock run out at exchange index 0). Each asserts its id, a segment-scoped
+  console-clean gate, `afterRun`, and a valid restart.
+- **Endings by mouse other than `door`** — the mouse campaign reaches `door` only; `seen`,
+  `want` and `silence` are driven by keyboard.
 - **Signature frames**: now judgeable for the first time — the plates are in — but no frame-by-frame
   pass has been run against `ART_DIRECTION`'s signature moments. Deferred, not passed.
 - **Onboarding comprehension**: no clean-context judgement has been run

@@ -2,7 +2,7 @@
   "url": "http://127.0.0.1:5199/?seed=42&fast=1",
   "normal_speed_run": false,
   "viewport": "1280x800",
-  "passed": 164,
+  "passed": 246,
   "failed": 0,
   "console_errors": [],
   "network_errors": [],
@@ -13,34 +13,34 @@
   "frame_ms": {
     "keyboard_title": {
       "p50": 8.3,
-      "p95": 9.8,
-      "max": 10,
+      "p95": 10.1,
+      "max": 10.3,
       "n": 90
     },
     "keyboard_playing": {
       "p50": 8.3,
-      "p95": 9.6,
-      "max": 10,
+      "p95": 9.2,
+      "max": 9.5,
       "n": 90
     },
     "mouse_title": {
       "p50": 8.3,
-      "p95": 10.2,
-      "max": 10.3,
+      "p95": 9.4,
+      "max": 10.2,
       "n": 90
     },
     "mouse_playing": {
       "p50": 8.3,
-      "p95": 8.6,
-      "max": 10,
+      "p95": 9.8,
+      "max": 10.3,
       "n": 90
     }
   },
   "frame_floor_ms": 33.4,
   "stall_gate_ms": 200.0,
   "longtasks_over_50ms": [],
-  "build_bytes": 1592743,
-  "shots": 38,
+  "build_bytes": 1593480,
+  "shots": 44,
   "shots_dir": "qa/evidence/browser",
   "run": {
     "keyboard": {
@@ -186,6 +186,53 @@
       "plan": "night 1: step out of the mouth, stand still; Agatha's retiring patrol sees the creature at minute ~= 1.38",
       "freeze_shot": "31_seen_freeze.jpg",
       "card_shot": "32_seen_card.jpg",
+      "completed": true
+    },
+    "want": {
+      "plan": "one milk-house take per night, nights 1-5: store 4,2,0,0,0; zeroStoreRun 3 at dawn 6 -> the family is gone (want)",
+      "nights_completed": 5,
+      "ending": "want",
+      "gone_shot": "33_want_gone_card.jpg",
+      "epilogue_model": {
+        "ending": "want",
+        "exchange5": false,
+        "exchanges": 0,
+        "nothingPutBy": true,
+        "journal": false,
+        "satUp": false,
+        "beds": 0,
+        "storeAtFlight": 0,
+        "firingAtFlight": 0,
+        "fewLessons": true,
+        "seenBy": null,
+        "seenContext": null
+      },
+      "afterrun_shot": "34_want_afterrun.jpg",
+      "restart_shot": "35_want_restart.jpg",
+      "completed": true
+    },
+    "silence": {
+      "plan": "take n1 (store 1 at dawn 6 -> the errand walk, day 9, two slots); wait out n2-8 inside; knock in the 15-30 s band (words 0 -> one slot); never answer: the 30 s clock runs out at index 0",
+      "nights_completed": 8,
+      "door_shot": "36_silence_door.jpg",
+      "ending": "silence",
+      "exchanges": 0,
+      "epilogue_model": {
+        "ending": "silence",
+        "exchange5": false,
+        "exchanges": 0,
+        "nothingPutBy": false,
+        "journal": false,
+        "satUp": false,
+        "beds": 0,
+        "storeAtFlight": 1,
+        "firingAtFlight": 0,
+        "fewLessons": true,
+        "seenBy": null,
+        "seenContext": null
+      },
+      "afterrun_shot": "37_silence_afterrun.jpg",
+      "restart_shot": "38_silence_restart.jpg",
       "completed": true
     },
     "card_layout": {
@@ -381,8 +428,8 @@
           }
         ]
       },
-      "about_shot": "33_card_about.jpg",
-      "options_shot": "34_card_options_scale125.jpg",
+      "about_shot": "39_card_about.jpg",
+      "options_shot": "40_card_options_scale125.jpg",
       "completed": true
     },
     "fonts": {
@@ -399,8 +446,8 @@
         "textOnDisp": 607.73974609375,
         "dispOnText": 267.07965087890625
       },
-      "title_shot": "35_fonts_title.jpg",
-      "prompt_shot": "36_fonts_coldopen_prompt.jpg",
+      "title_shot": "41_fonts_title.jpg",
+      "prompt_shot": "42_fonts_coldopen_prompt.jpg",
       "completed": true
     }
   }
