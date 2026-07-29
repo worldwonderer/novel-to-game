@@ -736,6 +736,15 @@ def run_campaign(page) -> dict:
 
         section("[campaign] night 4: first lesson, second carry")
         start_lesson(page, 4)
+        # M5's T-b frame (ART_DIRECTION §14): a word seen being minted, mid-rise
+        # in its lane, while the lesson runs. Capture-only — the frame is the
+        # evidence, judged in qa/evidence/signature-frames.md.
+        t0 = time.time()
+        while time.time() - t0 < 8 * SPEED:
+            if page.evaluate("window.__game.minted.length") > 0:
+                out["lesson_mint_shot"] = shot(page, "campaign_lesson_mint")
+                break
+            page.wait_for_timeout(100)
         need(wait_cond(page, lambda s: s["lessonDone"], 10 * SPEED),
              "[campaign] night 4: the first lesson completes (+20 words)")
         press(page, "x")
@@ -821,13 +830,24 @@ def run_campaign(page) -> dict:
         t0 = time.time()
         while time.time() - t0 < 60:
             ph = phase(page)
+            estep = page.evaluate("window.__game.epilogueStep")
             if ph == "epilogue" and "epilogue_shot" not in out:
                 page.wait_for_timeout(800)  # the lane card, the run's ending text
                 out["epilogue_shot"] = shot(page, "campaign_epilogue")
+            # M9's frames (ART_DIRECTION §14): the dark day, the held moonset,
+            # the burn. Capture-only, judged in qa/evidence/signature-frames.md.
+            if ph == "epilogue" and estep == 1 and "darkday_shot" not in out:
+                out["darkday_shot"] = shot(page, "campaign_darkday")
+            if ph == "epilogue" and estep == 2 and "moonset_shot" not in out:
+                page.wait_for_timeout(1200)  # the arc visibly runs down
+                out["moonset_shot"] = shot(page, "campaign_moonset")
+            if ph == "epilogue" and estep == 3 and "fire_shot" not in out:
+                page.wait_for_timeout(900)  # mid-burn
+                out["fire_shot"] = shot(page, "campaign_fire")
             if ph == "afterRun":
                 done = qa_state(page)
                 break
-            page.wait_for_timeout(400)
+            page.wait_for_timeout(250)
         page.keyboard.up("e")
         need(done is not None, "[campaign] the epilogue plays out to afterRun")
         need(done["ending"] == "door" and done["exchanges"] == 5,

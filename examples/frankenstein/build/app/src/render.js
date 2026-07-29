@@ -140,53 +140,146 @@ function plankEnd(ctx, x, y0, y1, dir) {
   ctx.fill();
 }
 
-// The chink's ragged silhouette — the clip the room is drawn through
-// (ART_DIRECTION §7.1's "ragged aperture", §16.3's "the aperture mask"). The
-// path retraces the tooth lines of the four plankBreak/plankEnd calls in
-// drawRoom, shifted 2 px into the room: same 7 px step, same det() salts (the
-// break's base y, the end's base x, and the shared 91 / 37), so the boards'
-// teeth overlap the room's rim by exactly 2 px everywhere — no room pixel
-// reaches the boards outside the gap, and no sliver of the plate shows
-// between the teeth and the room. Deterministic per frame, like every mark
-// seeded by det(). Keep the coordinates and salts in lockstep with those
-// four calls.
+// The chink's silhouette — one deterministic generator shared by the clip
+// (aperturePath) and the board cover laid over the seam (drawApertureCover).
+// The language is §7.1's, measured off the regenerated plate/hovel (F12):
+// the wall's planks run vertically, so the side edges are long, nearly
+// straight board edges broken by a few splintered bites, and the top and
+// bottom edges are the planks' broken ends — uneven stepped runs at a
+// handful of depths, not the uniform 7 px fringe that read as a pinked
+// mount (QA_REPORT F13). Everything is seeded by det(), so the silhouette is
+// identical on every frame and never touches the sim's seed stream.
+//
+// The returned polylines are the cover's inner edges — the line where board
+// mass meets visible room. aperturePath traces them shifted 2 px toward the
+// boards, so the room always reaches 2 px under the mass: no sliver of
+// plate shows at the seam, and no room pixel escapes onto the boards. The
+// bounds keep the QA probe's envelopes with margin (qa_browser.py:
+// left min 172, right max 578, bottom max 466) and keep the room clip
+// inside plate/room's drawn rect.
+function apertureEdges(ax, ay, aw, ah) {
+  const xL = ax + 14, xR = ax + aw - 14;      // side baselines: 174, 576
+  const yT = ay + 14, yB = ay + ah - 15;      // broken-end baselines: 164, 465
+  // The planks' broken ends, left to right: runs of one to three plank
+  // widths at a few depths — mostly shallow, a few broke deep — with a torn
+  // splinter at some joins. inward +1 hangs down (top edge), -1 rises (bottom).
+  const ends = (base, salt, inward, levels) => {
+    const pts = [];
+    let x = xL, i = 0, level = levels[0];
+    pts.push([x, base + inward * level]);
+    while (x < xR) {
+      const nx = Math.min(xR, x + 28 + Math.round(det(i, salt + 7) * 62));
+      pts.push([nx, base + inward * level]);
+      if (nx >= xR) break;
+      const next = levels[Math.floor(det(i, salt + 13) * levels.length)];
+      if (det(i, salt + 21) < 0.4) {
+        // a splinter at the join: a narrow spike past the deeper break
+        const deep = Math.max(level, next) + 3 + Math.round(det(i, salt + 33) * 3);
+        pts.push([nx + 1.5, base + inward * deep]);
+        pts.push([nx + 3, base + inward * next]);
+        x = nx + 3;
+      } else {
+        pts.push([nx, base + inward * next]);
+        x = nx;
+      }
+      level = next;
+      i++;
+    }
+    return pts;
+  };
+  // The side edges: a long straight board edge with a few splintered bites.
+  // Bite positions are authored, not seeded — each QA probe lane (left
+  // y 204-258, right y 210-333) must hold one or the torn-line gate loses
+  // its signal; depths and lengths stay det()-seeded.
+  const side = (xBase, salt, inward, bites) => {
+    const pts = [[xBase, yT - 8]];
+    for (const [by, bl] of bites) {
+      const bd = 4 + Math.round(det(by, salt) * 3);
+      pts.push([xBase, by]);
+      pts.push([xBase + inward * bd, by + Math.round(bl * 0.45)]);
+      pts.push([xBase + inward * Math.round(bd * 0.6), by + bl]);
+    }
+    pts.push([xBase, yB + 8]);
+    return pts;
+  };
+  return {
+    top: ends(yT, 61, 1, [0, 0, 4, 9, 15, 22]),
+    bottom: ends(yB, 92, -1, [0, 0, 4, 9, 14]),
+    left: side(xL, 43, 1, [[214, 11], [331, 9], [421, 12]]),
+    right: side(xR, 53, -1, [[238, 10], [322, 11], [428, 9]]),
+  };
+}
+
+// The clip the room is drawn through (ART_DIRECTION §7.1's "ragged
+// aperture", §16.3's "the aperture mask"): the silhouette shifted 2 px
+// toward the boards, so the room's rim always hides under the cover mass.
 export function aperturePath(ctx, ax, ay, aw, ah) {
-  const x0 = ax - 6, x1 = ax + aw + 6;         // the breaks' span
-  const ty = ay + 12, by = ay + ah - 12;       // the breaks' base lines
-  const lx = ax + 10, rx = ax + aw - 10;       // the ends' base lines
-  const ey0 = ay + 12, ey1 = ay + ah - 12;     // the ends' span
+  const E = apertureEdges(ax, ay, aw, ah);
   ctx.beginPath();
-  // top edge, left to right (plankBreak ty, dir -1, shifted 2 px down)
-  let n = 0;
-  for (let x = x0; x < x1 - 6; x += 7, n++) {
-    const deep = ty + 2 + (1.5 + det(n, Math.round(ty)) * 8);
-    const shallow = ty + 2 + (0.5 + det(n, 91) * 2.5);
-    if (x === x0) ctx.moveTo(x + 3.5, deep); else ctx.lineTo(x + 3.5, deep);
-    ctx.lineTo(x + 7, shallow);
-  }
-  // right edge, top to bottom (plankEnd rx, dir +1, shifted 2 px left)
-  n = 0;
-  for (let y = ey0; y < ey1 - 6; y += 7, n++) {
-    ctx.lineTo(rx - 2 - (1.5 + det(n, Math.round(rx)) * 6), y + 3.5);
-    ctx.lineTo(rx - 2 - (0.5 + det(n, 37) * 2), y + 7);
-  }
-  // bottom edge, right to left (plankBreak by, dir +1, shifted 2 px up)
-  const bot = [];
-  for (let x = x0, m = 0; x < x1 - 6; x += 7, m++) bot.push([x, m]);
-  for (let i = bot.length - 1; i >= 0; i--) {
-    const [x, m] = bot[i];
-    ctx.lineTo(x + 7, by - 2 - (0.5 + det(m, 91) * 2.5));
-    ctx.lineTo(x + 3.5, by - 2 - (1.5 + det(m, Math.round(by)) * 8));
-  }
-  // left edge, bottom to top (plankEnd lx, dir -1, shifted 2 px right)
-  const lef = [];
-  for (let y = ey0, m = 0; y < ey1 - 6; y += 7, m++) lef.push([y, m]);
-  for (let i = lef.length - 1; i >= 0; i--) {
-    const [y, m] = lef[i];
-    ctx.lineTo(lx + 2 + (0.5 + det(m, 37) * 2), y + 7);
-    ctx.lineTo(lx + 2 + (1.5 + det(m, Math.round(lx)) * 6), y + 3.5);
-  }
+  E.top.forEach(([x, y], i) => (i ? ctx.lineTo(x, y - 2) : ctx.moveTo(x, y - 2)));
+  for (const [x, y] of E.right) ctx.lineTo(x + 2, y);
+  for (let i = E.bottom.length - 1; i >= 0; i--) ctx.lineTo(E.bottom[i][0], E.bottom[i][1] + 2);
+  for (let i = E.left.length - 1; i >= 0; i--) ctx.lineTo(E.left[i][0] - 2, E.left[i][1]);
   ctx.closePath();
+}
+
+// The boards around the chink: night-deep masses filled between the
+// silhouette and a mostly straight outer edge, grained vertically — the
+// wall's planks run vertical, so the broken ends get end-grain ticks. The
+// top mass rises to y 115-121: high enough to swallow the plate's own
+// opening (F13's 52x11 sliver at y 126-137) and tuck under the roof beam,
+// whose lower edge sits at y ~112-117 on the regenerated plate/hovel.
+function drawApertureCover(ctx, ax, ay, aw, ah, E) {
+  const x0 = ax - 20, x1 = ax + aw + 20;
+  // A mostly straight outer edge with a few shallow notches — the long
+  // board-course line of §7.1, not a rule.
+  const outerLine = (x0, x1, base, salt, inward) => {
+    const pts = [[x0, base]];
+    let x = x0, i = 0;
+    while (x < x1) {
+      const nx = Math.min(x1, x + 60 + Math.round(det(i, salt) * 90));
+      pts.push([nx, base + inward * Math.round(det(i, salt + 3) * 5)]);
+      x = nx; i++;
+    }
+    return pts;
+  };
+  // Fill one mass (outer edge forward, silhouette back), then grain it —
+  // vertical lines, the wall's plank run — clipped to the mass itself.
+  const mass = (outer, inner, grain) => {
+    ctx.save();
+    ctx.beginPath();
+    outer.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
+    for (let i = inner.length - 1; i >= 0; i--) ctx.lineTo(inner[i][0], inner[i][1]);
+    ctx.closePath();
+    ctx.fillStyle = PAL.nightDeep;
+    ctx.fill();
+    ctx.clip();
+    hatch(ctx, grain[0], grain[1], grain[2], grain[3],
+      { spacing: 5, angle: Math.PI / 2, colour: withAlpha(PAL.ink2, 0.5), width: 1, broken: 1 });
+    ctx.restore();
+  };
+  // sides first (y 112-492), then top and bottom over their ends
+  mass([[x0, 112], [x0 + 5 + Math.round(det(1, 81) * 3), 300], [x0, 492]],
+    E.left, [x0 - 2, 112, ax + 18, 492]);
+  mass([[x1, 112], [x1 - 5 - Math.round(det(1, 83) * 3), 300], [x1, 492]],
+    E.right, [ax + aw - 18, 112, x1 + 2, 492]);
+  mass(outerLine(x0, x1, 115, 85, 1), E.top, [x0, 110, x1, 192]);
+  mass(outerLine(x0, x1, 488, 87, -1), E.bottom, [x0, 444, x1, 490]);
+  // end-grain ticks at the broken ends: short horizontal strokes where the
+  // skyline steps, on the mass side of the edge
+  ctx.strokeStyle = withAlpha(PAL.ink, 0.6); ctx.lineWidth = 1;
+  for (const E2 of [E.top, E.bottom]) {
+    const dir = E2 === E.top ? -1 : 1;
+    for (let i = 1; i < E2.length - 1; i++) {
+      const dy = E2[i][1] - E2[i - 1][1];
+      if (Math.abs(dy) >= 4 && E2[i][0] - E2[i - 1][0] < 4) {
+        ctx.beginPath();
+        ctx.moveTo(E2[i][0] - 5, E2[i][1] + dir * 2);
+        ctx.lineTo(E2[i][0] + 5, E2[i][1] + dir * 2);
+        ctx.stroke();
+      }
+    }
+  }
 }
 
 // Gloss an utterance against the player's vocabulary: known words print,
@@ -516,9 +609,10 @@ function drawScratches(ctx, words, x0, y0) {
 
 // The room through the chink. One composition; state reads as substitution.
 // The aperture is the torn gap of §7.1, not a rectangle: the room is clipped
-// to aperturePath and the boards' broken edges are laid over the seam — the
-// same break language as the cold slot, seeded by det(), identical every
-// frame. The straight stroked rule is gone with the rectangle.
+// to aperturePath and the board masses are laid over the seam — one shared
+// silhouette (apertureEdges), seeded by det(), identical every frame. The
+// straight stroked rule is gone with the rectangle, and the uniform fringe
+// that replaced it is gone too (F13).
 function drawRoom(ctx, state, ax, ay, aw, ah, view, opts) {
   ctx.save();
   aperturePath(ctx, ax, ay, aw, ah);
@@ -599,28 +693,11 @@ function drawRoom(ctx, state, ax, ay, aw, ah, view, opts) {
   // The first white flower (the thaw) — degradable, drawn as a dot here.
   if (state.night >= 5) disc(ctx, BOARD.right.x - aw * 0.03, BOARD.top.y - ah * 0.02, Math.max(3, aw * 0.011), PAL.snow);
   ctx.restore();
-  // The boards' broken edges over the seam, exactly the cold slot's language.
-  // aperturePath retraces these tooth lines 2 px in, so the teeth always
-  // overlap the room's rim — keep the four calls in lockstep with it.
-  plankBreak(ctx, ax - 6, ax + aw + 6, ay + 12, -1);
-  plankBreak(ctx, ax - 6, ax + aw + 6, ay + ah - 12, 1);
-  plankEnd(ctx, ax + 10, ay + 12, ay + ah - 12, -1);
-  plankEnd(ctx, ax + aw - 10, ay + 12, ay + ah - 12, 1);
-  // A second, staggered ring: the first ring's own outer edges would else be
-  // straight rules and the gap would sit in a rectangular dark frame. These
-  // breaks cover those edges (each mass overlaps the inner ring's) and their
-  // teeth point outward into the plate, so the dark zone's outer silhouette
-  // is a tooth line too and the corners step instead of squaring off.
-  plankBreak(ctx, ax + 18, ax + aw - 14, ay - 6, 1);
-  plankBreak(ctx, ax + 18, ax + aw - 14, ay + ah + 18, -1);
-  plankEnd(ctx, ax - 4, ay - 10, ay + ah + 10, 1);
-  plankEnd(ctx, ax + aw + 14, ay - 10, ay + ah + 10, -1);
-  // plankEnd carries no grain of its own; the side boards run with the
-  // plate's vertical planks, so the grain here is vertical, in lines.
-  hatch(ctx, ax - 2, ay + 16, ax + 8, ay + ah - 16,
-    { spacing: 5, angle: Math.PI / 2, colour: withAlpha(PAL.ink2, 0.5), width: 1, broken: 1 });
-  hatch(ctx, ax + aw - 8, ay + 16, ax + aw + 2, ay + ah - 16,
-    { spacing: 5, angle: Math.PI / 2, colour: withAlpha(PAL.ink2, 0.5), width: 1, broken: 1 });
+  // The boards over the seam: one shared silhouette with the clip (F13) —
+  // the room reaches 2 px under the masses, so no plate sliver shows at the
+  // seam and no room pixel escapes. The cover also swallows the plate's own
+  // opening above the chink (the 52x11 sliver at y 126-137).
+  drawApertureCover(ctx, ax, ay, aw, ah, apertureEdges(ax, ay, aw, ah));
 }
 
 // ---------------------------------------------------------------- cards & title

@@ -810,6 +810,7 @@ window.__game = {
   get cones() { return engine.activeCones(state); },
   get interactive() { return interactive; },
   get epilogueStep() { return scene.epilogueStep; },
+  get minted() { return scene.minted; },
   engine,
   restart,
   STRINGS,
