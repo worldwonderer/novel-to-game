@@ -41,6 +41,7 @@ const scene = {
   buttons: [],
   focus: 0,
   coldTime: 0,
+  coldGlow: 0.3,       // the hold made visible: 1 while held, 0.3 let go
   coldHeld: false,
   minted: [],          // minted-word animations { word, t }
   speech: null,        // current overheard utterance { speaker, text, t }
@@ -48,6 +49,8 @@ const scene = {
   epilogueStep: 0,
   holdTicks: 0,
   queuedAction: null,  // mouse: walk to an actionable and act on arrival
+  optionRows: [],      // the options plate's row hit boxes (cardLineHits)
+  hx: -1, hy: -1,      // last-seen mouse position: hover applies on movement
   listenedUtterance: 0,
   moonGone: 0,
   guitarCold: false,   // the cold-open guitar (GAME_DESIGN §10, 0:06), once
@@ -57,6 +60,7 @@ function resetScene() {
   scene.speech = null; scene.titleBeat = 0; scene.epilogueStep = 0;
   scene.holdTicks = 0; scene.queuedAction = null; scene.listenedUtterance = 0;
   scene.moonGone = 0; scene.guitarCold = false;
+  scene.coldGlow = 0.3; scene.optionRows = []; scene.hx = scene.hy = -1;
 }
 
 // Run-scoped, not scene-scoped: Agatha's latch sounds once per run (the
@@ -230,31 +234,69 @@ function maybeQueuedAction(input) {
 
 // ---------------------------------------------------------------- per-phase
 
+// The title reveal: six beats at a brisk pace. The old 45-tick beat put the
+// first verb 4.5 s out and gave clicks nothing to land on — it read as a
+// stall. Now the verbs are up in ~1.6 s, a click completes the reveal at
+// once, and Enter or Space activates the focused verb immediately.
+const TITLE_BEAT_TICKS = 16;
+const TITLE_REVEALED = 6 * TITLE_BEAT_TICKS; // phaseTick at full reveal
+
 function tickTitle(input) {
-  scene.titleBeat = Math.min(6, Math.floor(state.phaseTick / 45));
+  scene.titleBeat = Math.min(6, Math.floor(state.phaseTick / TITLE_BEAT_TICKS));
   setButtons(STRINGS.title.verbs);
-  if (input.advance) activateButton(scene.buttons[((scene.focus % 3) + 3) % 3].id);
-  if (input.clicked) clickButtons(input);
+  // Hover moves the focus underline — but only on real mouse movement, so a
+  // parked mouse never fights the keyboard's arrows.
+  const moved = input.x !== scene.hx || input.y !== scene.hy;
+  scene.hx = input.x; scene.hy = input.y;
+  if (moved) {
+    for (let i = 0; i < (scene._hit || []).length; i++) {
+      const b = scene._hit[i];
+      if (input.x >= b.x && input.x <= b.x + b.w && input.y >= b.y && input.y <= b.y + b.h) scene.focus = i;
+    }
+  }
+  if (input.advance || input.action) {
+    activateButton(scene.buttons[((scene.focus % 3) + 3) % 3].id);
+    return;
+  }
+  if (input.clicked) {
+    if (scene.titleBeat >= 6) clickButtons(input);
+    else { state.phaseTick = TITLE_REVEALED; scene.titleBeat = 6; }
+  }
 }
 
 function tickOptions(input) {
-  // One plate of toggles; arrow keys or click; last button goes back.
+  // Rows are hover/click targets (cardLineHits over the card's own layout);
+  // the keyboard drives the same rows by focus. Enter or Space applies the
+  // focused row, a click applies the row it lands on — and the last row is a
+  // mouse-reachable way back, which the plate never had.
   const rows = ['textScale', 'ink', 'sound', 'murmur', 'motion', 'back'];
-  if (input.focusDelta) scene.focus += input.focusDelta;
-  const f = ((scene.focus % rows.length) + rows.length) % rows.length;
-  if (input.advance || input.clicked) {
-    if (f === 0) { options.textScale = options.textScale >= 1.5 ? 1 : options.textScale + 0.25; saveOptions(); }
-    else if (f === 1) { options.inkHeavy = !options.inkHeavy; saveOptions(); }
-    else if (f === 2) { options.sound = !options.sound; audio.setSound(options.sound); saveOptions(); }
-    else if (f === 3) { options.murmur = !options.murmur; saveOptions(); }
-    else if (f === 4) { options.reducedMotion = !options.reducedMotion; saveOptions(); }
-    else { state.phase = 'title'; state.phaseTick = 0; scene.focus = 0; }
+  const moved = input.x !== scene.hx || input.y !== scene.hy;
+  scene.hx = input.x; scene.hy = input.y;
+  let target = -1;
+  scene.optionRows.forEach((b, i) => {
+    if (!b) return;
+    const inside = input.x >= b.x && input.x <= b.x + b.w && input.y >= b.y && input.y <= b.y + b.h;
+    if (inside && moved) scene.focus = i;
+    if (inside && input.clicked) target = i;
+  });
+  if (input.advance || input.action) target = ((scene.focus % rows.length) + rows.length) % rows.length;
+  if (target === 0) { options.textScale = options.textScale >= 1.5 ? 1 : options.textScale + 0.25; saveOptions(); }
+  else if (target === 1) { options.inkHeavy = !options.inkHeavy; saveOptions(); }
+  else if (target === 2) { options.sound = !options.sound; audio.setSound(options.sound); saveOptions(); }
+  else if (target === 3) { options.murmur = !options.murmur; saveOptions(); }
+  else if (target === 4) { options.reducedMotion = !options.reducedMotion; saveOptions(); }
+  else if (target === 5) {
+    state.phase = 'title'; state.phaseTick = TITLE_REVEALED; scene.focus = 0;
+    scene._hit = []; scene.optionRows = [];
   }
 }
 
 function tickColdOpen(input) {
-  const held = keys.has('e') || keys.has(' ') || mouse.down || input.advance;
+  const held = keys.has('e') || keys.has(' ') || keys.has('enter') || mouse.down;
   if (held) scene.coldTime += 1 / 60;
+  // The hold is the light: the chink brightens under a held hand and dims
+  // the moment it lets go — the scene answers the player from second 0.
+  scene.coldGlow += ((held ? 1 : 0.3) - scene.coldGlow) * 0.06;
   // 0:00 aperture · 0:06 the guitar · 0:14 Felix with the load · 0:18 the taper
   // goes out and the view pulls back · 0:22 the plank lifts · then the yard.
   if (scene.coldTime >= 23) {
@@ -541,7 +583,10 @@ function renderOptions(opts) {
     O.back,
   ];
   const f = ((scene.focus % rows.length) + rows.length) % rows.length;
-  scene._hit = R.drawCard(ctx, [O.title, ...rows.map((r, i) => (i === f ? `— ${r} —` : r))], opts, []);
+  const lines = [O.title, ...rows.map((r, i) => (i === f ? `— ${r} —` : r))];
+  R.drawCard(ctx, lines, opts, []);
+  // The rows' mouse targets, measured off the same layout the card drew.
+  scene.optionRows = R.cardLineHits(ctx, lines, opts).slice(1);
 }
 
 function renderAbout(opts) {
@@ -549,13 +594,10 @@ function renderAbout(opts) {
 }
 
 function renderColdOpen(opts) {
-  // The chink, and nothing else. One prompt, four words.
-  const t = scene.coldTime;
-  R.drawHovel(ctx, state, 'dusk', opts);
-  if (t < 18) {
-    // the room, closer: overlay a large aperture while we hold
-  }
-  R.drawPrompt(ctx, P.keepWatching, opts);
+  // The held chink and its beats (GAME_DESIGN §10, 0:00-0:22) live in the
+  // render layer off scene.coldTime, so the hold always moves the picture.
+  R.drawColdOpen(ctx, state, scene.coldTime, scene.coldGlow, opts);
+  R.drawPrompt(ctx, scene.coldTime >= 22 ? P.liftPlank : P.keepWatching, opts);
 }
 
 function renderNight(opts) {
@@ -762,7 +804,7 @@ function step(input) {
     // is two blank shapes with no way in.
     case 'title': engine.tick(state, {}); tickTitle(input); break;
     case 'options': tickOptions(input); break;
-    case 'about': if (input.advance || input.action || input.clicked) { state.phase = 'title'; state.phaseTick = 0; } engine.tick(state, {}); break;
+    case 'about': if (input.advance || input.action || input.clicked) { state.phase = 'title'; state.phaseTick = TITLE_REVEALED; } engine.tick(state, {}); break;
     case 'coldOpen': engine.tick(state, {}); tickColdOpen(input); break;
     case 'night': tickNight(input); break;
     case 'dawnRead': tickDawnRead(input); break;
@@ -811,6 +853,7 @@ window.__game = {
   get interactive() { return interactive; },
   get epilogueStep() { return scene.epilogueStep; },
   get minted() { return scene.minted; },
+  get optionRows() { return scene.optionRows; },
   engine,
   restart,
   STRINGS,

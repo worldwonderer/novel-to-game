@@ -2,7 +2,7 @@
 
 > `qa` gate not passed: the slice is **completable by either input scheme** — full eight-night
 > campaigns reach the `door` ending at exchange 5 and restart clean, one all-keyboard and one
-> all-mouse (336/336 browser assertions, engine invariants hold) — **all four designed endings
+> all-mouse (337/337 browser assertions, engine invariants hold) — **all four designed endings
 > (`door`, `seen`, `want`, `silence`) are played end to end**, and **every release-gated asset now
 > ships** — 6 plates, 2 Caslon faces, 12 audio cues. Still not a release build: onboarding
 > comprehension and a human playtest need a person, and the signature-frame pass is outstanding.
@@ -33,7 +33,13 @@
   `step()`'s `title` case never called `engine.tick()`, so `phaseTick` stayed 0, `titleBeat`
   stayed 0, and the title text and all three verbs were never drawn; the first screen was two
   blank shapes with no way in. Also fixed 2 `minor` occlusion defects (title crossing the
-  platemark; the prompt band covering the tally plank and food heap).
+  platemark; the prompt band covering the tally plank and food heap). 2026-07-29 human playtest
+  reflow (QA round 6, F17/F18/F19, all fixed): the title reveal's 4.5 s dead click window cut to
+  ~1.6 s with click-to-reveal and hover focus; the options plate's rows became real click
+  targets with a mouse-reachable way back (was a mouse trap); the cold open's 23 s hold now
+  plays its §10 beats — dim aperture that lights under the hold, guitar at 0:06, Felix with the
+  load at 0:14, taper out and pull-back at 0:18, the plank lifting at 0:22 — with a progress
+  rule, instead of a frozen picture. Full suite re-run green: 337/337.
 - Evidence: `qa/evidence/automated.json` (336 passed / 0 failed, 0 console errors, 0 external
   request domains, build 1.52 MB), `qa/evidence/browser/` 47 frames,
   `qa/evidence/qa_browser_last.log`, `node qa/design_invariants.mjs` all sections hold
@@ -57,4 +63,4 @@
   expression. Fonts and audio still absent.
 - Licence: `public_domain_source`; the two Caslon faces are `OFL-1.1` (licence text ships at
   `build/app/assets/font/OFL.txt`)
-- Updated: 2026-07-28
+- Updated: 2026-07-29

@@ -700,6 +700,126 @@ function drawRoom(ctx, state, ax, ay, aw, ah, view, opts) {
   drawApertureCover(ctx, ax, ay, aw, ah, apertureEdges(ax, ay, aw, ah));
 }
 
+// ---------------------------------------------------------------- the cold open
+
+// The held chink (GAME_DESIGN §10 beat 1, 0:00-0:22), drawn off the seconds
+// of held watch so the hold always moves the picture: the close room with
+// its small fire, the old man and the girl; the guitar at 0:06; Felix home
+// under the load at 0:14, the girl helping him off with it; the taper out
+// at 0:18 and the view pulled back into the hovel's wide interior; the
+// loose plank lifting at 0:22. `glow` is the hold itself made visible — the
+// aperture dims the moment the player lets go.
+export function drawColdOpen(ctx, state, coldTime, glow, opts) {
+  const ax = 160, ay = 150, aw = 430, ah = 330;
+  const TAPER_OUT = 17.2, PULL_BACK = 18, PULL_FADE = 2, PLANK_LIFT = 22;
+  if (coldTime < PULL_BACK) {
+    // Black, then one ragged aperture.
+    rect(ctx, 0, 0, PLATE.w, PLATE.h, PAL.nightDeep);
+    ctx.save();
+    aperturePath(ctx, ax, ay, aw, ah);
+    ctx.clip();
+    if (!skin.drawPlate(ctx, 'plate/room', ax, ay, aw, ah)) {
+      rect(ctx, ax, ay, ax + aw, ay + ah, '#efe6d2', PAL.ink);
+      skin.stampKey(ctx, 'plate/room', ax + 18, ay + 22);
+    }
+    const A = (fx, fy) => ({ x: ax + fx * aw, y: ay + fy * ah });
+    const headR = Math.max(5, aw * 0.026);
+    const figure = (pt, fill, r = headR) => {
+      disc(ctx, pt.x, pt.y, r, fill);
+      ctx.fillStyle = fill;
+      ctx.fillRect(pt.x - r * 0.8, pt.y + r * 0.6, r * 1.6, r * 2.2);
+    };
+    // A small fire — the cold open's one warm thing, whatever Firing says.
+    const hf = A(0.21, 0.79);
+    const fw = aw * 0.23 * 0.4, fh = ah * 0.10;
+    const gr = ctx.createRadialGradient(hf.x, hf.y, 2, hf.x, hf.y, fw * 1.6);
+    gr.addColorStop(0, withAlpha(PAL.amber, 0.95));
+    gr.addColorStop(1, withAlpha(PAL.amber, 0));
+    ctx.fillStyle = gr;
+    ctx.beginPath(); ctx.ellipse(hf.x, hf.y, fw * 1.6, fh * 1.3, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = PAL.amber;
+    ctx.beginPath();
+    ctx.moveTo(hf.x - fw / 2, hf.y); ctx.lineTo(hf.x + fw / 2, hf.y); ctx.lineTo(hf.x, hf.y - fh);
+    ctx.closePath(); ctx.fill();
+    // The old man with his head on his hands (chapter 11): the body, then
+    // the bowed head carried low and forward of the shoulders.
+    const man = A(0.30, 0.64);
+    ctx.fillStyle = PAL.cottager;
+    ctx.fillRect(man.x - headR * 0.9, man.y + headR * 0.7, headR * 1.8, headR * 2.4);
+    disc(ctx, man.x + headR * 0.7, man.y + headR * 1.1, headR * 0.85, PAL.cottager);
+    // 0:06 — he takes up the guitar.
+    if (coldTime >= 6) {
+      ctx.fillStyle = '#8a6f4d';
+      ctx.beginPath();
+      ctx.ellipse(man.x + headR * 0.6, man.y + headR * 2.2, headR * 1.2, headR * 0.85, -0.35, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = PAL.ink; ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(man.x + headR * 1.4, man.y + headR * 1.9);
+      ctx.lineTo(man.x + headR * 2.6, man.y + headR * 0.9);
+      ctx.stroke();
+    }
+    // The girl — sewing at his feet until 0:14, then up to the door to meet
+    // Felix and help him off with the load.
+    const meet = Math.max(0, Math.min(1, (coldTime - 14) / 1.5));
+    const g0 = A(0.40, 0.78), g1 = A(0.74, 0.68);
+    const girl = { x: g0.x + (g1.x - g0.x) * meet, y: g0.y + (g1.y - g0.y) * meet };
+    figure(girl, '#7a6a58', headR * 0.9);
+    if (meet === 0) {
+      // the needle: one short stroke, lifted and set
+      ctx.strokeStyle = PAL.ink2; ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(girl.x + headR, girl.y + headR * 1.2);
+      ctx.lineTo(girl.x + headR * 1.6, girl.y + headR * (0.9 + 0.3 * Math.sin(coldTime * 3.2)));
+      ctx.stroke();
+    }
+    // 0:14 — Felix home, bearing a load of wood on his shoulders.
+    if (coldTime >= 14) {
+      const felix = A(0.86, 0.64);
+      figure(felix, '#6a5a48');
+      if (meet < 1) {
+        rect(ctx, felix.x - 18, felix.y - headR * 2.2, felix.x + 18, felix.y - headR * 0.9, PAL.amber, PAL.ink);
+      } else {
+        // helped off with it: the load lowered between them
+        rect(ctx, felix.x - 34, felix.y + headR * 2.2, felix.x + 6, felix.y + headR * 3.0, PAL.amber, PAL.ink);
+      }
+    }
+    ctx.restore();
+    drawApertureCover(ctx, ax, ay, aw, ah, apertureEdges(ax, ay, aw, ah));
+    // The hold is the light: let go and the chink dims.
+    rect(ctx, 0, 0, PLATE.w, PLATE.h, withAlpha(PAL.nightDeep, (1 - glow) * 0.72));
+    // 0:18 — the taper goes out ahead of the pull-back.
+    if (coldTime > TAPER_OUT) {
+      rect(ctx, 0, 0, PLATE.w, PLATE.h,
+        withAlpha(PAL.nightDeep, Math.min(1, (coldTime - TAPER_OUT) / (PULL_BACK - TAPER_OUT))));
+    }
+  } else {
+    // The view pulled back: the hovel's wide interior — the wall of loose
+    // planks and, through the cold slot, the yard beyond.
+    drawHovel(ctx, state, 'dusk', opts);
+    const fade = Math.max(0, 1 - (coldTime - PULL_BACK) / PULL_FADE);
+    if (fade > 0) rect(ctx, 0, 0, PLATE.w, PLATE.h, withAlpha(PAL.nightDeep, fade));
+    if (coldTime >= PLANK_LIFT) {
+      // 0:22 — the loose plank lifts: a widening gap of cold light along the
+      // slot's foot, the plank's dark mass tipped up off it.
+      const k = Math.min(1, coldTime - PLANK_LIFT);
+      const sx = 900, sy = 480, sw = 260, sh = 90;
+      ctx.fillStyle = withAlpha(PAL.snow, 0.85);
+      ctx.fillRect(sx + 4, sy + sh - 2 - k * 9, sw - 8, k * 9);
+      ctx.fillStyle = PAL.nightDeep;
+      ctx.beginPath();
+      ctx.moveTo(sx + 2, sy + sh - 2 - k * 9);
+      ctx.lineTo(sx + sw - 2, sy + sh - 2 - k * 9 - k * 5);
+      ctx.lineTo(sx + sw - 2, sy + sh - 2 - k * 9 - k * 5 - 7);
+      ctx.lineTo(sx + 2, sy + sh - 2 - k * 9 - 7);
+      ctx.closePath(); ctx.fill();
+    }
+  }
+  // The hold's progress: one thin rule above the prompt band, no digits.
+  ctx.fillStyle = withAlpha(PAL.amber, 0.55);
+  ctx.fillRect(0, PLATE.h * 0.88 - 5, PLATE.w * Math.min(1, coldTime / 23), 2);
+}
+
 // ---------------------------------------------------------------- cards & title
 
 // The card's paper, centred on the plate. Card ink must never leave it: the
@@ -807,7 +927,7 @@ export function layoutCard(ctx, lines, opts = {}, buttons = []) {
       const disp = i === 0, p = disp ? pxTitle : px;
       const wrapW = Math.min(innerW, disp ? titleMeasure : bodyMeasure);
       for (const w of wrapCardLine(ctx, ln, disp ? fontDisp(p) : fontBody(p), wrapW, CARD_MEASURE)) {
-        phys.push({ ...w, px: p, disp, x: textX });
+        phys.push({ ...w, px: p, disp, x: textX, src: i });
       }
     });
     let baseline = textTop0 + (phys.length ? phys[0].px : 0);
@@ -828,8 +948,31 @@ export function layoutCard(ctx, lines, opts = {}, buttons = []) {
   return laid;
 }
 
-export function drawCard(ctx, lines, opts, buttons = []) {
-  const laid = layoutCard(ctx, lines, opts, buttons);
+// Hit boxes for a card's logical text lines, in drawCard's own geometry:
+// how a card's rows (the options plate) become mouse targets without
+// leaving the card idiom. Each box spans the paper's inner width and
+// reaches halfway to its neighbours, so a click anywhere on the row lands.
+// A logical line that wrapped to nothing (the empty string) yields null.
+export function cardLineHits(ctx, lines, opts = {}) {
+  const laid = layoutCard(ctx, lines, opts, []);
+  const groups = [];
+  for (const ln of laid.lines) {
+    const g = groups[ln.src] || (groups[ln.src] = { first: ln, last: ln });
+    g.last = ln;
+  }
+  return lines.map((_, i) => {
+    const g = groups[i];
+    if (!g) return null;
+    const prev = groups[i - 1], next = groups[i + 1];
+    const y0 = prev ? (prev.last.baseline + g.first.baseline) / 2
+                    : g.first.baseline - 0.8 * g.first.px - 6;
+    const y1 = next ? (g.last.baseline + next.first.baseline) / 2
+                    : g.last.baseline + 0.35 * g.last.px + 6;
+    return { x: laid.paperX0 + 24, y: y0, w: (laid.paperX1 - 24) - (laid.paperX0 + 24), h: y1 - y0 };
+  });
+}
+
+export function drawCard(ctx, lines, opts, buttons = []) {const laid = layoutCard(ctx, lines, opts, buttons);
   rect(ctx, 0, 0, PLATE.w, PLATE.h, PAL.nightDeep);
   rect(ctx, laid.paperX0, laid.paperY0, laid.paperX1, laid.paperY1, PAL.paper, PAL.ink);
   for (const ln of laid.lines) {

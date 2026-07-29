@@ -200,7 +200,7 @@ def run_once(page, mode: str) -> dict:
 
     section(f"[{mode}] boot and title")
     check(phase(page) == "title", "boots into the title phase")
-    # the title reveals over ~4.5 s (beat = phaseTick/45, 6 beats)
+    # the title reveals over ~1.6 s (beat = phaseTick/16, 6 beats)
     page.wait_for_timeout(6000)
     beat = page.evaluate("window.__game.state.phaseTick")
     check(beat >= 270, f"title fully revealed (phaseTick {beat} >= 270)")
@@ -216,24 +216,28 @@ def run_once(page, mode: str) -> dict:
         page.mouse.click(640, 400)   # anywhere: back (main.js step 'about')
         page.wait_for_timeout(400)
         check(phase(page) == "title", "clicking the about card returns to the title")
-        # Coming back resets phaseTick, so the verbs fade in again with the beat.
+        # Coming back restores the revealed title (phaseTick = TITLE_REVEALED).
         page.wait_for_function("window.__game.state.phaseTick >= 280", timeout=10000)
         page.mouse.click(640, 722)   # second verb: options
         page.wait_for_timeout(400)
         check(phase(page) == "options", "clicking the second title verb opens the options plate")
         before = page.evaluate(
             "(JSON.parse(localStorage.getItem('hovel.options') || '{}').textScale) || 1")
-        page.mouse.click(640, 400)   # toggles the focused row (text size)
+        # The rows are real click targets now; their boxes come from the game
+        # (they move with the text-size setting, so no hardcoded y).
+        rows = page.evaluate("window.__game.optionRows")
+        check(len(rows) == 6, f"the options plate exposes six row targets ({len(rows)})")
+        page.mouse.click(rows[0]["x"] + rows[0]["w"] / 2, rows[0]["y"] + rows[0]["h"] / 2)   # text size
         page.wait_for_timeout(300)
         after = page.evaluate(
             "(JSON.parse(localStorage.getItem('hovel.options') || '{}').textScale) || 1")
         check(after != before, f"clicking an options row toggles it (textScale {before} -> {after})")
-        # Options has no mouse-driven way back (focus moves on arrows only), so
-        # reload for a clean title; the reveal must run again for the hit boxes.
+        # ...and the last row is the mouse-driven way back the plate never had.
+        rows = page.evaluate("window.__game.optionRows")   # re-read: the paper moved
+        page.mouse.click(rows[-1]["x"] + rows[-1]["w"] / 2, rows[-1]["y"] + rows[-1]["h"] / 2)
+        page.wait_for_timeout(400)
+        check(phase(page) == "title", "the options plate's back row returns to the title by mouse")
         page.evaluate("localStorage.removeItem('hovel.options')")
-        page.goto(URL, wait_until="networkidle")
-        page.wait_for_timeout(6000)
-        check(phase(page) == "title", "back on a clean title after the options detour")
 
     section(f"[{mode}] enter the run")
     if mode == "keyboard":
@@ -1667,7 +1671,8 @@ def run_card_layout(page) -> dict:
     page.wait_for_function("window.__game.state.phaseTick >= 280", timeout=10000)
     page.mouse.click(640, 722)   # second verb: options
     page.wait_for_timeout(400)
-    page.mouse.click(640, 400)   # toggle text size 1 -> 1.25
+    rows = page.evaluate("window.__game.optionRows")
+    page.mouse.click(rows[0]["x"] + rows[0]["w"] / 2, rows[0]["y"] + rows[0]["h"] / 2)   # text size 1 -> 1.25
     page.wait_for_timeout(400)
     scale = page.evaluate("(JSON.parse(localStorage.getItem('hovel.options') || '{}').textScale) || 1")
     check(scale == 1.25, f"the options frame is at textScale 1.25 (got {scale})")
