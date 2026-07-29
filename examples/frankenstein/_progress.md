@@ -2,7 +2,7 @@
 
 > `qa` gate not passed: the slice is **completable by either input scheme** — full eight-night
 > campaigns reach the `door` ending at exchange 5 and restart clean, one all-keyboard and one
-> all-mouse (152/152 browser assertions, engine invariants hold) — the `seen` ending now renders
+> all-mouse (156/156 browser assertions, engine invariants hold) — the `seen` ending now renders
 > and is played to its failure card, and all 6 release-gated **image** keys are generated and
 > wired. Still open: the Caslon font subset, the audio set, and the `want` / `silence` endings.
 > Not a release build.
@@ -34,7 +34,7 @@
   blank shapes with no way in. Also fixed 2 `minor` occlusion defects (title crossing the
   platemark; the prompt band covering the tally plank and food heap).
 - Evidence: `qa/evidence/automated.json` (152 passed / 0 failed, 0 console errors, 0 external
-  request domains, build 1.50 MB), `qa/evidence/browser/` 34 frames,
+  request domains, build 1.50 MB), `qa/evidence/browser/` 36 frames,
   `qa/evidence/qa_browser_last.log`, `node qa/design_invariants.mjs` all sections hold
 - Verified path: the full campaign — boot → title → cold open → nights 1–7 (2 carries, 4 lessons,
   96 words) → the day-8 long walk → the door → five exchanges → ending `door` → epilogue →

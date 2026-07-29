@@ -573,8 +573,14 @@ function renderEpilogue(opts) {
     }
     case 'dark':
       R.drawHovel(ctx, state, 'dawn', opts);
+      // The room goes dark, the boards do not: darken through the same ragged
+      // mask the room is clipped to (drawHovel's aperture, 160,150,430,330).
+      ctx.save();
+      R.aperturePath(ctx, 160, 150, 430, 330);
+      ctx.clip();
       ctx.fillStyle = R.withAlpha(R.PAL.nightDeep, 0.85);
       ctx.fillRect(160, 150, 430, 330);
+      ctx.restore();
       scene._hit = R.drawCard(ctx, [STRINGS.epilogue.darkDay], opts, []);
       break;
     case 'moonset':

@@ -87,11 +87,12 @@ def check(cond: bool, name: str) -> bool:
     return bool(cond)
 
 
-def shot(page, name: str) -> str:
+def shot(page, name: str, clip: dict | None = None) -> str:
     global shot_n
     shot_n += 1
     fn = f"{shot_n:02d}_{name}.jpg"
-    page.screenshot(path=str(SHOTS / fn), type="jpeg", quality=80)
+    page.screenshot(path=str(SHOTS / fn), type="jpeg", quality=80,
+                    **({"clip": clip} if clip else {}))
     return fn
 
 
@@ -536,6 +537,118 @@ def hovel_plate_checks(page, out: dict) -> None:
     out["hovel_shot"] = shot(page, "campaign_hovel_night")
 
 
+# ---------------------------------------------------------------- the aperture
+#
+# TASK 6 ("撕裂的缝"): the aperture was the plate/room image drawn into a
+# hard-cornered rect with a stroked rule — a rectangle, where ART_DIRECTION
+# §7.1 calls for a ragged chink and §16.3 lists "the aperture mask" as Canvas
+# 2D work. The room is now clipped to a det()-seeded sawtooth path with
+# plankBreak/plankEnd edges over the seam. Pixel guard: along three edges of
+# the aperture, find the first pixel per column/row that reads as the room —
+# warm, i.e. r - b > 8 and luminance > 40; measured against the plate's
+# blue-grey boards and the nightDeep break mass (which fail it) and the
+# whitewash, floor boards and brown ink (which pass) — and assert the
+# boundary is no straight line: the variance of its position must clear a
+# floor a rectangle cannot reach (the pre-TASK-6 rect build scores 0.00 on
+# these lanes — measured on the left lane; the bottom and right lanes are
+# the same uniform floor and wall at the rect's own rim). The tally plank's
+# own edges, straight by construction, are the control: a broken probe (all
+# zeros, a covered canvas) fails there loudly.
+#
+# The lanes dodge the room plate's own dark features, because there the
+# first-warm scan follows the room's content instead of the mask: the beamed
+# ceiling (the top edge is excluded outright), the hearth's dark mouth and
+# the fire glow (the left lane is pinned above the hearth top, the bottom
+# lane right of where the glow can reach), and the boarded window's warm
+# frame plus the plates on the board (the right lane stops above both).
+#
+# Floors: measured on the ragged build (2026-07-28, seed 42 night frame):
+# bottom 3.32 px^2, left 1.43, right 15.87 (2.9 with two window-shadow rows
+# set aside). Floors sit >=2.7x below those. The second number in each gate
+# is the tooth envelope — the mask edge can never pass the plank teeth, so a
+# warm pixel beyond it is a room pixel leaked onto the boards.
+APERTURE_FLOOR_BOTTOM = 1.2
+APERTURE_FLOOR_SIDE = 0.5
+APERTURE_CONTROL_CEIL = 0.5
+
+APERTURE_PROBE_JS = """(() => {
+  const c = document.getElementById('plate');
+  const ctx = c.getContext('2d');
+  const AX = 160, AY = 150, AW = 430, AH = 330;   // drawHovel's aperture rect
+  const img = ctx.getImageData(AX - 30, AY - 30, AW + 60, AH + 80).data;
+  const W = AW + 60;
+  const px = (x, y) => {
+    const i = ((y - (AY - 30)) * W + (x - (AX - 30))) * 4;
+    return [img[i], img[i + 1], img[i + 2]];
+  };
+  const lum = (p) => 0.299 * p[0] + 0.587 * p[1] + 0.114 * p[2];
+  const warm = (p) => p[0] - p[2] > 8 && lum(p) > 40;
+  const variance = (xs) => {
+    const m = xs.reduce((s, v) => s + v, 0) / xs.length;
+    return Math.round(xs.reduce((s, v) => s + (v - m) * (v - m), 0) / xs.length * 100) / 100;
+  };
+  const scan = (hits) => ({ n: hits.length, var: variance(hits),
+                            min: Math.min(...hits), max: Math.max(...hits) });
+  // bottom edge: columns right of the hearth glow, scanning up from the straw
+  const bot = [];
+  for (let x = 360; x <= AX + AW - 24; x += 3)
+    for (let y = AY + AH + 20; y > AY + AH - 70; y--)
+      if (warm(px(x, y))) { bot.push(y); break; }
+  // left edge: rows above the hearth's dark mouth, scanning in from the boards
+  const lef = [];
+  for (let y = 204; y <= 258; y += 3)
+    for (let x = AX - 20; x < AX + 70; x++)
+      if (warm(px(x, y))) { lef.push(x); break; }
+  // right edge: rows clear of the window frame and the plates, scanning in
+  const rig = [];
+  for (let y = 210; y <= 333; y += 3)
+    for (let x = AX + AW + 20; x > AX + AW - 70; x--)
+      if (warm(px(x, y))) { rig.push(x); break; }
+  // control: the tally plank's own top and left edges (460,560)-(860,670)
+  const pk = ctx.getImageData(440, 540, 440, 140).data;
+  const pkx = (x, y) => {
+    const i = ((y - 540) * 440 + (x - 440)) * 4;
+    return [pk[i], pk[i + 1], pk[i + 2]];
+  };
+  const pt = [], pl = [];
+  for (let x = 470; x < 850; x += 3)
+    for (let y = 545; y < 600; y++) if (warm(pkx(x, y))) { pt.push(y); break; }
+  for (let y = 570; y < 660; y += 3)
+    for (let x = 445; x < 510; x++) if (warm(pkx(x, y))) { pl.push(x); break; }
+  return { bottom: scan(bot), left: scan(lef), right: scan(rig),
+           plankTop: scan(pt), plankLeft: scan(pl) };
+})()"""
+
+
+def aperture_checks(page, out: dict) -> None:
+    """Night 7, same frame as the swatch guard: the room is lit (firing 2),
+    the family is drawn, and the aperture's four broken board edges are on
+    the plate. Three edges must read as torn lines and stay inside the tooth
+    envelope; the plank control must stay straight."""
+    ap = page.evaluate(APERTURE_PROBE_JS)
+    out["aperture_probe"] = ap
+    b, l, r = ap["bottom"], ap["left"], ap["right"]
+    need(b["n"] >= 60 and b["var"] >= APERTURE_FLOOR_BOTTOM and b["max"] <= 466,
+         f"[campaign] aperture bottom edge is a torn line, not a rule "
+         f"(boundary variance {b['var']} px^2 >= {APERTURE_FLOOR_BOTTOM}, "
+         f"deepest warm {b['max']} <= 466 over {b['n']} columns; a rectangle scores 0)")
+    need(l["n"] >= 15 and l["var"] >= APERTURE_FLOOR_SIDE and l["min"] >= 172,
+         f"[campaign] aperture left edge is a torn line, not a rule "
+         f"(boundary variance {l['var']} px^2 >= {APERTURE_FLOOR_SIDE}, "
+         f"shallowest warm {l['min']} >= 172 over {l['n']} rows; a rectangle scores 0)")
+    need(r["n"] >= 15 and r["var"] >= APERTURE_FLOOR_SIDE and r["max"] <= 578,
+         f"[campaign] aperture right edge is a torn line, not a rule "
+         f"(boundary variance {r['var']} px^2 >= {APERTURE_FLOOR_SIDE}, "
+         f"shallowest warm {r['max']} <= 578 over {r['n']} rows; a rectangle scores 0)")
+    pt, pl = ap["plankTop"], ap["plankLeft"]
+    need(pt["n"] >= 120 and pt["var"] <= APERTURE_CONTROL_CEIL
+         and pl["n"] >= 25 and pl["var"] <= APERTURE_CONTROL_CEIL,
+         f"[campaign] the tally plank's own edges still read straight "
+         f"(control: {pt['var']} / {pl['var']} px^2 <= {APERTURE_CONTROL_CEIL})")
+    out["aperture_shot"] = shot(page, "campaign_hovel_aperture",
+                                clip={"x": 120, "y": 108, "width": 530, "height": 424})
+
+
 def run_campaign(page) -> dict:
     """The full path the docstring promises: played, on the fixed seed, to a
     designed ending, then restarted to a valid initial state."""
@@ -597,6 +710,9 @@ def run_campaign(page) -> dict:
         out["hovel_f2_shot"] = shot(page, "campaign_hovel_firing2")  # the slot's pile: 2 courses
         press(page)
         s = wait_dawn(page)
+        # Dawn 5 — the §14 read (M4): fire built high, Safie and Agatha at the
+        # board, and the aperture's ragged edge in daylight.
+        out["hovel_dawn_shot"] = shot(page, "campaign_hovel_dawn")
 
         section("[campaign] nights 5-7: the remaining lessons")
         for n in (5, 6, 7):
@@ -606,6 +722,8 @@ def run_campaign(page) -> dict:
             if n == 7:
                 section("[campaign] hovel plate: nothing reads as a flat swatch (TASK 5)")
                 hovel_plate_checks(page, out)
+                section("[campaign] the aperture mask is irregular (TASK 6)")
+                aperture_checks(page, out)
             press(page)  # listen out the rest
             s = wait_dawn(page)
         out["nights_completed"] = 7

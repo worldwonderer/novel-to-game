@@ -136,6 +136,55 @@ function plankEnd(ctx, x, y0, y1, dir) {
   ctx.fill();
 }
 
+// The chink's ragged silhouette — the clip the room is drawn through
+// (ART_DIRECTION §7.1's "ragged aperture", §16.3's "the aperture mask"). The
+// path retraces the tooth lines of the four plankBreak/plankEnd calls in
+// drawRoom, shifted 2 px into the room: same 7 px step, same det() salts (the
+// break's base y, the end's base x, and the shared 91 / 37), so the boards'
+// teeth overlap the room's rim by exactly 2 px everywhere — no room pixel
+// reaches the boards outside the gap, and no sliver of the plate shows
+// between the teeth and the room. Deterministic per frame, like every mark
+// seeded by det(). Keep the coordinates and salts in lockstep with those
+// four calls.
+export function aperturePath(ctx, ax, ay, aw, ah) {
+  const x0 = ax - 6, x1 = ax + aw + 6;         // the breaks' span
+  const ty = ay + 12, by = ay + ah - 12;       // the breaks' base lines
+  const lx = ax + 10, rx = ax + aw - 10;       // the ends' base lines
+  const ey0 = ay + 12, ey1 = ay + ah - 12;     // the ends' span
+  ctx.beginPath();
+  // top edge, left to right (plankBreak ty, dir -1, shifted 2 px down)
+  let n = 0;
+  for (let x = x0; x < x1 - 6; x += 7, n++) {
+    const deep = ty + 2 + (1.5 + det(n, Math.round(ty)) * 8);
+    const shallow = ty + 2 + (0.5 + det(n, 91) * 2.5);
+    if (x === x0) ctx.moveTo(x + 3.5, deep); else ctx.lineTo(x + 3.5, deep);
+    ctx.lineTo(x + 7, shallow);
+  }
+  // right edge, top to bottom (plankEnd rx, dir +1, shifted 2 px left)
+  n = 0;
+  for (let y = ey0; y < ey1 - 6; y += 7, n++) {
+    ctx.lineTo(rx - 2 - (1.5 + det(n, Math.round(rx)) * 6), y + 3.5);
+    ctx.lineTo(rx - 2 - (0.5 + det(n, 37) * 2), y + 7);
+  }
+  // bottom edge, right to left (plankBreak by, dir +1, shifted 2 px up)
+  const bot = [];
+  for (let x = x0, m = 0; x < x1 - 6; x += 7, m++) bot.push([x, m]);
+  for (let i = bot.length - 1; i >= 0; i--) {
+    const [x, m] = bot[i];
+    ctx.lineTo(x + 7, by - 2 - (0.5 + det(m, 91) * 2.5));
+    ctx.lineTo(x + 3.5, by - 2 - (1.5 + det(m, Math.round(by)) * 8));
+  }
+  // left edge, bottom to top (plankEnd lx, dir -1, shifted 2 px right)
+  const lef = [];
+  for (let y = ey0, m = 0; y < ey1 - 6; y += 7, m++) lef.push([y, m]);
+  for (let i = lef.length - 1; i >= 0; i--) {
+    const [y, m] = lef[i];
+    ctx.lineTo(lx + 2 + (0.5 + det(m, 37) * 2), y + 7);
+    ctx.lineTo(lx + 2 + (1.5 + det(m, Math.round(lx)) * 6), y + 3.5);
+  }
+  ctx.closePath();
+}
+
 // Gloss an utterance against the player's vocabulary: known words print,
 // unknown words are engraved wavy rules of the same length.
 export function glossText(ctx, str, wordsKnown, x, y, px, colour, align = 'center') {
@@ -462,14 +511,18 @@ function drawScratches(ctx, words, x0, y0) {
 }
 
 // The room through the chink. One composition; state reads as substitution.
+// The aperture is the torn gap of §7.1, not a rectangle: the room is clipped
+// to aperturePath and the boards' broken edges are laid over the seam — the
+// same break language as the cold slot, seeded by det(), identical every
+// frame. The straight stroked rule is gone with the rectangle.
 function drawRoom(ctx, state, ax, ay, aw, ah, view, opts) {
+  ctx.save();
+  aperturePath(ctx, ax, ay, aw, ah);
+  ctx.clip();
   // plate/room is the empty stage; every figure and state object is drawn on top.
-  if (skin.drawPlate(ctx, 'plate/room', ax, ay, aw, ah)) {
-    ctx.strokeStyle = PAL.ink; ctx.lineWidth = 1.5;
-    ctx.strokeRect(ax, ay, aw, ah);
-  } else {
+  if (!skin.drawPlate(ctx, 'plate/room', ax, ay, aw, ah)) {
     rect(ctx, ax, ay, ax + aw, ay + ah, '#efe6d2', PAL.ink);
-    skin.stampKey(ctx, 'plate/room', ax, ay);
+    skin.stampKey(ctx, 'plate/room', ax + 18, ay + 22);   // inside the mask
   }
   const dawn = view === 'dawn';
   // Anchors are fractions of the aperture so the drawn state objects register on
@@ -541,6 +594,29 @@ function drawRoom(ctx, state, ax, ay, aw, ah, view, opts) {
   }
   // The first white flower (the thaw) — degradable, drawn as a dot here.
   if (state.night >= 5) disc(ctx, BOARD.right.x - aw * 0.03, BOARD.top.y - ah * 0.02, Math.max(3, aw * 0.011), PAL.snow);
+  ctx.restore();
+  // The boards' broken edges over the seam, exactly the cold slot's language.
+  // aperturePath retraces these tooth lines 2 px in, so the teeth always
+  // overlap the room's rim — keep the four calls in lockstep with it.
+  plankBreak(ctx, ax - 6, ax + aw + 6, ay + 12, -1);
+  plankBreak(ctx, ax - 6, ax + aw + 6, ay + ah - 12, 1);
+  plankEnd(ctx, ax + 10, ay + 12, ay + ah - 12, -1);
+  plankEnd(ctx, ax + aw - 10, ay + 12, ay + ah - 12, 1);
+  // A second, staggered ring: the first ring's own outer edges would else be
+  // straight rules and the gap would sit in a rectangular dark frame. These
+  // breaks cover those edges (each mass overlaps the inner ring's) and their
+  // teeth point outward into the plate, so the dark zone's outer silhouette
+  // is a tooth line too and the corners step instead of squaring off.
+  plankBreak(ctx, ax + 18, ax + aw - 14, ay - 6, 1);
+  plankBreak(ctx, ax + 18, ax + aw - 14, ay + ah + 18, -1);
+  plankEnd(ctx, ax - 4, ay - 10, ay + ah + 10, 1);
+  plankEnd(ctx, ax + aw + 14, ay - 10, ay + ah + 10, -1);
+  // plankEnd carries no grain of its own; the side boards run with the
+  // plate's vertical planks, so the grain here is vertical, in lines.
+  hatch(ctx, ax - 2, ay + 16, ax + 8, ay + ah - 16,
+    { spacing: 5, angle: Math.PI / 2, colour: withAlpha(PAL.ink2, 0.5), width: 1, broken: 1 });
+  hatch(ctx, ax + aw - 8, ay + 16, ax + aw + 2, ay + ah - 16,
+    { spacing: 5, angle: Math.PI / 2, colour: withAlpha(PAL.ink2, 0.5), width: 1, broken: 1 });
 }
 
 // ---------------------------------------------------------------- cards & title
