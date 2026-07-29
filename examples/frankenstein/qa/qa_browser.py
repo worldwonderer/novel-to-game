@@ -589,11 +589,19 @@ APERTURE_PROBE_JS = """(() => {
   };
   const scan = (hits) => ({ n: hits.length, var: variance(hits),
                             min: Math.min(...hits), max: Math.max(...hits) });
-  // bottom edge: columns right of the hearth glow, scanning up from the straw
+  // Bottom edge: columns right of the hearth glow. Scan DOWN from inside the
+  // room and take the first pixel that stops reading as room — that is the
+  // board tooth, i.e. the mask's boundary. The earlier version scanned up from
+  // the straw and took the first warm pixel, which assumed the plate below the
+  // aperture was dark. Since plate/hovel was regenerated to §7.1 the hearth
+  // light legitimately spills onto that straw, so the upward scan latched onto
+  // the plate's own glow at y = 500 in every column and read it as the room
+  // leaking past the teeth. Measuring the boundary from inside is independent
+  // of whatever the plate does underneath it.
   const bot = [];
   for (let x = 360; x <= AX + AW - 24; x += 3)
-    for (let y = AY + AH + 20; y > AY + AH - 70; y--)
-      if (warm(px(x, y))) { bot.push(y); break; }
+    for (let y = AY + AH - 70; y <= AY + AH + 20; y++)
+      if (!warm(px(x, y))) { bot.push(y); break; }
   // left edge: rows above the hearth's dark mouth, scanning in from the boards
   const lef = [];
   for (let y = 204; y <= 258; y += 3)
@@ -604,19 +612,24 @@ APERTURE_PROBE_JS = """(() => {
   for (let y = 210; y <= 333; y += 3)
     for (let x = AX + AW + 20; x > AX + AW - 70; x--)
       if (warm(px(x, y))) { rig.push(x); break; }
-  // control: the tally plank's own top and left edges (460,560)-(860,670)
-  const pk = ctx.getImageData(440, 540, 440, 140).data;
-  const pkx = (x, y) => {
-    const i = ((y - 540) * 440 + (x - 440)) * 4;
-    return [pk[i], pk[i + 1], pk[i + 2]];
+  // Control: the prompt band's top edge at 0.88h = 704. It is opaque PAL.paper
+  // laid straight across the frame, so a working probe must score ~0 variance
+  // on it — that is what proves the variance figures above mean "torn" rather
+  // than "noisy probe". The control used to be the tally plank's edges, keyed
+  // on warm(), but the plank is #3a3020 and passes warm() itself; once
+  // plate/hovel was regenerated the straw around it is lit and warm too, so
+  // the scan measured straw texture instead of the plank. The band is keyed on
+  // luminance instead and does not depend on the plate at all.
+  const bd = ctx.getImageData(300, 680, 700, 60).data;
+  const bdl = (x, y) => {
+    const i = ((y - 680) * 700 + (x - 300)) * 4;
+    return 0.299 * bd[i] + 0.587 * bd[i + 1] + 0.114 * bd[i + 2];
   };
-  const pt = [], pl = [];
-  for (let x = 470; x < 850; x += 3)
-    for (let y = 545; y < 600; y++) if (warm(pkx(x, y))) { pt.push(y); break; }
-  for (let y = 570; y < 660; y += 3)
-    for (let x = 445; x < 510; x++) if (warm(pkx(x, y))) { pl.push(x); break; }
+  const bt = [];
+  for (let x = 300; x < 1000; x += 3)
+    for (let y = 682; y < 738; y++) if (bdl(x, y) > 180) { bt.push(y); break; }
   return { bottom: scan(bot), left: scan(lef), right: scan(rig),
-           plankTop: scan(pt), plankLeft: scan(pl) };
+           bandTop: scan(bt) };
 })()"""
 
 
@@ -640,11 +653,10 @@ def aperture_checks(page, out: dict) -> None:
          f"[campaign] aperture right edge is a torn line, not a rule "
          f"(boundary variance {r['var']} px^2 >= {APERTURE_FLOOR_SIDE}, "
          f"shallowest warm {r['max']} <= 578 over {r['n']} rows; a rectangle scores 0)")
-    pt, pl = ap["plankTop"], ap["plankLeft"]
-    need(pt["n"] >= 120 and pt["var"] <= APERTURE_CONTROL_CEIL
-         and pl["n"] >= 25 and pl["var"] <= APERTURE_CONTROL_CEIL,
-         f"[campaign] the tally plank's own edges still read straight "
-         f"(control: {pt['var']} / {pl['var']} px^2 <= {APERTURE_CONTROL_CEIL})")
+    bt = ap["bandTop"]
+    need(bt["n"] >= 200 and bt["var"] <= APERTURE_CONTROL_CEIL,
+         f"[campaign] the prompt band's straight edge still reads straight "
+         f"(control: {bt['var']} px^2 <= {APERTURE_CONTROL_CEIL} over {bt['n']} columns)")
     out["aperture_shot"] = shot(page, "campaign_hovel_aperture",
                                 clip={"x": 120, "y": 108, "width": 530, "height": 424})
 

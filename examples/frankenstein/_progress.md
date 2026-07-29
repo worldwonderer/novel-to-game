@@ -48,7 +48,8 @@
   covering the mouse campaign (F9 blocked it until now); signature frames not yet
   judged against `ART_DIRECTION` now that the plates are in; no clean-context onboarding
   judgement; no audio; no human playtest protocol yet
-- Assets: all 6 release-gated plates generated 2026-07-28 (`plate/paper|title|room|hovel|door|fire`),
+- Assets: `plate/hovel` regenerated 2026-07-28 to §7.1's composition (one warm chink, left of
+  centre; the earlier plate put it right of centre at 1.4% width — F12). All 6 release-gated plates generated 2026-07-28 (`plate/paper|title|room|hovel|door|fire`),
   sized to draw size and shipped as WebP — 17 MB PNG → 1.4 MB, total build 1.50 MB against a
   25 MB budget. They enter through `src/skin.js`; a key that fails to load still draws a grey box
   with its key name and the run continues. The 9 degradable keys remain on their named lesser
