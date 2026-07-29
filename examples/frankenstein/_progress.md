@@ -2,9 +2,10 @@
 
 > `qa` gate not passed: the slice is **completable by either input scheme** — full eight-night
 > campaigns reach the `door` ending at exchange 5 and restart clean, one all-keyboard and one
-> all-mouse (291/291 browser assertions, engine invariants hold) — **all four designed endings
-> (`door`, `seen`, `want`, `silence`) are played end to end**, and all 6 release-gated **image** keys are generated and
-> wired, and both Caslon faces ship. Still open: the audio set — the layer now exists with 1 of 12 cues authored.
+> all-mouse (336/336 browser assertions, engine invariants hold) — **all four designed endings
+> (`door`, `seen`, `want`, `silence`) are played end to end**, and **every release-gated asset now
+> ships** — 6 plates, 2 Caslon faces, 12 audio cues. Still not a release build: onboarding
+> comprehension and a human playtest need a person, and the signature-frame pass is outstanding.
 > Not a release build.
 
 - Source: Project Gutenberg, *Frankenstein; or, The Modern Prometheus* (1818), public domain
@@ -18,7 +19,7 @@
 - gate:design pass
 - gate:art pass
 - gate:build pass
-- gate:qa fail(3 `major`: F1 partly cleared — 6 gated image keys present, Caslon fonts and audio
+- gate:qa fail(2 `major`: F1 partly cleared — 6 gated image keys present, Caslon fonts and audio
   still absent; F6 **fixed** — the whole mouse click path was dead in three places and is now
   wired, proved by an all-mouse campaign; F7 **fixed** — `wedge` was never exported, so every
   frame of the `seen` phase threw; now exported and the phase plays to its failure card;
@@ -33,7 +34,7 @@
   stayed 0, and the title text and all three verbs were never drawn; the first screen was two
   blank shapes with no way in. Also fixed 2 `minor` occlusion defects (title crossing the
   platemark; the prompt band covering the tally plank and food heap).
-- Evidence: `qa/evidence/automated.json` (291 passed / 0 failed, 0 console errors, 0 external
+- Evidence: `qa/evidence/automated.json` (336 passed / 0 failed, 0 console errors, 0 external
   request domains, build 1.52 MB), `qa/evidence/browser/` 47 frames,
   `qa/evidence/qa_browser_last.log`, `node qa/design_invariants.mjs` all sections hold
 - Verified path: the full campaign — boot → title → cold open → nights 1–7 (2 carries, 4 lessons,

@@ -21,12 +21,19 @@ door's real-time clock runs out at index 0, which is the silence ending
 afterRun, and a restart to a valid initial state. An eighth pass plays the
 night-1 seen failure to its epilogue card at textScale 1 and 1.5, frames
 both, and asserts the text-size setting delivers on the card itself
-(TASK F10). A ninth pass gates the audio layer (ART_DIRECTION §13): the
-key register and §13.5 gated-pending list, the latch cue rendered offline and
-asserted non-silent against sound=false and missing-key silence, the options
-switch reaching the layer, the AudioContext running after the first real
-input, and the latch firing exactly once from engine state — never at a dawn
-without a first carry behind it.
+(TASK F10). A ninth pass gates the audio layer (ART_DIRECTION §13): all
+twelve §13.5 keys authored (pending lists empty), each rendered offline and
+asserted non-silent against sound=false and missing-key silence, the beds
+asserted sounding with levels that follow real state (the hearth louder at a
+Firing >= 2 dawn than at a small one; the wind's yard layer up in the last two
+night-minutes), the position stage asserted on the band it filters (F14:
+energy above 900 Hz, not full-band RMS), the options switch reaching the
+layer, the AudioContext running after the first real input — and a driven
+five-night campaign in which every gated key fires from real state: the latch
+exactly once (never at a dawn without a first carry behind it), the bird at
+every dawn read and in no other phase, the taper from a real unease-2 night,
+the four footfalls on their four real surfaces, and the guitar at its seeded
+hour.
 
 Evidence lands in the workspace at qa/evidence/browser/ as JPEG. The qa contract treats
 paths outside the workspace (and system temp dirs) as no evidence at all.
@@ -1807,20 +1814,39 @@ def run_fonts(page) -> dict:
 
 # ---------------------------------------------------------------- audio
 #
-# ART_DIRECTION §13 + the queue's audio task: the layer exists, and one real
-# cue — Agatha's hand on the latch (§13.3, "the first reward in the game") —
-# fires from engine state. Headless cannot hear, so the proof is threefold:
-# the cue's exact voice and position stage are rendered in an
-# OfflineAudioContext and the buffer is asserted non-silent (the F6/fonts
-# lesson: "called" is not "sounding"); the same render with sound=false and
-# for a missing key is asserted silent without throwing; and a driven night
-# with a carry asserts the latch really enters audio's played log from the
-# dawn event — while a driven night without one asserts it does not.
+# ART_DIRECTION §13 + the queue's audio task: all twelve §13.5 gated keys are
+# authored and fire from real state. Headless cannot hear, so the proof is
+# fourfold. Offline: every key's exact voice (or bed) and position stage is
+# rendered in an OfflineAudioContext and asserted non-silent, with sound=false
+# and a missing key asserted silent without throwing (the F6/fonts lesson:
+# "called" is not "sounding"); the beds are rendered at two states and their
+# levels compared (the hearth at a Firing >= 2 dawn vs a small one; the wind's
+# yard layer up vs down — §13.2's second non-visual channel). The position
+# stage is asserted on the band it actually filters: F14's full-band RMS
+# compare netted the 900 Hz low-pass against the hovel's unfiltered 0.16
+# reflection and passed at 2.2%, so it now compares the energy above 900 Hz
+# (audition's hf900) on the palette's brightest source, the taper strike.
+# Live: the switch and the autoplay gate, then a driven five-night campaign in
+# which the played log and the live-bed list show every key entering from real
+# state — and the bird entering at every dawn read and in no other phase.
+
+# Offline floors sit at roughly half the measured renders (qa/evidence/
+# automated.json, run.audio.renders) so a voice can be re-balanced without a
+# harness edit, but silence, a dropped position stage, or a bed that stops
+# following state fails loudly.
+GATED_KEYS = (
+    "footfall/snow", "footfall/path", "footfall/earth", "footfall/straw",
+    "load-down", "latch", "hearth/small", "hearth/high",
+    "taper-strike", "dawn-bird", "wind", "guitar",
+)
+
 
 def run_audio(page) -> dict:
-    out = {"plan": "register + offline renders (no input); the sound switch on "
-                   "the title options plate; then nights 1-3: no carry, carry, "
-                   "no carry -> latch silent, once, still once"}
+    out = {"plan": "register + offline renders (no input); the sound switch; "
+                   "then nights 1-5: clear the path n1, a garden print and the "
+                   "first carry n2, the taper n3 (waited out inside), the "
+                   "second carry n4, the thaw and the sty n5 -> every gated "
+                   "key from real state"}
     try:
         section("audio: the register and the offline renders (§13.5)")
         page.goto(URL, wait_until="networkidle")
@@ -1831,10 +1857,10 @@ def run_audio(page) -> dict:
           status: window.__game.audioStatus,
         })""")
         out["pending"] = reg["pending"]
-        check(len(reg["pending"]) == 11 and "latch" not in reg["pending"],
-              f"audio.pending(): the eleven unauthored keys, latch not among them {reg['pending']}")
-        check(reg["gated"] == reg["pending"],
-              "audio.gatedPending(): the same eleven (all twelve keys are §13.5-gated)")
+        check(reg["pending"] == [],
+              f"audio.pending(): empty — all twelve §13.5 keys authored {reg['pending']}")
+        check(reg["gated"] == [],
+              f"audio.gatedPending(): empty — the release-gate row closes {reg['gated']}")
         out["context_before_input"] = reg["status"]["context"]
 
         rend = page.evaluate("""async () => {
@@ -1844,25 +1870,63 @@ def run_audio(page) -> dict:
             catch (e) { return { threw: String(e) }; }
           };
           return {
-            on: await tryAud('latch', { position: 'hovel' }),
-            off: await tryAud('latch', { position: 'hovel', sound: false }),
-            missing: await tryAud('no/such-key', { position: 'hovel' }),
-            yard: await tryAud('latch', { position: 'yard' }),
+            'footfall/snow':  await tryAud('footfall/snow',  { position: 'yard',  seconds: 0.6 }),
+            'footfall/path':  await tryAud('footfall/path',  { position: 'yard',  seconds: 0.6 }),
+            'footfall/earth': await tryAud('footfall/earth', { position: 'yard',  seconds: 0.6 }),
+            'footfall/straw': await tryAud('footfall/straw', { position: 'yard',  seconds: 0.6 }),
+            'load-down':      await tryAud('load-down',      { position: 'yard',  seconds: 1.2 }),
+            'latch':          await tryAud('latch',          { position: 'hovel', seconds: 0.6 }),
+            'hearth/small':   await tryAud('hearth/small',   { position: 'hovel', seconds: 2.5 }),
+            'hearth/high':    await tryAud('hearth/high',    { position: 'hovel', seconds: 2.5 }),
+            'taper-strike':   await tryAud('taper-strike',   { position: 'hovel', seconds: 1.0 }),
+            'dawn-bird':      await tryAud('dawn-bird',      { position: 'hovel', seconds: 2.0 }),
+            'wind':           await tryAud('wind',           { position: 'yard',  seconds: 3.0 }),
+            'guitar':         await tryAud('guitar',         { position: 'hovel', seconds: 7.5 }),
+            'wind/l2up':      await tryAud('wind', { position: 'yard', seconds: 3.0, params: { layer2: 1 } }),
+            'wind/l2down':    await tryAud('wind', { position: 'yard', seconds: 3.0, params: { layer2: 0 } }),
+            'off':            await tryAud('latch', { position: 'hovel', sound: false }),
+            'offBed':         await tryAud('hearth/high', { position: 'hovel', sound: false, seconds: 2.0 }),
+            'missing':        await tryAud('no/such-key', { position: 'hovel' }),
+            'taperYard':      await tryAud('taper-strike', { position: 'yard', seconds: 1.0 }),
           };
         }""")
         out["renders"] = rend
-        on, off, missing, yard = rend["on"], rend["off"], rend["missing"], rend["yard"]
-        check(on.get("rms", 0) > 0.005 and on.get("peak", 0) > 0.05,
-              f"latch offline render is not silence (RMS {on.get('rms'):.5f}, "
-              f"peak {on.get('peak'):.3f}, {on.get('samples')} samples)")
+        floors = {  # (rms, peak) at ~half the measured values
+            "footfall/snow": (0.0004, 0.008), "footfall/path": (0.0004, 0.008),
+            "footfall/earth": (0.0004, 0.006), "footfall/straw": (0.0004, 0.006),
+            "load-down": (0.008, 0.10), "latch": (0.005, 0.05),
+            "hearth/small": (0.003, 0.012), "hearth/high": (0.007, 0.03),
+            "taper-strike": (0.003, 0.02), "dawn-bird": (0.015, 0.12),
+            "wind": (0.003, 0.010), "guitar": (0.02, 0.10),
+        }
+        for k in GATED_KEYS:
+            r = rend[k]
+            lo_rms, lo_peak = floors[k]
+            check(not r.get("threw") and r.get("rms", 0) > lo_rms and r.get("peak", 0) > lo_peak,
+                  f"{k} offline render is not silence (RMS {r.get('rms'):.5f} >= {lo_rms}, "
+                  f"peak {r.get('peak'):.3f} >= {lo_peak})")
+        small, high = rend["hearth/small"], rend["hearth/high"]
+        check(high.get("rms", 0) > small.get("rms", 1) * 1.8,
+              f"the hearth's level follows the fire: built high is louder than small "
+              f"(RMS {high.get('rms'):.5f} vs {small.get('rms'):.5f}; §13.2's second channel)")
+        l2up, l2down = rend["wind/l2up"], rend["wind/l2down"]
+        check(l2up.get("rms", 0) > l2down.get("rms", 1) * 3,
+              f"the wind's yard layer rises for the last two night-minutes "
+              f"(RMS {l2up.get('rms'):.5f} vs {l2down.get('rms'):.5f} down)")
+        off, off_bed, missing = rend["off"], rend["offBed"], rend["missing"]
         check(not off.get("threw") and off.get("rms", 1) < 1e-9,
               f"the same render with sound=false is silence (RMS {off.get('rms')})")
+        check(not off_bed.get("threw") and off_bed.get("rms", 1) < 1e-9,
+              f"a bed with sound=false is silence too (RMS {off_bed.get('rms')})")
         check(not missing.get("threw") and missing.get("rms", 1) < 1e-9,
               f"a missing key renders silence and does not throw "
               f"(threw={missing.get('threw')!r}, RMS {missing.get('rms')})")
-        check(yard.get("rms", 0) > on.get("rms", 1),
-              f"the position stage really filters: the yard hearing is more open than "
-              f"the hovel's 900 Hz wall (RMS {yard.get('rms'):.5f} > {on.get('rms'):.5f})")
+        taper_yard, taper_hovel = rend["taperYard"], rend["taper-strike"]
+        check(taper_yard.get("hf900", 0) > taper_hovel.get("hf900", 1) * 2,
+              f"F14: the position stage really filters — energy above the wall's 900 Hz "
+              f"corner, yard vs hovel (hf900 {taper_yard.get('hf900'):.5f} vs "
+              f"{taper_hovel.get('hf900'):.5f}; full-band RMS nets the low-pass against "
+              f"the reflection and says nothing)")
 
         section("audio: the switch on the options plate, and the autoplay gate")
         # Title -> options -> the sound row. The first arrows/Enter are also the
@@ -1886,13 +1950,53 @@ def run_audio(page) -> dict:
         st3 = page.evaluate("window.__game.audioStatus")
         check(st3["soundOn"] is True, "[audio] options.sound on again")
 
-        section("audio: the latch fires from engine state — and only from it")
+        section("audio: five driven nights — every gated key from real state")
         cold_open_to_night1(page, "audio")
-        s = wait_dawn(page)  # night 1, no carry
+        need(wait_cond(page, lambda s: any(b["key"] == "wind" for b in page.evaluate("window.__game.audioBeds")), 5),
+             "[audio] night 1: the wind bed is sounding")
+        guitars0 = page.evaluate("window.__game.audioPlayed")
+        need(any(p["key"] == "guitar" and p["phase"] == "coldOpen" for p in guitars0),
+             "[audio] the cold open's 0:06 beat sounds the guitar")
+
+        # Night 1: clear the path at the apron, then scuff on it — snow first,
+        # grit after (footfall/snow, footfall/path).
+        need(wait_cond(page, lambda s: s["minute"] >= 5.2, 10 * SPEED),
+             "[audio] night 1: the retiring window closes")
+        press(page, "x")
+        need(wait_cond(page, lambda s: not s["inHovel"], 5),
+             "[audio] night 1: steps out once the yard is empty")
+        for wx, wy in [(684, 290), (748, 300), (748, 440), (700, 440)]:
+            s = drive_to(page, wx, wy, 12)
+            if s is None or s["phase"] != "night":
+                raise CampaignAbort(f"night 1: the walk to the apron failed (last={s})")
+        press(page)  # iron on frozen ground: the path hold (stands still)
+        need(wait_cond(page, lambda s: s["action"] == "path", 5),
+             "[audio] night 1: clearing the path")
+        need(wait_cond(page, lambda s: s["action"] is None, 8 * SPEED),
+             "[audio] night 1: the path is cleared")
+        for _ in range(2):  # scuff the grit he just made
+            drive_to(page, 748, 440, 10)
+            drive_to(page, 700, 440, 10)
+        for wx, wy in [(748, 300), (684, 290), (630, 265)]:
+            s = drive_to(page, wx, wy, 12)
+            if s is None or s["phase"] != "night":
+                raise CampaignAbort(f"night 1: the walk home failed (last={s})")
+        press(page)  # slip back inside
+        need(qa_state(page)["inHovel"], "[audio] night 1: back inside ahead of the dawn window")
+        s = wait_dawn(page)  # dawn 2: Firing 0, no fire lit
         played0 = page.evaluate("window.__game.audioPlayed")
         check(not any(p["key"] == "latch" for p in played0),
               f"[audio] dawn 2 without a carry: no latch (played: {played0 or 'nothing'})")
+        check(not any(b["key"].startswith("hearth") for b in page.evaluate("window.__game.audioBeds")),
+              "[audio] a Firing-0 dawn: the hearth is silent (no fire burning)")
+        for k in ("footfall/snow", "footfall/path"):
+            need(any(p["key"] == k and p["phase"] == "night" for p in played0),
+                 f"[audio] {k} sounded from a real walk on its surface")
+        need(any(p["key"] == "guitar" and p["phase"] == "night" for p in played0),
+             "[audio] the guitar sounds at its seeded hour inside the night")
 
+        # Night 2: a garden print (unease 2 by dawn 3 -> the taper on night 3),
+        # then the first carry — load-down at the door, the latch at dawn 3.
         press(page)  # let the day pass -> night 2
         need(wait_cond(page, lambda s: s["phase"] == "night" and s["night"] == 2, 5),
              "[audio] night 2 begins")
@@ -1901,7 +2005,33 @@ def run_audio(page) -> dict:
         press(page, "x")
         need(wait_cond(page, lambda s: not s["inHovel"], 5),
              "[audio] night 2: steps out once the yard is empty")
-        carry_load(page, out, "audio_n2_carry")
+        for wx, wy in [(684, 290), (748, 300), (850, 460)]:
+            s = drive_to(page, wx, wy, 12)
+            if s is None or s["phase"] != "night":
+                raise CampaignAbort(f"night 2: the walk to the garden failed (last={s})")
+        need(wait_cond(page, lambda s: s["unease"] == 2, 5),
+             "[audio] night 2: a footprint in the beds (unease 1 -> 2)")
+        f0 = qa_state(page)["firing"]
+        for wx, wy in [(455, 462), (310, 458)]:
+            s = drive_to(page, wx, wy, 14)
+            if s is None or s["phase"] != "night":
+                raise CampaignAbort(f"night 2: the walk to the outhouse failed (last={s})")
+        press(page)  # take the load up
+        need(qa_state(page)["carrying"], "[audio] night 2: the load is taken up")
+        for wx, wy in ROUTE_DOOR:
+            s = drive_to(page, wx, wy, 16)
+            if s is None or s["phase"] != "night":
+                raise CampaignAbort(f"night 2: the carry to the door failed (last={s})")
+        press(page)  # put it down at their door
+        s = qa_state(page)
+        need(not s["carrying"] and s["firing"] == f0 + 1,
+             f"[audio] night 2: put down at their door (firing {f0} -> {s['firing']})")
+        for wx, wy in ROUTE_HOME:
+            s = drive_to(page, wx, wy, 12)
+            if s is None or s["phase"] != "night":
+                raise CampaignAbort(f"night 2: the walk home failed (last={s})")
+        press(page)  # slip back inside
+        need(qa_state(page)["inHovel"], "[audio] night 2: back inside ahead of the dawn window")
         s = wait_dawn(page)  # dawn 3: the family finds the first load
         played1 = page.evaluate("window.__game.audioPlayed")
         latches = [p for p in played1 if p["key"] == "latch"]
@@ -1911,15 +2041,75 @@ def run_audio(page) -> dict:
         check(bool(latches) and latches[0]["position"] == "hovel",
               f"[audio] the latch is heard through the hovel wall "
               f"(position: {latches[0]['position'] if latches else 'n/a'})")
+        loads = [p for p in played1 if p["key"] == "load-down" and p["phase"] == "night"]
+        check(bool(loads) and loads[0]["position"] == "yard",
+              f"[audio] the load-down sounds at the door, in the open "
+              f"({len(loads)}x, position {loads[0]['position'] if loads else 'n/a'})")
+        check(any(b["key"] == "hearth/small" for b in page.evaluate("window.__game.audioBeds")),
+              "[audio] a Firing-1 dawn read: the hearth bed sounds, small")
 
+        # Night 3: unease 2 at the dusk snapshot, so the taper lights ahead of
+        # Felix waking. Waited out inside — heard through the wall.
         press(page)  # -> night 3, no second carry
         need(wait_cond(page, lambda s: s["phase"] == "night" and s["night"] == 3, 5),
              "[audio] night 3 begins")
-        wait_dawn(page)
+        s = wait_dawn(page)  # dawn 4
         played2 = page.evaluate("window.__game.audioPlayed")
         check(sum(1 for p in played2 if p["key"] == "latch") == 1,
               f"[audio] dawn 4 with nothing new carried: still one latch, not two "
               f"(played: {played2})")
+        tapers = [p for p in played2 if p["key"] == "taper-strike"]
+        check(len(tapers) == 1 and tapers[0]["phase"] == "night" and tapers[0]["position"] == "hovel",
+              f"[audio] the taper strike fires from a real unease-2 night, heard through "
+              f"the wall ({len(tapers)}x, {tapers[0] if tapers else 'n/a'})")
+
+        # Night 4: the second carry -> Firing 2 at dawn 5, the hearth built high.
+        press(page)  # -> night 4
+        need(wait_cond(page, lambda s: s["phase"] == "night" and s["night"] == 4, 5),
+             "[audio] night 4 begins")
+        need(wait_cond(page, lambda s: s["minute"] >= 5.2, 10 * SPEED),
+             "[audio] night 4: the retiring window closes")
+        press(page, "x")
+        need(wait_cond(page, lambda s: not s["inHovel"], 5),
+             "[audio] night 4: steps out once the yard is empty")
+        carry_load(page, out, "audio_n4_carry")
+        s = wait_dawn(page)  # dawn 5: Firing 2
+        need(s["firing"] == 2, f"[audio] dawn 5: Firing 2 behind the read (firing {s['firing']})")
+        check(any(b["key"] == "hearth/high" for b in page.evaluate("window.__game.audioBeds")),
+              "[audio] a Firing-2 dawn read: the hearth bed sounds, built high")
+
+        # Night 5: the thaw — earth underfoot, and the sty's straw (the pig
+        # drive is free of unease by design, GAME_DESIGN §6.4).
+        press(page)  # -> night 5 (Firing 2 at dusk: the household retires late)
+        need(wait_cond(page, lambda s: s["phase"] == "night" and s["night"] == 5, 5),
+             "[audio] night 5 begins")
+        need(wait_cond(page, lambda s: s["minute"] >= 6.2, 10 * SPEED),
+             "[audio] night 5: the late retiring window closes")
+        press(page, "x")
+        need(wait_cond(page, lambda s: not s["inHovel"], 5),
+             "[audio] night 5: steps out once the yard is empty")
+        for wx, wy in [(585, 258), (520, 238), (530, 246), (585, 258), (630, 265)]:
+            s = drive_to(page, wx, wy, 10)
+            if s is None or s["phase"] != "night":
+                raise CampaignAbort(f"night 5: the sty round failed (last={s})")
+        press(page)  # slip back inside
+        need(qa_state(page)["inHovel"], "[audio] night 5: back inside ahead of the dawn window")
+        s = wait_dawn(page)  # dawn 6
+        played5 = page.evaluate("window.__game.audioPlayed")
+        for k in ("footfall/earth", "footfall/straw"):
+            need(any(p["key"] == k and p["phase"] == "night" for p in played5),
+                 f"[audio] {k} sounded from a real walk on its surface")
+
+        section("audio: the release-gate table closes (§13.5)")
+        played_all = page.evaluate("window.__game.audioPlayed")
+        missing = [k for k in GATED_KEYS if not any(p["key"] == k for p in played_all)]
+        check(not missing,
+              f"all twelve gated cues fired from real state in one campaign "
+              f"(missing: {missing or 'none'})")
+        birds = [p for p in played_all if p["key"] == "dawn-bird"]
+        check(len(birds) == 5 and all(p["phase"] == "dawnRead" for p in birds),
+              f"the bird sings at first light and nowhere else "
+              f"({len(birds)} dawns, phases {sorted(set(p['phase'] for p in birds)) or 'n/a'})")
         out["completed"] = True
     except CampaignAbort as e:
         out["aborted"] = str(e)

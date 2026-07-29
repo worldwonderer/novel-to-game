@@ -2,7 +2,7 @@
   "url": "http://127.0.0.1:5199/?seed=42&fast=1",
   "normal_speed_run": false,
   "viewport": "1280x800",
-  "passed": 291,
+  "passed": 336,
   "failed": 0,
   "console_errors": [],
   "network_errors": [],
@@ -13,20 +13,20 @@
   "frame_ms": {
     "keyboard_title": {
       "p50": 8.3,
-      "p95": 9.3,
-      "max": 10.3,
+      "p95": 9.4,
+      "max": 10,
       "n": 90
     },
     "keyboard_playing": {
       "p50": 8.3,
-      "p95": 9.7,
-      "max": 10.4,
+      "p95": 9.5,
+      "max": 10.2,
       "n": 90
     },
     "mouse_title": {
       "p50": 8.3,
-      "p95": 9.4,
-      "max": 10.2,
+      "p95": 9.6,
+      "max": 10.4,
       "n": 90
     },
     "mouse_playing": {
@@ -39,7 +39,7 @@
   "frame_floor_ms": 33.4,
   "stall_gate_ms": 200.0,
   "longtasks_over_50ms": [],
-  "build_bytes": 1607952,
+  "build_bytes": 1626144,
   "shots": 47,
   "shots_dir": "qa/evidence/browser",
   "run": {
@@ -91,7 +91,7 @@
         },
         "plank": {
           "unique": 145,
-          "var": 1090.7
+          "var": 1080.2
         },
         "bundle": {
           "unique": 197,
@@ -139,7 +139,7 @@
       },
       "aperture_shot": "16_campaign_hovel_aperture.jpg",
       "nights_completed": 7,
-      "words_at_walk": 97,
+      "words_at_walk": 96,
       "walk_shot": "17_campaign_walk.jpg",
       "door_shot": "18_campaign_door.jpg",
       "ending": "door",
@@ -521,44 +521,120 @@
       "completed": true
     },
     "audio": {
-      "plan": "register + offline renders (no input); the sound switch on the title options plate; then nights 1-3: no carry, carry, no carry -> latch silent, once, still once",
-      "pending": [
-        "footfall/snow",
-        "footfall/path",
-        "footfall/earth",
-        "footfall/straw",
-        "load-down",
-        "hearth/small",
-        "hearth/high",
-        "taper-strike",
-        "dawn-bird",
-        "wind",
-        "guitar"
-      ],
+      "plan": "register + offline renders (no input); the sound switch; then nights 1-5: clear the path n1, a garden print and the first carry n2, the taper n3 (waited out inside), the second carry n4, the thaw and the sty n5 -> every gated key from real state",
+      "pending": [],
       "context_before_input": "suspended",
       "renders": {
-        "on": {
+        "footfall/snow": {
+          "rms": 0.0017511626073515691,
+          "peak": 0.02780964784324169,
+          "hf900": 0.0009932528688925985,
+          "samples": 26460
+        },
+        "footfall/path": {
+          "rms": 0.0015929249485159612,
+          "peak": 0.038232091814279556,
+          "hf900": 0.001238304548330557,
+          "samples": 26460
+        },
+        "footfall/earth": {
+          "rms": 0.00087928096180643,
+          "peak": 0.013799362815916538,
+          "hf900": 0.0004558428955089268,
+          "samples": 26460
+        },
+        "footfall/straw": {
+          "rms": 0.0009339632527216127,
+          "peak": 0.019588889554142952,
+          "hf900": 0.0007801255062959189,
+          "samples": 26460
+        },
+        "load-down": {
+          "rms": 0.01739385511804062,
+          "peak": 0.2900618314743042,
+          "hf900": 0.004950583289313385,
+          "samples": 52920
+        },
+        "latch": {
           "rms": 0.021385072675283338,
           "peak": 0.2600450813770294,
+          "hf900": 0.0072094436407151834,
           "samples": 26460
+        },
+        "hearth/small": {
+          "rms": 0.006200418853669055,
+          "peak": 0.029265448451042175,
+          "hf900": 0.0034602724318786643,
+          "samples": 110250
+        },
+        "hearth/high": {
+          "rms": 0.01512176712508535,
+          "peak": 0.07131992280483246,
+          "hf900": 0.008457436215928918,
+          "samples": 110250
+        },
+        "taper-strike": {
+          "rms": 0.005880384372183502,
+          "peak": 0.05374464765191078,
+          "hf900": 0.004249497234068729,
+          "samples": 44100
+        },
+        "dawn-bird": {
+          "rms": 0.03738707831628059,
+          "peak": 0.3058464825153351,
+          "hf900": 0.024308861661376996,
+          "samples": 88200
+        },
+        "wind": {
+          "rms": 0.006043444883971927,
+          "peak": 0.024921884760260582,
+          "hf900": 0.0018452498150136759,
+          "samples": 132300
+        },
+        "guitar": {
+          "rms": 0.055223662683843336,
+          "peak": 0.27002424001693726,
+          "hf900": 0.025705075270710576,
+          "samples": 330750
+        },
+        "wind/l2up": {
+          "rms": 0.027847738927122365,
+          "peak": 0.10923892259597778,
+          "hf900": 0.021503868194289885,
+          "samples": 132300
+        },
+        "wind/l2down": {
+          "rms": 0.006043444883971927,
+          "peak": 0.024921884760260582,
+          "hf900": 0.0018452498150136759,
+          "samples": 132300
         },
         "off": {
           "rms": 0,
           "peak": 0,
+          "hf900": 0,
           "samples": 26460
+        },
+        "offBed": {
+          "rms": 0,
+          "peak": 0,
+          "hf900": 0,
+          "samples": 88200
         },
         "missing": {
           "rms": 0,
           "peak": 0,
+          "hf900": 0,
           "samples": 26460
         },
-        "yard": {
-          "rms": 0.02185536405041611,
-          "peak": 0.4102586507797241,
-          "samples": 26460
+        "taperYard": {
+          "rms": 0.013260636379049895,
+          "peak": 0.18485130369663239,
+          "hf900": 0.011272294651326212,
+          "samples": 44100
         }
       },
-      "audio_n2_carry_shot": "45_campaign_audio_n2_carry.jpg",
+      "audio_n4_carry_shot": "45_campaign_audio_n4_carry.jpg",
       "completed": true
     }
   }

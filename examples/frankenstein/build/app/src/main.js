@@ -8,6 +8,7 @@ import * as engine from './engine/sim.js';
 import {
   MINUTE_TICKS, FAST_MINUTE_TICKS, PLATE, HOVEL_MOUTH, DOOR,
   OUTHOUSE, WELL, MILK_HOUSE, WOOD_EDGE, DOOR_APRON,
+  THAW_NIGHT, STY_GROUND,
 } from './engine/constants.js';
 import { STRINGS, glossWords } from './strings.js';
 import * as R from './render.js';
@@ -49,24 +50,34 @@ const scene = {
   queuedAction: null,  // mouse: walk to an actionable and act on arrival
   listenedUtterance: 0,
   moonGone: 0,
+  guitarCold: false,   // the cold-open guitar (GAME_DESIGN §10, 0:06), once
 };
 function resetScene() {
   scene.buttons = []; scene.focus = 0; scene.coldTime = 0; scene.minted = [];
   scene.speech = null; scene.titleBeat = 0; scene.epilogueStep = 0;
   scene.holdTicks = 0; scene.queuedAction = null; scene.listenedUtterance = 0;
-  scene.moonGone = 0;
+  scene.moonGone = 0; scene.guitarCold = false;
 }
 
 // Run-scoped, not scene-scoped: Agatha's latch sounds once per run (the
 // engine's own never-set flag is state.firstCarryLatchSeen), and resetScene
 // runs at every dawn advance, which must not re-arm it. restart() re-arms.
 let latchPlayed = false;
+// The guitar's nightly arming is run-scoped the same way: the hour is seeded
+// (§13.2), the phrase never varies, and each night it sounds once.
+let guitarNight = 0;
+let guitarDone = false;
+// Footfall pacing: steps are distance, not ticks (§13.3 "Continuous, low").
+let stepAcc = 0;
+const lastPos = { x: null, y: null };
 
 function restart() {
   state = createRun(seed);
   state.minuteTicks = fast ? FAST_MINUTE_TICKS : MINUTE_TICKS;
   state.phase = 'title';
   latchPlayed = false;
+  guitarNight = 0; guitarDone = false;
+  stepAcc = 0; lastPos.x = null; lastPos.y = null;
   resetScene();
 }
 
@@ -384,7 +395,16 @@ function drainEvents() {
       scene.speech = { speaker: null, text: STRINGS.moments.portmanteau, t: 0, narration: true };
     } else if (ev.type === 'journal') {
       scene.speech = { speaker: null, text: STRINGS.moments.journalRead, t: 0, narration: true };
+    } else if (ev.type === 'putDown') {
+      // Wood settling on wood (§13.3) — the game's reward sound.
+      audio.play('load-down');
+    } else if (ev.type === 'taper') {
+      // The warning sound (§13.3): a taper lit ahead of Felix waking.
+      audio.play('taper-strike');
     } else if (ev.type === 'dawn') {
+      // First light, and only first light: the bird is the sound of the
+      // deadline (§13.2), so it is scheduled here and nowhere else.
+      audio.play('dawn-bird');
       // Agatha's hand on the latch (ART_DIRECTION §13.3, GAME_DESIGN §10 beat
       // 1): the first dawn after a load has been put at their door, once per
       // run. The engine declares state.firstCarryLatchSeen for exactly this
@@ -397,6 +417,69 @@ function drainEvents() {
       }
     }
   }
+}
+
+// ---------------------------------------------------------------- audio sync
+//
+// The state-class sounds (ART_DIRECTION §13.2): beds that follow state rather
+// than events, paced once per frame from the state itself. The hearth mirrors
+// render.js's fire read exactly (Firing 0 -> silence, 1 -> small, >= 2 ->
+// built high), so the second, non-visual channel for the fire peaks at the
+// same read the visual does and the two never disagree.
+
+function surfaceKey() {
+  const c = state.creature;
+  // Straw is the sty's floor; earth is the thaw; grit is the path the creature
+  // cleared himself, and only where he cleared it; everything else is snow.
+  if (c.x > STY_GROUND.x0 && c.x < STY_GROUND.x1 && c.y > STY_GROUND.y0 && c.y < STY_GROUND.y1) {
+    return 'footfall/straw';
+  }
+  if (state.night >= THAW_NIGHT) return 'footfall/earth';
+  if (state.tonight && state.tonight.pathCleared &&
+      Math.hypot(c.x - DOOR_APRON.x, c.y - DOOR_APRON.y) <= 96) return 'footfall/path';
+  return 'footfall/snow';
+}
+
+function syncAudio() {
+  const inHovelView = (state.phase === 'night' && state.creature.inHovel) ||
+    state.phase === 'dawnRead' || state.phase === 'coldOpen';
+  const fire = state.firing >= 2 ? 2 : state.firing > 0 ? 1 : 0;
+  audio.setBed('hearth/small', 'hovel', inHovelView && fire === 1 ? 1 : 0);
+  audio.setBed('hearth/high', 'hovel', inHovelView && fire === 2 ? 1 : 0);
+  const night = state.phase === 'night';
+  // The yard layer rises across the last two night-minutes (§13.2): dawn is
+  // heard before it is seen.
+  const layer2 = night ? Math.max(0, Math.min(1, (2 - state.nightMinutesLeft) / 2)) : 0;
+  audio.setBed('wind', state.creature.inHovel ? 'hovel' : 'yard', night ? 1 : 0, { layer2 });
+
+  // De Lacey at his own hours (§13.3): one seeded minute each night, the same
+  // phrase — and the cold open's 0:06 beat (GAME_DESIGN §10).
+  if (night) {
+    if (guitarNight !== state.night) { guitarNight = state.night; guitarDone = false; }
+    if (!guitarDone && state.minute >= audio.guitarHour()) {
+      guitarDone = true;
+      audio.play('guitar');
+    }
+  }
+  if (state.phase === 'coldOpen' && !scene.guitarCold && scene.coldTime >= 6) {
+    scene.guitarCold = true;
+    audio.play('guitar');
+  }
+
+  // Footfalls: one scuff per step walked, on the surface under him.
+  if (night && !state.creature.inHovel && state.creature.moving) {
+    if (lastPos.x !== null) {
+      stepAcc += Math.hypot(state.creature.x - lastPos.x, state.creature.y - lastPos.y);
+    }
+    if (stepAcc >= 26) {
+      stepAcc = 0;
+      audio.play(surfaceKey());
+    }
+  } else {
+    stepAcc = 0;
+  }
+  lastPos.x = state.creature.x;
+  lastPos.y = state.creature.y;
 }
 
 // ---------------------------------------------------------------- render
@@ -668,6 +751,7 @@ function frame(now) {
     interactive = true;
   }
   render();
+  syncAudio();
 }
 
 function step(input) {
@@ -713,6 +797,8 @@ skin.load();
 audio.load();
 audio.setSound(options.sound);
 audio.onPosition(() => (state.creature.inHovel ? 'hovel' : 'yard'));
+audio.onPhase(() => state.phase);
+audio.setSeed(seed);
 
 // The test hook: current state, the tick index, and the active cone set.
 // layoutCard is the render layer's pure card measure (QA_REPORT F8): the
@@ -732,6 +818,7 @@ window.__game = {
   get audioPending() { return audio.pending(); },
   get audioGatedPending() { return audio.gatedPending(); },
   get audioStatus() { return audio.status(); },
+  get audioBeds() { return audio.beds(); },
   get audioPlayed() { return audio.playedCues(); },
   audioAudition: (key, opts) => audio.audition(key, opts),
 };
