@@ -1,9 +1,9 @@
 {
-  "url": "http://127.0.0.1:5199/?seed=42&fast=1",
-  "normal_speed_run": false,
+  "url": "http://127.0.0.1:5199/?seed=42",
+  "normal_speed_run": true,
   "viewport": "1280x800",
-  "passed": 336,
-  "failed": 0,
+  "passed": 272,
+  "failed": 2,
   "console_errors": [],
   "network_errors": [],
   "request_hosts": [
@@ -13,26 +13,26 @@
   "frame_ms": {
     "keyboard_title": {
       "p50": 8.3,
-      "p95": 9.2,
-      "max": 9.3,
+      "p95": 8.9,
+      "max": 9.2,
       "n": 90
     },
     "keyboard_playing": {
       "p50": 8.3,
-      "p95": 9.2,
-      "max": 9.3,
+      "p95": 9.1,
+      "max": 9.4,
       "n": 90
     },
     "mouse_title": {
       "p50": 8.3,
-      "p95": 9,
-      "max": 9.4,
+      "p95": 10.1,
+      "max": 10.3,
       "n": 90
     },
     "mouse_playing": {
       "p50": 8.3,
-      "p95": 9.2,
-      "max": 9.4,
+      "p95": 10.1,
+      "max": 10.4,
       "n": 90
     }
   },
@@ -40,23 +40,18 @@
   "stall_gate_ms": 200.0,
   "longtasks_over_50ms": [],
   "build_bytes": 1630095,
-  "shots": 50,
+  "shots": 46,
   "shots_dir": "qa/evidence/browser",
   "run": {
     "keyboard": {
       "title_shot": "01_keyboard_title.jpg",
       "cold_open_shot": "02_keyboard_cold_open.jpg",
-      "cold_open_seconds": 23.3,
+      "cold_open_seconds": 23.2,
       "playing_shot": "03_keyboard_playing.jpg",
-      "advanced_a_night": true,
       "state_changed": [
-        "night",
-        "minute",
-        "words",
-        "store",
-        "unease"
+        "minute"
       ],
-      "night_reached": 2,
+      "night_reached": 1,
       "restart_shot": "04_keyboard_restart.jpg"
     },
     "mouse": {
@@ -65,20 +60,16 @@
       "cold_open_shot": "07_mouse_cold_open.jpg",
       "cold_open_seconds": 23.3,
       "playing_shot": "08_mouse_playing.jpg",
-      "advanced_a_night": true,
       "state_changed": [
-        "night",
-        "minute",
-        "store",
-        "unease"
+        "minute"
       ],
-      "night_reached": 2,
+      "night_reached": 1,
       "restart_shot": "09_mouse_restart.jpg"
     },
     "campaign": {
       "plan": "listen n1-2; carry n3; lesson+carry n4; lesson n5-7; walk day 8 (5 slots); five exchanges; epilogue; restart",
-      "words_after_n1": 12,
-      "words_after_n2": 21,
+      "words_after_n1": 14,
+      "words_after_n2": 22,
       "n3_carry_shot": "10_campaign_n3_carry.jpg",
       "hovel_f1_shot": "11_campaign_hovel_firing1.jpg",
       "lesson_mint_shot": "12_campaign_lesson_mint.jpg",
@@ -92,7 +83,7 @@
         },
         "plank": {
           "unique": 145,
-          "var": 1080.2
+          "var": 1111.6
         },
         "bundle": {
           "unique": 197,
@@ -140,7 +131,7 @@
       },
       "aperture_shot": "17_campaign_hovel_aperture.jpg",
       "nights_completed": 7,
-      "words_at_walk": 97,
+      "words_at_walk": 100,
       "walk_shot": "18_campaign_walk.jpg",
       "door_shot": "19_campaign_door.jpg",
       "ending": "door",
@@ -169,13 +160,13 @@
     "mouse_campaign": {
       "plan": "as [campaign], but no keyboard input anywhere; hotspots carry the context actions (walk-and-act on arrival)",
       "title_button_shot": "25_mousecampaign_title_button.jpg",
-      "words_after_n1": 12,
-      "words_after_n2": 20,
+      "words_after_n1": 14,
+      "words_after_n2": 22,
       "move_shot": "26_mouseclick_yard_move.jpg",
       "n3_carry_shot": "27_mousecampaign_n3_carry.jpg",
       "n4_carry_shot": "28_mousecampaign_n4_carry.jpg",
       "nights_completed": 7,
-      "words_at_walk": 97,
+      "words_at_walk": 100,
       "walk_shot": "29_mousecampaign_walk.jpg",
       "door_shot": "30_mousecampaign_door.jpg",
       "ending": "door",
@@ -193,50 +184,81 @@
     },
     "want": {
       "plan": "one milk-house take per night, nights 1-5: store 4,2,0,0,0; zeroStoreRun 3 at dawn 6 -> the family is gone (want)",
-      "nights_completed": 5,
-      "ending": "want",
-      "gone_shot": "36_want_gone_card.jpg",
-      "epilogue_model": {
-        "ending": "want",
-        "exchange5": false,
-        "exchanges": 0,
-        "nothingPutBy": true,
-        "journal": false,
-        "satUp": false,
-        "beds": 0,
-        "storeAtFlight": 0,
-        "firingAtFlight": 0,
-        "fewLessons": true,
+      "completed": false,
+      "abort": "[want] the walk to the milk-house (last={'phase': 'dawnRead', 'night': 3, 'day': 3, 'minute': 14.1, 'length': 14, 'words': 0, 'firing': 0, 'store': 3, 'unease': 2, 'x': 630, 'y': 265, 'carrying': False, 'inHovel': True, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 0, 'takes': 1, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})",
+      "state_at_abort": {
+        "phase": "dawnRead",
+        "night": 3,
+        "day": 3,
+        "minute": 14.1,
+        "length": 14,
+        "words": 0,
+        "firing": 0,
+        "store": 3,
+        "unease": 2,
+        "x": 630,
+        "y": 265,
+        "carrying": false,
+        "inHovel": true,
+        "ending": null,
         "seenBy": null,
-        "seenContext": null
+        "seenCtx": null,
+        "exchanges": 0,
+        "carries": 0,
+        "lessons": 0,
+        "listens": 0,
+        "takes": 1,
+        "zeroStoreRun": 0,
+        "familyGone": false,
+        "slipped": false,
+        "walk": null,
+        "door": null,
+        "canSpeak": false,
+        "lessonDone": false,
+        "listening": false,
+        "action": null,
+        "walkStage": null
       },
-      "afterrun_shot": "37_want_afterrun.jpg",
-      "restart_shot": "38_want_restart.jpg",
-      "completed": true
+      "abort_shot": "36_want_abort.jpg"
     },
     "silence": {
       "plan": "take n1 (store 1 at dawn 6 -> the errand walk, day 9, two slots); wait out n2-8 inside; knock in the 15-30 s band (words 0 -> one slot); never answer: the 30 s clock runs out at index 0",
-      "nights_completed": 8,
-      "door_shot": "39_silence_door.jpg",
-      "ending": "silence",
-      "exchanges": 0,
-      "epilogue_model": {
-        "ending": "silence",
-        "exchange5": false,
-        "exchanges": 0,
-        "nothingPutBy": false,
-        "journal": false,
-        "satUp": false,
-        "beds": 0,
-        "storeAtFlight": 1,
-        "firingAtFlight": 0,
-        "fewLessons": true,
+      "completed": false,
+      "abort": "[silence] the walk to the milk-house (last={'phase': 'dawnRead', 'night': 2, 'day': 2, 'minute': 14.1, 'length': 14, 'words': 0, 'firing': 0, 'store': 5, 'unease': 2, 'x': 630, 'y': 265, 'carrying': False, 'inHovel': True, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 0, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})",
+      "state_at_abort": {
+        "phase": "dawnRead",
+        "night": 2,
+        "day": 2,
+        "minute": 14.1,
+        "length": 14,
+        "words": 0,
+        "firing": 0,
+        "store": 5,
+        "unease": 2,
+        "x": 630,
+        "y": 265,
+        "carrying": false,
+        "inHovel": true,
+        "ending": null,
         "seenBy": null,
-        "seenContext": null
+        "seenCtx": null,
+        "exchanges": 0,
+        "carries": 0,
+        "lessons": 0,
+        "listens": 0,
+        "takes": 0,
+        "zeroStoreRun": 0,
+        "familyGone": false,
+        "slipped": false,
+        "walk": null,
+        "door": null,
+        "canSpeak": false,
+        "lessonDone": false,
+        "listening": false,
+        "action": null,
+        "walkStage": null
       },
-      "afterrun_shot": "40_silence_afterrun.jpg",
-      "restart_shot": "41_silence_restart.jpg",
-      "completed": true
+      "abort_shot": "37_silence_abort.jpg"
     },
     "card_layout": {
       "layout": {
@@ -474,13 +496,13 @@
           }
         ]
       },
-      "about_shot": "42_card_about.jpg",
-      "options_shot": "43_card_options_scale125.jpg",
+      "about_shot": "38_card_about.jpg",
+      "options_shot": "39_card_options_scale125.jpg",
       "completed": true
     },
     "epilogue_textscale": {
-      "shot_scale1": "44_epilogue_textscale1.jpg",
-      "shot_scale1.5": "45_epilogue_textscale1.5.jpg",
+      "shot_scale1": "40_epilogue_textscale1.jpg",
+      "shot_scale1.5": "41_epilogue_textscale1.5.jpg",
       "layouts": {
         "1": {
           "px": 22,
@@ -519,8 +541,8 @@
         "textOnDisp": 607.73974609375,
         "dispOnText": 267.07965087890625
       },
-      "title_shot": "46_fonts_title.jpg",
-      "prompt_shot": "47_fonts_coldopen_prompt.jpg",
+      "title_shot": "42_fonts_title.jpg",
+      "prompt_shot": "43_fonts_coldopen_prompt.jpg",
       "completed": true
     },
     "audio": {
@@ -595,9 +617,9 @@
           "samples": 132300
         },
         "guitar": {
-          "rms": 0.05522366270102526,
+          "rms": 0.05522366272838349,
           "peak": 0.27002424001693726,
-          "hf900": 0.02570507527923569,
+          "hf900": 0.025705075291896914,
           "samples": 330750
         },
         "wind/l2up": {
@@ -637,7 +659,7 @@
           "samples": 44100
         }
       },
-      "audio_n4_carry_shot": "48_campaign_audio_n4_carry.jpg",
+      "audio_n4_carry_shot": "44_campaign_audio_n4_carry.jpg",
       "completed": true
     }
   }
