@@ -2,7 +2,7 @@
   "url": "http://127.0.0.1:5199/?seed=42&fast=1",
   "normal_speed_run": false,
   "viewport": "1280x800",
-  "passed": 246,
+  "passed": 267,
   "failed": 0,
   "console_errors": [],
   "network_errors": [],
@@ -13,34 +13,34 @@
   "frame_ms": {
     "keyboard_title": {
       "p50": 8.3,
-      "p95": 10.1,
-      "max": 10.3,
+      "p95": 9.6,
+      "max": 10,
       "n": 90
     },
     "keyboard_playing": {
       "p50": 8.3,
-      "p95": 9.2,
-      "max": 9.5,
+      "p95": 9.4,
+      "max": 9.9,
       "n": 90
     },
     "mouse_title": {
       "p50": 8.3,
-      "p95": 9.4,
-      "max": 10.2,
+      "p95": 10,
+      "max": 10.3,
       "n": 90
     },
     "mouse_playing": {
       "p50": 8.3,
-      "p95": 9.8,
-      "max": 10.3,
+      "p95": 8.5,
+      "max": 9.9,
       "n": 90
     }
   },
   "frame_floor_ms": 33.4,
   "stall_gate_ms": 200.0,
   "longtasks_over_50ms": [],
-  "build_bytes": 1593480,
-  "shots": 44,
+  "build_bytes": 1596705,
+  "shots": 46,
   "shots_dir": "qa/evidence/browser",
   "run": {
     "keyboard": {
@@ -91,7 +91,7 @@
         },
         "plank": {
           "unique": 145,
-          "var": 1090.7
+          "var": 1080.2
         },
         "bundle": {
           "unique": 197,
@@ -139,7 +139,7 @@
       },
       "aperture_shot": "16_campaign_hovel_aperture.jpg",
       "nights_completed": 7,
-      "words_at_walk": 97,
+      "words_at_walk": 96,
       "walk_shot": "17_campaign_walk.jpg",
       "door_shot": "18_campaign_door.jpg",
       "ending": "door",
@@ -241,54 +241,225 @@
         "nStrings": 229,
         "wide": [],
         "tall": [],
+        "overChars": [],
+        "smallPx": [],
+        "badLead": [],
+        "badAlign": [],
+        "under": [],
+        "heavy": [
+          {
+            "first": "At dawn, two men stood in the lane. The othe",
+            "logical": 4,
+            "buttons": 1,
+            "scales": {
+              "1": {
+                "px": 15,
+                "nLines": 8,
+                "maxChars": 60
+              },
+              "1.25": {
+                "px": 21,
+                "nLines": 8,
+                "maxChars": 60
+              },
+              "1.5": {
+                "px": 26,
+                "nLines": 8,
+                "maxChars": 60
+              }
+            }
+          },
+          {
+            "first": "At dawn, two men stood in the lane. The othe",
+            "logical": 4,
+            "buttons": 1,
+            "scales": {
+              "1": {
+                "px": 15,
+                "nLines": 8,
+                "maxChars": 58
+              },
+              "1.25": {
+                "px": 21,
+                "nLines": 8,
+                "maxChars": 58
+              },
+              "1.5": {
+                "px": 26,
+                "nLines": 8,
+                "maxChars": 58
+              }
+            }
+          },
+          {
+            "first": "At dawn, two men stood in the lane. The othe",
+            "logical": 4,
+            "buttons": 0,
+            "scales": {
+              "1": {
+                "px": 20,
+                "nLines": 8,
+                "maxChars": 60
+              },
+              "1.25": {
+                "px": 25,
+                "nLines": 8,
+                "maxChars": 60
+              },
+              "1.5": {
+                "px": 30,
+                "nLines": 8,
+                "maxChars": 60
+              }
+            }
+          },
+          {
+            "first": "At dawn, two men stood in the lane. The othe",
+            "logical": 4,
+            "buttons": 0,
+            "scales": {
+              "1": {
+                "px": 20,
+                "nLines": 8,
+                "maxChars": 58
+              },
+              "1.25": {
+                "px": 25,
+                "nLines": 8,
+                "maxChars": 58
+              },
+              "1.5": {
+                "px": 30,
+                "nLines": 8,
+                "maxChars": 58
+              }
+            }
+          },
+          {
+            "first": "Sound and text",
+            "logical": 7,
+            "buttons": 1,
+            "scales": {
+              "1": {
+                "px": 17,
+                "nLines": 7,
+                "maxChars": 25
+              },
+              "1.25": {
+                "px": 23,
+                "nLines": 7,
+                "maxChars": 25
+              },
+              "1.5": {
+                "px": 30,
+                "nLines": 7,
+                "maxChars": 25
+              }
+            }
+          },
+          {
+            "first": "Sound and text",
+            "logical": 7,
+            "buttons": 1,
+            "scales": {
+              "1": {
+                "px": 17,
+                "nLines": 7,
+                "maxChars": 25
+              },
+              "1.25": {
+                "px": 23,
+                "nLines": 7,
+                "maxChars": 25
+              },
+              "1.5": {
+                "px": 30,
+                "nLines": 7,
+                "maxChars": 25
+              }
+            }
+          }
+        ],
         "shrunk": [
           {
             "scale": 1,
-            "shrink": 0.72,
-            "px": 16,
+            "shrink": 0.78,
+            "px": 17,
             "logical": 7,
             "buttons": 1,
             "first": "Sound and text"
-          },
-          {
-            "scale": 1,
-            "shrink": 0.78,
-            "px": 17,
-            "logical": 4,
-            "buttons": 0,
-            "first": "At dawn, two men stood in the lane. The othe"
-          },
-          {
-            "scale": 1,
-            "shrink": 0.72,
-            "px": 16,
-            "logical": 4,
-            "buttons": 1,
-            "first": "At dawn, two men stood in the lane. The othe"
-          },
-          {
-            "scale": 1,
-            "shrink": 0.78,
-            "px": 17,
-            "logical": 3,
-            "buttons": 1,
-            "first": "At dawn, two men stood in the lane. The othe"
           },
           {
             "scale": 1.25,
             "shrink": 0.85,
             "px": 23,
             "logical": 7,
-            "buttons": 0,
+            "buttons": 1,
             "first": "Sound and text"
           },
           {
-            "scale": 1.25,
-            "shrink": 0.66,
-            "px": 18,
+            "scale": 1.5,
+            "shrink": 0.92,
+            "px": 30,
             "logical": 7,
             "buttons": 1,
             "first": "Sound and text"
+          },
+          {
+            "scale": 1,
+            "shrink": 0.92,
+            "px": 20,
+            "logical": 4,
+            "buttons": 0,
+            "first": "At dawn, two men stood in the lane. The othe"
+          },
+          {
+            "scale": 1.25,
+            "shrink": 0.92,
+            "px": 25,
+            "logical": 4,
+            "buttons": 0,
+            "first": "At dawn, two men stood in the lane. The othe"
+          },
+          {
+            "scale": 1.5,
+            "shrink": 0.92,
+            "px": 30,
+            "logical": 4,
+            "buttons": 0,
+            "first": "At dawn, two men stood in the lane. The othe"
+          },
+          {
+            "scale": 1,
+            "shrink": 0.66,
+            "px": 15,
+            "logical": 4,
+            "buttons": 1,
+            "first": "At dawn, two men stood in the lane. The othe"
+          },
+          {
+            "scale": 1.25,
+            "shrink": 0.78,
+            "px": 21,
+            "logical": 4,
+            "buttons": 1,
+            "first": "At dawn, two men stood in the lane. The othe"
+          },
+          {
+            "scale": 1.5,
+            "shrink": 0.78,
+            "px": 26,
+            "logical": 4,
+            "buttons": 1,
+            "first": "At dawn, two men stood in the lane. The othe"
+          },
+          {
+            "scale": 1,
+            "shrink": 0.85,
+            "px": 19,
+            "logical": 3,
+            "buttons": 1,
+            "first": "At dawn, two men stood in the lane. The othe"
           },
           {
             "scale": 1.25,
@@ -296,140 +467,39 @@
             "px": 25,
             "logical": 3,
             "buttons": 1,
-            "first": "This plate is drawn from the 1831 text, chap"
-          },
-          {
-            "scale": 1.25,
-            "shrink": 0.78,
-            "px": 21,
-            "logical": 4,
-            "buttons": 0,
             "first": "At dawn, two men stood in the lane. The othe"
-          },
-          {
-            "scale": 1.25,
-            "shrink": 0.66,
-            "px": 18,
-            "logical": 4,
-            "buttons": 1,
-            "first": "At dawn, two men stood in the lane. The othe"
-          },
-          {
-            "scale": 1.25,
-            "shrink": 0.78,
-            "px": 21,
-            "logical": 3,
-            "buttons": 1,
-            "first": "At dawn, two men stood in the lane. The othe"
-          },
-          {
-            "scale": 1.25,
-            "shrink": 0.78,
-            "px": 21,
-            "logical": 3,
-            "buttons": 1,
-            "first": "It was apparent that my conversation had int"
-          },
-          {
-            "scale": 1.25,
-            "shrink": 0.92,
-            "px": 25,
-            "logical": 3,
-            "buttons": 1,
-            "first": "He had heard a stranger at his door, and not"
-          },
-          {
-            "scale": 1.5,
-            "shrink": 0.78,
-            "px": 26,
-            "logical": 7,
-            "buttons": 0,
-            "first": "Sound and text"
-          },
-          {
-            "scale": 1.5,
-            "shrink": 0.6,
-            "px": 20,
-            "logical": 7,
-            "buttons": 1,
-            "first": "Sound and text"
-          },
-          {
-            "scale": 1.5,
-            "shrink": 0.85,
-            "px": 28,
-            "logical": 3,
-            "buttons": 1,
-            "first": "This plate is drawn from the 1831 text, chap"
-          },
-          {
-            "scale": 1.5,
-            "shrink": 0.92,
-            "px": 30,
-            "logical": 2,
-            "buttons": 1,
-            "first": "At dawn, two men stood in the lane. The othe"
-          },
-          {
-            "scale": 1.5,
-            "shrink": 0.78,
-            "px": 26,
-            "logical": 4,
-            "buttons": 0,
-            "first": "At dawn, two men stood in the lane. The othe"
-          },
-          {
-            "scale": 1.5,
-            "shrink": 0.6,
-            "px": 20,
-            "logical": 4,
-            "buttons": 1,
-            "first": "At dawn, two men stood in the lane. The othe"
-          },
-          {
-            "scale": 1.5,
-            "shrink": 0.92,
-            "px": 30,
-            "logical": 3,
-            "buttons": 0,
-            "first": "At dawn, two men stood in the lane. The othe"
-          },
-          {
-            "scale": 1.5,
-            "shrink": 0.78,
-            "px": 26,
-            "logical": 3,
-            "buttons": 1,
-            "first": "At dawn, two men stood in the lane. The othe"
-          },
-          {
-            "scale": 1.5,
-            "shrink": 0.66,
-            "px": 22,
-            "logical": 3,
-            "buttons": 1,
-            "first": "It was apparent that my conversation had int"
-          },
-          {
-            "scale": 1.5,
-            "shrink": 0.92,
-            "px": 30,
-            "logical": 3,
-            "buttons": 0,
-            "first": "It was apparent that my conversation had int"
-          },
-          {
-            "scale": 1.5,
-            "shrink": 0.85,
-            "px": 28,
-            "logical": 3,
-            "buttons": 1,
-            "first": "He had heard a stranger at his door, and not"
           }
         ]
       },
       "about_shot": "39_card_about.jpg",
       "options_shot": "40_card_options_scale125.jpg",
+      "completed": true
+    },
+    "epilogue_textscale": {
+      "shot_scale1": "41_epilogue_textscale1.jpg",
+      "shot_scale1.5": "42_epilogue_textscale1.5.jpg",
+      "layouts": {
+        "1": {
+          "px": 22,
+          "pxTitle": 30,
+          "lines": 6,
+          "maxChars": 57,
+          "align": "left",
+          "paperW": 717,
+          "bottom": 491,
+          "limit": 540
+        },
+        "1.5": {
+          "px": 33,
+          "pxTitle": 45,
+          "lines": 6,
+          "maxChars": 60,
+          "align": "left",
+          "paperW": 1075,
+          "bottom": 527,
+          "limit": 620
+        }
+      },
       "completed": true
     },
     "fonts": {
@@ -446,8 +516,8 @@
         "textOnDisp": 607.73974609375,
         "dispOnText": 267.07965087890625
       },
-      "title_shot": "41_fonts_title.jpg",
-      "prompt_shot": "42_fonts_coldopen_prompt.jpg",
+      "title_shot": "43_fonts_title.jpg",
+      "prompt_shot": "44_fonts_coldopen_prompt.jpg",
       "completed": true
     }
   }

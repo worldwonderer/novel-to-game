@@ -627,25 +627,63 @@ function drawRoom(ctx, state, ax, ay, aw, ah, view, opts) {
 
 // The card's paper, centred on the plate. Card ink must never leave it: the
 // paper is the one light ground on a night-deep plate, so a glyph off its
-// edge is a glyph lost (QA_REPORT F8).
-const CARD = { x0: PLATE.w * 0.22, y0: PLATE.h * 0.30, x1: PLATE.w * 0.78, y1: PLATE.h * 0.70 };
+// edge is a glyph lost (QA_REPORT F8). The sheet itself grows with the
+// text-size setting — a reader who asks for larger type gets a larger
+// sheet, not the same sheet with the shrink ladder quietly eating the
+// difference (QA_REPORT F10b) — and it never crosses the air the moon arc
+// (bottom edge 0.085h + 52 + stroke ~= 122) and the prompt band (top
+// 0.88h = 704) need, nor the plate's side margins.
+const CARD_BASE_W = PLATE.w * 0.56;   // 716.8 at textScale 1 — the F8 geometry
+const CARD_BASE_H = PLATE.h * 0.40;   // 320, centred on the plate
+const CARD_LIMITS = { x0: 96, y0: 132, x1: PLATE.w - 96, y1: 688 };
 const CARD_PAD_X = 56;         // inner side margins: ink never nears the deckle
 const CARD_PAD_TOP = 24;
 const CARD_PAD_BOTTOM = 20;
 const CARD_SHRINK = [1, 0.92, 0.85, 0.78, 0.72, 0.66, 0.6, 0.54];
 
-// Wrap one logical line to physical lines measuring <= maxWidth, word by word
-// (the same measureText walk glossText does). A single word wider than the
-// measure stays whole on its own line — the layout reports the overflow
-// rather than breaking the word.
-function wrapCardLine(ctx, str, font, maxWidth) {
+// ART_DIRECTION §9, transcribed: card body 22 px with a floor of 13 px it
+// "must never cross"; the first line 30 px (§9 sets it no floor — 14 stays
+// as the ladder's last resort); leading 1.5; measure <= 62 characters.
+// §9's sizes are "before the text-size multiplier", so both classes take
+// the multiplier here.
+const CARD_BODY = 22, CARD_BODY_FLOOR = 13;
+const CARD_TITLE = 30, CARD_TITLE_FLOOR = 14;
+const CARD_LEADING = 1.5;
+const CARD_MEASURE = 62;
+// The measure turned into pixels is measured, not assumed: 62 characters of
+// the game's own prose in the line's own face and size. Caslon sets wider
+// than the Georgia stack the layout was tuned against, so any carried-over
+// constant would wrap at the wrong place (TASK F10). Exactly CARD_MEASURE
+// characters by construction.
+const MEASURE_SAMPLE = ('for many months i have lived against your wall and i have learned '
+  + 'your speech by listening at the chink').slice(0, CARD_MEASURE);
+
+function cardPaper(scale) {
+  const w = Math.min(CARD_BASE_W * scale, CARD_LIMITS.x1 - CARD_LIMITS.x0);
+  const h = Math.min(CARD_BASE_H * scale, CARD_LIMITS.y1 - CARD_LIMITS.y0);
+  return {
+    x0: Math.max(CARD_LIMITS.x0, PLATE.w / 2 - w / 2),
+    x1: Math.min(CARD_LIMITS.x1, PLATE.w / 2 + w / 2),
+    y0: Math.max(CARD_LIMITS.y0, PLATE.h / 2 - h / 2),
+    y1: Math.min(CARD_LIMITS.y1, PLATE.h / 2 + h / 2),
+  };
+}
+
+// Wrap one logical line to physical lines measuring <= maxWidth AND holding
+// <= maxChars characters, word by word (the same measureText walk glossText
+// does). §9's two caps both bind: a line breaks at whichever it reaches
+// first, so the gate can assert the measure in characters as well as pixels
+// and never find a narrow-lettered line sneaking past 62. A single word
+// wider than the measure stays whole on its own line — the layout reports
+// the overflow rather than breaking the word.
+function wrapCardLine(ctx, str, font, maxWidth, maxChars) {
   ctx.font = font;
   const space = ctx.measureText(' ').width;
   const out = [];
   let cur = '', curW = 0;
   for (const w of str.split(' ')) {
     const ww = ctx.measureText(w).width;
-    if (cur && curW + space + ww > maxWidth) {
+    if (cur && (curW + space + ww > maxWidth || cur.length + 1 + w.length > maxChars)) {
       out.push({ str: cur, width: curW });
       cur = w; curW = ww;
     } else {
@@ -657,41 +695,54 @@ function wrapCardLine(ctx, str, font, maxWidth) {
   return out;
 }
 
-// Pure layout for drawCard; measures, never draws. Every logical line wraps
-// to the paper's inner width, then the ladder steps leading and type down
-// together until the block clears the paper's foot — and the button zone
+// Pure layout for drawCard; measures, never draws. §9's setting: single
+// column, left-aligned, ragged right. Every logical line wraps to the
+// narrower of the paper's inner width and the 62-character measure in its
+// own face, then the ladder steps type down — leading holds at 1.5 at every
+// rung — until the block clears the paper's foot and the button zone
 // anchored there. Nothing is truncated and nothing leaves the paper; if the
 // smallest setting still misfits it is returned as-is and the QA gate fails
 // loudly instead of spilling ink onto the night.
 export function layoutCard(ctx, lines, opts = {}, buttons = []) {
   const scale = opts.textScale || 1;
-  const innerW = (CARD.x1 - CARD.x0) - CARD_PAD_X * 2;
-  const textTop0 = CARD.y0 + CARD_PAD_TOP;
+  const paper = cardPaper(scale);
+  const innerW = (paper.x1 - paper.x0) - CARD_PAD_X * 2;
+  const textX = paper.x0 + CARD_PAD_X;
+  const textTop0 = paper.y0 + CARD_PAD_TOP;
   // Buttons anchor at the paper's foot (drawCard keeps their geometry); the
   // text block must end above the topmost button's hit zone.
   const textLimit = buttons.length
-    ? CARD.y1 - 60 - (buttons.length - 1) * 44 - 30
-    : CARD.y1 - CARD_PAD_BOTTOM;
+    ? paper.y1 - 60 - (buttons.length - 1) * 44 - 30
+    : paper.y1 - CARD_PAD_BOTTOM;
+  // §9's leading, per line size, with one pixel of air as the degenerate
+  // floor so a line can never sit on its own ascenders.
+  const leadOf = (px) => Math.max(px + 1, Math.round(px * CARD_LEADING));
   let laid = null;
   for (const shrink of CARD_SHRINK) {
-    const pxTitle = Math.max(14, Math.round(30 * shrink));
-    const px = Math.max(11, Math.round(22 * scale * shrink));
-    const gap = Math.max(6, Math.round(16 * shrink));
+    const pxTitle = Math.max(CARD_TITLE_FLOOR, Math.round(CARD_TITLE * scale * shrink));
+    const px = Math.max(CARD_BODY_FLOOR, Math.round(CARD_BODY * scale * shrink));
+    ctx.font = fontDisp(pxTitle);
+    const titleMeasure = ctx.measureText(MEASURE_SAMPLE).width;
+    ctx.font = fontBody(px);
+    const bodyMeasure = ctx.measureText(MEASURE_SAMPLE).width;
     const phys = [];
     lines.forEach((ln, i) => {
       const disp = i === 0, p = disp ? pxTitle : px;
-      for (const w of wrapCardLine(ctx, ln, disp ? fontDisp(p) : fontBody(p), innerW)) {
-        phys.push({ ...w, px: p, disp });
+      const wrapW = Math.min(innerW, disp ? titleMeasure : bodyMeasure);
+      for (const w of wrapCardLine(ctx, ln, disp ? fontDisp(p) : fontBody(p), wrapW, CARD_MEASURE)) {
+        phys.push({ ...w, px: p, disp, x: textX });
       }
     });
     let baseline = textTop0 + (phys.length ? phys[0].px : 0);
-    for (const l of phys) { l.baseline = baseline; baseline += l.px + gap; }
+    for (const l of phys) { l.baseline = baseline; baseline += leadOf(l.px); }
     const textTop = phys.length ? phys[0].baseline - 0.8 * phys[0].px : textTop0;
     const textBottom = phys.length
       ? phys[phys.length - 1].baseline + 0.35 * phys[phys.length - 1].px : textTop0;
     laid = {
-      lines: phys, shrink, px, pxTitle, gap, innerW,
-      paperTop: CARD.y0, paperBottom: CARD.y1, padX: CARD_PAD_X,
+      lines: phys, shrink, px, pxTitle, leading: leadOf(px), innerW, textX, align: 'left',
+      measureChars: CARD_MEASURE,
+      paperX0: paper.x0, paperY0: paper.y0, paperX1: paper.x1, paperY1: paper.y1,
+      paperTop: paper.y0, paperBottom: paper.y1, padX: CARD_PAD_X,
       textTop, textBottom, textLimit,
       totalH: textBottom - textTop, availH: textLimit - textTop0,
     };
@@ -701,15 +752,18 @@ export function layoutCard(ctx, lines, opts = {}, buttons = []) {
 }
 
 export function drawCard(ctx, lines, opts, buttons = []) {
+  const laid = layoutCard(ctx, lines, opts, buttons);
   rect(ctx, 0, 0, PLATE.w, PLATE.h, PAL.nightDeep);
-  rect(ctx, CARD.x0, CARD.y0, CARD.x1, CARD.y1, PAL.paper, PAL.ink);
-  for (const ln of layoutCard(ctx, lines, opts, buttons).lines) {
-    text(ctx, ln.str, PLATE.w / 2, ln.baseline, ln.px, PAL.ink, 'center',
+  rect(ctx, laid.paperX0, laid.paperY0, laid.paperX1, laid.paperY1, PAL.paper, PAL.ink);
+  for (const ln of laid.lines) {
+    text(ctx, ln.str, ln.x, ln.baseline, ln.px, PAL.ink, 'left',
       ln.disp ? fontDisp(ln.px) : null);
   }
+  // The foot verbs are §8.4 letterpress buttons, not card text: they stay
+  // centred on the paper like the title plate's verbs, hit boxes unchanged.
   const bs = [];
   buttons.forEach((b, i) => {
-    const by = CARD.y1 - 60 - (buttons.length - 1 - i) * 44;
+    const by = laid.paperY1 - 60 - (buttons.length - 1 - i) * 44;
     text(ctx, b.label, PLATE.w / 2, by, Math.round(19 * (opts.textScale || 1)), b.focus ? PAL.ink : PAL.ink2, 'center');
     if (b.focus) {
       ctx.strokeStyle = PAL.ink; ctx.lineWidth = 1.5;

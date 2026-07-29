@@ -1,8 +1,8 @@
 
 == [keyboard] boot and title ==
   PASS  boots into the title phase
-  PASS  title fully revealed (phaseTick 415 >= 270)
-  frame keyboard_title: p50 8.3 / p95 10.1 / worst 10.3 ms
+  PASS  title fully revealed (phaseTick 416 >= 270)
+  frame keyboard_title: p50 8.3 / p95 9.6 / worst 10 ms
 
 == [keyboard] enter the run ==
   PASS  leaving the title works (keyboard)
@@ -11,7 +11,7 @@
   PASS  cold open completes into the night (23.2 s held, phase=night)
 
 == [keyboard] the nights ==
-  frame keyboard_playing: p50 8.3 / p95 9.2 / worst 9.5 ms
+  frame keyboard_playing: p50 8.3 / p95 9.4 / worst 9.9 ms
   PASS  the simulation advances under input
   PASS  observable state changes: ['night', 'minute', 'words', 'store', 'unease']
 
@@ -22,7 +22,7 @@
 == [mouse] boot and title ==
   PASS  boots into the title phase
   PASS  title fully revealed (phaseTick 414 >= 270)
-  frame mouse_title: p50 8.3 / p95 9.4 / worst 10.2 ms
+  frame mouse_title: p50 8.3 / p95 10 / worst 10.3 ms
 
 == [mouse] title buttons: about and options plates ==
   PASS  clicking the third title verb opens the about card
@@ -39,7 +39,7 @@
   PASS  cold open completes into the night (23.2 s held, phase=night)
 
 == [mouse] the nights ==
-  frame mouse_playing: p50 8.3 / p95 9.8 / worst 10.3 ms
+  frame mouse_playing: p50 8.3 / p95 8.5 / worst 9.9 ms
   PASS  the simulation advances under input
   PASS  observable state changes: ['night', 'minute', 'store', 'unease']
 
@@ -81,9 +81,9 @@
   PASS  [campaign] night 7: the lesson completes
 
 == [campaign] hovel plate: nothing reads as a flat swatch (TASK 5) ==
-  PASS  [campaign] night 7: words 96 >= 62, the journal bundle is on the straw
+  PASS  [campaign] night 7: words 95 >= 62, the journal bundle is on the straw
   PASS  [campaign] hovel slot is no flat swatch (638 colours >= 40, luminance var 471.2 >= 150.0; straw control 1776 / 689.9)
-  PASS  [campaign] hovel plank is no flat swatch (145 colours >= 40, luminance var 1090.7 >= 150.0; straw control 15767 / 1621.9)
+  PASS  [campaign] hovel plank is no flat swatch (145 colours >= 40, luminance var 1080.2 >= 150.0; straw control 15767 / 1621.9)
   PASS  [campaign] hovel bundle is no flat swatch (197 colours >= 40, luminance var 773.2 >= 150.0; straw control 648 / 611.8)
   PASS  [campaign] the straw controls read as engraved plate (probe sanity)
 
@@ -93,7 +93,7 @@
   PASS  [campaign] aperture right edge is a torn line, not a rule (boundary variance 16.28 px^2 >= 0.5, shallowest warm 576 <= 578 over 42 rows; a rectangle scores 0)
   PASS  [campaign] the prompt band's straight edge still reads straight (control: 0 px^2 <= 0.5 over 234 columns)
   PASS  [campaign] four lessons attended (4)
-  PASS  [campaign] words 97 >= 80, the fifth exchange gate (GAME_DESIGN §7)
+  PASS  [campaign] words 96 >= 80, the fifth exchange gate (GAME_DESIGN §7)
   PASS  [campaign] carries 2 >= 1, the exchange-5 lock (GAME_DESIGN §9)
   PASS  [campaign] seven full nights played before the walk (now at dawn 8, night counter 8)
 
@@ -105,7 +105,7 @@
 
 == [campaign] the door: five exchanges ==
   PASS  [campaign] the door opens when the walk's clock runs out
-  PASS  [campaign] all five exchanges land (reached 5, words 97)
+  PASS  [campaign] all five exchanges land (reached 5, words 96)
   PASS  [campaign] ending id is a designed one (door; §12: ('seen', 'want', 'silence', 'door'))
   PASS  [campaign] the run ends at the door (door)
 
@@ -131,34 +131,34 @@
   PASS  [mouse-campaign] night 3 begins
   PASS  [mouse-campaign] night 3: the retiring window closes
   PASS  [mouse-campaign] night 3: clicking the cold slot steps out
-  PASS  [mouse-campaign] click-to-move reaches (585,258) (last={'phase': 'night', 'night': 3, 'day': 3, 'minute': 5.6, 'length': 13, 'words': 22, 'firing': 0, 'store': 4, 'unease': 0, 'x': 587, 'y': 258, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 14, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
-  PASS  [mouse-campaign] click-to-move actually moves the creature ((630,265) -> (587,258); moved 43.6 px of the 45.5 px leg, floor 29.5)
-  PASS  [mouse-campaign] click-to-move reaches (455,330) (last={'phase': 'night', 'night': 3, 'day': 3, 'minute': 6.17, 'length': 13, 'words': 22, 'firing': 0, 'store': 4, 'unease': 0, 'x': 455, 'y': 330, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 14, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
-  PASS  [mouse-campaign] n3_carry: the outhouse click walks over and takes the load (last={'phase': 'night', 'night': 3, 'day': 3, 'minute': 6.8, 'length': 13, 'words': 22, 'firing': 0, 'store': 4, 'unease': 0, 'x': 330, 'y': 464, 'carrying': True, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 14, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
-  PASS  [mouse-campaign] click-to-move reaches (450,462) (last={'phase': 'night', 'night': 3, 'day': 3, 'minute': 7.23, 'length': 13, 'words': 22, 'firing': 0, 'store': 4, 'unease': 0, 'x': 451, 'y': 462, 'carrying': True, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 14, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
-  PASS  [mouse-campaign] click-to-move reaches (748,462) (last={'phase': 'night', 'night': 3, 'day': 3, 'minute': 8.22, 'length': 13, 'words': 22, 'firing': 0, 'store': 4, 'unease': 0, 'x': 736, 'y': 462, 'carrying': True, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 14, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
-  PASS  [mouse-campaign] click-to-move reaches (748,425) (last={'phase': 'night', 'night': 3, 'day': 3, 'minute': 8.32, 'length': 13, 'words': 22, 'firing': 0, 'store': 4, 'unease': 0, 'x': 745, 'y': 434, 'carrying': True, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 14, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
+  PASS  [mouse-campaign] click-to-move reaches (585,258) (last={'phase': 'night', 'night': 3, 'day': 3, 'minute': 5.52, 'length': 13, 'words': 22, 'firing': 0, 'store': 4, 'unease': 0, 'x': 597, 'y': 260, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 14, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
+  PASS  [mouse-campaign] click-to-move actually moves the creature ((630,265) -> (597,260); moved 33.4 px of the 45.5 px leg, floor 29.5)
+  PASS  [mouse-campaign] click-to-move reaches (455,330) (last={'phase': 'night', 'night': 3, 'day': 3, 'minute': 6.08, 'length': 13, 'words': 22, 'firing': 0, 'store': 4, 'unease': 0, 'x': 455, 'y': 330, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 14, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
+  PASS  [mouse-campaign] n3_carry: the outhouse click walks over and takes the load (last={'phase': 'night', 'night': 3, 'day': 3, 'minute': 6.72, 'length': 13, 'words': 22, 'firing': 0, 'store': 4, 'unease': 0, 'x': 330, 'y': 464, 'carrying': True, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 14, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
+  PASS  [mouse-campaign] click-to-move reaches (450,462) (last={'phase': 'night', 'night': 3, 'day': 3, 'minute': 7.15, 'length': 13, 'words': 22, 'firing': 0, 'store': 4, 'unease': 0, 'x': 451, 'y': 462, 'carrying': True, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 14, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
+  PASS  [mouse-campaign] click-to-move reaches (748,462) (last={'phase': 'night', 'night': 3, 'day': 3, 'minute': 8.22, 'length': 13, 'words': 22, 'firing': 0, 'store': 4, 'unease': 0, 'x': 746, 'y': 462, 'carrying': True, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 14, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
+  PASS  [mouse-campaign] click-to-move reaches (748,425) (last={'phase': 'night', 'night': 3, 'day': 3, 'minute': 8.33, 'length': 13, 'words': 22, 'firing': 0, 'store': 4, 'unease': 0, 'x': 748, 'y': 428, 'carrying': True, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 14, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
   PASS  [mouse-campaign] n3_carry: the door click puts the load down (firing 0 -> 1)
-  PASS  [mouse-campaign] click-to-move reaches (748,410) (last={'phase': 'night', 'night': 3, 'day': 3, 'minute': 9.67, 'length': 13, 'words': 22, 'firing': 1, 'store': 4, 'unease': 0, 'x': 747, 'y': 411, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 1, 'lessons': 0, 'listens': 14, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
-  PASS  [mouse-campaign] click-to-move reaches (748,290) (last={'phase': 'night', 'night': 3, 'day': 3, 'minute': 10.1, 'length': 13, 'words': 22, 'firing': 1, 'store': 4, 'unease': 0, 'x': 748, 'y': 290, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 1, 'lessons': 0, 'listens': 14, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
-  PASS  [mouse-campaign] click-to-move reaches (684,290) (last={'phase': 'night', 'night': 3, 'day': 3, 'minute': 10.32, 'length': 13, 'words': 22, 'firing': 1, 'store': 4, 'unease': 0, 'x': 685, 'y': 290, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 1, 'lessons': 0, 'listens': 14, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
-  PASS  [mouse-campaign] n3_carry: the mouth click slips back inside (last={'phase': 'night', 'night': 3, 'day': 3, 'minute': 10.63, 'length': 13, 'words': 22, 'firing': 1, 'store': 4, 'unease': 0, 'x': 630, 'y': 265, 'carrying': False, 'inHovel': True, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 1, 'lessons': 0, 'listens': 14, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
+  PASS  [mouse-campaign] click-to-move reaches (748,410) (last={'phase': 'night', 'night': 3, 'day': 3, 'minute': 9.57, 'length': 13, 'words': 22, 'firing': 1, 'store': 4, 'unease': 0, 'x': 741, 'y': 416, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 1, 'lessons': 0, 'listens': 14, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
+  PASS  [mouse-campaign] click-to-move reaches (748,290) (last={'phase': 'night', 'night': 3, 'day': 3, 'minute': 10, 'length': 13, 'words': 22, 'firing': 1, 'store': 4, 'unease': 0, 'x': 748, 'y': 291, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 1, 'lessons': 0, 'listens': 14, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
+  PASS  [mouse-campaign] click-to-move reaches (684,290) (last={'phase': 'night', 'night': 3, 'day': 3, 'minute': 10.22, 'length': 13, 'words': 22, 'firing': 1, 'store': 4, 'unease': 0, 'x': 685, 'y': 290, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 1, 'lessons': 0, 'listens': 14, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
+  PASS  [mouse-campaign] n3_carry: the mouth click slips back inside (last={'phase': 'night', 'night': 3, 'day': 3, 'minute': 10.53, 'length': 13, 'words': 22, 'firing': 1, 'store': 4, 'unease': 0, 'x': 630, 'y': 265, 'carrying': False, 'inHovel': True, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 1, 'lessons': 0, 'listens': 14, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
 
 == [mouse-campaign] night 4: first lesson by click, second carry ==
   PASS  [mouse-campaign] night 4: the lesson starts at minute 0 by click (lesson)
   PASS  [mouse-campaign] night 4: the first lesson completes (+20 words)
   PASS  [mouse-campaign] night 4: steps out after the lesson
-  PASS  [mouse-campaign] click-to-move reaches (585,258) (last={'phase': 'night', 'night': 4, 'day': 4, 'minute': 5.48, 'length': 12, 'words': 43, 'firing': 1, 'store': 3, 'unease': 0, 'x': 587, 'y': 258, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 1, 'lessons': 1, 'listens': 15, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': True, 'listening': False, 'action': None, 'walkStage': None})
-  PASS  [mouse-campaign] click-to-move reaches (455,330) (last={'phase': 'night', 'night': 4, 'day': 4, 'minute': 6.02, 'length': 12, 'words': 43, 'firing': 1, 'store': 3, 'unease': 0, 'x': 455, 'y': 330, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 1, 'lessons': 1, 'listens': 15, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': True, 'listening': False, 'action': None, 'walkStage': None})
-  PASS  [mouse-campaign] n4_carry: the outhouse click walks over and takes the load (last={'phase': 'night', 'night': 4, 'day': 4, 'minute': 6.65, 'length': 12, 'words': 43, 'firing': 1, 'store': 3, 'unease': 0, 'x': 330, 'y': 464, 'carrying': True, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 1, 'lessons': 1, 'listens': 15, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': True, 'listening': False, 'action': None, 'walkStage': None})
-  PASS  [mouse-campaign] click-to-move reaches (450,462) (last={'phase': 'night', 'night': 4, 'day': 4, 'minute': 7.08, 'length': 12, 'words': 43, 'firing': 1, 'store': 3, 'unease': 0, 'x': 450, 'y': 462, 'carrying': True, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 1, 'lessons': 1, 'listens': 15, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': True, 'listening': False, 'action': None, 'walkStage': None})
-  PASS  [mouse-campaign] click-to-move reaches (748,462) (last={'phase': 'night', 'night': 4, 'day': 4, 'minute': 8.17, 'length': 12, 'words': 43, 'firing': 1, 'store': 3, 'unease': 0, 'x': 745, 'y': 462, 'carrying': True, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 1, 'lessons': 1, 'listens': 15, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': True, 'listening': False, 'action': None, 'walkStage': None})
-  PASS  [mouse-campaign] click-to-move reaches (748,425) (last={'phase': 'night', 'night': 4, 'day': 4, 'minute': 8.27, 'length': 12, 'words': 43, 'firing': 1, 'store': 3, 'unease': 0, 'x': 747, 'y': 433, 'carrying': True, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 1, 'lessons': 1, 'listens': 15, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': True, 'listening': False, 'action': None, 'walkStage': None})
+  PASS  [mouse-campaign] click-to-move reaches (585,258) (last={'phase': 'night', 'night': 4, 'day': 4, 'minute': 5.52, 'length': 12, 'words': 43, 'firing': 1, 'store': 3, 'unease': 0, 'x': 587, 'y': 258, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 1, 'lessons': 1, 'listens': 15, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': True, 'listening': False, 'action': None, 'walkStage': None})
+  PASS  [mouse-campaign] click-to-move reaches (455,330) (last={'phase': 'night', 'night': 4, 'day': 4, 'minute': 6.05, 'length': 12, 'words': 43, 'firing': 1, 'store': 3, 'unease': 0, 'x': 455, 'y': 330, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 1, 'lessons': 1, 'listens': 15, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': True, 'listening': False, 'action': None, 'walkStage': None})
+  PASS  [mouse-campaign] n4_carry: the outhouse click walks over and takes the load (last={'phase': 'night', 'night': 4, 'day': 4, 'minute': 6.7, 'length': 12, 'words': 43, 'firing': 1, 'store': 3, 'unease': 0, 'x': 330, 'y': 464, 'carrying': True, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 1, 'lessons': 1, 'listens': 15, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': True, 'listening': False, 'action': None, 'walkStage': None})
+  PASS  [mouse-campaign] click-to-move reaches (450,462) (last={'phase': 'night', 'night': 4, 'day': 4, 'minute': 7.13, 'length': 12, 'words': 43, 'firing': 1, 'store': 3, 'unease': 0, 'x': 450, 'y': 462, 'carrying': True, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 1, 'lessons': 1, 'listens': 15, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': True, 'listening': False, 'action': None, 'walkStage': None})
+  PASS  [mouse-campaign] click-to-move reaches (748,462) (last={'phase': 'night', 'night': 4, 'day': 4, 'minute': 8.2, 'length': 12, 'words': 43, 'firing': 1, 'store': 3, 'unease': 0, 'x': 745, 'y': 462, 'carrying': True, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 1, 'lessons': 1, 'listens': 15, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': True, 'listening': False, 'action': None, 'walkStage': None})
+  PASS  [mouse-campaign] click-to-move reaches (748,425) (last={'phase': 'night', 'night': 4, 'day': 4, 'minute': 8.3, 'length': 12, 'words': 43, 'firing': 1, 'store': 3, 'unease': 0, 'x': 747, 'y': 433, 'carrying': True, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 1, 'lessons': 1, 'listens': 15, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': True, 'listening': False, 'action': None, 'walkStage': None})
   PASS  [mouse-campaign] n4_carry: the door click puts the load down (firing 1 -> 2)
-  PASS  [mouse-campaign] click-to-move reaches (748,410) (last={'phase': 'night', 'night': 4, 'day': 4, 'minute': 9.53, 'length': 12, 'words': 43, 'firing': 2, 'store': 3, 'unease': 0, 'x': 738, 'y': 419, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 2, 'lessons': 1, 'listens': 15, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': True, 'listening': False, 'action': None, 'walkStage': None})
-  PASS  [mouse-campaign] click-to-move reaches (748,290) (last={'phase': 'night', 'night': 4, 'day': 4, 'minute': 9.97, 'length': 12, 'words': 43, 'firing': 2, 'store': 3, 'unease': 0, 'x': 747, 'y': 299, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 2, 'lessons': 1, 'listens': 15, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': True, 'listening': False, 'action': None, 'walkStage': None})
-  PASS  [mouse-campaign] click-to-move reaches (684,290) (last={'phase': 'night', 'night': 4, 'day': 4, 'minute': 10.18, 'length': 12, 'words': 43, 'firing': 2, 'store': 3, 'unease': 0, 'x': 692, 'y': 290, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 2, 'lessons': 1, 'listens': 15, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': True, 'listening': False, 'action': None, 'walkStage': None})
-  PASS  [mouse-campaign] n4_carry: the mouth click slips back inside (last={'phase': 'night', 'night': 4, 'day': 4, 'minute': 10.5, 'length': 12, 'words': 43, 'firing': 2, 'store': 3, 'unease': 0, 'x': 630, 'y': 265, 'carrying': False, 'inHovel': True, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 2, 'lessons': 1, 'listens': 15, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': True, 'listening': False, 'action': None, 'walkStage': None})
+  PASS  [mouse-campaign] click-to-move reaches (748,410) (last={'phase': 'night', 'night': 4, 'day': 4, 'minute': 9.63, 'length': 12, 'words': 43, 'firing': 2, 'store': 3, 'unease': 0, 'x': 748, 'y': 410, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 2, 'lessons': 1, 'listens': 15, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': True, 'listening': False, 'action': None, 'walkStage': None})
+  PASS  [mouse-campaign] click-to-move reaches (748,290) (last={'phase': 'night', 'night': 4, 'day': 4, 'minute': 10.07, 'length': 12, 'words': 43, 'firing': 2, 'store': 3, 'unease': 0, 'x': 748, 'y': 294, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 2, 'lessons': 1, 'listens': 15, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': True, 'listening': False, 'action': None, 'walkStage': None})
+  PASS  [mouse-campaign] click-to-move reaches (684,290) (last={'phase': 'night', 'night': 4, 'day': 4, 'minute': 10.28, 'length': 12, 'words': 43, 'firing': 2, 'store': 3, 'unease': 0, 'x': 690, 'y': 290, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 2, 'lessons': 1, 'listens': 15, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': True, 'listening': False, 'action': None, 'walkStage': None})
+  PASS  [mouse-campaign] n4_carry: the mouth click slips back inside (last={'phase': 'night', 'night': 4, 'day': 4, 'minute': 10.6, 'length': 12, 'words': 43, 'firing': 2, 'store': 3, 'unease': 0, 'x': 630, 'y': 265, 'carrying': False, 'inHovel': True, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 2, 'lessons': 1, 'listens': 15, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': True, 'listening': False, 'action': None, 'walkStage': None})
 
 == [mouse-campaign] nights 5-7: the remaining lessons by click ==
   PASS  [mouse-campaign] night 5: the lesson starts at minute 0 by click (lesson)
@@ -177,7 +177,7 @@
   PASS  [mouse-campaign] the three go out at the gate
   PASS  [mouse-campaign] click-to-move reaches (684,222) (last={'phase': 'walk', 'night': 8, 'day': 8, 'minute': 9.1, 'length': 9, 'words': 96, 'firing': 1, 'store': 3, 'unease': 0, 'x': 679, 'y': 226, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 2, 'lessons': 4, 'listens': 20, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': {'day': 8, 'slots': 5, 'band': 'long'}, 'door': None, 'canSpeak': False, 'lessonDone': True, 'listening': True, 'action': None, 'walkStage': 'cross'})
   PASS  [mouse-campaign] click-to-move reaches (748,222) (last={'phase': 'walk', 'night': 8, 'day': 8, 'minute': 9.1, 'length': 9, 'words': 96, 'firing': 1, 'store': 3, 'unease': 0, 'x': 742, 'y': 222, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 2, 'lessons': 4, 'listens': 20, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': {'day': 8, 'slots': 5, 'band': 'long'}, 'door': None, 'canSpeak': False, 'lessonDone': True, 'listening': True, 'action': None, 'walkStage': 'cross'})
-  PASS  [mouse-campaign] click-to-move reaches (748,425) (last={'phase': 'walk', 'night': 8, 'day': 8, 'minute': 9.1, 'length': 9, 'words': 96, 'firing': 1, 'store': 3, 'unease': 0, 'x': 748, 'y': 425, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 2, 'lessons': 4, 'listens': 20, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': {'day': 8, 'slots': 5, 'band': 'long'}, 'door': None, 'canSpeak': False, 'lessonDone': True, 'listening': True, 'action': None, 'walkStage': 'cross'})
+  PASS  [mouse-campaign] click-to-move reaches (748,425) (last={'phase': 'walk', 'night': 8, 'day': 8, 'minute': 9.1, 'length': 9, 'words': 96, 'firing': 1, 'store': 3, 'unease': 0, 'x': 748, 'y': 411, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 2, 'lessons': 4, 'listens': 20, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': {'day': 8, 'slots': 5, 'band': 'long'}, 'door': None, 'canSpeak': False, 'lessonDone': True, 'listening': True, 'action': None, 'walkStage': 'cross'})
   PASS  [mouse-campaign] clicking the door walks up and knocks, keeping all five slots (slots=5)
 
 == [mouse-campaign] the door: five exchanges, clicked ==
@@ -219,40 +219,40 @@
 == [want] nights 1-5: one take a night ==
   PASS  [want] the retiring window closes
   PASS  [want] steps out once the yard is empty
-  PASS  [want] the walk to the milk-house (last={'phase': 'night', 'night': 1, 'day': 1, 'minute': 5.62, 'length': 14, 'words': 0, 'firing': 0, 'store': 6, 'unease': 0, 'x': 688, 'y': 248, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 0, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
-  PASS  [want] the take lands (takesTotal=1, last={'phase': 'night', 'night': 1, 'day': 1, 'minute': 6.18, 'length': 14, 'words': 0, 'firing': 0, 'store': 6, 'unease': 0, 'x': 688, 'y': 248, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 0, 'takes': 1, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
-  PASS  [want] the walk home (last={'phase': 'night', 'night': 1, 'day': 1, 'minute': 6.42, 'length': 14, 'words': 0, 'firing': 0, 'store': 6, 'unease': 0, 'x': 628, 'y': 264, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 0, 'takes': 1, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
+  PASS  [want] the walk to the milk-house (last={'phase': 'night', 'night': 1, 'day': 1, 'minute': 5.63, 'length': 14, 'words': 0, 'firing': 0, 'store': 6, 'unease': 0, 'x': 688, 'y': 248, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 0, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
+  PASS  [want] the take lands (takesTotal=1, last={'phase': 'night', 'night': 1, 'day': 1, 'minute': 6.2, 'length': 14, 'words': 0, 'firing': 0, 'store': 6, 'unease': 0, 'x': 688, 'y': 248, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 0, 'takes': 1, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
+  PASS  [want] the walk home (last={'phase': 'night', 'night': 1, 'day': 1, 'minute': 6.43, 'length': 14, 'words': 0, 'firing': 0, 'store': 6, 'unease': 0, 'x': 628, 'y': 264, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 0, 'takes': 1, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
   PASS  [want] back inside ahead of the dawn window
   PASS  [want] night 1: the take drains the store on schedule (store 4 == 4, takesTotal 1)
   PASS  [want] night 2 begins
   PASS  [want] the retiring window closes
   PASS  [want] steps out once the yard is empty
-  PASS  [want] the walk to the milk-house (last={'phase': 'night', 'night': 2, 'day': 2, 'minute': 5.53, 'length': 14, 'words': 0, 'firing': 0, 'store': 4, 'unease': 1, 'x': 688, 'y': 248, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 0, 'takes': 1, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
-  PASS  [want] the take lands (takesTotal=2, last={'phase': 'night', 'night': 2, 'day': 2, 'minute': 6.1, 'length': 14, 'words': 0, 'firing': 0, 'store': 4, 'unease': 1, 'x': 688, 'y': 248, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 0, 'takes': 2, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
-  PASS  [want] the walk home (last={'phase': 'night', 'night': 2, 'day': 2, 'minute': 6.32, 'length': 14, 'words': 0, 'firing': 0, 'store': 4, 'unease': 1, 'x': 631, 'y': 262, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 0, 'takes': 2, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
+  PASS  [want] the walk to the milk-house (last={'phase': 'night', 'night': 2, 'day': 2, 'minute': 5.65, 'length': 14, 'words': 0, 'firing': 0, 'store': 4, 'unease': 1, 'x': 687, 'y': 251, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 0, 'takes': 1, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
+  PASS  [want] the take lands (takesTotal=2, last={'phase': 'night', 'night': 2, 'day': 2, 'minute': 6.23, 'length': 14, 'words': 0, 'firing': 0, 'store': 4, 'unease': 1, 'x': 687, 'y': 251, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 0, 'takes': 2, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
+  PASS  [want] the walk home (last={'phase': 'night', 'night': 2, 'day': 2, 'minute': 6.47, 'length': 14, 'words': 0, 'firing': 0, 'store': 4, 'unease': 1, 'x': 629, 'y': 264, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 0, 'takes': 2, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
   PASS  [want] back inside ahead of the dawn window
   PASS  [want] night 2: the take drains the store on schedule (store 2 == 2, takesTotal 2)
   PASS  [want] night 3 begins
   PASS  [want] the retiring window closes
   PASS  [want] steps out once the yard is empty
-  PASS  [want] the walk to the milk-house (last={'phase': 'night', 'night': 3, 'day': 3, 'minute': 5.67, 'length': 13, 'words': 0, 'firing': 0, 'store': 2, 'unease': 0, 'x': 687, 'y': 251, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 0, 'takes': 2, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
-  PASS  [want] the take lands (takesTotal=3, last={'phase': 'night', 'night': 3, 'day': 3, 'minute': 6.23, 'length': 13, 'words': 0, 'firing': 0, 'store': 2, 'unease': 0, 'x': 687, 'y': 251, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 0, 'takes': 3, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
-  PASS  [want] the walk home (last={'phase': 'night', 'night': 3, 'day': 3, 'minute': 6.47, 'length': 13, 'words': 0, 'firing': 0, 'store': 2, 'unease': 0, 'x': 625, 'y': 264, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 0, 'takes': 3, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
+  PASS  [want] the walk to the milk-house (last={'phase': 'night', 'night': 3, 'day': 3, 'minute': 5.67, 'length': 13, 'words': 0, 'firing': 0, 'store': 2, 'unease': 0, 'x': 688, 'y': 248, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 0, 'takes': 2, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
+  PASS  [want] the take lands (takesTotal=3, last={'phase': 'night', 'night': 3, 'day': 3, 'minute': 6.23, 'length': 13, 'words': 0, 'firing': 0, 'store': 2, 'unease': 0, 'x': 688, 'y': 248, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 0, 'takes': 3, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
+  PASS  [want] the walk home (last={'phase': 'night', 'night': 3, 'day': 3, 'minute': 6.47, 'length': 13, 'words': 0, 'firing': 0, 'store': 2, 'unease': 0, 'x': 628, 'y': 264, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 0, 'takes': 3, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
   PASS  [want] back inside ahead of the dawn window
   PASS  [want] night 3: the take drains the store on schedule (store 0 == 0, takesTotal 3)
   PASS  [want] night 4 begins
   PASS  [want] the retiring window closes
   PASS  [want] steps out once the yard is empty
-  PASS  [want] the walk to the milk-house (last={'phase': 'night', 'night': 4, 'day': 4, 'minute': 5.67, 'length': 12, 'words': 0, 'firing': 0, 'store': 0, 'unease': 0, 'x': 687, 'y': 251, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 0, 'takes': 3, 'zeroStoreRun': 1, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
-  PASS  [want] the take lands (takesTotal=4, last={'phase': 'night', 'night': 4, 'day': 4, 'minute': 6.23, 'length': 12, 'words': 0, 'firing': 0, 'store': 0, 'unease': 0, 'x': 687, 'y': 251, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 0, 'takes': 4, 'zeroStoreRun': 1, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
-  PASS  [want] the walk home (last={'phase': 'night', 'night': 4, 'day': 4, 'minute': 6.47, 'length': 12, 'words': 0, 'firing': 0, 'store': 0, 'unease': 0, 'x': 629, 'y': 264, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 0, 'takes': 4, 'zeroStoreRun': 1, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
+  PASS  [want] the walk to the milk-house (last={'phase': 'night', 'night': 4, 'day': 4, 'minute': 5.53, 'length': 12, 'words': 0, 'firing': 0, 'store': 0, 'unease': 0, 'x': 688, 'y': 248, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 0, 'takes': 3, 'zeroStoreRun': 1, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
+  PASS  [want] the take lands (takesTotal=4, last={'phase': 'night', 'night': 4, 'day': 4, 'minute': 6.08, 'length': 12, 'words': 0, 'firing': 0, 'store': 0, 'unease': 0, 'x': 688, 'y': 248, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 0, 'takes': 4, 'zeroStoreRun': 1, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
+  PASS  [want] the walk home (last={'phase': 'night', 'night': 4, 'day': 4, 'minute': 6.32, 'length': 12, 'words': 0, 'firing': 0, 'store': 0, 'unease': 0, 'x': 628, 'y': 264, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 0, 'takes': 4, 'zeroStoreRun': 1, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
   PASS  [want] back inside ahead of the dawn window
   PASS  [want] night 4: the take drains the store on schedule (store 0 == 0, takesTotal 4)
   PASS  [want] night 5 begins
   PASS  [want] the retiring window closes
   PASS  [want] steps out once the yard is empty
   PASS  [want] the walk to the milk-house (last={'phase': 'night', 'night': 5, 'day': 5, 'minute': 5.67, 'length': 11, 'words': 0, 'firing': 0, 'store': 0, 'unease': 0, 'x': 688, 'y': 248, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 0, 'takes': 4, 'zeroStoreRun': 2, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
-  PASS  [want] the take lands (takesTotal=5, last={'phase': 'night', 'night': 5, 'day': 5, 'minute': 6.23, 'length': 11, 'words': 0, 'firing': 0, 'store': 0, 'unease': 0, 'x': 688, 'y': 248, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 0, 'takes': 5, 'zeroStoreRun': 2, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
+  PASS  [want] the take lands (takesTotal=5, last={'phase': 'night', 'night': 5, 'day': 5, 'minute': 6.22, 'length': 11, 'words': 0, 'firing': 0, 'store': 0, 'unease': 0, 'x': 688, 'y': 248, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 0, 'takes': 5, 'zeroStoreRun': 2, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
   PASS  [want] the walk home (last={'phase': 'night', 'night': 5, 'day': 5, 'minute': 6.47, 'length': 11, 'words': 0, 'firing': 0, 'store': 0, 'unease': 0, 'x': 626, 'y': 262, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 0, 'takes': 5, 'zeroStoreRun': 2, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
   PASS  [want] back inside ahead of the dawn window
   PASS  [want] night 5: the take drains the store on schedule (store 0 == 0, takesTotal 5)
@@ -278,9 +278,9 @@
 == [silence] night 1: one take; nights 2-8 waited out inside ==
   PASS  [silence] the retiring window closes
   PASS  [silence] steps out once the yard is empty
-  PASS  [silence] the walk to the milk-house (last={'phase': 'night', 'night': 1, 'day': 1, 'minute': 5.63, 'length': 14, 'words': 0, 'firing': 0, 'store': 6, 'unease': 0, 'x': 687, 'y': 251, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 0, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
-  PASS  [silence] the take lands (takesTotal=1, last={'phase': 'night', 'night': 1, 'day': 1, 'minute': 6.22, 'length': 14, 'words': 0, 'firing': 0, 'store': 6, 'unease': 0, 'x': 688, 'y': 251, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 0, 'takes': 1, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
-  PASS  [silence] the walk home (last={'phase': 'night', 'night': 1, 'day': 1, 'minute': 6.45, 'length': 14, 'words': 0, 'firing': 0, 'store': 6, 'unease': 0, 'x': 629, 'y': 264, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 0, 'takes': 1, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
+  PASS  [silence] the walk to the milk-house (last={'phase': 'night', 'night': 1, 'day': 1, 'minute': 5.65, 'length': 14, 'words': 0, 'firing': 0, 'store': 6, 'unease': 0, 'x': 688, 'y': 251, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 0, 'takes': 0, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
+  PASS  [silence] the take lands (takesTotal=1, last={'phase': 'night', 'night': 1, 'day': 1, 'minute': 6.2, 'length': 14, 'words': 0, 'firing': 0, 'store': 6, 'unease': 0, 'x': 688, 'y': 251, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 0, 'takes': 1, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
+  PASS  [silence] the walk home (last={'phase': 'night', 'night': 1, 'day': 1, 'minute': 6.43, 'length': 14, 'words': 0, 'firing': 0, 'store': 6, 'unease': 0, 'x': 629, 'y': 264, 'carrying': False, 'inHovel': False, 'ending': None, 'seenBy': None, 'seenCtx': None, 'exchanges': 0, 'carries': 0, 'lessons': 0, 'listens': 0, 'takes': 1, 'zeroStoreRun': 0, 'familyGone': False, 'slipped': False, 'walk': None, 'door': None, 'canSpeak': False, 'lessonDone': False, 'listening': False, 'action': None, 'walkStage': None})
   PASS  [silence] back inside ahead of the dawn window
   PASS  [silence] night 1: the take lands (store 4 == 4, takesTotal 1)
   PASS  [silence] night 2 begins
@@ -313,34 +313,52 @@
 == [silence] restart ==
   PASS  [silence] restart restores a valid initial state (phase=title, night 1, words 0, store 6)
 
-== card layout: no glyph off the paper (F8) ==
+== card layout: no glyph off the paper (F8), §9 typography (F10) ==
   PASS  every card line wraps inside the paper's inner width (2898 layouts over 229 strings; overflow: [])
   PASS  every card block clears the paper's foot and the button zone (2898 layouts; misfit: [])
-  note  textScale 1: a 4-line card (no buttons) fits at shrink 0.78 (body 17 px) — 'At dawn, two men stood in the lane. The othe'
-  note  textScale 1: a 4-line card (buttons) fits at shrink 0.72 (body 16 px) — 'At dawn, two men stood in the lane. The othe'
-  note  textScale 1: a 3-line card (buttons) fits at shrink 0.78 (body 17 px) — 'At dawn, two men stood in the lane. The othe'
-  note  textScale 1: a 7-line card (buttons) fits at shrink 0.72 (body 16 px) — 'Sound and text'
-  note  textScale 1.25: a 4-line card (no buttons) fits at shrink 0.78 (body 21 px) — 'At dawn, two men stood in the lane. The othe'
-  note  textScale 1.25: a 4-line card (buttons) fits at shrink 0.66 (body 18 px) — 'At dawn, two men stood in the lane. The othe'
-  note  textScale 1.25: a 3-line card (buttons) fits at shrink 0.78 (body 21 px) — 'At dawn, two men stood in the lane. The othe'
-  note  textScale 1.25: a 3-line card (buttons) fits at shrink 0.92 (body 25 px) — 'He had heard a stranger at his door, and not'
-  note  textScale 1.25: a 3-line card (buttons) fits at shrink 0.78 (body 21 px) — 'It was apparent that my conversation had int'
-  note  textScale 1.25: a 7-line card (no buttons) fits at shrink 0.85 (body 23 px) — 'Sound and text'
-  note  textScale 1.25: a 7-line card (buttons) fits at shrink 0.66 (body 18 px) — 'Sound and text'
-  note  textScale 1.25: a 3-line card (buttons) fits at shrink 0.92 (body 25 px) — 'This plate is drawn from the 1831 text, chap'
-  note  textScale 1.5: a 2-line card (buttons) fits at shrink 0.92 (body 30 px) — 'At dawn, two men stood in the lane. The othe'
-  note  textScale 1.5: a 4-line card (no buttons) fits at shrink 0.78 (body 26 px) — 'At dawn, two men stood in the lane. The othe'
-  note  textScale 1.5: a 4-line card (buttons) fits at shrink 0.6 (body 20 px) — 'At dawn, two men stood in the lane. The othe'
-  note  textScale 1.5: a 3-line card (no buttons) fits at shrink 0.92 (body 30 px) — 'At dawn, two men stood in the lane. The othe'
-  note  textScale 1.5: a 3-line card (buttons) fits at shrink 0.78 (body 26 px) — 'At dawn, two men stood in the lane. The othe'
-  note  textScale 1.5: a 3-line card (buttons) fits at shrink 0.85 (body 28 px) — 'He had heard a stranger at his door, and not'
-  note  textScale 1.5: a 3-line card (buttons) fits at shrink 0.66 (body 22 px) — 'It was apparent that my conversation had int'
-  note  textScale 1.5: a 3-line card (no buttons) fits at shrink 0.92 (body 30 px) — 'It was apparent that my conversation had int'
-  note  textScale 1.5: a 7-line card (no buttons) fits at shrink 0.78 (body 26 px) — 'Sound and text'
-  note  textScale 1.5: a 7-line card (buttons) fits at shrink 0.6 (body 20 px) — 'Sound and text'
-  note  textScale 1.5: a 3-line card (buttons) fits at shrink 0.85 (body 28 px) — 'This plate is drawn from the 1831 text, chap'
+  PASS  every wrapped line holds at most 62 characters — §9's measure asserted in characters (2898 layouts; over: [])
+  PASS  card body never crosses §9's 13 px floor (2898 layouts; under: [])
+  PASS  card leading holds at 1.5 at every ladder rung (2898 layouts; off: [])
+  PASS  every card line is left-aligned at the paper's text edge (2898 layouts; off: [])
+  PASS  the text-size setting delivers at least its own ratio on every card (0.85 tolerance for ladder steps; under-delivers: [])
+  note  textScale 1: a 4-line card (no buttons) fits at shrink 0.92 (body 20 px) — 'At dawn, two men stood in the lane. The othe'
+  note  textScale 1: a 4-line card (buttons) fits at shrink 0.66 (body 15 px) — 'At dawn, two men stood in the lane. The othe'
+  note  textScale 1: a 3-line card (buttons) fits at shrink 0.85 (body 19 px) — 'At dawn, two men stood in the lane. The othe'
+  note  textScale 1: a 7-line card (buttons) fits at shrink 0.78 (body 17 px) — 'Sound and text'
+  note  textScale 1.25: a 4-line card (no buttons) fits at shrink 0.92 (body 25 px) — 'At dawn, two men stood in the lane. The othe'
+  note  textScale 1.25: a 4-line card (buttons) fits at shrink 0.78 (body 21 px) — 'At dawn, two men stood in the lane. The othe'
+  note  textScale 1.25: a 3-line card (buttons) fits at shrink 0.92 (body 25 px) — 'At dawn, two men stood in the lane. The othe'
+  note  textScale 1.25: a 7-line card (buttons) fits at shrink 0.85 (body 23 px) — 'Sound and text'
+  note  textScale 1.5: a 4-line card (no buttons) fits at shrink 0.92 (body 30 px) — 'At dawn, two men stood in the lane. The othe'
+  note  textScale 1.5: a 4-line card (buttons) fits at shrink 0.78 (body 26 px) — 'At dawn, two men stood in the lane. The othe'
+  note  textScale 1.5: a 7-line card (buttons) fits at shrink 0.92 (body 30 px) — 'Sound and text'
+  card table (heaviest): body px / wrapped lines / max chars per line, textScale 1 · 1.25 · 1.5
+    'At dawn, two men stood in the lane. The othe' (4 logical, buttons): 15/8/60 · 21/8/60 · 26/8/60
+    'At dawn, two men stood in the lane. The othe' (4 logical, buttons): 15/8/58 · 21/8/58 · 26/8/58
+    'At dawn, two men stood in the lane. The othe' (4 logical, no buttons): 20/8/60 · 25/8/60 · 30/8/60
+    'At dawn, two men stood in the lane. The othe' (4 logical, no buttons): 20/8/58 · 25/8/58 · 30/8/58
+    'Sound and text' (7 logical, buttons): 17/7/25 · 23/7/25 · 30/7/25
+    'Sound and text' (7 logical, buttons): 17/7/25 · 23/7/25 · 30/7/25
   PASS  the about card opens for the layout frame
   PASS  the options frame is at textScale 1.25 (got 1.25)
+
+== epilogue card: the text-size setting delivers (F10) ==
+  PASS  [scale1] boots into the title phase
+  PASS  [scale1] textScale 1 is in force (got 1)
+  PASS  [scale1] leaving the title works
+  PASS  [scale1] cold open completes into night 1
+  PASS  [scale1] Agatha's retiring patrol finds the creature
+  PASS  [scale1] the epilogue opens (ending=seen)
+  PASS  [scale1] the lane card fits its paper on screen (491 <= 540)
+  PASS  [scale1.5] boots into the title phase
+  PASS  [scale1.5] textScale 1.5 is in force (got 1.5)
+  PASS  [scale1.5] leaving the title works
+  PASS  [scale1.5] cold open completes into night 1
+  PASS  [scale1.5] Agatha's retiring patrol finds the creature
+  PASS  [scale1.5] the epilogue opens (ending=seen)
+  PASS  [scale1.5] the lane card fits its paper on screen (527 <= 620)
+  PASS  console clean through both epilogue runs (0 new errors)
+  PASS  the epilogue card's body grows with the setting: scale 1 -> 22 px / 6 lines / 57 max chars, scale 1.5 -> 33 px / 6 lines / 60 max chars
 
 == fonts: the Caslon faces load and are really in use (§9, §16.1) ==
   PASS  document.fonts.check: "Libre Caslon Text" is loaded
@@ -368,10 +386,10 @@
   PASS  no external request domains (saw ['127.0.0.1:5199'])
   PASS  no failed resource requests (0)
   PASS  console clean (0 errors)
-  PASS  frame p95 10.1 ms <= 33.4 ms (30 FPS floor)
+  PASS  frame p95 10 ms <= 33.4 ms (30 FPS floor)
   PASS  no >200 ms stall (worst frame 10.3 ms)
   PASS  no in-game main-thread block > 200 ms (0 over 50 ms)
 
 build: 1.52 MB | external domains: none
-result: 246 passed, 0 failed | 44 frames -> /Users/pite/makemoney/novel-to-game/examples/frankenstein/qa/evidence/browser
+result: 267 passed, 0 failed | 46 frames -> /Users/pite/makemoney/novel-to-game/examples/frankenstein/qa/evidence/browser
 note: accelerated run; timing evidence is invalid. Re-run once with QA_SLOW=1.

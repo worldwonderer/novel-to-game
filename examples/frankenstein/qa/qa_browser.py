@@ -18,7 +18,10 @@ want (sim.js STORE_GONE_DAWNS), the seventh draws the store to 1 by dawn 6 so
 the walk is the errand (day 9, two slots), knocks, and never answers — the
 door's real-time clock runs out at index 0, which is the silence ending
 (sim.js:666). Both assert the ending id, a console-clean staging segment,
-afterRun, and a restart to a valid initial state.
+afterRun, and a restart to a valid initial state. An eighth pass plays the
+night-1 seen failure to its epilogue card at textScale 1 and 1.5, frames
+both, and asserts the text-size setting delivers on the card itself
+(TASK F10).
 
 Evidence lands in the workspace at qa/evidence/browser/ as JPEG. The qa contract treats
 paths outside the workspace (and system temp dirs) as no evidence at all.
@@ -1476,10 +1479,17 @@ def run_silence(page) -> dict:
 # must measure inside the paper's inner width and the block must clear the
 # paper's foot and the button zone — so a future long string fails here
 # instead of silently spilling ink onto the nightDeep ground.
+#
+# TASK F10 extends the gate from geometry to §9's typography: every wrapped
+# line also holds at most 62 characters (the measure asserted in characters,
+# not just pixels), the body size never crosses §9's 13 px floor, leading
+# holds at 1.5 at every ladder rung, every line stands left-aligned at the
+# paper's text edge, and the text-size setting delivers at least its own
+# ratio on every card (the shrink ladder may no longer eat it).
 
 def run_card_layout(page) -> dict:
     out = {}
-    section("card layout: no glyph off the paper (F8)")
+    section("card layout: no glyph off the paper (F8), §9 typography (F10)")
     rep = page.evaluate("""(() => {
       const g = window.__game;
       const S = g.STRINGS;
@@ -1515,19 +1525,33 @@ def run_card_layout(page) -> dict:
                        [C.labourTrue, C.journal], [C.fed, C.journal], [C.theft, C.noJournal]])
         cards.push(t);
       cards.push([S.cards.endOfRun]);
-      const wide = [], tall = [];
+      const wide = [], tall = [], overChars = [], smallPx = [], badLead = [], badAlign = [];
       const shrunk = {};
+      const perCard = {};
       let checked = 0;
-      for (const scale of [1, 1.25, 1.5]) {
-        for (const lines of cards) {
-          for (const btns of [[], [{ id: 'b', label: S.cards.restart, focus: true }]]) {
+      for (let ci = 0; ci < cards.length; ci++) {
+        const lines = cards[ci];
+        for (let bi = 0; bi < 2; bi++) {
+          const btns = bi ? [{ id: 'b', label: S.cards.restart, focus: true }] : [];
+          const key = ci + '|' + bi;
+          for (const scale of [1, 1.25, 1.5]) {
             const L = g.layoutCard(lines, { textScale: scale }, btns);
             checked++;
             for (const ln of L.lines) {
               if (ln.width > L.innerW + 0.5)
                 wide.push({ scale, str: ln.str.slice(0, 60),
                             width: Math.round(ln.width * 10) / 10, innerW: L.innerW });
+              if (ln.str.length > L.measureChars)
+                overChars.push({ scale, len: ln.str.length, str: ln.str.slice(0, 60) });
+              if (L.align !== 'left' || ln.x !== L.textX || ln.x < L.paperX0 + L.padX - 0.5)
+                badAlign.push({ scale, str: ln.str.slice(0, 40), x: ln.x, textX: L.textX });
             }
+            if (L.px < 13)
+              smallPx.push({ scale, first: String(lines[0]).slice(0, 40), px: L.px });
+            const leadRatio = L.leading / L.px;
+            if (leadRatio < 1.45 || leadRatio > 1.55)
+              badLead.push({ scale, first: String(lines[0]).slice(0, 40),
+                             px: L.px, leading: L.leading });
             if (L.textBottom > L.textLimit + 0.5 || L.textTop < L.paperTop - 0.5)
               tall.push({ scale, first: String(lines[0]).slice(0, 40), logical: lines.length,
                           buttons: btns.length, bottom: Math.round(L.textBottom),
@@ -1538,10 +1562,30 @@ def run_card_layout(page) -> dict:
                 shrunk[k] = { scale, shrink: L.shrink, px: L.px, logical: lines.length,
                               buttons: btns.length, first: String(lines[0]).slice(0, 44) };
             }
+            if (!perCard[key])
+              perCard[key] = { first: String(lines[0]).slice(0, 44), logical: lines.length,
+                               buttons: btns.length, scales: {} };
+            perCard[key].scales[scale] = {
+              px: L.px, nLines: L.lines.length,
+              maxChars: L.lines.length ? Math.max(...L.lines.map(l => l.str.length)) : 0,
+            };
           }
         }
       }
-      return { checked, nStrings: all.length, wide, tall, shrunk: Object.values(shrunk) };
+      const under = [];
+      for (const c of Object.values(perCard)) {
+        const p1 = c.scales[1].px, p2 = c.scales[1.25].px, p3 = c.scales[1.5].px;
+        if (p2 < p1 * 1.25 * 0.85 || p3 < p1 * 1.5 * 0.85)
+          under.push({ first: c.first, buttons: c.buttons, p1, p2, p3 });
+      }
+      // The heaviest cards for the record: most wrapped lines first, then the
+      // deepest shrink at textScale 1.
+      const heavy = Object.values(perCard)
+        .sort((a, b) => (b.scales[1].nLines - a.scales[1].nLines)
+                        || (a.scales[1].px - b.scales[1].px))
+        .slice(0, 6);
+      return { checked, nStrings: all.length, wide, tall, overChars, smallPx,
+               badLead, badAlign, under, heavy, shrunk: Object.values(shrunk) };
     })()""")
     check(not rep["wide"],
           f"every card line wraps inside the paper's inner width "
@@ -1549,11 +1593,34 @@ def run_card_layout(page) -> dict:
     check(not rep["tall"],
           f"every card block clears the paper's foot and the button zone "
           f"({rep['checked']} layouts; misfit: {rep['tall'][:3]})")
+    check(not rep["overChars"],
+          f"every wrapped line holds at most 62 characters — §9's measure asserted "
+          f"in characters ({rep['checked']} layouts; over: {rep['overChars'][:3]})")
+    check(not rep["smallPx"],
+          f"card body never crosses §9's 13 px floor ({rep['checked']} layouts; "
+          f"under: {rep['smallPx'][:3]})")
+    check(not rep["badLead"],
+          f"card leading holds at 1.5 at every ladder rung "
+          f"({rep['checked']} layouts; off: {rep['badLead'][:3]})")
+    check(not rep["badAlign"],
+          f"every card line is left-aligned at the paper's text edge "
+          f"({rep['checked']} layouts; off: {rep['badAlign'][:3]})")
+    check(not rep["under"],
+          f"the text-size setting delivers at least its own ratio on every card "
+          f"(0.85 tolerance for ladder steps; under-delivers: {rep['under'][:3]})")
     out["layout"] = rep
     for s in sorted(rep["shrunk"], key=lambda s: (s["scale"], s["first"])):
         print(f"  note  textScale {s['scale']}: a {s['logical']}-line card "
               f"({'buttons' if s['buttons'] else 'no buttons'}) fits at shrink {s['shrink']} "
               f"(body {s['px']} px) — {s['first']!r}")
+    print("  card table (heaviest): body px / wrapped lines / max chars per line, "
+          "textScale 1 · 1.25 · 1.5")
+    for c in rep["heavy"]:
+        sc = c["scales"]
+        print(f"    {c['first']!r} ({c['logical']} logical, "
+              f"{'buttons' if c['buttons'] else 'no buttons'}): "
+              + " · ".join(f"{sc[str(s)]['px']}/{sc[str(s)]['nLines']}/{sc[str(s)]['maxChars']}"
+                           for s in (1, 1.25, 1.5)))
 
     # Frames for the record: the about card, and the options panel at
     # textScale 1.25 — both go through drawCard's new wrapping path.
@@ -1575,6 +1642,91 @@ def run_card_layout(page) -> dict:
     out["options_shot"] = shot(page, "card_options_scale125")
     page.evaluate("localStorage.removeItem('hovel.options')")
     out["completed"] = True
+    return out
+
+
+# ---------------------------------------------------- epilogue at two text sizes
+#
+# TASK F10: the text-size setting must produce a proportionate change on the
+# cards themselves, and the epilogue card is the slice's payoff surface. The
+# pass plays the fastest designed path to an epilogue card by real input —
+# the night-1 seen failure, one key on — once at textScale 1 and once at 1.5,
+# frames the lane card both times, measures the exact card on screen through
+# layoutCard, and asserts the delivered body size really grows.
+
+def run_epilogue_textscale(page) -> dict:
+    out = {}
+    section("epilogue card: the text-size setting delivers (F10)")
+    err0 = len(errors)
+    layouts = {}
+    try:
+        for scale in (1, 1.5):
+            tag = f"scale{scale}"
+            page.goto(URL, wait_until="networkidle")
+            page.evaluate("localStorage.setItem('hovel.options', "
+                          f"JSON.stringify({{ textScale: {scale} }}))")
+            page.goto(URL, wait_until="networkidle")
+            page.wait_for_timeout(600)
+            need(phase(page) == "title", f"[{tag}] boots into the title phase")
+            got = page.evaluate(
+                "(JSON.parse(localStorage.getItem('hovel.options') || '{}').textScale) || 1")
+            need(got == scale, f"[{tag}] textScale {scale} is in force (got {got})")
+            page.keyboard.press("Enter")
+            need(wait_cond(page, lambda s: s["phase"] == "coldOpen", 5) is not None,
+                 f"[{tag}] leaving the title works")
+            page.keyboard.down(" ")
+            t0 = time.time()
+            while phase(page) == "coldOpen" and time.time() - t0 < 40:
+                page.wait_for_timeout(500)
+            page.keyboard.up(" ")
+            need(qa_state(page)["phase"] == "night",
+                 f"[{tag}] cold open completes into night 1")
+            press(page, "x")  # lift the plank; stand still for Agatha's patrol
+            need(wait_cond(page, lambda s: s["phase"] == "seen", 30 * SPEED) is not None,
+                 f"[{tag}] Agatha's retiring patrol finds the creature")
+            page.wait_for_function("window.__game.epilogueStep >= 1", timeout=10000)
+            press(page)  # through the failure card into the epilogue
+            s = wait_cond(page, lambda s: s["phase"] == "epilogue", 5)
+            need(s is not None and s["ending"] == "seen",
+                 f"[{tag}] the epilogue opens (ending={s and s['ending']})")
+            page.wait_for_timeout(600)  # let the lane card draw for a few frames
+            out[f"shot_{tag}"] = shot(page, f"epilogue_textscale{scale}")
+            layouts[scale] = page.evaluate("""(() => {
+              const g = window.__game, S = g.STRINGS;
+              // the exact card renderEpilogue's lane step is showing
+              const m = g.engine.epilogueModel(g.state);
+              const lines = [...S.epilogue.lane];
+              if (m.satUp) lines.push(S.epilogue.laneSatUp);
+              lines.push(m.beds >= 3 ? S.epilogue.laneAnswerProduce : S.epilogue.laneAnswer);
+              const L = g.layoutCard(lines, { textScale: %s }, []);
+              return { px: L.px, pxTitle: L.pxTitle, lines: L.lines.length,
+                       maxChars: Math.max(...L.lines.map(l => l.str.length)),
+                       align: L.align, paperW: Math.round(L.paperX1 - L.paperX0),
+                       bottom: Math.round(L.textBottom), limit: Math.round(L.textLimit) };
+            })()""" % scale)
+            need(layouts[scale]["bottom"] <= layouts[scale]["limit"],
+                 f"[{tag}] the lane card fits its paper on screen "
+                 f"({layouts[scale]['bottom']} <= {layouts[scale]['limit']})")
+            page.evaluate("localStorage.removeItem('hovel.options')")
+        need(len(errors) == err0,
+             f"console clean through both epilogue runs ({len(errors) - err0} new errors)")
+        check(layouts[1.5]["px"] > layouts[1]["px"],
+              f"the epilogue card's body grows with the setting: scale 1 -> "
+              f"{layouts[1]['px']} px / {layouts[1]['lines']} lines / "
+              f"{layouts[1]['maxChars']} max chars, scale 1.5 -> {layouts[1.5]['px']} px / "
+              f"{layouts[1.5]['lines']} lines / {layouts[1.5]['maxChars']} max chars")
+        out["layouts"] = layouts
+        out["completed"] = True
+    except CampaignAbort as e:
+        out["completed"] = False
+        out["abort"] = str(e)
+        check(False, f"[epilogue-textscale] {e}")
+        try:
+            out["state_at_abort"] = qa_state(page)
+            out["abort_shot"] = shot(page, "epilogue_textscale_abort")
+        except Exception:
+            pass
+        page.evaluate("localStorage.removeItem('hovel.options')")
     return out
 
 
@@ -1672,6 +1824,7 @@ def main() -> int:
             result["want"] = run_want(page)
             result["silence"] = run_silence(page)
             result["card_layout"] = run_card_layout(page)
+            result["epilogue_textscale"] = run_epilogue_textscale(page)
             result["fonts"] = run_fonts(page)
 
             section("determinism")
