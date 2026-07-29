@@ -1292,6 +1292,76 @@ def run_card_layout(page) -> dict:
     return out
 
 
+# ---------------------------------------------------------------- fonts
+#
+# ART_DIRECTION §9 + §16.1: font/caslon-text and font/caslon-display are
+# release-gated skin keys, loaded by src/skin.js through FontFace. "Loaded" is
+# not "in use" — the F6 lesson — so the gate does not stop at
+# document.fonts.check: it measures the game's own title and prompt strings in
+# each Caslon face and in Georgia and asserts the widths differ. If a face
+# failed to load, the canvas would silently measure with Georgia and the two
+# numbers would be identical.
+
+def run_fonts(page) -> dict:
+    out = {}
+    section("fonts: the Caslon faces load and are really in use (§9, §16.1)")
+    page.goto(URL, wait_until="networkidle")
+    page.wait_for_timeout(600)
+    rep = page.evaluate("""async () => {
+      await document.fonts.ready;
+      const cx = document.createElement('canvas').getContext('2d');
+      const w = (font, str) => { cx.font = font; return cx.measureText(str).width; };
+      const S = window.__game.STRINGS;
+      const body = S.prompts.keepWatching + ' · ' + S.prompts.liftPlank;
+      const disp = S.title.book;
+      return {
+        checkText: document.fonts.check('16px "Libre Caslon Text"'),
+        checkDisp: document.fonts.check('16px "Libre Caslon Display"'),
+        pending: window.__game.pendingKeys,
+        body, disp,
+        textW: w('20px "Libre Caslon Text", Georgia, serif', body),
+        textGeoW: w('20px Georgia, serif', body),
+        dispW: w('30px "Libre Caslon Display", Georgia, serif', disp),
+        dispGeoW: w('30px Georgia, serif', disp),
+        textOnDisp: w('30px "Libre Caslon Text", Georgia, serif', disp),
+        dispOnText: w('20px "Libre Caslon Display", Georgia, serif', body),
+      };
+    }""")
+    check(rep["checkText"], 'document.fonts.check: "Libre Caslon Text" is loaded')
+    check(rep["checkDisp"], 'document.fonts.check: "Libre Caslon Display" is loaded')
+    font_pending = [k for k in rep["pending"] if k.startswith("font/")]
+    check(not font_pending,
+          f"skin.pending() holds no font keys (pending: {rep['pending'] or 'none'})")
+
+    def differs(a, b):
+        return abs(a - b) > max(0.5, 0.01 * max(a, b))
+    check(differs(rep["textW"], rep["textGeoW"]),
+          f"the prompt string really renders in Caslon Text, not the Georgia fallback "
+          f"({rep['textW']:.1f} vs {rep['textGeoW']:.1f} px — {rep['body']!r})")
+    check(differs(rep["dispW"], rep["dispGeoW"]),
+          f"the title string really renders in Caslon Display, not the Georgia fallback "
+          f"({rep['dispW']:.1f} vs {rep['dispGeoW']:.1f} px — {rep['disp']!r})")
+    check(differs(rep["dispW"], rep["textOnDisp"]),
+          f"Text and Display are not the same family (title: Display {rep['dispW']:.1f} "
+          f"vs Text {rep['textOnDisp']:.1f} px)")
+    check(differs(rep["textW"], rep["dispOnText"]),
+          f"Text and Display are not the same family (body: Text {rep['textW']:.1f} "
+          f"vs Display {rep['dispOnText']:.1f} px)")
+    out["measure"] = rep
+
+    # Frames for the record: the title plate (Display in use), and the cold
+    # open's hovel with the prompt band (Text in use).
+    page.wait_for_function("window.__game.state.phaseTick >= 280", timeout=15000)
+    page.wait_for_timeout(300)
+    out["title_shot"] = shot(page, "fonts_title")
+    page.keyboard.press("Enter")
+    page.wait_for_timeout(1200)
+    check(phase(page) == "coldOpen", "the cold open opens for the prompt-band frame")
+    out["prompt_shot"] = shot(page, "fonts_coldopen_prompt")
+    out["completed"] = True
+    return out
+
+
 def main() -> int:
     shutil.rmtree(SHOTS, ignore_errors=True)
     SHOTS.mkdir(parents=True, exist_ok=True)
@@ -1314,6 +1384,7 @@ def main() -> int:
             result["mouse_campaign"] = run_mouse_campaign(page)
             result["seen"] = run_seen(page)
             result["card_layout"] = run_card_layout(page)
+            result["fonts"] = run_fonts(page)
 
             section("determinism")
             def replay():

@@ -20,8 +20,12 @@ export const PAL = {
   creature: '#14100c', cottager: '#8a7a66',
 };
 
-const FONT_BODY = 'Georgia, "Times New Roman", serif';
-const FONT_DISP = 'Georgia, "Times New Roman", serif';
+// ART_DIRECTION §9: Libre Caslon Text for body, dialogue and prompts; Libre
+// Caslon Display for the title and cards. The faces load through the skin
+// layer's font/* keys; until a face resolves (or if it never does) the stack
+// falls through to Georgia — the two classes stay distinct either way.
+const FONT_BODY = '"Libre Caslon Text", Georgia, "Times New Roman", serif';
+const FONT_DISP = '"Libre Caslon Display", Georgia, "Times New Roman", serif';
 
 export function fontBody(px) { return `${px}px ${FONT_BODY}`; }
 export function fontDisp(px) { return `${px}px ${FONT_DISP}`; }

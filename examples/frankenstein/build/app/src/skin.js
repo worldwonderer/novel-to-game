@@ -15,9 +15,17 @@ const KEYS = {
   'plate/fire': 'assets/plate_fire.webp',
 };
 
+// The two Caslon faces (ART_DIRECTION §9): self-hosted woff2, Latin-1 subset,
+// OFL 1.1 (assets/font/OFL.txt). They enter through the same key mechanism as
+// the plates; the family names here are the ones render.js's stacks ask for.
+const FONT_KEYS = {
+  'font/caslon-text': { family: 'Libre Caslon Text', src: 'assets/font/libre-caslon-text.woff2' },
+  'font/caslon-display': { family: 'Libre Caslon Display', src: 'assets/font/libre-caslon-display.woff2' },
+};
+
 // Release-gated per §16.1: absent means the build fails its release gate. It does
 // not mean the build fails to run.
-const GATED = new Set(Object.keys(KEYS));
+const GATED = new Set([...Object.keys(KEYS), ...Object.keys(FONT_KEYS)]);
 
 const entries = new Map();
 
@@ -28,6 +36,19 @@ export function load() {
     e.img.onerror = () => { e.failed = true; };
     e.img.src = src;
     entries.set(key, e);
+  }
+  // Fonts, same key mechanism. A FontFace per key, added to the document and
+  // load()ed — the canvas never waits on it, so until a face resolves the
+  // render stacks fall through to Georgia (the greybox principle in type),
+  // and a face that never arrives stays pending while the run continues.
+  for (const [key, def] of Object.entries(FONT_KEYS)) {
+    const e = { face: null, ready: false, failed: false };
+    entries.set(key, e);
+    if (typeof FontFace === 'undefined') { e.failed = true; continue; }
+    const face = new FontFace(def.family, `url(${def.src}) format('woff2')`);
+    e.face = face;
+    document.fonts.add(face);
+    face.load().then(() => { e.ready = true; }, () => { e.failed = true; });
   }
 }
 

@@ -9,13 +9,13 @@
 - Verdict: **not `PASS`** — the slice is **completable by either input scheme**: full eight-night
   campaigns reach the `door` ending at exchange 5 and restart clean, one driven entirely by
   keyboard and one entirely by mouse, and the `seen` ending now renders and is played to its
-  failure card. Still open: two release gates (Caslon fonts, audio set), and `want` and `silence`
+  failure card. Still open: one release gate (the audio set), and `want` and `silence`
   remain unplayed (see *Findings*, *Release gate*, *Not verified*).
 - `blocker`: 0 (1 found in round 1, **fixed**, with a regression check)
-- `major`: 4 — 1 partly cleared (images done; fonts and audio outstanding), 3 **fixed**
+- `major`: 4 — 1 partly cleared (images and fonts done; audio outstanding), 3 **fixed**
   (F6 mouse input, F7 the `seen` ending, F12 the hovel plate's composition)
 - `minor`: 6 fixed, 4 open
-- Deliverable name: **completable vertical slice, both input schemes, plates in, two gates open**
+- Deliverable name: **completable vertical slice, both input schemes, plates and fonts in, one gate open**
 
 The automated result says this build boots, plays seven nights, takes the long walk, opens the
 door, lands all five exchanges, reaches a designed ending, plays the epilogue and restarts to a
@@ -35,15 +35,15 @@ python3 qa/qa_browser.py        # real Chromium: keyboard, mouse, both campaigns
 | Page | `http://127.0.0.1:5199/?seed=42&fast=1` (and `?seed=42` under `QA_SLOW=1`) |
 | Form | native ES Module + Canvas 2D, zero build |
 | Viewport | 1280×800 (target), 1280×720 (minimum) both tested |
-| Browser assertions | **156 passed, 0 failed** across five passes: keyboard, mouse, keyboard campaign, mouse campaign, `seen` ending, plus a card-layout gate over 2898 layouts |
+| Browser assertions | **164 passed, 0 failed** across five passes: keyboard, mouse, keyboard campaign, mouse campaign, `seen` ending, plus a card-layout gate over 2898 layouts and a font gate proving both Caslon faces really render |
 | Engine invariants | all sections hold |
 | Console errors / failed requests | 0 / 0 |
 | Request domains | `127.0.0.1:5199` only — **no external domain** |
-| Total build | 1.50 MB (6 plates as WebP; budget is 25 MB) |
+| Total build | 1.52 MB (6 plates as WebP + 2 woff2 at 33 KB; budget is 25 MB) |
 | Frame p50 / p95 / worst | 8.3 / 10.0 / 10.4 ms — comfortably inside the 30 FPS floor (33.4 ms) |
 | Main-thread long tasks | 0 in-game, 0 at boot |
 
-Machine-readable summary: `qa/evidence/automated.json`. Frames: `qa/evidence/browser/` (36).
+Machine-readable summary: `qa/evidence/automated.json`. Frames: `qa/evidence/browser/` (38).
 Full run log: `qa/evidence/qa_browser_last.log`.
 
 Frame sampling sits on the two heaviest live screens (title reveal, night play), not an idle
@@ -63,7 +63,7 @@ outstanding item. The door scene runs on a real-time clock
 | # | Severity | Stage | Finding | Verification |
 |---|---|---|---|---|
 | B1 | `blocker` | `build` | **The title screen never completed.** `engine.tick()` owns `state.phaseTick`, and `step()`'s `title` case called `tickTitle(input)` without it — unlike `coldOpen` and `about`, which both call it. So `phaseTick` stayed 0 forever, `titleBeat` (= `phaseTick/45`) stayed 0, and the title text and all three verbs were never drawn. A player saw two blank shapes with no way in; only a blind Enter started the game | **Fixed** — `src/main.js` `case 'title'` now calls `engine.tick(state, {})`. Harness asserts `phaseTick >= 270` (full reveal); measured 414. Engine invariants still hold |
-| F1 | `major` | `build` | All **6 release-gated image keys** and both Caslon fonts were absent; every one rendered as its grey box. Per `ART_DIRECTION` §16.1 a missing gated key means the build fails release | **Images fixed; fonts and audio still open.** All 6 plates (`plate/paper`, `plate/title`, `plate/room`, `plate/hovel`, `plate/door`, `plate/fire`) generated, sized to their draw size and shipped as WebP (17 MB PNG → 1.4 MB, total build 1.50 MB against a 25 MB budget). They enter through `src/skin.js`; a key that fails to load still draws a grey box carrying its key name and the run continues. **Still absent:** `font/caslon-text`, `font/caslon-display`, and the release-gated audio set |
+| F1 | `major` | `build` | All **6 release-gated image keys** and both Caslon fonts were absent; every one rendered as its grey box. Per `ART_DIRECTION` §16.1 a missing gated key means the build fails release | **Images fixed; fonts now fixed too; audio still open.** All 6 plates (`plate/paper`, `plate/title`, `plate/room`, `plate/hovel`, `plate/door`, `plate/fire`) generated, sized to their draw size and shipped as WebP (17 MB PNG → 1.4 MB, total build 1.50 MB against a 25 MB budget). They enter through `src/skin.js`; a key that fails to load still draws a grey box carrying its key name and the run continues. **Fonts now fixed too:** `font/caslon-text` and `font/caslon-display` ship as self-hosted woff2 Latin-1 subsets (16.6 / 15.7 KB, `OFL.txt` alongside), enter through `src/skin.js`'s key mechanism via `FontFace`, and are gated in the browser suite — `document.fonts.check` for both faces, neither key in `skin.pending()`, and canvas `measureText` width deltas proving each face really renders in place of Georgia and that Text and Display are distinct families. **Still absent:** the release-gated audio set |
 | F2 | `minor` | `build` | Title line collided with the plate border: the plate ended at `PLATE.h-180` = 620 and the 30 px title sat at `0.78h` = 624, so the rule cut the letterforms. §3.3 puts occlusion tolerance at zero | **Fixed** — plate now stops at `0.72h`; title block clears the platemark |
 | F3 | `minor` | `build` | In the hovel, the opaque prompt band (`0.88h`–`0.96h` = 704–768) was drawn over the tally plank (620–730) and completely hid the food heap (baseline 720). The plank carries Words and the heap carries own-food — both are read-outs the player is meant to check | **Fixed** — heap, plank and journal bundle raised to a `FLOOR` of 690 so they clear the band |
 | F4 | `minor` | `design` | The cold open requires **23 s of continuously held input** before the first night, and `?fast=1` does not shorten it (`coldTime` counts real seconds, not night-minutes). It is a deliberate paced scene, but it is also 23 s before any interactive verb, and it makes every automated pass slow | **Open** — flagged to `game-world-design`; not changed unilaterally because the pacing is an explicit authored beat |
@@ -127,14 +127,15 @@ writing further automation against this build has to hold.
 | Gate | State |
 |---|---|
 | 6 gated image keys | **present** — generated, sized, shipped as WebP, wired through `src/skin.js` |
-| 2 Caslon fonts | **absent** — Georgia/serif fallback in use |
+| 2 Caslon fonts | **present** — Libre Caslon Text + Display, self-hosted woff2 Latin-1 subsets (16.6 / 15.7 KB) with `OFL.txt`, wired as `font/caslon-text` / `font/caslon-display` through `src/skin.js`; `document.fonts.check` true for both, `skin.pending()` holds neither, and canvas `measureText` proves both faces really render (not the Georgia fallback) and are not the same family |
 | Release-gated audio set | **absent** |
 | 9 degradable keys | all currently on their named lesser expression |
 
-The six plates are in and the game reads as the engraved book it was specified to be. Two gates
-remain open — the Caslon subset and the audio set — so this is still not a release build, and this
-report does not call it one. The fallback path is intact and exercised: a key that fails to load
-draws a grey box carrying its key name and the run continues.
+The six plates and both Caslon faces are in and the game reads as the engraved book it was
+specified to be. One gate remains open — the audio set — so this is still not a release build, and
+this report does not call it one. The fallback path is intact and exercised: a key that fails to
+load draws a grey box carrying its key name (or sets type in Georgia, for a font key) and the run
+continues.
 
 **Known integration debt after the plates landed.** The Canvas state objects were positioned
 against the greybox room; the room's hearth, board, stool and window have been re-anchored to

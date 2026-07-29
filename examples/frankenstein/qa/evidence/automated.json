@@ -2,7 +2,7 @@
   "url": "http://127.0.0.1:5199/?seed=42&fast=1",
   "normal_speed_run": false,
   "viewport": "1280x800",
-  "passed": 156,
+  "passed": 164,
   "failed": 0,
   "console_errors": [],
   "network_errors": [],
@@ -13,34 +13,34 @@
   "frame_ms": {
     "keyboard_title": {
       "p50": 8.3,
-      "p95": 10,
-      "max": 10.3,
+      "p95": 9.8,
+      "max": 10,
       "n": 90
     },
     "keyboard_playing": {
       "p50": 8.3,
-      "p95": 9.5,
-      "max": 10.3,
+      "p95": 9.6,
+      "max": 10,
       "n": 90
     },
     "mouse_title": {
       "p50": 8.3,
-      "p95": 8.7,
-      "max": 10.1,
+      "p95": 10.2,
+      "max": 10.3,
       "n": 90
     },
     "mouse_playing": {
       "p50": 8.3,
-      "p95": 10.2,
-      "max": 10.3,
+      "p95": 8.6,
+      "max": 10,
       "n": 90
     }
   },
   "frame_floor_ms": 33.4,
   "stall_gate_ms": 200.0,
   "longtasks_over_50ms": [],
-  "build_bytes": 1553556,
-  "shots": 36,
+  "build_bytes": 1592743,
+  "shots": 38,
   "shots_dir": "qa/evidence/browser",
   "run": {
     "keyboard": {
@@ -91,7 +91,7 @@
         },
         "plank": {
           "unique": 145,
-          "var": 1080.2
+          "var": 1090.7
         },
         "bundle": {
           "unique": 197,
@@ -139,7 +139,7 @@
       },
       "aperture_shot": "16_campaign_hovel_aperture.jpg",
       "nights_completed": 7,
-      "words_at_walk": 96,
+      "words_at_walk": 97,
       "walk_shot": "17_campaign_walk.jpg",
       "door_shot": "18_campaign_door.jpg",
       "ending": "door",
@@ -213,8 +213,8 @@
           },
           {
             "scale": 1,
-            "shrink": 0.78,
-            "px": 17,
+            "shrink": 0.72,
+            "px": 16,
             "logical": 4,
             "buttons": 1,
             "first": "At dawn, two men stood in the lane. The othe"
@@ -277,16 +277,16 @@
           },
           {
             "scale": 1.25,
-            "shrink": 0.85,
-            "px": 23,
+            "shrink": 0.78,
+            "px": 21,
             "logical": 3,
             "buttons": 1,
             "first": "It was apparent that my conversation had int"
           },
           {
             "scale": 1.25,
-            "shrink": 0.78,
-            "px": 21,
+            "shrink": 0.92,
+            "px": 25,
             "logical": 3,
             "buttons": 1,
             "first": "He had heard a stranger at his door, and not"
@@ -317,8 +317,16 @@
           },
           {
             "scale": 1.5,
-            "shrink": 0.66,
-            "px": 22,
+            "shrink": 0.92,
+            "px": 30,
+            "logical": 2,
+            "buttons": 1,
+            "first": "At dawn, two men stood in the lane. The othe"
+          },
+          {
+            "scale": 1.5,
+            "shrink": 0.78,
+            "px": 26,
             "logical": 4,
             "buttons": 0,
             "first": "At dawn, two men stood in the lane. The othe"
@@ -341,8 +349,8 @@
           },
           {
             "scale": 1.5,
-            "shrink": 0.66,
-            "px": 22,
+            "shrink": 0.78,
+            "px": 26,
             "logical": 3,
             "buttons": 1,
             "first": "At dawn, two men stood in the lane. The othe"
@@ -365,24 +373,34 @@
           },
           {
             "scale": 1.5,
-            "shrink": 0.78,
-            "px": 26,
+            "shrink": 0.85,
+            "px": 28,
             "logical": 3,
             "buttons": 1,
-            "first": "He had heard a stranger at his door, and not"
-          },
-          {
-            "scale": 1.5,
-            "shrink": 0.92,
-            "px": 30,
-            "logical": 3,
-            "buttons": 0,
             "first": "He had heard a stranger at his door, and not"
           }
         ]
       },
       "about_shot": "33_card_about.jpg",
       "options_shot": "34_card_options_scale125.jpg",
+      "completed": true
+    },
+    "fonts": {
+      "measure": {
+        "checkText": true,
+        "checkDisp": true,
+        "pending": [],
+        "body": "hold to keep watching · lift the plank",
+        "disp": "Frankenstein; or, The Modern Prometheus",
+        "textW": 345.3997497558594,
+        "textGeoW": 321.416015625,
+        "dispW": 472.9197082519531,
+        "dispGeoW": 567.0849609375,
+        "textOnDisp": 607.73974609375,
+        "dispOnText": 267.07965087890625
+      },
+      "title_shot": "35_fonts_title.jpg",
+      "prompt_shot": "36_fonts_coldopen_prompt.jpg",
       "completed": true
     }
   }

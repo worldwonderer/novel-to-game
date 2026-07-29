@@ -54,5 +54,6 @@
   25 MB budget. They enter through `src/skin.js`; a key that fails to load still draws a grey box
   with its key name and the run continues. The 9 degradable keys remain on their named lesser
   expression. Fonts and audio still absent.
-- Licence: `public_domain_source`
+- Licence: `public_domain_source`; the two Caslon faces are `OFL-1.1` (licence text ships at
+  `build/app/assets/font/OFL.txt`)
 - Updated: 2026-07-28
