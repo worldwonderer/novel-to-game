@@ -12,6 +12,7 @@ import {
 import { STRINGS, glossWords } from './strings.js';
 import * as R from './render.js';
 import * as skin from './skin.js';
+import * as audio from './audio.js';
 
 const params = new URLSearchParams(location.search);
 const seed = params.get('seed') || 'hovel-01';
@@ -56,10 +57,16 @@ function resetScene() {
   scene.moonGone = 0;
 }
 
+// Run-scoped, not scene-scoped: Agatha's latch sounds once per run (the
+// engine's own never-set flag is state.firstCarryLatchSeen), and resetScene
+// runs at every dawn advance, which must not re-arm it. restart() re-arms.
+let latchPlayed = false;
+
 function restart() {
   state = createRun(seed);
   state.minuteTicks = fast ? FAST_MINUTE_TICKS : MINUTE_TICKS;
   state.phase = 'title';
+  latchPlayed = false;
   resetScene();
 }
 
@@ -79,6 +86,7 @@ function canvasPos(e) {
 
 window.addEventListener('keydown', (e) => {
   if (e.repeat) return;
+  audio.resume(); // the autoplay gate lifts on the first real gesture
   const k = e.key.toLowerCase();
   keys.add(k);
   if (k === 'e' || k === ' ') { edges.action = true; e.preventDefault(); }
@@ -91,7 +99,7 @@ window.addEventListener('keydown', (e) => {
 });
 window.addEventListener('keyup', (e) => keys.delete(e.key.toLowerCase()));
 canvas.addEventListener('mousemove', (e) => { const p = canvasPos(e); mouse.x = p.x; mouse.y = p.y; });
-canvas.addEventListener('mousedown', (e) => { const p = canvasPos(e); mouse = { x: p.x, y: p.y, down: true, clicked: true }; });
+canvas.addEventListener('mousedown', (e) => { audio.resume(); const p = canvasPos(e); mouse = { x: p.x, y: p.y, down: true, clicked: true }; });
 window.addEventListener('mouseup', () => { mouse.down = false; });
 
 function inputVector() {
@@ -226,7 +234,7 @@ function tickOptions(input) {
   if (input.advance || input.clicked) {
     if (f === 0) { options.textScale = options.textScale >= 1.5 ? 1 : options.textScale + 0.25; saveOptions(); }
     else if (f === 1) { options.inkHeavy = !options.inkHeavy; saveOptions(); }
-    else if (f === 2) { options.sound = !options.sound; saveOptions(); }
+    else if (f === 2) { options.sound = !options.sound; audio.setSound(options.sound); saveOptions(); }
     else if (f === 3) { options.murmur = !options.murmur; saveOptions(); }
     else if (f === 4) { options.reducedMotion = !options.reducedMotion; saveOptions(); }
     else { state.phase = 'title'; state.phaseTick = 0; scene.focus = 0; }
@@ -376,6 +384,17 @@ function drainEvents() {
       scene.speech = { speaker: null, text: STRINGS.moments.portmanteau, t: 0, narration: true };
     } else if (ev.type === 'journal') {
       scene.speech = { speaker: null, text: STRINGS.moments.journalRead, t: 0, narration: true };
+    } else if (ev.type === 'dawn') {
+      // Agatha's hand on the latch (ART_DIRECTION §13.3, GAME_DESIGN §10 beat
+      // 1): the first dawn after a load has been put at their door, once per
+      // run. The engine declares state.firstCarryLatchSeen for exactly this
+      // beat but never sets it (no latch event exists — written up in
+      // build/COMPLETION.md), so the moment is derived here from the dawn
+      // event and carriesTotal. The engine is not told the audio exists.
+      if (state.carriesTotal >= 1 && !latchPlayed) {
+        latchPlayed = true;
+        audio.play('latch');
+      }
     }
   }
 }
@@ -686,6 +705,15 @@ fitCanvas();
 // it decodes, and any key that never arrives stays a greybox carrying its key name.
 skin.load();
 
+// Kick off the audio layer the same way. The context stays suspended until
+// the first real input (resume lives in the input handlers), and every cue
+// learns where the creature is listening from at schedule time (§13.1) —
+// hovel through the wall, yard open. Nothing routes to 'room' yet: the
+// slice's door scene plays at the threshold, never inside their room.
+audio.load();
+audio.setSound(options.sound);
+audio.onPosition(() => (state.creature.inHovel ? 'hovel' : 'yard'));
+
 // The test hook: current state, the tick index, and the active cone set.
 // layoutCard is the render layer's pure card measure (QA_REPORT F8): the
 // browser harness drives it over every card string and asserts the fit.
@@ -701,6 +729,11 @@ window.__game = {
   STRINGS,
   layoutCard: (lines, opts, buttons) => R.layoutCard(ctx, lines, opts, buttons),
   get pendingKeys() { return skin.pending(); },
+  get audioPending() { return audio.pending(); },
+  get audioGatedPending() { return audio.gatedPending(); },
+  get audioStatus() { return audio.status(); },
+  get audioPlayed() { return audio.playedCues(); },
+  audioAudition: (key, opts) => audio.audition(key, opts),
 };
 
 requestAnimationFrame(frame);

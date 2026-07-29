@@ -21,7 +21,12 @@ door's real-time clock runs out at index 0, which is the silence ending
 afterRun, and a restart to a valid initial state. An eighth pass plays the
 night-1 seen failure to its epilogue card at textScale 1 and 1.5, frames
 both, and asserts the text-size setting delivers on the card itself
-(TASK F10).
+(TASK F10). A ninth pass gates the audio layer (ART_DIRECTION §13): the
+key register and §13.5 gated-pending list, the latch cue rendered offline and
+asserted non-silent against sound=false and missing-key silence, the options
+switch reaching the layer, the AudioContext running after the first real
+input, and the latch firing exactly once from engine state — never at a dawn
+without a first carry behind it.
 
 Evidence lands in the workspace at qa/evidence/browser/ as JPEG. The qa contract treats
 paths outside the workspace (and system temp dirs) as no evidence at all.
@@ -1800,6 +1805,128 @@ def run_fonts(page) -> dict:
     return out
 
 
+# ---------------------------------------------------------------- audio
+#
+# ART_DIRECTION §13 + the queue's audio task: the layer exists, and one real
+# cue — Agatha's hand on the latch (§13.3, "the first reward in the game") —
+# fires from engine state. Headless cannot hear, so the proof is threefold:
+# the cue's exact voice and position stage are rendered in an
+# OfflineAudioContext and the buffer is asserted non-silent (the F6/fonts
+# lesson: "called" is not "sounding"); the same render with sound=false and
+# for a missing key is asserted silent without throwing; and a driven night
+# with a carry asserts the latch really enters audio's played log from the
+# dawn event — while a driven night without one asserts it does not.
+
+def run_audio(page) -> dict:
+    out = {"plan": "register + offline renders (no input); the sound switch on "
+                   "the title options plate; then nights 1-3: no carry, carry, "
+                   "no carry -> latch silent, once, still once"}
+    try:
+        section("audio: the register and the offline renders (§13.5)")
+        page.goto(URL, wait_until="networkidle")
+        page.wait_for_timeout(600)
+        reg = page.evaluate("""() => ({
+          pending: window.__game.audioPending,
+          gated: window.__game.audioGatedPending,
+          status: window.__game.audioStatus,
+        })""")
+        out["pending"] = reg["pending"]
+        check(len(reg["pending"]) == 11 and "latch" not in reg["pending"],
+              f"audio.pending(): the eleven unauthored keys, latch not among them {reg['pending']}")
+        check(reg["gated"] == reg["pending"],
+              "audio.gatedPending(): the same eleven (all twelve keys are §13.5-gated)")
+        out["context_before_input"] = reg["status"]["context"]
+
+        rend = page.evaluate("""async () => {
+          const A = window.__game;
+          const tryAud = async (key, opts) => {
+            try { return await A.audioAudition(key, opts); }
+            catch (e) { return { threw: String(e) }; }
+          };
+          return {
+            on: await tryAud('latch', { position: 'hovel' }),
+            off: await tryAud('latch', { position: 'hovel', sound: false }),
+            missing: await tryAud('no/such-key', { position: 'hovel' }),
+            yard: await tryAud('latch', { position: 'yard' }),
+          };
+        }""")
+        out["renders"] = rend
+        on, off, missing, yard = rend["on"], rend["off"], rend["missing"], rend["yard"]
+        check(on.get("rms", 0) > 0.005 and on.get("peak", 0) > 0.05,
+              f"latch offline render is not silence (RMS {on.get('rms'):.5f}, "
+              f"peak {on.get('peak'):.3f}, {on.get('samples')} samples)")
+        check(not off.get("threw") and off.get("rms", 1) < 1e-9,
+              f"the same render with sound=false is silence (RMS {off.get('rms')})")
+        check(not missing.get("threw") and missing.get("rms", 1) < 1e-9,
+              f"a missing key renders silence and does not throw "
+              f"(threw={missing.get('threw')!r}, RMS {missing.get('rms')})")
+        check(yard.get("rms", 0) > on.get("rms", 1),
+              f"the position stage really filters: the yard hearing is more open than "
+              f"the hovel's 900 Hz wall (RMS {yard.get('rms'):.5f} > {on.get('rms'):.5f})")
+
+        section("audio: the switch on the options plate, and the autoplay gate")
+        # Title -> options -> the sound row. The first arrows/Enter are also the
+        # first real input, so the context must be running right after.
+        page.keyboard.press("ArrowDown")   # title focus: begin -> options
+        page.keyboard.press("Enter")
+        need(wait_cond(page, lambda s: s["phase"] == "options", 5) is not None,
+             "[audio] the options plate opens")
+        st1 = page.evaluate("window.__game.audioStatus")
+        check(st1["context"] == "running",
+              f"AudioContext running after the first real input (was "
+              f"{out['context_before_input']!r} before, now {st1['context']!r})")
+        page.keyboard.press("ArrowDown")   # textScale -> ink
+        page.keyboard.press("ArrowDown")   # ink -> sound
+        page.keyboard.press("Enter")       # sound off
+        page.wait_for_timeout(150)
+        st2 = page.evaluate("window.__game.audioStatus")
+        check(st2["soundOn"] is False, "[audio] options.sound off reaches the layer")
+        page.keyboard.press("Enter")       # sound back on for the driven nights
+        page.wait_for_timeout(150)
+        st3 = page.evaluate("window.__game.audioStatus")
+        check(st3["soundOn"] is True, "[audio] options.sound on again")
+
+        section("audio: the latch fires from engine state — and only from it")
+        cold_open_to_night1(page, "audio")
+        s = wait_dawn(page)  # night 1, no carry
+        played0 = page.evaluate("window.__game.audioPlayed")
+        check(not any(p["key"] == "latch" for p in played0),
+              f"[audio] dawn 2 without a carry: no latch (played: {played0 or 'nothing'})")
+
+        press(page)  # let the day pass -> night 2
+        need(wait_cond(page, lambda s: s["phase"] == "night" and s["night"] == 2, 5),
+             "[audio] night 2 begins")
+        need(wait_cond(page, lambda s: s["minute"] >= 5.2, 10 * SPEED),
+             "[audio] night 2: the retiring window closes")
+        press(page, "x")
+        need(wait_cond(page, lambda s: not s["inHovel"], 5),
+             "[audio] night 2: steps out once the yard is empty")
+        carry_load(page, out, "audio_n2_carry")
+        s = wait_dawn(page)  # dawn 3: the family finds the first load
+        played1 = page.evaluate("window.__game.audioPlayed")
+        latches = [p for p in played1 if p["key"] == "latch"]
+        check(len(latches) == 1,
+              f"[audio] the dawn after the first carry sounds the latch, once "
+              f"(played: {played1})")
+        check(bool(latches) and latches[0]["position"] == "hovel",
+              f"[audio] the latch is heard through the hovel wall "
+              f"(position: {latches[0]['position'] if latches else 'n/a'})")
+
+        press(page)  # -> night 3, no second carry
+        need(wait_cond(page, lambda s: s["phase"] == "night" and s["night"] == 3, 5),
+             "[audio] night 3 begins")
+        wait_dawn(page)
+        played2 = page.evaluate("window.__game.audioPlayed")
+        check(sum(1 for p in played2 if p["key"] == "latch") == 1,
+              f"[audio] dawn 4 with nothing new carried: still one latch, not two "
+              f"(played: {played2})")
+        out["completed"] = True
+    except CampaignAbort as e:
+        out["aborted"] = str(e)
+        check(False, f"[audio] pass aborted: {e}")
+    return out
+
+
 def main() -> int:
     shutil.rmtree(SHOTS, ignore_errors=True)
     SHOTS.mkdir(parents=True, exist_ok=True)
@@ -1826,6 +1953,7 @@ def main() -> int:
             result["card_layout"] = run_card_layout(page)
             result["epilogue_textscale"] = run_epilogue_textscale(page)
             result["fonts"] = run_fonts(page)
+            result["audio"] = run_audio(page)
 
             section("determinism")
             def replay():

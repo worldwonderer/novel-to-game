@@ -2,7 +2,7 @@
   "url": "http://127.0.0.1:5199/?seed=42&fast=1",
   "normal_speed_run": false,
   "viewport": "1280x800",
-  "passed": 267,
+  "passed": 291,
   "failed": 0,
   "console_errors": [],
   "network_errors": [],
@@ -13,34 +13,34 @@
   "frame_ms": {
     "keyboard_title": {
       "p50": 8.3,
-      "p95": 9.6,
-      "max": 10,
+      "p95": 9.3,
+      "max": 10.3,
       "n": 90
     },
     "keyboard_playing": {
       "p50": 8.3,
-      "p95": 9.4,
-      "max": 9.9,
+      "p95": 9.7,
+      "max": 10.4,
       "n": 90
     },
     "mouse_title": {
       "p50": 8.3,
-      "p95": 10,
-      "max": 10.3,
+      "p95": 9.4,
+      "max": 10.2,
       "n": 90
     },
     "mouse_playing": {
       "p50": 8.3,
-      "p95": 8.5,
-      "max": 9.9,
+      "p95": 9.4,
+      "max": 10.2,
       "n": 90
     }
   },
   "frame_floor_ms": 33.4,
   "stall_gate_ms": 200.0,
   "longtasks_over_50ms": [],
-  "build_bytes": 1596705,
-  "shots": 46,
+  "build_bytes": 1607952,
+  "shots": 47,
   "shots_dir": "qa/evidence/browser",
   "run": {
     "keyboard": {
@@ -91,7 +91,7 @@
         },
         "plank": {
           "unique": 145,
-          "var": 1080.2
+          "var": 1090.7
         },
         "bundle": {
           "unique": 197,
@@ -139,7 +139,7 @@
       },
       "aperture_shot": "16_campaign_hovel_aperture.jpg",
       "nights_completed": 7,
-      "words_at_walk": 96,
+      "words_at_walk": 97,
       "walk_shot": "17_campaign_walk.jpg",
       "door_shot": "18_campaign_door.jpg",
       "ending": "door",
@@ -518,6 +518,47 @@
       },
       "title_shot": "43_fonts_title.jpg",
       "prompt_shot": "44_fonts_coldopen_prompt.jpg",
+      "completed": true
+    },
+    "audio": {
+      "plan": "register + offline renders (no input); the sound switch on the title options plate; then nights 1-3: no carry, carry, no carry -> latch silent, once, still once",
+      "pending": [
+        "footfall/snow",
+        "footfall/path",
+        "footfall/earth",
+        "footfall/straw",
+        "load-down",
+        "hearth/small",
+        "hearth/high",
+        "taper-strike",
+        "dawn-bird",
+        "wind",
+        "guitar"
+      ],
+      "context_before_input": "suspended",
+      "renders": {
+        "on": {
+          "rms": 0.021385072675283338,
+          "peak": 0.2600450813770294,
+          "samples": 26460
+        },
+        "off": {
+          "rms": 0,
+          "peak": 0,
+          "samples": 26460
+        },
+        "missing": {
+          "rms": 0,
+          "peak": 0,
+          "samples": 26460
+        },
+        "yard": {
+          "rms": 0.02185536405041611,
+          "peak": 0.4102586507797241,
+          "samples": 26460
+        }
+      },
+      "audio_n2_carry_shot": "45_campaign_audio_n2_carry.jpg",
       "completed": true
     }
   }

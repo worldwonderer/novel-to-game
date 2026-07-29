@@ -2,9 +2,9 @@
 
 > `qa` gate not passed: the slice is **completable by either input scheme** — full eight-night
 > campaigns reach the `door` ending at exchange 5 and restart clean, one all-keyboard and one
-> all-mouse (267/267 browser assertions, engine invariants hold) — **all four designed endings
+> all-mouse (291/291 browser assertions, engine invariants hold) — **all four designed endings
 > (`door`, `seen`, `want`, `silence`) are played end to end**, and all 6 release-gated **image** keys are generated and
-> wired, and both Caslon faces ship. Still open: one release gate, the audio set.
+> wired, and both Caslon faces ship. Still open: the audio set — the layer now exists with 1 of 12 cues authored.
 > Not a release build.
 
 - Source: Project Gutenberg, *Frankenstein; or, The Modern Prometheus* (1818), public domain
@@ -33,8 +33,8 @@
   stayed 0, and the title text and all three verbs were never drawn; the first screen was two
   blank shapes with no way in. Also fixed 2 `minor` occlusion defects (title crossing the
   platemark; the prompt band covering the tally plank and food heap).
-- Evidence: `qa/evidence/automated.json` (267 passed / 0 failed, 0 console errors, 0 external
-  request domains, build 1.52 MB), `qa/evidence/browser/` 46 frames,
+- Evidence: `qa/evidence/automated.json` (291 passed / 0 failed, 0 console errors, 0 external
+  request domains, build 1.52 MB), `qa/evidence/browser/` 47 frames,
   `qa/evidence/qa_browser_last.log`, `node qa/design_invariants.mjs` all sections hold
 - Verified path: the full campaign — boot → title → cold open → nights 1–7 (2 carries, 4 lessons,
   96 words) → the day-8 long walk → the door → five exchanges → ending `door` → epilogue →
