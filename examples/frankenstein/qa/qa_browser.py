@@ -470,6 +470,72 @@ def start_lesson(page, night: int) -> None:
     need(r == "lesson", f"night {night}: the lesson starts at minute 0 ({r})")
 
 
+# ---------------------------------------------------------------- hovel plate
+#
+# TASK 5 ("刻在版上"): the cold slot, the tally plank and the journal bundle
+# were single fillRect swatches over plate/hovel — flat stickers on an
+# engraved ground. Pixel-level guard: sample each region on the canvas itself
+# and assert it is not one colour. A same-size patch of bare straw next to
+# each region is the control: the straw is part of the engraved plate, so it
+# marks what "engraved" scores on the same metric — and a broken probe (all
+# zeros, a covered canvas) fails the controls too, loudly.
+#
+# Floors: measured on the engraved build (2026-07-28, the night frame — the
+# poorer case; the dawn frame scores higher): slot 754 unique / 525 luminance
+# variance, plank 143 / 921, bundle 197 / 773; straw controls 2865/658,
+# 3002/490, 893/637. A flat fillRect with a 1.5 px stroke scores ~3-6 unique
+# colours and variance ~10. The floors sit ~3.5x below the worst engraved
+# measurement and an order of magnitude above flat.
+UNIQUE_FLOOR = 40
+VAR_FLOOR = 150.0
+
+HOVEL_PROBE_JS = """(() => {
+  const c = document.getElementById('plate');
+  const ctx = c.getContext('2d');
+  const probe = (x, y, w, h) => {
+    const d = ctx.getImageData(x, y, w, h).data;
+    const colours = new Set();
+    let sum = 0, sum2 = 0, n = 0;
+    for (let i = 0; i < d.length; i += 4) {
+      colours.add((d[i] << 16) | (d[i + 1] << 8) | d[i + 2]);
+      const l = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
+      sum += l; sum2 += l * l; n++;
+    }
+    const mean = sum / n;
+    return { unique: colours.size, var: Math.round((sum2 / n - mean * mean) * 10) / 10 };
+  };
+  return {
+    slot: probe(900, 480, 260, 90),        // the cold slot (TASK 5 coordinates)
+    plank: probe(460, 560, 400, 110),      // the tally plank; FLOOR = 690
+    bundle: probe(880, 600, 50, 40),       // the journal parcel
+    straw_slot: probe(900, 590, 260, 90),  // controls: bare straw, same sizes
+    straw_plank: probe(60, 565, 400, 110),
+    straw_bundle: probe(1200, 600, 50, 40),
+  };
+})()"""
+
+
+def hovel_plate_checks(page, out: dict) -> None:
+    """Night 7, after the lesson: words >= 62 (the campaign's own gates prove
+    >= 80 by the walk, so >= 62 here is arithmetic), the creature is inside,
+    and slot + plank + bundle are all on the straw in one frame."""
+    s = qa_state(page)
+    need(s["words"] >= 62,
+         f"[campaign] night 7: words {s['words']} >= 62, the journal bundle is on the straw")
+    rep = page.evaluate(HOVEL_PROBE_JS)
+    out["hovel_probe"] = rep
+    for region in ("slot", "plank", "bundle"):
+        r, c = rep[region], rep[f"straw_{region}"]
+        need(r["unique"] >= UNIQUE_FLOOR and r["var"] >= VAR_FLOOR,
+             f"[campaign] hovel {region} is no flat swatch "
+             f"({r['unique']} colours >= {UNIQUE_FLOOR}, luminance var {r['var']} >= {VAR_FLOOR}; "
+             f"straw control {c['unique']} / {c['var']})")
+    need(all(rep[f"straw_{r}"]["unique"] >= UNIQUE_FLOOR and rep[f"straw_{r}"]["var"] >= VAR_FLOOR
+             for r in ("slot", "plank", "bundle")),
+         "[campaign] the straw controls read as engraved plate (probe sanity)")
+    out["hovel_shot"] = shot(page, "campaign_hovel_night")
+
+
 def run_campaign(page) -> dict:
     """The full path the docstring promises: played, on the fixed seed, to a
     designed ending, then restarted to a valid initial state."""
@@ -516,6 +582,7 @@ def run_campaign(page) -> dict:
         need(wait_cond(page, lambda s: not s["inHovel"], 5),
              "[campaign] night 3: steps out once the yard is empty")
         carry_load(page, out, "n3_carry")
+        out["hovel_f1_shot"] = shot(page, "campaign_hovel_firing1")  # the slot's pile: 1 course
         press(page)  # listen out the rest
         wait_dawn(page)
 
@@ -527,6 +594,7 @@ def run_campaign(page) -> dict:
         need(wait_cond(page, lambda s: not s["inHovel"], 5),
              "[campaign] night 4: steps out after the lesson")
         carry_load(page, out, "n4_carry")
+        out["hovel_f2_shot"] = shot(page, "campaign_hovel_firing2")  # the slot's pile: 2 courses
         press(page)
         s = wait_dawn(page)
 
@@ -535,6 +603,9 @@ def run_campaign(page) -> dict:
             start_lesson(page, n)
             need(wait_cond(page, lambda s: s["lessonDone"], 10 * SPEED),
                  f"[campaign] night {n}: the lesson completes")
+            if n == 7:
+                section("[campaign] hovel plate: nothing reads as a flat swatch (TASK 5)")
+                hovel_plate_checks(page, out)
             press(page)  # listen out the rest
             s = wait_dawn(page)
         out["nights_completed"] = 7

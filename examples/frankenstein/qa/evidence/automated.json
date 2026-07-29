@@ -2,7 +2,7 @@
   "url": "http://127.0.0.1:5199/?seed=42&fast=1",
   "normal_speed_run": false,
   "viewport": "1280x800",
-  "passed": 147,
+  "passed": 152,
   "failed": 0,
   "console_errors": [],
   "network_errors": [],
@@ -13,25 +13,25 @@
   "frame_ms": {
     "keyboard_title": {
       "p50": 8.3,
-      "p95": 9.3,
-      "max": 10.1,
+      "p95": 9.6,
+      "max": 10.3,
       "n": 90
     },
     "keyboard_playing": {
       "p50": 8.3,
-      "p95": 9.9,
+      "p95": 10.4,
       "max": 10.4,
       "n": 90
     },
     "mouse_title": {
       "p50": 8.3,
-      "p95": 9.9,
-      "max": 10.3,
+      "p95": 10.3,
+      "max": 10.4,
       "n": 90
     },
     "mouse_playing": {
       "p50": 8.3,
-      "p95": 9.6,
+      "p95": 10.3,
       "max": 10.4,
       "n": 90
     }
@@ -39,8 +39,8 @@
   "frame_floor_ms": 33.4,
   "stall_gate_ms": 200.0,
   "longtasks_over_50ms": [],
-  "build_bytes": 1579209,
-  "shots": 31,
+  "build_bytes": 1590083,
+  "shots": 34,
   "shots_dir": "qa/evidence/browser",
   "run": {
     "keyboard": {
@@ -63,7 +63,7 @@
       "title_shot": "05_mouse_title.jpg",
       "title_button_shot": "06_mouseclick_title_button.jpg",
       "cold_open_shot": "07_mouse_cold_open.jpg",
-      "cold_open_seconds": 23.3,
+      "cold_open_seconds": 23.2,
       "playing_shot": "08_mouse_playing.jpg",
       "advanced_a_night": true,
       "state_changed": [
@@ -80,11 +80,40 @@
       "words_after_n1": 12,
       "words_after_n2": 21,
       "n3_carry_shot": "10_campaign_n3_carry.jpg",
-      "n4_carry_shot": "11_campaign_n4_carry.jpg",
+      "hovel_f1_shot": "11_campaign_hovel_firing1.jpg",
+      "n4_carry_shot": "12_campaign_n4_carry.jpg",
+      "hovel_f2_shot": "13_campaign_hovel_firing2.jpg",
+      "hovel_probe": {
+        "slot": {
+          "unique": 638,
+          "var": 471.2
+        },
+        "plank": {
+          "unique": 145,
+          "var": 1080.2
+        },
+        "bundle": {
+          "unique": 197,
+          "var": 773.2
+        },
+        "straw_slot": {
+          "unique": 2865,
+          "var": 658.1
+        },
+        "straw_plank": {
+          "unique": 3002,
+          "var": 490
+        },
+        "straw_bundle": {
+          "unique": 893,
+          "var": 636.5
+        }
+      },
+      "hovel_shot": "14_campaign_hovel_night.jpg",
       "nights_completed": 7,
-      "words_at_walk": 98,
-      "walk_shot": "12_campaign_walk.jpg",
-      "door_shot": "13_campaign_door.jpg",
+      "words_at_walk": 96,
+      "walk_shot": "15_campaign_walk.jpg",
+      "door_shot": "16_campaign_door.jpg",
       "ending": "door",
       "exchanges": 5,
       "epilogue_model": {
@@ -101,34 +130,34 @@
         "seenBy": null,
         "seenContext": null
       },
-      "epilogue_shot": "14_campaign_epilogue.jpg",
-      "afterrun_shot": "15_campaign_afterrun.jpg",
-      "restart_shot": "16_campaign_restart.jpg",
+      "epilogue_shot": "17_campaign_epilogue.jpg",
+      "afterrun_shot": "18_campaign_afterrun.jpg",
+      "restart_shot": "19_campaign_restart.jpg",
       "completed": true
     },
     "mouse_campaign": {
       "plan": "as [campaign], but no keyboard input anywhere; hotspots carry the context actions (walk-and-act on arrival)",
-      "title_button_shot": "17_mousecampaign_title_button.jpg",
+      "title_button_shot": "20_mousecampaign_title_button.jpg",
       "words_after_n1": 12,
       "words_after_n2": 20,
-      "move_shot": "18_mouseclick_yard_move.jpg",
-      "n3_carry_shot": "19_mousecampaign_n3_carry.jpg",
-      "n4_carry_shot": "20_mousecampaign_n4_carry.jpg",
+      "move_shot": "21_mouseclick_yard_move.jpg",
+      "n3_carry_shot": "22_mousecampaign_n3_carry.jpg",
+      "n4_carry_shot": "23_mousecampaign_n4_carry.jpg",
       "nights_completed": 7,
-      "words_at_walk": 97,
-      "walk_shot": "21_mousecampaign_walk.jpg",
-      "door_shot": "22_mousecampaign_door.jpg",
+      "words_at_walk": 96,
+      "walk_shot": "24_mousecampaign_walk.jpg",
+      "door_shot": "25_mousecampaign_door.jpg",
       "ending": "door",
       "exchanges": 5,
-      "epilogue_shot": "23_mousecampaign_epilogue.jpg",
-      "afterrun_shot": "24_mousecampaign_afterrun.jpg",
-      "restart_shot": "25_mousecampaign_restart.jpg",
+      "epilogue_shot": "26_mousecampaign_epilogue.jpg",
+      "afterrun_shot": "27_mousecampaign_afterrun.jpg",
+      "restart_shot": "28_mousecampaign_restart.jpg",
       "completed": true
     },
     "seen": {
       "plan": "night 1: step out of the mouth, stand still; Agatha's retiring patrol sees the creature at minute ~= 1.38",
-      "freeze_shot": "26_seen_freeze.jpg",
-      "card_shot": "27_seen_card.jpg",
+      "freeze_shot": "29_seen_freeze.jpg",
+      "card_shot": "30_seen_card.jpg",
       "completed": true
     },
     "card_layout": {
@@ -324,8 +353,8 @@
           }
         ]
       },
-      "about_shot": "28_card_about.jpg",
-      "options_shot": "29_card_options_scale125.jpg",
+      "about_shot": "31_card_about.jpg",
+      "options_shot": "32_card_options_scale125.jpg",
       "completed": true
     }
   }

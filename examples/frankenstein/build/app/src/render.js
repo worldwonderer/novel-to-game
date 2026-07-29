@@ -58,6 +58,84 @@ function wavy(ctx, x, y, w, colour) {
   ctx.stroke();
 }
 
+// ------------------------------------------------------- engraving helpers
+
+// Deterministic pseudo-jitter for engraving marks: a hash of the mark's index.
+// Never Math.random, and never the engine's seeded RNG — the sim's seed stream
+// belongs to the rules, and drawing from it would desync replays. The same
+// mark lands the same way on every frame, so nothing flickers.
+function det(i, salt = 0) {
+  let h = (Math.imul(i + 1, 2654435761) ^ Math.imul(salt + 1, 40503)) >>> 0;
+  h = Math.imul(h ^ (h >>> 13), 1103515245) >>> 0;
+  h ^= h >>> 16;
+  return (h >>> 8) / 16777216;   // 0..1
+}
+
+// The engraving workhorse: parallel ink lines clipped to a rect. Shade is line
+// density and brokenness, never a gradient or a soft shadow (ART_DIRECTION
+// §16.3). With broken > 0 the lines come out as dashes seeded by line index,
+// so the same patch hatches identically on every frame.
+export function hatch(ctx, x0, y0, x1, y1, { spacing = 5, angle = 0, colour = PAL.ink, width = 1, broken = 0 } = {}) {
+  const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+  const r = Math.hypot(x1 - x0, y1 - y0) / 2 + spacing;
+  ctx.save();
+  ctx.beginPath(); ctx.rect(x0, y0, x1 - x0, y1 - y0); ctx.clip();
+  ctx.translate(cx, cy); ctx.rotate(angle);
+  ctx.strokeStyle = colour; ctx.lineWidth = width;
+  let n = 0;
+  for (let d = -r; d <= r; d += spacing, n++) {
+    ctx.beginPath();
+    if (broken > 0) {
+      ctx.setLineDash([5 + det(n, 1) * 9, 2 + det(n, 2) * 6 * broken]);
+      ctx.lineDashOffset = det(n, 3) * 12;
+    }
+    ctx.moveTo(-r, d); ctx.lineTo(r, d);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+// A board's ragged horizontal edge — the break where the loose plank sits over
+// the cold slot. The silhouette is a sawtooth seeded by position along the
+// break: the same break every frame, and never a clean 1.5 px rule (TASK 1).
+// dir -1: the board mass lies above the edge (teeth hang down); +1: below.
+function plankBreak(ctx, x0, x1, y, dir) {
+  ctx.fillStyle = PAL.nightDeep;
+  ctx.beginPath();
+  ctx.moveTo(x0, y + dir * 16);
+  ctx.lineTo(x0, y);
+  let n = 0;
+  for (let x = x0; x < x1 - 6; x += 7, n++) {
+    ctx.lineTo(x + 3.5, y - dir * (1.5 + det(n, Math.round(y)) * 8));
+    ctx.lineTo(x + 7, y - dir * (0.5 + det(n, 91) * 2.5));
+  }
+  ctx.lineTo(x1, y);
+  ctx.lineTo(x1, y + dir * 16);
+  ctx.closePath();
+  ctx.fill();
+  // the board's face next to the break: broken grain lines on the mass side
+  hatch(ctx, x0, dir < 0 ? y - 13 : y + 3, x1, dir < 0 ? y - 3 : y + 13,
+    { spacing: 4, angle: 0, colour: withAlpha(PAL.ink2, 0.55), width: 1, broken: 1 });
+}
+
+// The slot's end caps: the neighbouring boards' ends, broken off vertical.
+// dir -1: the mass lies left of the edge; +1: right.
+function plankEnd(ctx, x, y0, y1, dir) {
+  ctx.fillStyle = PAL.nightDeep;
+  ctx.beginPath();
+  ctx.moveTo(x + dir * 8, y0);
+  ctx.lineTo(x, y0);
+  let n = 0;
+  for (let y = y0; y < y1 - 6; y += 7, n++) {
+    ctx.lineTo(x - dir * (1.5 + det(n, Math.round(x)) * 6), y + 3.5);
+    ctx.lineTo(x - dir * (0.5 + det(n, 37) * 2), y + 7);
+  }
+  ctx.lineTo(x, y1);
+  ctx.lineTo(x + dir * 8, y1);
+  ctx.closePath();
+  ctx.fill();
+}
+
 // Gloss an utterance against the player's vocabulary: known words print,
 // unknown words are engraved wavy rules of the same length.
 export function glossText(ctx, str, wordsKnown, x, y, px, colour, align = 'center') {
@@ -137,10 +215,37 @@ export function drawHolding(ctx, state, opts = {}) {
   ctx.beginPath(); ctx.moveTo(LANE_GATE.x - 12, LANE_GATE.y); ctx.lineTo(LANE_GATE.x + 12, LANE_GATE.y); ctx.stroke();
 }
 
-function drawPile(ctx, firing, daylight) {
+// The pile at the door IS Firing: one course per point, 0..4. One drawing
+// serves both of its reads — the yard plan, and the strip of yard seen through
+// the cold slot (ART_DIRECTION §7.1, §16.3 "the pile courses") — so the two
+// can never drift into separate implementations. `at` carries only the frame
+// geometry; the stacking rule is shared.
+function drawPile(ctx, firing, daylight, at = {}) {
+  const g = { x: DOOR.x + 8, yBase: DOOR.y + 10, w: 26, courseH: 4, step: 6, ...at };
+  const fill = daylight ? '#8a6f4d' : '#a08c68';
   for (let i = 0; i < firing; i++) {
-    rect(ctx, DOOR.x + 8, DOOR.y + 6 - i * 6, DOOR.x + 34, DOOR.y + 10 - i * 6,
-      daylight ? '#8a6f4d' : '#a08c68', PAL.ink);
+    const off = (det(i, 17) - 0.5) * 2;          // courses never stack machine-true
+    const y1 = g.yBase - i * g.step, y0 = y1 - g.courseH;
+    rect(ctx, g.x + off, y0, g.x + g.w + off, y1, fill, PAL.ink);
+    // grain along the course: one broken cut line, two when the course is tall
+    const grains = g.courseH >= 6 ? 2 : 1;
+    ctx.strokeStyle = withAlpha(PAL.ink, 0.75); ctx.lineWidth = 1;
+    for (let k = 0; k < grains; k++) {
+      const gy = y0 + (g.courseH * (k + 1)) / (grains + 1);
+      ctx.setLineDash([4 + det(i, 50 + k) * 5, 2 + det(i, 60 + k) * 3]);
+      ctx.beginPath();
+      ctx.moveTo(g.x + off + 2 + det(i, 30 + k) * 4, gy);
+      ctx.lineTo(g.x + g.w + off - 2 - det(i, 40 + k) * 4, gy);
+      ctx.stroke();
+    }
+    ctx.setLineDash([]);
+    // the log end, when the course is big enough to carry it
+    if (g.courseH >= 5) {
+      ctx.strokeStyle = PAL.ink; ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.ellipse(g.x + off + 3, (y0 + y1) / 2, 1.8, g.courseH * 0.32, 0, 0, Math.PI * 2);
+      ctx.stroke();
+    }
   }
 }
 
@@ -216,11 +321,7 @@ export function drawHovel(ctx, state, view, opts) {
   const ax = 160, ay = 150, aw = 430, ah = 330;
   drawRoom(ctx, state, ax, ay, aw, ah, view, opts);
   // The cold slot, lower right: the yard strip and the pile at the door.
-  const sx = 900, sy = 480, sw = 260, sh = 90;
-  rect(ctx, sx, sy, sx + sw, sy + sh, view === 'dawn' ? PAL.plate : PAL.nightMid, PAL.ink);
-  for (let i = 0; i < state.firing; i++) {
-    rect(ctx, sx + 150, sy + sh - 14 - i * 10, sx + 200, sy + sh - 8 - i * 10, '#a08c68', PAL.ink);
-  }
+  drawColdSlot(ctx, state, view);
   // Everything on the straw sits above the prompt band (0.88h = 704). The band is
   // opaque paper; anything drawn under it is simply not readable, and §3.3 puts
   // occlusion tolerance at zero. Heap, plank and bundle are raised to clear it.
@@ -236,13 +337,112 @@ export function drawHovel(ctx, state, view, opts) {
     ctx.closePath(); ctx.fill();
   }
   // The plank, and the scratches that ARE Words: grouped in fives, five groups to a row.
-  rect(ctx, 460, FLOOR - 130, 860, FLOOR - 20, '#3a3020', PAL.ink2);
+  // The board is engraved, not filled: grain lines run with the plank, the ends
+  // show end-grain, the top edge catches the room's light and the foot sits on
+  // a hatched contact shadow. drawScratches itself is left exactly as it was.
+  const px0 = 460, py0 = FLOOR - 130, px1 = 860, py1 = FLOOR - 20;
+  rect(ctx, px0, py0, px1, py1, '#3a3020');
+  hatch(ctx, px0 + 2, py0 + 2, px1 - 2, py1 - 2,
+    { spacing: 6, angle: 0, colour: withAlpha(PAL.ink, 0.7), width: 1, broken: 1.1 });
+  hatch(ctx, px0, py0, px0 + 10, py1,
+    { spacing: 4, angle: Math.PI / 2, colour: withAlpha(PAL.ink, 0.55), width: 1, broken: 0.8 });
+  hatch(ctx, px1 - 10, py0, px1, py1,
+    { spacing: 4, angle: Math.PI / 2, colour: withAlpha(PAL.ink, 0.55), width: 1, broken: 0.8 });
+  for (let k = 0; k < 3; k++) {                 // knots, seeded not random
+    const kx = px0 + 50 + det(k, 71) * (px1 - px0 - 100);
+    const ky = py0 + 16 + det(k, 72) * (py1 - py0 - 32);
+    ctx.strokeStyle = withAlpha(PAL.ink, 0.8); ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.ellipse(kx, ky, 4.5, 2.4, 0, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(kx, ky, 2, 1, 0, 0, Math.PI * 2); ctx.stroke();
+  }
+  ctx.strokeStyle = PAL.ink2; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(px0, py0); ctx.lineTo(px1, py0); ctx.stroke();
+  ctx.strokeStyle = PAL.ink; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(px0, py1); ctx.lineTo(px1, py1); ctx.stroke();
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(px0, py0); ctx.lineTo(px0, py1); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(px1, py0); ctx.lineTo(px1, py1); ctx.stroke();
+  hatch(ctx, px0 + 4, py1 + 1, px1 - 4, py1 + 11,
+    { spacing: 3, angle: 0, colour: withAlpha(PAL.ink, 0.45), width: 1, broken: 1 });
   drawScratches(ctx, state.words, 480, FLOOR - 110);
   // The journal bundle.
-  if (state.words >= 62 && !state.journalRead) {
-    rect(ctx, 880, FLOOR - 90, 930, FLOOR - 50, '#8a7a5c', PAL.ink);
+  if (state.words >= 62 && !state.journalRead) drawJournal(ctx, FLOOR, false);
+  if (state.journalRead) drawJournal(ctx, FLOOR, true);
+}
+
+// The cold slot, lower right: not a swatch but a strip of the yard seen
+// through the gap where the loose plank sits — ground, the corner of the
+// cottage, and the pile of cut wood at the door (ART_DIRECTION §7.1). The
+// gap's edges are the boards' own broken ends, not a stroked rect.
+function drawColdSlot(ctx, state, view) {
+  const sx = 900, sy = 480, sw = 260, sh = 90;
+  const dawn = view === 'dawn';
+  const hz = sy + sh - 24;                       // the yard's ground line
+  // night air above the yard, then the ground itself: the holding's night
+  // plate, carried into lines
+  rect(ctx, sx, sy, sx + sw, sy + sh, dawn ? PAL.plate : PAL.nightMid);
+  hatch(ctx, sx, sy + 6, sx + sw, hz - 4,
+    { spacing: 9, angle: 0, colour: withAlpha(dawn ? PAL.ink2 : PAL.snow, 0.16), width: 1, broken: 1.4 });
+  hatch(ctx, sx, hz, sx + sw, sy + sh,
+    { spacing: 4, angle: 0, colour: withAlpha(dawn ? PAL.ink2 : PAL.snow, 0.5), width: 1, broken: 0.9 });
+  // the corner of the cottage: weatherboards, and the shadow side of the turn
+  const wx0 = sx + 14, wx1 = sx + 112;
+  rect(ctx, wx0, sy, wx1, hz, dawn ? '#cbbf9f' : '#4a5a78');
+  hatch(ctx, wx0, sy, wx1, hz,
+    { spacing: 7, angle: Math.PI / 2, colour: withAlpha(PAL.ink, 0.65), width: 1, broken: 0.5 });
+  hatch(ctx, wx1 - 18, sy, wx1, hz,
+    { spacing: 3.5, angle: Math.PI / 2, colour: withAlpha(PAL.ink, 0.8), width: 1, broken: 0.3 });
+  ctx.strokeStyle = PAL.ink; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(wx1, sy); ctx.lineTo(wx1, hz); ctx.stroke();
+  // the pile of cut wood at the door, against the corner — the same courses
+  // the yard plan draws
+  drawPile(ctx, state.firing, dawn, { x: sx + 96, yBase: sy + sh - 9, w: 48, courseH: 6, step: 10 });
+  hatch(ctx, sx + 92, sy + sh - 8, sx + 152, sy + sh - 2,
+    { spacing: 2.5, angle: 0, colour: withAlpha(PAL.ink, 0.6), width: 1, broken: 0.7 });
+  // and over everything, the gap itself: the boards' ragged breaks and ends
+  plankBreak(ctx, sx - 6, sx + sw + 6, sy + 2, -1);
+  plankBreak(ctx, sx - 6, sx + sw + 6, sy + sh - 2, 1);
+  plankEnd(ctx, sx + 2, sy + 2, sy + sh - 2, -1);
+  plankEnd(ctx, sx + sw - 2, sy + 2, sy + sh - 2, 1);
+}
+
+// The journal bundle: a sewn paper parcel on the straw, drawn in lines. While
+// unread it stays a dark, cord-tied packet; read, it lies paler with its
+// leaves fanned — the two states must read apart at a glance (TASK 4).
+function drawJournal(ctx, FLOOR, read) {
+  const bx = 880, by = FLOOR - 90, bw = 50, bh = 40;
+  rect(ctx, bx, by, bx + bw, by + bh, read ? '#b0a37e' : '#8a7a5c');
+  // the parcel's volume: shade gathered toward the foot, in lines
+  hatch(ctx, bx + 1, by + bh * 0.5, bx + bw - 1, by + bh - 1,
+    { spacing: 3, angle: -0.45, colour: withAlpha(PAL.ink, read ? 0.4 : 0.65), width: 1, broken: 0.7 });
+  hatch(ctx, bx + 1, by + 1, bx + bw - 1, by + bh * 0.5,
+    { spacing: 5, angle: -0.45, colour: withAlpha(PAL.ink, read ? 0.25 : 0.4), width: 1, broken: 1 });
+  if (read) {
+    // open leaves: three page edges fanning from the fold
+    ctx.strokeStyle = PAL.ink2; ctx.lineWidth = 1;
+    for (let k = 0; k < 3; k++) {
+      const ly = by + 8 + k * 7;
+      ctx.beginPath(); ctx.moveTo(bx + 6, ly); ctx.lineTo(bx + bw - 8 - det(k, 81) * 6, ly + 1); ctx.stroke();
+    }
+    ctx.strokeStyle = PAL.ink; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(bx + 6, by + 5); ctx.lineTo(bx + 6, by + bh - 6); ctx.stroke();
+  } else {
+    // the cord: one wrap each way, and the knot
+    ctx.strokeStyle = PAL.ink; ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(bx + bw * 0.58, by); ctx.lineTo(bx + bw * 0.58, by + bh);
+    ctx.moveTo(bx, by + bh * 0.42); ctx.lineTo(bx + bw, by + bh * 0.42);
+    ctx.stroke();
+    ctx.beginPath(); ctx.arc(bx + bw * 0.58, by + bh * 0.42, 2.4, 0, Math.PI * 2); ctx.stroke();
   }
-  if (state.journalRead) rect(ctx, 880, FLOOR - 90, 930, FLOOR - 50, '#b0a37e', PAL.ink);
+  // the folded corner
+  ctx.strokeStyle = PAL.ink; ctx.lineWidth = 1.2;
+  ctx.beginPath(); ctx.moveTo(bx + bw - 9, by); ctx.lineTo(bx + bw, by + 9); ctx.stroke();
+  ctx.strokeStyle = PAL.ink; ctx.lineWidth = 1.5;
+  ctx.strokeRect(bx, by, bw, bh);
+  // contact shadow on the straw, in lines
+  hatch(ctx, bx + 3, by + bh + 1, bx + bw + 6, by + bh + 8,
+    { spacing: 2.5, angle: 0, colour: withAlpha(PAL.ink, 0.4), width: 1, broken: 1 });
 }
 
 function drawScratches(ctx, words, x0, y0) {
