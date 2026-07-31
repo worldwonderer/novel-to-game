@@ -1,0 +1,17 @@
+{
+  "inputs": [
+    "QA place in glade",
+    "E",
+    "camera commitment"
+  ],
+  "viewport": [
+    1440,
+    900
+  ],
+  "url": "http://127.0.0.1:4173/?qa=s9",
+  "consoleErrorsAtCheckpoint": [],
+  "requestHostsAtCheckpoint": [
+    "127.0.0.1:4173"
+  ],
+  "capturedAtUnixMs": 1785530940438
+}
