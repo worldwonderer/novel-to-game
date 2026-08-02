@@ -80,13 +80,38 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
 renderer.setSize(window.innerWidth, window.innerHeight, false);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.16;
+renderer.toneMappingExposure = 1.5;
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(PALETTE.amber);
-scene.fog = new THREE.FogExp2(PALETTE.dusk, 0.0094);
+scene.fog = new THREE.FogExp2(0x40545a, 0.0076);
+
+const sky = new THREE.Mesh(
+  new THREE.SphereGeometry(250, 24, 12),
+  new THREE.ShaderMaterial({
+    side: THREE.BackSide,
+    depthWrite: false,
+    uniforms: {
+      horizon: { value: new THREE.Color(0xffdca0) },
+      zenith: { value: new THREE.Color(0xabc8d0) },
+      haze: { value: new THREE.Color(0xf0be7b) },
+    },
+    vertexShader: `varying vec3 worldPosition;
+      void main() { worldPosition = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+    fragmentShader: `varying vec3 worldPosition;
+      uniform vec3 horizon; uniform vec3 zenith; uniform vec3 haze;
+      void main() {
+        float height = clamp(normalize(worldPosition).y * .78 + .28, 0.0, 1.0);
+        vec3 colour = mix(horizon, zenith, smoothstep(.08, .82, height));
+        colour = mix(haze, colour, smoothstep(.0, .34, height));
+        gl_FragColor = vec4(colour, 1.0);
+      }`,
+  }),
+);
+sky.name = 'light.functional_arc.atmospheric_sky';
+scene.add(sky);
 
 const camera = new THREE.PerspectiveCamera(58, window.innerWidth / window.innerHeight, 0.1, 320);
 const titleCameraPosition = new THREE.Vector3(18, 8.2, 77);
@@ -134,6 +159,9 @@ let frameSamples = [];
 let lastFrame = performance.now();
 let firstRenderedAt = null;
 let visualElapsed = 0;
+let visualTimeFrozen = false;
+let visualThreatOverride = null;
+let visualThreatPose = null;
 let boundaryNoticeUntil = 0;
 let observedBoundaryRecoveries = 0;
 let observationNoticeUntil = 0;
@@ -323,9 +351,9 @@ function setView(view) {
   } else if (view === 'glade') {
     document.body.dataset.mode = 'field';
     fieldHud.hidden = false;
-    camera.position.set(12, 5.2, -9);
-    camera.lookAt(new THREE.Vector3(1, 3.4, -49));
-    camera.fov = 72;
+    camera.position.set(8, 4.4, -15);
+    camera.lookAt(new THREE.Vector3(1, 3.0, -35));
+    camera.fov = 66;
   } else {
     document.body.dataset.mode = 'title';
     fieldHud.hidden = true;
@@ -451,13 +479,14 @@ function resumeRun() {
 
 function worldRuntime(deltaSeconds = 0) {
   return {
-    threatAwareness: player.threatAwareness,
+    threatAwareness: visualThreatOverride ?? player.threatAwareness,
     playerPosition: player.position,
     shotCount: player.shotCount,
     brookResponse: player.brookResponse,
     inCover: player.inCover,
     familyMoment: player.pendingExposure?.key ?? null,
     deltaSeconds,
+    captureThreatPose: visualThreatPose,
   };
 }
 
@@ -490,9 +519,9 @@ function update(deltaSeconds, now) {
         : 'CASE STRIKE — THE NEXT PASS WILL END THE RUN.';
     }
     if (previousRunStatus === 'active' && player.runStatus !== 'active') presentTerminal();
-    visualElapsed += deltaSeconds;
+    if (!visualTimeFrozen) visualElapsed += deltaSeconds;
   } else if (!runActive && cameraMode !== 'terminal') {
-    visualElapsed += deltaSeconds;
+    if (!visualTimeFrozen) visualElapsed += deltaSeconds;
   }
   world.update(
     visualElapsed,
@@ -747,6 +776,22 @@ window.__projectPlateau = {
     }
     if (player.runStatus !== 'active') presentTerminal();
     return playerSnapshot();
+  },
+  freezeVisualForTest(seconds = 4.25) {
+    if (!query.has('qa')) throw new Error('freezeVisualForTest requires a qa query');
+    visualElapsed = Math.max(0, Number(seconds) || 0);
+    visualTimeFrozen = true;
+    world.update(visualElapsed, true, worldRuntime(0));
+    return visualElapsed;
+  },
+  setThreatVisualForTest(awareness = null, pose = null) {
+    if (!query.has('qa')) throw new Error('setThreatVisualForTest requires a qa query');
+    visualThreatOverride = awareness === null
+      ? null
+      : Math.max(0, Math.min(3, Number(awareness) || 0));
+    visualThreatPose = pose;
+    world.update(visualElapsed, true, worldRuntime(0));
+    return visualThreatOverride;
   },
   snapshot() {
     return {

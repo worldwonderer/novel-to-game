@@ -31,6 +31,7 @@
     "verify:s9": "npm test && npm run build && npm run test:s9",
     "test:s10": "python3 test/qa_s10.py",
     "verify:s10": "npm test && npm run build && npm run test:s10",
+    "capture:visual": "python3 test/capture_visual_upgrade.py",
     "verify": "python3 test/verify.py"
   },
   "dependencies": {

@@ -4,13 +4,44 @@ import { PALETTE, SCENE_BUDGET, seededRandom } from './config.js';
 const shared = {
   trunkGeometry: new THREE.CylinderGeometry(0.34, 0.52, 5.6, 6),
   crownGeometry: new THREE.IcosahedronGeometry(2.8, 1),
-  fernGeometry: new THREE.ConeGeometry(0.7, 2.8, 4),
+  fernGeometry: makeFernGeometry(),
   trunkMaterial: new THREE.MeshStandardMaterial({ color: 0x354331, roughness: 1 }),
   crownMaterial: new THREE.MeshStandardMaterial({ color: PALETTE.canopy, roughness: 1 }),
-  fernMaterial: new THREE.MeshStandardMaterial({ color: PALETTE.fern, roughness: 0.92 }),
+  fernMaterial: new THREE.MeshStandardMaterial({
+    color: PALETTE.fern,
+    roughness: 0.92,
+    side: THREE.DoubleSide,
+    vertexColors: true,
+  }),
 };
 
 const GLADE_SIGHTLINE_HALF_WIDTH = 22;
+
+function makeFernGeometry() {
+  const positions = [];
+  const colors = [];
+  const indices = [];
+  const base = new THREE.Color(0x294c32);
+  const tip = new THREE.Color(0x6c8a51);
+  for (let frond = 0; frond < 7; frond += 1) {
+    const angle = (frond / 7) * Math.PI * 2;
+    const reach = 0.76 + (frond % 3) * 0.12;
+    const start = positions.length / 3;
+    const sideX = Math.cos(angle + Math.PI / 2) * 0.17;
+    const sideZ = Math.sin(angle + Math.PI / 2) * 0.17;
+    const tipX = Math.cos(angle) * reach;
+    const tipZ = Math.sin(angle) * reach;
+    positions.push(-sideX, 0.08, -sideZ, sideX, 0.08, sideZ, tipX, 1.55, tipZ);
+    for (const value of [base, base, tip]) colors.push(value.r, value.g, value.b);
+    indices.push(start, start + 1, start + 2);
+  }
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+  geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+  geometry.setIndex(indices);
+  geometry.computeVertexNormals();
+  return geometry;
+}
 
 export function terrainHeight(x, z) {
   const broad = Math.sin(x * 0.045) * 0.7 + Math.cos(z * 0.052) * 0.45;
@@ -26,10 +57,24 @@ function makeTerrain(scene) {
     const z = -positions.getY(i);
     positions.setZ(i, terrainHeight(x, z));
   }
+  const colors = [];
+  const moss = new THREE.Color(0x334633);
+  const earth = new THREE.Color(PALETTE.soil);
+  const clay = new THREE.Color(0x694a34);
+  for (let i = 0; i < positions.count; i += 1) {
+    const x = positions.getX(i);
+    const z = -positions.getY(i);
+    const damp = Math.max(0, 1 - Math.abs(x + 10) / 17);
+    const exposed = Math.max(0, Math.min(1, (x - 9) / 28));
+    const colour = earth.clone().lerp(moss, damp * 0.62).lerp(clay, exposed * 0.38);
+    colors.push(colour.r, colour.g, colour.b);
+  }
+  geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
   geometry.computeVertexNormals();
   geometry.rotateX(-Math.PI / 2);
   const material = new THREE.MeshStandardMaterial({
-    color: PALETTE.soil,
+    color: 0xffffff,
+    vertexColors: true,
     roughness: 1,
     metalness: 0,
   });
@@ -37,6 +82,23 @@ function makeTerrain(scene) {
   mesh.receiveShadow = true;
   mesh.name = 'world.connected_route.terrain';
   scene.add(mesh);
+}
+
+function makeDistantPlateau(scene) {
+  const group = new THREE.Group();
+  const far = new THREE.MeshStandardMaterial({ color: 0x423c39, roughness: 1, flatShading: true });
+  const rim = new THREE.MeshStandardMaterial({ color: 0x704437, roughness: 0.96, flatShading: true });
+  const geometry = new THREE.CylinderGeometry(1, 1.45, 1, 7, 3);
+  for (let index = 0; index < 11; index += 1) {
+    const x = -74 + index * 15;
+    const height = 18 + (index % 4) * 5;
+    const mesa = primitive(index % 3 === 0 ? rim : far, geometry, [x, height * 0.48 - 5, -91], [8.5, height, 7]);
+    mesa.rotation.y = index * 0.31;
+    group.add(mesa);
+  }
+  group.name = 'world.connected_route.distant_plateau';
+  scene.add(group);
+  return group;
 }
 
 function makeRibbon(points, width, color, yOffset = 0) {
@@ -82,9 +144,45 @@ function makeRouteAndBrook(scene) {
     [-14, 88], [-11, 69], [-16, 51], [-10, 33], [-13, 15], [-7, -4],
     [-12, -22], [-8, -39], [-15, -58], [-11, -78],
   ].map(([x, z]) => new THREE.Vector3(x, 0, z));
+  const wetBank = makeRibbon(brookPoints, 6.1, 0x253a31, 0.085);
+  wetBank.material = new THREE.MeshPhysicalMaterial({
+    color: 0x253a31,
+    roughness: 0.38,
+    clearcoat: 0.46,
+    clearcoatRoughness: 0.28,
+    transparent: true,
+    opacity: 0.82,
+    side: THREE.DoubleSide,
+  });
+  wetBank.name = 'world.connected_route.wet_bank';
+  scene.add(wetBank);
+
   const brook = makeRibbon(brookPoints, 3.4, PALETTE.water, 0.12);
+  brook.material = new THREE.MeshPhysicalMaterial({
+    color: PALETTE.water,
+    roughness: 0.16,
+    metalness: 0.04,
+    clearcoat: 0.82,
+    clearcoatRoughness: 0.12,
+    transparent: true,
+    opacity: 0.78,
+    side: THREE.DoubleSide,
+  });
   brook.name = 'world.connected_route.brook';
   scene.add(brook);
+  const glintPoints = brookPoints.map((point, index) => new THREE.Vector3(
+    point.x + (index % 2 ? 0.48 : -0.32), 0, point.z,
+  ));
+  const glint = makeRibbon(glintPoints, 0.2, 0xd5eee2, 0.145);
+  glint.material = new THREE.MeshBasicMaterial({
+    color: 0xd5eee2,
+    transparent: true,
+    opacity: 0.48,
+    depthWrite: false,
+    side: THREE.DoubleSide,
+  });
+  glint.name = 'world.connected_route.brook_specular_glint';
+  scene.add(glint);
 
   const routePoints = [
     [3, 88], [4, 67], [0, 50], [8, 31], [11, 12], [4, -8], [10, -31], [3, -54],
@@ -146,6 +244,11 @@ function placeVegetation(scene) {
     shared.crownMaterial,
     SCENE_BUDGET.trees,
   );
+  const crownAccent = new THREE.InstancedMesh(
+    shared.crownGeometry,
+    new THREE.MeshStandardMaterial({ color: 0x2c5436, roughness: 1, flatShading: true }),
+    SCENE_BUDGET.trees,
+  );
   const dummy = new THREE.Object3D();
 
   for (let i = 0; i < SCENE_BUDGET.trees; i += 1) {
@@ -171,6 +274,12 @@ function placeVegetation(scene) {
     dummy.scale.set(scale * (0.9 + random() * 0.35), scale * 0.72, scale);
     dummy.updateMatrix();
     crownMesh.setMatrixAt(i, dummy.matrix);
+
+    dummy.position.set(x + (random() - 0.5) * 2.2, y + 6.7 * scale, z + (random() - 0.5) * 1.8);
+    dummy.rotation.set(random() * 0.18, random() * Math.PI, random() * 0.14);
+    dummy.scale.set(scale * 0.62, scale * 0.48, scale * 0.68);
+    dummy.updateMatrix();
+    crownAccent.setMatrixAt(i, dummy.matrix);
   }
   trunkMesh.name = 'world.connected_route.tree_trunks';
   crownMesh.name = 'world.connected_route.canopy';
@@ -178,7 +287,10 @@ function placeVegetation(scene) {
   trunkMesh.receiveShadow = true;
   crownMesh.castShadow = true;
   crownMesh.receiveShadow = true;
-  scene.add(trunkMesh, crownMesh);
+  crownAccent.name = 'world.connected_route.canopy_highlights';
+  crownAccent.castShadow = true;
+  crownAccent.receiveShadow = true;
+  scene.add(trunkMesh, crownMesh, crownAccent);
 
   const fernMesh = new THREE.InstancedMesh(
     shared.fernGeometry,
@@ -201,9 +313,56 @@ function placeVegetation(scene) {
   scene.add(fernMesh);
 }
 
+function makeGladeGroundDetail(scene) {
+  const group = new THREE.Group();
+  const stoneMaterial = new THREE.MeshStandardMaterial({ color: 0x596052, roughness: 0.98, flatShading: true });
+  const logMaterial = new THREE.MeshStandardMaterial({ color: 0x342e24, roughness: 1 });
+  const reedMaterial = new THREE.MeshStandardMaterial({ color: 0x78905a, roughness: 0.94, side: THREE.DoubleSide });
+  const random = seededRandom(413);
+  for (let index = 0; index < 28; index += 1) {
+    const edge = index % 2 ? -1 : 1;
+    const x = edge * (17 + random() * 13);
+    const z = -11 - random() * 48;
+    const stone = primitive(stoneMaterial, new THREE.DodecahedronGeometry(0.55 + random() * 0.55, 0), [x, terrainHeight(x, z) + 0.3, z], [1.5, 0.65, 1]);
+    stone.rotation.y = random() * Math.PI;
+    group.add(stone);
+  }
+  for (const [x, z, yaw] of [[-17, -19, 1.1], [18, -45, -0.8], [-20, -51, 0.5]]) {
+    group.add(primitive(logMaterial, new THREE.CylinderGeometry(0.34, 0.55, 6.8, 8), [x, terrainHeight(x, z) + 0.42, z], [1, 1, 1], [Math.PI / 2, 0, yaw]));
+  }
+  for (let index = 0; index < 18; index += 1) {
+    const x = -8.5 + (random() - 0.5) * 6;
+    const z = -12 - random() * 51;
+    const blade = primitive(reedMaterial, new THREE.PlaneGeometry(0.35, 2.2), [x, terrainHeight(x, z) + 1.05, z], [1, 1, 1], [0, random() * Math.PI, (random() - 0.5) * 0.2]);
+    group.add(blade);
+  }
+  group.name = 'world.iguanodon_glade.ground_detail';
+  scene.add(group);
+  return group;
+}
+
 function makeBasalt(scene) {
-  const geometry = new THREE.BoxGeometry(1, 1, 1);
-  const material = new THREE.MeshStandardMaterial({ color: PALETTE.basalt, roughness: 0.95 });
+  const geometry = new THREE.CylinderGeometry(0.86, 1.08, 1, 7, 3);
+  const basaltColours = [];
+  const basaltBase = new THREE.Color(PALETTE.basalt);
+  const basaltLight = new THREE.Color(0xaa5a3e);
+  const basaltDark = new THREE.Color(PALETTE.basaltShade);
+  const basaltPositions = geometry.attributes.position;
+  for (let index = 0; index < basaltPositions.count; index += 1) {
+    const angle = Math.atan2(basaltPositions.getZ(index), basaltPositions.getX(index));
+    const band = Math.floor(((angle + Math.PI) / (Math.PI * 2)) * 7) % 3;
+    const colour = band === 0 ? basaltLight : band === 1 ? basaltBase : basaltDark;
+    basaltColours.push(colour.r, colour.g, colour.b);
+  }
+  geometry.setAttribute('color', new THREE.Float32BufferAttribute(basaltColours, 3));
+  const material = new THREE.MeshPhysicalMaterial({
+    color: 0xffffff,
+    roughness: 0.7,
+    clearcoat: 0.08,
+    clearcoatRoughness: 0.62,
+    flatShading: true,
+    vertexColors: true,
+  });
   const pillars = new THREE.InstancedMesh(geometry, material, SCENE_BUDGET.basaltPillars);
   const dummy = new THREE.Object3D();
   for (let i = 0; i < SCENE_BUDGET.basaltPillars; i += 1) {
@@ -230,62 +389,102 @@ function primitive(material, geometry, position, scale, rotation = [0, 0, 0]) {
   return mesh;
 }
 
+function segmentBetween(material, start, end, radiusTop, radiusBottom, sides = 7) {
+  const from = new THREE.Vector3(...start);
+  const to = new THREE.Vector3(...end);
+  const direction = to.clone().sub(from);
+  const mesh = new THREE.Mesh(
+    new THREE.CylinderGeometry(radiusTop, radiusBottom, direction.length(), sides),
+    material,
+  );
+  mesh.position.copy(from).add(to).multiplyScalar(0.5);
+  mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction.normalize());
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  return mesh;
+}
+
 function makeIguanodon(scene, x, z, scale, heading, young, behaviorRole) {
   const group = new THREE.Group();
-  const skin = new THREE.MeshStandardMaterial({
-    color: young ? 0x81906e : 0x61756c,
-    roughness: 0.86,
-    flatShading: true,
+  const skin = new THREE.MeshPhysicalMaterial({
+    color: young ? 0x718374 : 0x4f655d,
+    roughness: 0.74,
+    clearcoat: 0.12,
+    clearcoatRoughness: 0.72,
+    sheen: 0.18,
+    sheenColor: new THREE.Color(0x91a688),
+    flatShading: false,
   });
-  const underside = new THREE.MeshStandardMaterial({
-    color: young ? 0x9a956f : 0x878066,
-    roughness: 0.9,
-    flatShading: true,
+  const underside = new THREE.MeshPhysicalMaterial({
+    color: young ? 0xb38a61 : 0x9a6f50,
+    roughness: 0.82,
+    sheen: 0.12,
+    sheenColor: new THREE.Color(0xd4a77b),
+    flatShading: false,
   });
-  const claw = new THREE.MeshStandardMaterial({ color: 0x343b37, roughness: 0.86 });
-  const eye = new THREE.MeshStandardMaterial({ color: 0x121715, roughness: 0.42 });
-  const bodyGeometry = new THREE.IcosahedronGeometry(1, 1);
-  const limbGeometry = new THREE.CylinderGeometry(0.18, 0.26, 1.8, 6);
-  const tailGeometry = new THREE.ConeGeometry(0.45, 3.8, 7);
-  const body = primitive(skin, bodyGeometry, [0, 1.7, 0], [2.8, 1.45, 1.1]);
-  const belly = primitive(underside, bodyGeometry, [0.15, 1.38, 0], [2.5, 0.72, 1.02]);
-  const shoulder = primitive(skin, bodyGeometry, [1.75, 2.0, 0], [1.15, 1.2, 0.95]);
+  const skinPatch = new THREE.MeshStandardMaterial({
+    color: young ? 0x52695b : 0x354f47,
+    roughness: 0.88,
+  });
+  const claw = new THREE.MeshStandardMaterial({ color: 0x2a302d, roughness: 0.72 });
+  const eye = new THREE.MeshPhysicalMaterial({ color: 0x101513, roughness: 0.2, clearcoat: 0.85 });
+  const bodyGeometry = new THREE.CapsuleGeometry(0.92, 2.8, 5, 9);
+  const body = primitive(skin, bodyGeometry, [-0.25, 2.05, 0], [1.08, 1.18, 1.03], [0, 0, Math.PI / 2]);
+  const belly = primitive(underside, new THREE.CapsuleGeometry(0.7, 2.3, 4, 8), [0.02, 1.72, 0], [1, 0.68, 0.98], [0, 0, Math.PI / 2]);
+  const hip = primitive(skin, new THREE.SphereGeometry(1, 9, 7), [-1.62, 2.04, 0], [1.2, 1.25, 1.12]);
+  const shoulder = primitive(skin, new THREE.SphereGeometry(1, 9, 7), [1.45, 2.12, 0], [0.88, 1.03, 0.98]);
+
   const headPivot = new THREE.Group();
-  headPivot.position.set(1.8, 2.0, 0);
-  const neck = primitive(skin, new THREE.CylinderGeometry(0.42, 0.72, 1.75, 7), [0.5, 0.42, 0], [1, 1, 1], [0, 0, -0.72]);
-  const head = primitive(skin, bodyGeometry, [1.18, 0.5, 0], [0.68, 0.62, 0.58]);
-  const muzzle = primitive(underside, bodyGeometry, [1.72, 0.31, 0], [0.62, 0.38, 0.48]);
-  const leftEye = primitive(eye, new THREE.SphereGeometry(0.085, 8, 6), [1.43, 0.7, -0.48], [1, 1, 1]);
-  const rightEye = primitive(eye, new THREE.SphereGeometry(0.085, 8, 6), [1.43, 0.7, 0.48], [1, 1, 1]);
+  headPivot.position.set(1.35, 2.06, 0);
+  const neck = segmentBetween(skin, [0, 0, 0], [1.03, 0.72, 0], 0.48, 0.67, 8);
+  const head = primitive(skin, new THREE.SphereGeometry(0.72, 9, 7), [1.28, 0.84, 0], [1.02, 0.76, 0.68]);
+  const muzzle = primitive(underside, new THREE.CapsuleGeometry(0.34, 0.58, 3, 7), [1.87, 0.68, 0], [1, 0.72, 0.8], [0, 0, Math.PI / 2]);
+  const leftEye = primitive(eye, new THREE.SphereGeometry(0.09, 8, 6), [1.5, 1.04, -0.51], [1, 1, 1]);
+  const rightEye = primitive(eye, new THREE.SphereGeometry(0.09, 8, 6), [1.5, 1.04, 0.51], [1, 1, 1]);
   headPivot.add(neck, head, muzzle, leftEye, rightEye);
-  const tail = primitive(skin, tailGeometry, [-3.6, 1.65, 0], [1, 1, 1], [0, 0, Math.PI / 2]);
-  tail.rotation.z = -Math.PI / 2;
-  for (const side of [-0.62, 0.62]) {
-    const hind = primitive(skin, limbGeometry, [-1.25, 0.72, side], [1.24, 1.08, 1.24]);
-    const fore = primitive(skin, limbGeometry, [1.45, 0.84, side], [0.86, 0.92, 0.86]);
-    const thumb = primitive(
-      claw,
-      new THREE.ConeGeometry(0.12, 0.72, 5),
-      [1.52, 1.05, side + Math.sign(side) * 0.2],
-      [1, 1, 1],
-      [0, 0, Math.sign(side) * 0.48],
-    );
-    group.add(hind, fore, thumb);
+
+  const tail = new THREE.Group();
+  const tailPoints = [[-1.85, 2.08, 0], [-3.55, 2.0, 0], [-5.1, 2.2, 0], [-6.55, 2.52, 0]];
+  const radii = [[0.58, 0.86], [0.34, 0.58], [0.08, 0.34]];
+  for (let index = 0; index < tailPoints.length - 1; index += 1) {
+    tail.add(segmentBetween(skin, tailPoints[index], tailPoints[index + 1], radii[index][0], radii[index][1], 8));
   }
-  group.add(body, belly, shoulder, headPivot, tail);
-  group.position.set(x, terrainHeight(x, z) + 0.1, z);
+  tail.name = 'subject.iguanodon_family.lifted_tail';
+
+  for (const side of [-0.66, 0.66]) {
+    const thigh = segmentBetween(skin, [-1.28, 1.66, side], [-0.92, 0.78, side], 0.34, 0.5, 8);
+    const shin = segmentBetween(underside, [-0.92, 0.78, side], [-0.78, 0.16, side], 0.2, 0.3, 7);
+    const hindFoot = primitive(claw, new THREE.CapsuleGeometry(0.14, 0.58, 3, 7), [-0.46, 0.08, side], [1, 0.55, 1], [0, 0, Math.PI / 2]);
+    const upperArm = segmentBetween(skin, [1.35, 1.63, side], [1.48, 0.75, side], 0.22, 0.3, 7);
+    const forearm = segmentBetween(underside, [1.48, 0.75, side], [1.7, 0.2, side], 0.14, 0.21, 7);
+    const hand = primitive(claw, new THREE.CapsuleGeometry(0.1, 0.38, 3, 6), [1.92, 0.11, side], [1, 0.52, 1], [0, 0, Math.PI / 2]);
+    const thumb = primitive(claw, new THREE.ConeGeometry(0.11, 0.62, 6), [1.67, 0.42, side + Math.sign(side) * 0.2], [1, 1, 1], [0, 0, Math.sign(side) * 0.72]);
+    group.add(thigh, shin, hindFoot, upperArm, forearm, hand, thumb);
+    for (let toe = -1; toe <= 1; toe += 1) {
+      group.add(primitive(claw, new THREE.CapsuleGeometry(0.055, 0.32, 2, 5), [-0.12, 0.06, side + toe * 0.14], [1, 0.5, 1], [0, 0, Math.PI / 2]));
+    }
+  }
+  const dorsalMarks = new THREE.Group();
+  for (let index = 0; index < 7; index += 1) {
+    dorsalMarks.add(primitive(underside, new THREE.ConeGeometry(0.08, 0.22, 5), [-1.65 + index * 0.5, 3.13 - Math.abs(index - 3) * 0.055, 0], [1, 1, 1]));
+  }
+  const flankPatches = new THREE.Group();
+  for (const [px, py, pz, sx] of [[-1.25, 2.42, -0.86, 0.52], [-0.35, 2.62, -0.96, 0.42], [0.62, 2.48, -0.91, 0.48], [1.24, 2.3, -0.78, 0.34]]) {
+    flankPatches.add(primitive(
+      skinPatch,
+      new THREE.SphereGeometry(0.34, 7, 5),
+      [px, py, pz],
+      [sx, 0.42, 0.16],
+    ));
+  }
+  group.add(body, belly, hip, shoulder, headPivot, tail, dorsalMarks, flankPatches);
+  group.position.set(x, terrainHeight(x, z) + 0.02, z);
   group.rotation.y = heading;
   group.scale.setScalar(scale);
   group.name = young ? 'subject.iguanodon_family.young' : 'subject.iguanodon_family.adult';
   group.userData = {
-    baseX: x,
-    baseY: group.position.y,
-    baseZ: z,
-    baseHeading: heading,
-    phase: x * 0.7 + z,
-    young,
-    behaviorRole,
-    headPivot,
+    baseX: x, baseY: group.position.y, baseZ: z, baseHeading: heading,
+    phase: x * 0.7 + z, young, behaviorRole, headPivot,
   };
   scene.add(group);
   return group;
@@ -353,44 +552,65 @@ function makeGladeSunLane(scene) {
 
 function makePterodactyl(scene, radius, height, phase, scale = 1) {
   const group = new THREE.Group();
-  const membrane = new THREE.MeshStandardMaterial({
-    color: 0x665f58,
-    roughness: 0.82,
+  const membrane = new THREE.MeshPhysicalMaterial({
+    color: 0xffffff,
+    roughness: 0.58,
     side: THREE.DoubleSide,
+    transparent: true,
+    opacity: 0.9,
+    transmission: 0.04,
+    thickness: 0.18,
+    sheen: 0.22,
+    sheenColor: new THREE.Color(0xc8926e),
+    vertexColors: true,
   });
-  const hide = new THREE.MeshStandardMaterial({ color: 0x403e39, roughness: 0.9 });
+  const hide = new THREE.MeshPhysicalMaterial({
+    color: 0x3d403b, roughness: 0.7, clearcoat: 0.08, flatShading: true,
+  });
+  const jawMaterial = new THREE.MeshStandardMaterial({ color: 0x87766a, roughness: 0.78 });
   const wingGeometry = (side) => {
+    const points = [
+      [0, 0, -0.3],
+      [side * 1.1, 0.3, -0.62],
+      [side * 3.05, 0.42, -0.18],
+      [side * 5.55, -0.02, 1.38],
+      [side * 4.15, -0.58, 0.28],
+      [side * 2.2, -0.88, -1.05],
+      [side * 0.72, -0.46, -1.32],
+    ];
     const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute('position', new THREE.Float32BufferAttribute([
-      0, 0, 0,
-      side * 5.4, 0, 1.5,
-      side * 1.15, 0, -0.65,
-      side * 5.4, 0, 1.5,
-      side * 3.2, 0, -0.25,
-      side * 1.15, 0, -0.65,
-    ], 3));
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(points.flat(), 3));
+    const root = new THREE.Color(0x554f4b);
+    const warmEdge = new THREE.Color(0xd39a6d);
+    const trailing = new THREE.Color(0x897067);
+    const colours = [root, trailing, trailing, warmEdge, warmEdge, warmEdge, root].flatMap(
+      (colour) => [colour.r, colour.g, colour.b],
+    );
+    geometry.setAttribute('color', new THREE.Float32BufferAttribute(colours, 3));
+    geometry.setIndex([0,1,6, 1,2,6, 2,5,6, 2,4,5, 2,3,4]);
     geometry.computeVertexNormals();
     return geometry;
   };
   const leftWing = new THREE.Mesh(wingGeometry(-1), membrane);
   const rightWing = new THREE.Mesh(wingGeometry(1), membrane);
-  const body = primitive(hide, new THREE.ConeGeometry(0.42, 3.5, 7), [0, 0.02, -1.25], [1, 1, 1], [-Math.PI / 2, 0, 0]);
-  const head = primitive(hide, new THREE.ConeGeometry(0.22, 1.7, 6), [0, 0, -3.1], [1, 1, 1], [-Math.PI / 2, 0, 0]);
-  const crest = primitive(membrane, new THREE.ConeGeometry(0.24, 1.15, 5), [0, 0.16, -2.75], [1, 1, 1], [Math.PI / 2, 0, 0]);
+  const torso = primitive(hide, new THREE.CapsuleGeometry(0.38, 1.55, 4, 7), [0, 0, -1.2], [1, 1, 1], [Math.PI / 2, 0, 0]);
+  const headGroup = new THREE.Group();
+  const skull = primitive(hide, new THREE.SphereGeometry(0.34, 8, 6), [0, 0.03, -2.35], [0.72, 0.7, 1.25]);
+  const upperJaw = segmentBetween(hide, [0, 0.03, -2.42], [0, -0.02, -3.72], 0.07, 0.17, 6);
+  const lowerJaw = segmentBetween(jawMaterial, [0, -0.12, -2.4], [0, -0.15, -3.48], 0.045, 0.12, 6);
+  const eyeMaterial = new THREE.MeshPhysicalMaterial({ color: 0xd7af62, roughness: 0.18, clearcoat: 0.8 });
+  const leftEye = primitive(eyeMaterial, new THREE.SphereGeometry(0.065, 7, 5), [-0.22, 0.13, -2.47], [1,1,1]);
+  const rightEye = primitive(eyeMaterial, new THREE.SphereGeometry(0.065, 7, 5), [0.22, 0.13, -2.47], [1,1,1]);
+  headGroup.add(skull, upperJaw, lowerJaw, leftEye, rightEye);
+  const crest = primitive(membrane, new THREE.ConeGeometry(0.2, 0.9, 7), [0, 0.22, -2.05], [1,1,1], [Math.PI / 2, 0, 0]);
+  const tailVane = primitive(membrane, new THREE.ConeGeometry(0.18, 1.15, 6), [0, 0, -0.05], [1, 0.45, 1], [-Math.PI / 2, 0, 0]);
   leftWing.name = 'threat.pterodactyl.left-wing';
   rightWing.name = 'threat.pterodactyl.right-wing';
-  group.add(leftWing, rightWing, body, head, crest);
+  group.add(leftWing, rightWing, torso, headGroup, crest);
+  torso.add(tailVane);
   group.scale.setScalar(scale);
   group.name = 'threat.pterodactyl.distant';
-  group.userData = {
-    radius,
-    height,
-    phase,
-    baseScale: scale,
-    leftWing,
-    rightWing,
-    silhouette: 'membrane-wing',
-  };
+  group.userData = { radius, height, phase, baseScale: scale, leftWing, rightWing, silhouette: 'membrane-wing' };
   scene.add(group);
   return group;
 }
@@ -500,17 +720,19 @@ function makeRifle(scene) {
 
 export function createWorld(scene) {
   makeTerrain(scene);
+  makeDistantPlateau(scene);
   makeRouteAndBrook(scene);
   const coverArches = makeCoverArches(scene);
   placeVegetation(scene);
+  makeGladeGroundDetail(scene);
   makeBasalt(scene);
   const family = makeFamily(scene);
   const feedingBranch = makeFeedingBranch(scene);
   const gladeSunLane = makeGladeSunLane(scene);
   const pterodactyls = [
-    makePterodactyl(scene, 29, 23, 0.0, 0.88),
-    makePterodactyl(scene, 37, 28, 2.2, 0.62),
-    makePterodactyl(scene, 45, 32, 4.1, 0.46),
+    makePterodactyl(scene, 29, 15, 0.0, 0.9),
+    makePterodactyl(scene, 37, 20, 2.2, 0.64),
+    makePterodactyl(scene, 45, 24, 4.1, 0.46),
   ];
   const smoke = makeFort(scene);
   const brookResponse = makeBrookResponse(scene);
@@ -560,7 +782,7 @@ export function createWorld(scene) {
         const { radius, height, phase } = mesh.userData;
         const isPrimary = index === 0;
         const stateRadius = isPrimary ? [radius, 26, 17, 9][awareness] : radius;
-        const stateHeight = isPrimary ? [height, 12, 10, 6.7][awareness] : height;
+        const stateHeight = isPrimary ? [height, 10, 8, 5.2][awareness] : height;
         const stateSpeed = speed * (1 + awareness * 0.42) * (1 + index * 0.08);
         const angle = phase + elapsed * stateSpeed;
         if (isPrimary && awareness === 3 && runtime.inCover) {
@@ -592,14 +814,39 @@ export function createWorld(scene) {
         }
         mesh.name = `threat.pterodactyl.${isPrimary ? renderedThreatState : 'distant'}`;
         const wingFold = isPrimary && awareness === 3 && !runtime.inCover
-          ? 0.24 + Math.abs(Math.sin(angle * 2)) * 0.08
+          ? 0.68 + Math.abs(Math.sin(angle * 2)) * 0.08
           : 0;
         const wingBeat = reducedMotion ? 0 : Math.sin(angle * (2.8 + awareness * 0.4)) * (0.05 + awareness * 0.025);
         mesh.userData.leftWing.rotation.z = wingFold + wingBeat;
         mesh.userData.rightWing.rotation.z = -wingFold - wingBeat;
+        const attackSpan = isPrimary && awareness === 3 && !runtime.inCover ? 0.54 : 1;
+        mesh.userData.leftWing.scale.x = attackSpan;
+        mesh.userData.rightWing.scale.x = attackSpan;
+        const attackSweep = isPrimary && awareness === 3 && !runtime.inCover ? 0.68 : 0;
+        mesh.userData.leftWing.rotation.y = -attackSweep;
+        mesh.userData.rightWing.rotation.y = attackSweep;
         mesh.rotation.y = -angle + Math.PI / 2;
-        mesh.rotation.z = Math.sin(angle * 2.4) * (0.16 + awareness * 0.035);
+        mesh.rotation.z = awareness === 3 && isPrimary && !runtime.inCover
+          ? -0.48 + Math.sin(angle * 2.4) * 0.08
+          : Math.sin(angle * 2.4) * (0.16 + awareness * 0.035);
       });
+      if (runtime.captureThreatPose === 'family') {
+        const primary = pterodactyls[0];
+        primary.position.set(-4, 10.5, -31);
+        primary.rotation.set(0.12, Math.PI, -0.12);
+        primary.scale.setScalar(primary.userData.baseScale * 0.86);
+      } else if (runtime.captureThreatPose === 'dive') {
+        const primary = pterodactyls[0];
+        primary.position.set(4.8, 9.1, -25.5);
+        primary.rotation.set(0.62, Math.PI + 0.46, -0.62);
+        primary.scale.setScalar(primary.userData.baseScale * 1.08);
+        primary.userData.leftWing.rotation.z = 0.46;
+        primary.userData.rightWing.rotation.z = -0.46;
+        primary.userData.leftWing.scale.x = 0.5;
+        primary.userData.rightWing.scale.x = 0.5;
+        primary.userData.leftWing.rotation.y = -0.78;
+        primary.userData.rightWing.rotation.y = 0.78;
+      }
       family.forEach((animal, index) => {
         const { baseX, baseY, baseZ, baseHeading, behaviorRole, headPivot, phase } = animal.userData;
         const youngPlay = behaviorRole === 'young-play' && renderedFamilyMoment === 'glade-young-play';

@@ -40,7 +40,7 @@ JS_TESTS = (
 )
 HISTORY_QA = tuple(f"test/qa_s{stage}.py" for stage in range(8)) + ("test/qa_s9.py",)
 COMPLETE_RUN_QA = ("test/qa_s8.py",)
-CURRENT_VISUAL_QA = ("test/qa_s10.py",)
+CURRENT_VISUAL_QA = ("test/qa_s10.py", "test/capture_visual_upgrade.py")
 EXCLUDED_TEST_TOOLS = {
     "test/capture_demo_clip.py": "reproducible delivery-media recorder, not a pass/fail test suite",
     "test/verify.py": "authoritative suite orchestrator; registering it would recurse",
@@ -69,7 +69,7 @@ SUITES = (
     Suite(
         "browser:current-visual",
         CURRENT_VISUAL_QA,
-        ((sys.executable, CURRENT_VISUAL_QA[0]),),
+        tuple((sys.executable, location) for location in CURRENT_VISUAL_QA),
         APP,
     ),
     Suite(
@@ -109,6 +109,11 @@ def command_output(command: tuple[str, ...], cwd: Path) -> tuple[int, str]:
     if result.stderr:
         output += ("\n" if output else "") + result.stderr
     return result.returncode, output.rstrip()
+
+
+def normalize_log_text(value: str) -> str:
+    """Remove non-semantic trailing whitespace from every serialized log line."""
+    return "\n".join(line.rstrip() for line in value.splitlines())
 
 
 def display_command(command: tuple[str, ...], cwd: Path) -> str:
@@ -411,7 +416,7 @@ def main() -> int:
 
     duration_ms = round((time.monotonic() - started) * 1000)
     log_lines.extend([f"authoritativeExitCode={exit_code}", f"authoritativeDurationMs={duration_ms}"])
-    LOG.write_text("\n".join(log_lines) + "\n", encoding="utf-8")
+    LOG.write_text(normalize_log_text("\n".join(log_lines)) + "\n", encoding="utf-8")
     write_verification(
         source_commit=source_commit,
         fingerprint=fingerprint,
