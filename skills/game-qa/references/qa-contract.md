@@ -4,6 +4,9 @@
 `PRODUCT_BRIEF.md` 与 `BUILD_BRIEF.md` 读取**目标运行环境**、`targetRuntime` 和本次实际验证的
 `testedRuntime`，再选择对应的 runner、日志、输入和性能证据；网页规则只在网页项目中启用。
 
+全部结论状态只取 `NOT_RUN` / `FAIL` / `PASS`。QA 必须逐字核对 PRODUCT_BRIEF、ART_DIRECTION、
+VISUAL_TARGETS 与 BUILD_BRIEF 的 `targetFinish`；缺失或不一致不得继续按更高等级裁决。
+
 ## 必须证明
 
 - 目标交付物能够构建或导出，并在 `testedRuntime` 启动、持续渲染，无关键错误或资源失败；
@@ -62,6 +65,86 @@ suite 执行状态，以及一条 `clean start → 核心动作 → 设计结果
 再逐个核对 `ART_DIRECTION`《声音与音乐方向》定的关键反馈
 ——核心动作 / 命中 / 状态变化 / 转场 / 胜负——在真实游玩里是否都有对应声音层：完全缺席
 记 minor，承诺了却没做记 major。
+
+## 独立视觉评审与发布结论
+
+视觉 QA 读取批准的 `VISUAL_TARGETS.md`、工作区内真实 before/after contact sheet 和每帧可操作
+路径，不读取实现方对缺陷的辩解。reviewer 记录身份及“未参与实现”的独立性说明；无法满足时写
+`NOT_RUN: 原因`，不得让实现方自评补位。每帧逐项裁决：**焦点、轮廓、空间层次、材质 / 线条、
+光色、HUD、动作 / 反馈、伪影、与失败例冲突**。聚合分数仅可摘要，任何单项 blocker/major 都
+必须单独关闭并附复验证据。
+
+对 `playable-prototype` 及以上，下列至少记 `major`：违反核心视觉原则；签名帧明显
+偏离目标；焦点资产仍是 graybox；目标镜头缺必要空间层次或动作反馈；ART_DIRECTION 明令排除的
+表现仍出现。`playable-prototype` 要求焦点发布门禁资产脱离灰盒、视觉 blocker/major 为零且
+必需独立视觉评审与帧证据通过；只有 `graybox` 可把
+未完成视觉资产保留为已声明限制。自动像素检查只探测空白、伪影、尺寸或明显渲染故障，不能把
+边缘密度、色彩熵或单一图像分数当审美门槛。
+
+发布结论摘要落盘 `qa/release-gates.json`，至少包含：
+
+```json
+{
+  "schemaVersion": 1,
+  "sourceCommit": "...",
+  "evidenceCommit": "...",
+  "sourceFingerprint": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+  "targetFinish": "graybox|playable-prototype|polished-vertical-slice|showcase",
+  "demonstratedTier": "graybox|playable-prototype|polished-vertical-slice|showcase",
+  "publicationTier": "graybox|playable-prototype|polished-vertical-slice|showcase",
+  "pipelineGates": {"intake": "PASS", "analyze": "PASS", "concept": "PASS", "design": "PASS", "art": "PASS", "build": "PASS", "qa": "PASS"},
+  "grayboxReady": {"status": "PASS", "evidence": ["qa/evidence/complete-run.json"]},
+  "visualPromotion": {"status": "PASS", "evidence": ["qa/evidence/promotion.md"]},
+  "visualEvidenceManifests": [{"path": "build/evidence/visual-upgrade/manifest.json", "sha256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"}],
+  "publicHost": {"status": "PASS", "sourceFingerprint": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef", "evidence": ["qa/evidence/public-host.json"]},
+  "visualFrames": [{"id": "...", "status": "PASS", "operationPath": "...", "evidence": ["qa/evidence/..."], "rubric": {"focus": "PASS", "silhouette": "PASS", "depth": "PASS", "materialLine": "PASS", "lightColor": "PASS", "hud": "PASS", "motionFeedback": "PASS", "artifacts": "PASS", "failureExamples": "PASS"}}],
+  "visualReview": {"required": true, "status": "PASS", "reviewer": "...", "independence": "未参与实现", "evidence": "qa/evidence/..."},
+  "focalReleaseAssets": ["hero"],
+  "degradableReleaseAssets": ["ambient-variation"],
+  "unresolvedDefects": [{"id": "...", "severity": "minor", "status": "CLOSED", "summary": "...", "owner": "build", "evidence": ["qa/evidence/..."]}]
+}
+```
+
+字段纪律：所有 gate、帧量表项以及 `grayboxReady.status`、`visualPromotion.status` 只取
+`NOT_RUN` / `FAIL` / `PASS`；两种状态都必须是含 `status` 与 evidence 数组的对象，不接受布尔值、
+裸字符串或自由文本。七个 pipeline gate 全部必填。每个 visual frame 必须有 ID、可操作路径、
+九项量表和非空 evidence 数组；每个 evidence、
+reviewer evidence、缺陷复验证据和 ledger evidence 都必须是工作区内真实存在的相对路径。
+`visualReview.required` 是布尔值，playable 及以上必须为 true 且 status 为 PASS。
+
+`unresolvedDefects` 每项必含非空 ID、非空 summary、`severity`（只取 `blocker` / `major` /
+`minor`）与 `status`（只取 `OPEN` / `CLOSED`）；归属阶段存在时只取 `build` / `design` /
+`product`，关闭项附复验证据。OPEN 的 blocker/major 阻止 playable 及以上。
+
+发布资产真值不复制进 manifest：`focalReleaseAssets` 列出 playable 必须晋级的键，
+`degradableReleaseAssets` 列出允许 fallback 的键；两数组不得重复、不得相交，并集必须恰好覆盖
+`build/asset-ledger.json` 中每个 `tier: release-gate` 键，未分类键直接失败。每个 ledger
+release-gate 项必含非空 key、tier、非空生产状态 status、
+布尔型 `releaseGatePassed`、非空 evidence 数组和显式 remaining；evidence 路径按 ledger 所在目录
+解析并必须真实存在。`releaseGatePassed: true` 时 remaining 必须为空、`none` 或等价的“无剩余”值；
+任一路径不存在或字段缺失都视为失败。playable 要求 `focalReleaseAssets` 对应项全部 passed=true；
+每个 degradable ledger 项必须有结构化 `fallback`：非空 `behavior`；`preserved` 对象中的
+`coreAction` / `state` / `result` / `readableFeedback` / `restart` 五项均为 true；非空 `evidence`
+数组且每条为工作区内真实路径。缺字段、任一 false 或证据无效时，playable 不得使用该可降级键。
+polished/showcase 要求全部 release-gate 项通过。
+
+`NOT_RUN` 可以如实结束验证，但只有 graybox 能携带视觉 `NOT_RUN`、视觉 major 或灰盒资产；
+playable 及以上任一未关闭 blocker/major、必需独立评审 `NOT_RUN`、焦点资产失败、可降级项无
+有效 fallback、ledger 分类不完整 / 重叠或工作区外证据，都阻止 `gate:qa pass`。等级顺序固定，必须满足
+`publicationTier <= demonstratedTier <= targetFinish`。`sourceCommit` / `evidenceCommit` 是可空的
+历史定位信息，不代表当前候选，也不要求相等；预算、时间或工具上限不改变结论。
+
+### 当前候选与公开托管身份
+
+`sourceFingerprint` 是 release 的权威当前候选身份：对实际发布输入的稳定、落盘清单计算为
+64 位小写 SHA-256 十六进制串，并在 build 完成记录、验证结果和 release manifest 中保持一致。
+`visualEvidenceManifests` 每项包含工作区内真实存在的 `path` 与 64 位小写 `sha256`；哈希必须等于
+该文件实际字节，且该 manifest 内嵌的 `sourceFingerprint` 必须等于 release fingerprint，否则视觉
+证据属于别的候选、不得通过。commit ID 只作历史
+定位；工作区或构建输入已偏离 commit 时，禁止沿用该 commit 的 PASS，旧证据标为
+`historical/not-current`。公开托管裁决以结构化记录保存 `status`、`sourceFingerprint` 与工作区内
+evidence；只有 deployed fingerprint 与 release fingerprint 完全相同才可 `PASS`，否则即使 URL
+可访问也只能记历史 / 非当前候选。
 
 ## 可读性与无障碍下限
 
@@ -328,7 +411,9 @@ go/no-go 表」的证据描述逐行实测，替代泛泛观察；按「数值�
   不能证明人物自然。
 
 - `blocker`：无法构建/启动、主画面空白、核心输入无效、崩溃或无法完成/重开。
-- `major`：关键机制、状态、画面可读性或目标视口失败，但仍有替代路径。
+- `major`：关键机制、状态、画面可读性或目标视口失败，但仍有替代路径；对 playable 及以上
+  也包括核心视觉原则被违反、签名帧明显偏离目标、焦点资产仍为 graybox、空间层次或动作反馈
+  缺失，以及明令排除的表现仍出现。
 - `minor`：不阻断体验的局部视觉、反馈或警告问题。
 
 每条 `blocker`/`major` 须标注归属阶段：`build`＝实现与设计不符（含数值门槛、结局条件的
