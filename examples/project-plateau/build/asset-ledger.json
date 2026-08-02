@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updated": "2026-08-01 PT · example promotion and launch media V2",
+  "updated": "2026-08-02 PT · playable-prototype promotion after independent visual review and authoritative verification",
   "policy": "Every shipped non-code asset must be original, public domain, or redistribution-compatible. Modern adaptation assets are prohibited.",
   "entries": [
     {
       "key": "world.connected_route",
       "tier": "release-gate",
-      "status": "functional-graybox",
-      "releaseGatePassed": false,
+      "status": "playable-prototype-verified",
+      "releaseGatePassed": true,
       "source": "app/src/world.js",
       "provenance": "Original deterministic procedural geometry",
       "rights": "Original project code and geometry",
@@ -33,15 +33,22 @@
         "evidence/s9/01-young-play-commitment.jpg",
         "evidence/s9/03-branch-pull-commitment.jpg",
         "evidence/s10/01-clear-family-sightline.jpg",
-        "evidence/s10/02-young-play-silver-frame.jpg"
+        "evidence/s10/02-young-play-silver-frame.jpg",
+        "evidence/visual-upgrade/after-glade-1440x900.jpg",
+        "evidence/visual-upgrade/contact-sheet-glade-1440x900.jpg",
+        "evidence/visual-upgrade/generated/manifest.json",
+        "evidence/visual-upgrade/generated/contact-sheet-supported-viewports.png",
+        "evidence/visual-upgrade/review2-before-after.png",
+        "../qa/verification.json",
+        "../qa/evidence/independent-visual-review-2026-08-02.md"
       ],
-      "remaining": "The route passes input-only Strong/Mixed/Panic traversal; its glade now protects a broad lit subject corridor with edge-framed vegetation. Remaining gates are landmark polish and first-time human navigation evidence."
+      "remaining": "none"
     },
     {
       "key": "tool.field_camera",
       "tier": "release-gate",
-      "status": "procedural-prototype",
-      "releaseGatePassed": false,
+      "status": "playable-prototype-verified",
+      "releaseGatePassed": true,
       "source": "app/src/world.js",
       "provenance": "Original primitive model informed by generic period camera construction",
       "rights": "Original project geometry; no maker marks or copied product mesh",
@@ -50,15 +57,17 @@
         "evidence/s1/01-clean-start.jpg",
         "evidence/s3/03-camera-raised.jpg",
         "evidence/s3/05-partial-plate.jpg",
-        "evidence/s6/04-bellows-camera-raised.jpg"
+        "evidence/s6/04-bellows-camera-raised.jpg",
+        "../qa/verification.json",
+        "../qa/evidence/independent-visual-review-2026-08-02.md"
       ],
-      "remaining": "The folded/raised model now has a rear standard, ground glass, five bellows folds, brass rails and lens; hand placement, plate insertion motion and final material polish remain."
+      "remaining": "none"
     },
     {
       "key": "tool.plate_case",
       "tier": "release-gate",
-      "status": "functional-prototype",
-      "releaseGatePassed": false,
+      "status": "playable-prototype-verified",
+      "releaseGatePassed": true,
       "source": "app/index.html; app/src/main.js; app/src/simulation.js; app/src/styles.css",
       "provenance": "Original HTML/CSS plate previews and deterministic resource state",
       "rights": "Original project geometry required",
@@ -77,15 +86,17 @@
         "evidence/s9/02-young-play-plate.jpg",
         "evidence/s9/04-branch-pull-plate.jpg",
         "evidence/s9/05-distinct-recovered-plates.jpg",
-        "evidence/s9/06-clean-order-no-plates.jpg"
+        "evidence/s9/06-clean-order-no-plates.jpg",
+        "../qa/verification.json",
+        "../qa/evidence/independent-visual-review-2026-08-02.md"
       ],
-      "remaining": "Every shutter now preserves its exact local renderer view as a monochrome plate through preview, result and restart; hand placement, insertion/fracture motion and independent composition review remain."
+      "remaining": "none"
     },
     {
       "key": "tool.period_rifle",
       "tier": "release-gate",
-      "status": "functional-graybox",
-      "releaseGatePassed": false,
+      "status": "playable-prototype-verified",
+      "releaseGatePassed": true,
       "source": "app/src/world.js; app/src/main.js; app/src/simulation.js; app/src/styles.css",
       "provenance": "Original procedural period-rifle silhouette and CSS sight",
       "rights": "Original project geometry required",
@@ -97,15 +108,17 @@
         "evidence/s8/08-mixed-rifle-brook.jpg",
         "evidence/s8/09-mixed-input-result.jpg",
         "evidence/s8/11-panic-first-contact.jpg",
-        "evidence/s8/12-panic-input-failure.jpg"
+        "evidence/s8/12-panic-input-failure.jpg",
+        "../qa/verification.json",
+        "../qa/evidence/independent-visual-review-2026-08-02.md"
       ],
-      "remaining": "Hidden/raised state, two chamber marks, timely interruption, report/echo, brook response and result callback pass one-shot Mixed and two-shot Panic input paths; final recoil and production mix remain."
+      "remaining": "none"
     },
     {
       "key": "subject.iguanodon_family",
       "tier": "release-gate",
-      "status": "procedural-prototype",
-      "releaseGatePassed": false,
+      "status": "playable-prototype-verified",
+      "releaseGatePassed": true,
       "source": "app/src/world.js",
       "provenance": "Original low-poly procedural family blockout",
       "rights": "Original project geometry; museum pages inform facts only",
@@ -117,15 +130,22 @@
         "evidence/s9/05-distinct-recovered-plates.jpg",
         "evidence/s10/01-clear-family-sightline.jpg",
         "evidence/s10/02-young-play-silver-frame.jpg",
-        "evidence/s10/03-branch-pull-silver-frame.jpg"
+        "evidence/s10/03-branch-pull-silver-frame.jpg",
+        "evidence/visual-upgrade/after-glade-1440x900.jpg",
+        "evidence/visual-upgrade/contact-sheet-glade-1440x900.jpg",
+        "evidence/visual-upgrade/generated/manifest.json",
+        "evidence/visual-upgrade/generated/contact-sheet-supported-viewports.png",
+        "evidence/visual-upgrade/review2-before-after.png",
+        "../qa/verification.json",
+        "../qa/evidence/independent-visual-review-2026-08-02.md"
       ],
-      "remaining": "Two adults and three young now have expanded faceted anatomy, eye/underside separation, graze/play/branch-pull roles, a feeding branch and distinct lit commitments; independent anatomy, motion and first-time readability review remain."
+      "remaining": "none"
     },
     {
       "key": "threat.pterodactyl",
       "tier": "release-gate",
-      "status": "procedural-prototype",
-      "releaseGatePassed": false,
+      "status": "playable-prototype-verified",
+      "releaseGatePassed": true,
       "source": "app/src/world.js",
       "provenance": "Original membrane-wing silhouette and deterministic orbit",
       "rights": "Original project geometry; museum pages inform facts only",
@@ -155,15 +175,22 @@
         "evidence/s10/04-achromatopsia-attack.jpg",
         "evidence/s10/10-protanopia-attack-defense.jpg",
         "evidence/s10/11-deuteranopia-attack-defense.jpg",
-        "evidence/s10/12-tritanopia-attack-defense.jpg"
+        "evidence/s10/12-tritanopia-attack-defense.jpg",
+        "evidence/visual-upgrade/after-glade-1440x900.jpg",
+        "evidence/visual-upgrade/contact-sheet-glade-1440x900.jpg",
+        "evidence/visual-upgrade/generated/manifest.json",
+        "evidence/visual-upgrade/generated/contact-sheet-supported-viewports.png",
+        "evidence/visual-upgrade/review2-before-after.png",
+        "../qa/verification.json",
+        "../qa/evidence/independent-visual-review-2026-08-02.md"
       ],
-      "remaining": "Four states, timed contact, shot response and cover pull-up pass full-colour and achromatopsia input routes; protanopia, deuteranopia and tritanopia attack/defence checkpoints retain the encoded state. Anatomy, material and independent colour-cue readability review remain."
+      "remaining": "none"
     },
     {
       "key": "ui.field_system",
       "tier": "release-gate",
-      "status": "functional-prototype",
-      "releaseGatePassed": false,
+      "status": "playable-prototype-verified",
+      "releaseGatePassed": true,
       "source": "app/index.html; app/src/main.js; app/src/settings.js; app/src/styles.css",
       "provenance": "Original HTML/CSS interface using system fonts",
       "rights": "Original project layout and icons",
@@ -208,15 +235,20 @@
         "evidence/s10/04-achromatopsia-attack.jpg",
         "evidence/s10/05-strong-plate-board.jpg",
         "evidence/s10/06-clean-restart.jpg",
-        "evidence/s10/report.json"
+        "evidence/s10/report.json",
+        "evidence/visual-upgrade/generated/manifest.json",
+        "evidence/visual-upgrade/generated/contact-sheet-supported-viewports.png",
+        "evidence/visual-upgrade/review2-before-after.png",
+        "../qa/verification.json",
+        "../qa/evidence/independent-visual-review-2026-08-02.md"
       ],
-      "remaining": "Field prompts, physical resources, renderer-derived previews, result/failure bands and restart are implemented. Complete full-colour and achromatopsia routes plus the three-mode checkpoint matrix pass technical checks; independent composition and colour-cue readability review remain."
+      "remaining": "none"
     },
     {
       "key": "light.functional_arc",
       "tier": "release-gate",
-      "status": "functional-graybox",
-      "releaseGatePassed": false,
+      "status": "playable-prototype-verified",
+      "releaseGatePassed": true,
       "source": "app/src/main.js; app/src/config.js",
       "provenance": "Original real-time lighting and approved functional palette",
       "rights": "Original project code; no third-party sky",
@@ -230,14 +262,21 @@
         "evidence/s8/09-mixed-input-result.jpg",
         "evidence/s8/12-panic-input-failure.jpg",
         "evidence/s10/01-clear-family-sightline.jpg",
-        "evidence/s10/02-young-play-silver-frame.jpg"
+        "evidence/s10/02-young-play-silver-frame.jpg",
+        "evidence/visual-upgrade/after-glade-1440x900.jpg",
+        "evidence/visual-upgrade/contact-sheet-glade-1440x900.jpg",
+        "evidence/visual-upgrade/generated/manifest.json",
+        "evidence/visual-upgrade/generated/contact-sheet-supported-viewports.png",
+        "evidence/visual-upgrade/review2-before-after.png",
+        "../qa/verification.json",
+        "../qa/evidence/independent-visual-review-2026-08-02.md"
       ],
-      "remaining": "The 180-second budget is grounded by measured paths, and the glade now separates subjects with one warm lane, cool rim and shadows; full sky/light interpolation and low-light legibility remain."
+      "remaining": "none"
     },
     {
       "key": "audio.core_world",
       "tier": "release-gate",
-      "status": "functional-prototype",
+      "status": "tested-captioned-fallback",
       "releaseGatePassed": false,
       "source": "app/src/audio.js; app/src/main.js",
       "provenance": "Original runtime Web Audio synthesis and authored English captions",
@@ -252,15 +291,39 @@
         "evidence/s7/06-focus-pause-commitment-minimum.jpg",
         "evidence/s8/08-mixed-rifle-brook.jpg",
         "evidence/s8/09-mixed-input-result.jpg",
-        "evidence/s8/12-panic-input-failure.jpg"
+        "evidence/s8/12-panic-input-failure.jpg",
+        "../qa/verification.json"
       ],
-      "remaining": "Core cues and captions remain active across measured Strong/Mixed/Panic paths; production mix, richer ambience and subjective listening review remain."
+      "remaining": "Subjective production-mix review remains. The tested fallback preserves every core cue through authored on-screen sound captions and the existing visual/state response; complete paths and settings are recorded in qa/verification.json.",
+      "fallback": {
+        "behavior": "When production audio is unavailable or unsuitable, authored on-screen sound captions plus the existing visual and state responses communicate every core cue.",
+        "evidence": [
+          "evidence/s6/02-field-sound-start.jpg",
+          "evidence/s6/03-examine-caption.jpg",
+          "evidence/s6/05-plate-slide-caption.jpg",
+          "evidence/s6/08-rifle-brook-response.jpg",
+          "evidence/s6/09-result-cue.jpg",
+          "evidence/s6/10-failure-cue.jpg",
+          "evidence/s7/06-focus-pause-commitment-minimum.jpg",
+          "evidence/s8/08-mixed-rifle-brook.jpg",
+          "evidence/s8/09-mixed-input-result.jpg",
+          "evidence/s8/12-panic-input-failure.jpg",
+          "../qa/verification.json"
+        ],
+        "preserved": {
+          "coreAction": true,
+          "state": true,
+          "result": true,
+          "readableFeedback": true,
+          "restart": true
+        }
+      }
     },
     {
       "key": "accessibility.presentation",
       "tier": "release-gate",
-      "status": "functional-prototype",
-      "releaseGatePassed": false,
+      "status": "playable-prototype-verified",
+      "releaseGatePassed": true,
       "source": "app/index.html; app/src/main.js; app/src/settings.js; app/src/styles.css",
       "provenance": "Original reduced-motion and text-scale controls",
       "rights": "Original project UI",
@@ -278,9 +341,11 @@
         "evidence/s8/report.json",
         "evidence/s9/05-distinct-recovered-plates.jpg",
         "evidence/s10/04-achromatopsia-attack.jpg",
-        "evidence/s10/report.json"
+        "evidence/s10/report.json",
+        "../qa/verification.json",
+        "../qa/evidence/independent-visual-review-2026-08-02.md"
       ],
-      "remaining": "Persisted controls, monochrome plate/result treatment, complete full-colour and achromatopsia input routes, and the protanopia/deuteranopia/tritanopia checkpoint matrix are verified technically; independent colour-cue readability review remains."
+      "remaining": "none"
     },
     {
       "key": "media.launch_voiceover",

@@ -1,0 +1,157 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": null,
+  "evidenceCommit": null,
+  "targetFinish": "playable-prototype",
+  "demonstratedTier": "playable-prototype",
+  "publicationTier": "playable-prototype",
+  "pipelineGates": {
+    "intake": "PASS",
+    "analyze": "PASS",
+    "concept": "PASS",
+    "design": "PASS",
+    "art": "PASS",
+    "build": "PASS",
+    "qa": "PASS"
+  },
+  "grayboxReady": {
+    "status": "PASS",
+    "evidence": [
+      "qa/verification.json"
+    ]
+  },
+  "visualPromotion": {
+    "status": "PASS",
+    "evidence": [
+      "qa/verification.json",
+      "build/evidence/visual-upgrade/generated/manifest.json",
+      "qa/evidence/independent-visual-review-2026-08-02.md"
+    ]
+  },
+  "visualFrames": [
+    {
+      "id": "glade-family-under-aerial-pressure",
+      "status": "PASS",
+      "operationPath": "cd build/app && npm run capture:visual",
+      "evidence": [
+        "build/evidence/visual-upgrade/generated/title-1440x900.png",
+        "build/evidence/visual-upgrade/generated/title-1280x720.png",
+        "build/evidence/visual-upgrade/generated/family-1440x900.png",
+        "build/evidence/visual-upgrade/generated/dive-1440x900.png",
+        "build/evidence/visual-upgrade/generated/family-1280x720.png",
+        "build/evidence/visual-upgrade/generated/dive-1280x720.png",
+        "build/evidence/visual-upgrade/generated/contact-sheet-supported-viewports.png"
+      ],
+      "rubric": {
+        "focus": "PASS",
+        "silhouette": "PASS",
+        "depth": "PASS",
+        "materialLine": "PASS",
+        "lightColor": "PASS",
+        "hud": "PASS",
+        "motionFeedback": "PASS",
+        "artifacts": "PASS",
+        "failureExamples": "PASS"
+      }
+    }
+  ],
+  "visualReview": {
+    "required": true,
+    "status": "PASS",
+    "reviewer": "/root/visual_review (vision)",
+    "independence": "Independent vision agent; made no implementation edits and judged only approved targets plus captured evidence.",
+    "evidence": "qa/evidence/independent-visual-review-2026-08-02.md"
+  },
+  "focalReleaseAssets": [
+    "world.connected_route",
+    "tool.field_camera",
+    "tool.plate_case",
+    "tool.period_rifle",
+    "subject.iguanodon_family",
+    "threat.pterodactyl",
+    "ui.field_system",
+    "light.functional_arc",
+    "accessibility.presentation"
+  ],
+  "unresolvedDefects": [
+    {
+      "id": "VIS-REVIEW-001",
+      "severity": "major",
+      "status": "CLOSED",
+      "summary": "Independent visual review completed with zero blockers and zero majors.",
+      "owner": "build",
+      "evidence": [
+        "qa/evidence/independent-visual-review-2026-08-02.md"
+      ]
+    },
+    {
+      "id": "VIS-PROMOTION-002",
+      "severity": "major",
+      "status": "CLOSED",
+      "summary": "Folded diagonal dive corridor and directly visible material responses passed independent re-review.",
+      "owner": "build",
+      "evidence": [
+        "qa/evidence/independent-visual-review-2026-08-02.md",
+        "build/evidence/visual-upgrade/generated/contact-sheet-supported-viewports.png"
+      ]
+    },
+    {
+      "id": "VIS-MINOR-01",
+      "severity": "minor",
+      "status": "OPEN",
+      "summary": "Iguanodon round eyes and blunt muzzle remain slightly toy-like; hands and thumb accents are understated.",
+      "owner": "build"
+    },
+    {
+      "id": "VIS-MINOR-02",
+      "severity": "minor",
+      "status": "OPEN",
+      "summary": "The dive wingtip exits the top edge.",
+      "owner": "build"
+    },
+    {
+      "id": "VIS-MINOR-03",
+      "severity": "minor",
+      "status": "OPEN",
+      "summary": "The cover mouth / defensive choice is not explicit enough.",
+      "owner": "build"
+    },
+    {
+      "id": "VIS-MINOR-04",
+      "severity": "minor",
+      "status": "OPEN",
+      "summary": "Material differentiation is functional prototype quality, not showcase surface detail.",
+      "owner": "build"
+    },
+    {
+      "id": "VIS-MINOR-05",
+      "severity": "minor",
+      "status": "OPEN",
+      "summary": "The title right tree canopy and menu form a heavy dark block.",
+      "owner": "build"
+    },
+    {
+      "id": "VIS-MINOR-06",
+      "severity": "minor",
+      "status": "OPEN",
+      "summary": "Still frames do not prove the full watch → bank → dive → pull-up cadence.",
+      "owner": "build"
+    }
+  ],
+  "notes": "Independent visual review passes playable-prototype with 0 blockers, 0 majors and 6 disclosed minors. The current authoritative local run passes 7/7 suites and 17/17 commands and is bound to sourceFingerprint. Nine focal assets pass; audio remains an explicit tested captioned fallback. The retained public-host run is historical/not-current and no deployed current-fingerprint PASS is claimed.",
+  "degradableReleaseAssets": [
+    "audio.core_world"
+  ],
+  "sourceFingerprint": "8329da6c8289acfa826e6cfb773e983f9fc270e366f5d375f679f21b5596c6c6",
+  "visualEvidenceManifests": [
+    {
+      "path": "build/evidence/visual-upgrade/generated/manifest.json",
+      "sha256": "c6f83ebfbd606b03e187f485403e8096a4b9d074bc19fa52170d4e3b161936f5"
+    }
+  ],
+  "publicHost": {
+    "status": "HISTORICAL",
+    "evidence": "qa/evidence/public-host/report.json",
+    "sourceFingerprint": "e99883ce0a14f31782ac0dc6a91bd38f7e9869d86279d11ca04b5171a59af69d"
+  }
+}

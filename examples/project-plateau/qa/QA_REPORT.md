@@ -1,42 +1,45 @@
 # Project Plateau QA report
 
-## Verdict
+`targetFinish: playable-prototype`
 
-**Local automated build handoff: PASS. Public-host smoke: PASS. Example publication: MAINTAINER-GO.**
+## Current verdict · 2026-08-02
 
-The authoritative run completed every registered suite, a same-run input-only
-Strong path from clean field order through result and restart, a second complete
-Strong path under Chromium achromatopsia, and 41 direct state/browser/visual
-checkpoints. No local blocker, uncaught browser error, external runtime host,
-failed deterministic outcome or budget regression was observed.
+**Authoritative runtime QA: PASS. Independent visual review: PASS. Visual promotion: PASS. Demonstrated/publication tier: `playable-prototype`.**
 
-On 2026-08-01 the maintainer reported three successful informal first-time
-sessions and explicitly accepted the project for publication under `examples/`.
-The sessions did not retain the protocol's raw environment, timestamps, paths,
-results or verbatim answers, so the specific first-time criteria remain
-unverified in this repository. Independent anatomy/motion/composition and
-colour-cue review also remains `NOT_RUN`. Publication is a product decision
-with disclosed evidence gaps, not an inferred QA pass.
+The current `npm run verify` invocation passes 7/7 suites and 17/17 commands,
+including input-only Strong/Mixed/Panic paths, terminal results, clean restart,
+S10 visual/state coverage and the registered deterministic dual-viewport capture.
+The source fingerprint is
+`8329da6c8289acfa826e6cfb773e983f9fc270e366f5d375f679f21b5596c6c6`;
+the run completed in `481532 ms` with no failed command.
 
-## Authoritative run
+Independent reviewer `/root/visual_review` (`vision`) made no implementation
+edits and judged only the approved targets and captured evidence. The verdict is
+PASS for `playable-prototype`: 0 blockers, 0 majors and 6 disclosed minors. The
+folded diagonal dive and material-response majors are closed. The durable rubric,
+minor wording and reviewed paths are in
+[`evidence/independent-visual-review-2026-08-02.md`](evidence/independent-visual-review-2026-08-02.md).
+
+Nine focal release assets pass current runtime and review evidence. Audio remains
+an explicitly degradable asset: authored sound captions and existing visual/state
+feedback are the tested fallback. This supports a playable prototype, not polished
+or showcase quality.
+
+## Current authoritative run
 
 | Field | Observed |
 |---|---|
-| Source commit | `8793fb904ca6ac1aedf62f296febff6c68a9bb3d` |
-| App fingerprint | `e99883ce0a14f31782ac0dc6a91bd38f7e9869d86279d11ca04b5171a59af69d` |
-| Install | [`npm ci`](evidence/install.log) — 24 packages, 0 vulnerabilities |
+| Source commit | Uncommitted current candidate; commit fields remain null until source and evidence are committed together |
+| App fingerprint | `8329da6c8289acfa826e6cfb773e983f9fc270e366f5d375f679f21b5596c6c6` |
 | Verify | `npm run verify` |
-| Result | exit `0`; 7/7 suites; 16/16 commands |
-| Duration | `509894 ms` |
+| Result | exit `0`; 7/7 suites; 17/17 commands |
+| Duration | `481532 ms` |
 | Log | [`evidence/verify.log`](evidence/verify.log) |
 | Structured handoff | [`verification.json`](verification.json) |
-| Suite discovery | 15 registered pass/fail files; 2 explicit non-suite tools; 0 orphan |
+| Visual review | [`evidence/independent-visual-review-2026-08-02.md`](evidence/independent-visual-review-2026-08-02.md) — PASS, 0 blocker / 0 major / 6 minor |
 
-`capture_demo_clip.py` is recorded as a delivery-media tool rather than a test;
-`verify.py` is the orchestrator and would recurse if registered as its own
-suite. Any new Python or JavaScript file under `build/app/test/` that is neither
-registered nor explicitly classified now fails with `ORPHANED_TEST_SUITE
-major`.
+The earlier `8793fb9` / `e99883ce…` 16-command run is historical gameplay
+evidence only and is superseded by the current structured handoff above.
 
 ## Environment and budgets
 
@@ -50,12 +53,13 @@ major`.
 | Built payload | `602904` raw bytes; `154906` gzip bytes | PASS vs `50/20 MiB` |
 | First local no-cache frame | `2198.3 ms` at simulated 25 Mbps | PASS vs `8000 ms` locally |
 | Runtime requests | only `127.0.0.1:4173`; no external host | PASS |
-| Public preview | `https://plateau.vibecoco.ai`; Google Chrome `150.0.7871.187` | PASS; anonymous HTTPS load, full input routes, result and restart; no console error or third-party runtime host |
+| Historical public preview | `https://plateau.vibecoco.ai`; Google Chrome `150.0.7871.187` | `HISTORICAL / NOT_CURRENT`; the retained run is bound to `e99883ce…`, not the current `8329da6c…` candidate, and does not count as current release proof |
 
 The loading measurement uses Chrome DevTools throttling against local Vite. It
-does not measure public-host cold-cache timing. The separate
-[`public-host`](evidence/public-host/report.json) run proves DNS/TLS reachability,
-clean-context loading and complete play against the deployed assets.
+does not measure public-host cold-cache timing. The separate historical
+[`public-host`](evidence/public-host/report.json) record proves only the older
+`e99883ce…` deployment; it is `HISTORICAL / NOT_CURRENT` for this candidate.
+No deployed current-fingerprint PASS is claimed.
 
 ## Suite discovery and execution
 
@@ -65,9 +69,9 @@ clean-context loading and complete play against the deployed assets.
 | `build:production` | `index.html`, `src/`, `public/` | PASS; Vite production build |
 | `browser:checkpoint-history` | `qa_s0.py`–`qa_s7.py`, `qa_s9.py` | PASS; 9/9 commands |
 | `browser:complete-run` | `qa_s8.py` | PASS; Strong/Mixed/Panic plus achromatopsia Strong by keyboard/mouse |
-| `browser:current-visual` | `qa_s10.py` | PASS; glade/plates plus four-state checkpoints for three additional vision deficiencies |
+| `browser:current-visual` | `qa_s10.py`, `capture_visual_upgrade.py` | PASS; glade/plates, four-state checkpoints for three additional vision deficiencies and deterministic dual-viewport captures |
 | `qa:design-invariants` | `qa/check_design_invariants.py` | PASS; 10/10 design-derived checks |
-| `repo:contract` | validator and repository unit discovery | PASS; 7 skills, 25 tests |
+| `repo:contract` | validator and repository unit discovery | PASS; 7 skills, 63 tests |
 
 ## Complete run
 
@@ -126,14 +130,15 @@ their findings still require the live-run evidence and disposition defined by
 | Three first-time players recognize 3D action/exploration and not a text/VN presentation | INFORMAL_PLAY_REPORTED / CRITERION_NOT_RECORDED | accepted for example publication; evidence-qualified PASS remains open | Three raw sessions using [`PLAYTEST_PROTOCOL.md`](PLAYTEST_PROTOCOL.md); at least two meet the stated threshold |
 | First meaningful interaction within 90 seconds and result within 15 minutes | INFORMAL_PLAY_REPORTED / CRITERION_NOT_RECORDED | accepted for example publication; evidence-qualified PASS remains open | Timestamped, uncoached player records using the same protocol |
 | Players can restate scout/proof/extract rather than “shoot dinosaurs” | INFORMAL_PLAY_REPORTED / CRITERION_NOT_RECORDED | accepted for example publication; evidence-qualified PASS remains open | Verbatim post-run answers linked to each raw session |
-| Independent anatomy, motion and composition review | NOT_RUN | accepted risk for example publication | [`PERCEPTION_REVIEW_PROTOCOL.md`](PERCEPTION_REVIEW_PROTOCOL.md), [reviewer intake](https://github.com/worldwonderer/novel-to-game/discussions/8), reviewer context, frame-level findings and disposition |
-| Input routes and checkpoints under colour-vision modes | AUTOMATED_PASS / HUMAN_REVIEW_NOT_RUN | accepted risk for example publication | Full-colour + achromatopsia routes and the three specified checkpoint sets exist; an independent reviewer must still judge cue readability |
-| Anonymous public HTTPS load, play, result and restart | PASS | cleared | [`evidence/public-host/report.json`](evidence/public-host/report.json): clean Chrome context, source fingerprint, 46 real-input steps, Strong/Mixed/Panic plus achromatopsia Strong, result and restart; zero console errors or third-party runtime hosts |
+| Independent anatomy, motion and composition review | PASS — 0 blocker / 0 major / 6 minor | clears playable-prototype visual gate | [`evidence/independent-visual-review-2026-08-02.md`](evidence/independent-visual-review-2026-08-02.md) |
+| Input routes and checkpoints under colour-vision modes | PASS for playable-prototype | current automated matrix plus independent achromatopsia attack judgment | [`verification.json`](verification.json), [`evidence/independent-visual-review-2026-08-02.md`](evidence/independent-visual-review-2026-08-02.md) |
+| Anonymous public HTTPS load, play, result and restart | HISTORICAL / NOT_CURRENT | does not count as current release proof; local evidence remains sufficient for the playable-prototype tier | [`evidence/public-host/report.json`](evidence/public-host/report.json) is bound to `e99883ce…`, not the current `8329da6c…` candidate |
 | Platform upload/transcode for short media | NOT_RUN | not required for the hosted example; still blocks claiming an uploaded attachment | Uploaded file hash and playback check |
 
-No subjective fun, balance, audio-mix, anatomy, motion, composition or
-colour-cue readability claim is marked PASS. Numeric image floors only catch
-gross occlusion, flat exposure or missing state.
+No subjective fun, balance or production audio-mix claim is marked PASS.
+Anatomy, motion, composition and colour-cue readability pass only at the
+playable-prototype threshold under the named independent review; numeric image
+floors remain limited to gross occlusion, flat exposure or missing state.
 
 ## Reproduce
 

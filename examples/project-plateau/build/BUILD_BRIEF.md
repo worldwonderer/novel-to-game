@@ -2,6 +2,23 @@
 
 ## Finished-product target
 
+`targetFinish: playable-prototype`
+`publicationTier: playable-prototype`
+`demonstratedTier: playable-prototype`
+`grayboxReady: PASS`
+
+Evidence: `qa/verification.json` retains the complete input paths, results and clean restart evidence.
+
+`visualPromotion: PASS`
+
+The representative scene has reproducible dual-viewport captures, current authoritative verification and an independent PASS with zero blockers/majors. Nine focal assets pass; audio uses the tested captioned fallback recorded in the release manifest.
+
+The approved visual target index is `../design/VISUAL_TARGETS.md`. The
+representative promotion scene is the glade family view under approaching
+pterodactyl pressure. Release-gate asset keys remain authoritative in
+`asset-ledger.json`; a working or improved asset is not a passed release gate
+until its evidence and independent disposition exist.
+
 Build a free, anonymous, single-player desktop web vertical slice for English-
 speaking players who already understand first-person controls. One compact run
 lasts 1–3 minutes: leave Fort Challenger, read the plateau, make a limited
@@ -341,27 +358,29 @@ are not claimed by automated verification.
 
 ## Final scope reconciliation
 
-Reconciled on 2026-07-31 against source commit
-`8793fb904ca6ac1aedf62f296febff6c68a9bb3d` and authoritative command
-`npm run verify`. The 509.894-second run executed all seven registered suites
-and sixteen underlying commands; its log and 41-checkpoint handoff are
-`../qa/evidence/verify.log` and `../qa/verification.json`.
+Reconciled on 2026-08-02 against the current publishable-input fingerprint
+`8329da6c8289acfa826e6cfb773e983f9fc270e366f5d375f679f21b5596c6c6` and
+authoritative command `npm run verify`. The 481.532-second run executed all
+seven registered suites and all seventeen underlying commands; its log and
+structured handoff are `../qa/evidence/verify.log` and
+`../qa/verification.json`. The deterministic visual-capture manifest carries
+the same fingerprint.
 
 | Approved scope | Delivery | Evidence or deliberate boundary |
 |---|---|---|
-| Free anonymous desktop WebGL2 slice at `1440×900`, minimum `1280×720` | Delivered locally | S0/S7 browser evidence; public HTTPS and anonymous-host smoke remain NOT_RUN |
+| Free anonymous desktop WebGL2 slice at `1440×900`, minimum `1280×720` | Delivered for the current local candidate | S0/S7 browser evidence; the retained public-host run is historical and does not prove deployment of the current fingerprint |
 | Continuous first-person connected zone, collision, pause, focus recovery and restart | Delivered | S1/S2/S7 plus the S8 input-only complete run |
 | Five same-play verbs performed by input | Delivered | `../qa/evidence/design-invariants.md#same-play-verbs`; S8 input trace and checkpoints |
 | Four physical plates with view-dependent proof and persistent recovered views | Delivered | S3/S9/S10 state, browser and renderer-derived visual evidence |
-| Four readable threat states, cover, one recoverable contact and limited defensive shot | Delivered technically | S2/S3/S5/S6; complete full-colour and achromatopsia routes in S8; three additional colour-vision attack/defence checkpoints in S10; independent cue review remains open |
+| Four readable threat states, cover, one recoverable contact and limited defensive shot | Delivered and independently reviewed | S2/S3/S5/S6; complete full-colour and achromatopsia routes in S8; three additional colour-vision attack/defence checkpoints in S10; independent visual review PASS |
 | Covered and exposed returns with different time, plate and callback consequences | Delivered | S5 and input-only Strong/Mixed/Panic paths in S8 |
 | Strong, partial and failure outcomes followed by a clean restart | Delivered | S4/S5 plus per-terminal S8 restart checkpoints |
 | Local audio/captions, HUD, sensitivity, motion reduction and text scaling | Delivered | S6/S7; subjective mix and comfort remain outside automated proof |
-| Non-colour redundancy across the supported colour-vision modes | Delivered technically | S8 complete full-colour and achromatopsia routes plus S10 protanopia/deuteranopia/tritanopia order, glade, attack/defence and result checkpoints; independent cue-readability review remains open |
+| Non-colour redundancy across the supported colour-vision modes | Delivered and independently reviewed | S8 complete full-colour and achromatopsia routes plus S10 protanopia/deuteranopia/tritanopia order, glade, attack/defence and result checkpoints; independent visual review PASS at playable-prototype threshold |
 | Payload, loading, lifecycle and heaviest-state performance budgets | Delivered locally | 154,906 gzip bytes; 2,198.3 ms local 25 Mbps first frame; 120.5/106.4 target median/1%-low FPS in S7 |
 | First-time premise, genre and route comprehension | Not delivered as evidence | Three independent raw player records remain NOT_RUN; automation cannot substitute |
-| Independent anatomy, motion and composition approval | Not delivered as evidence | Current numeric/image floors detect gross failures only |
-| Public deployment | Not delivered | Public-host cold load, anonymous play and restart smoke remain a release gate |
+| Independent anatomy, motion and composition approval | Delivered for playable-prototype | Independent review PASS: 0 blockers, 0 majors and 6 disclosed minors in `../qa/evidence/independent-visual-review-2026-08-02.md` |
+| Public deployment | Not claimed for the current candidate | `../qa/evidence/public-host/report.json` is retained as historical evidence only; its deployed fingerprint does not match the current visual candidate |
 
 The earlier paper target of 5–8 minutes and 420 seconds was deliberately revised
 on 2026-07-31 to the measured 1–3 minute / 180-second contract in
@@ -370,6 +389,11 @@ explicit non-goals remain excluded: this is not a full open world, arena
 shooter, crafting/survival progression game, multiplayer service, mobile build,
 chapter retelling or modern licensed adaptation.
 
-Automated verification passes the local build handoff only. Release remains
-NO-GO until the independent player/perception records and public-host checks in
-`../qa/QA_REPORT.md` are complete.
+The current local candidate and independent visual evidence support a
+`playable-prototype` PASS. This is not a polished vertical slice or showcase;
+evidence-qualified first-time-player records and deployment of the current
+fingerprint remain explicit, nonblocking publication boundaries.
+
+Superseded history: the 2026-07-31 `8793fb9` run took 509.894 seconds, executed
+sixteen commands and correctly remained NO-GO at that time. It is retained only
+as historical gameplay evidence and is not a competing current verdict.
