@@ -587,6 +587,19 @@ class RepositoryValidationTests(unittest.TestCase):
                     "AUDITION_APPROVED_NOT_RUNTIME_ADOPTED",
                 )
                 self.assertEqual(candidate_document["runtimeVoiceStrategy"], "none")
+                # The ownership fence runs both ways: an audition document must not be able to
+                # rescope, recast or re-bound the trial the provider config declared.
+                for provider_field in (
+                    "scope",
+                    "source",
+                    "reference_env",
+                    "file",
+                    "metadata_file",
+                    "minimum_seconds",
+                    "maximum_seconds",
+                    "candidate_ref",
+                ):
+                    self.assertNotIn(provider_field, candidate_document["candidate"])
                 art_direction = (
                     ROOT / candidate_ref
                 ).with_name("ART_DIRECTION.md").read_text(encoding="utf-8")
@@ -654,26 +667,15 @@ class RepositoryValidationTests(unittest.TestCase):
             }.issubset(matrix_ids)
         )
 
-    def test_fish_audio_adapter_has_secret_retry_and_response_guards(self) -> None:
-        client = (
-            ROOT
-            / "examples/project-plateau/build/media/remotion/scripts/fish-tts-client.mjs"
-        ).read_text(encoding="utf-8")
+    def test_review_scenario_generator_attests_rights_and_records_requests(self) -> None:
+        # The adapter's own guards (timeout, bounded retry, Retry-After, redirect refusal, response
+        # validation, streaming size limit, secret redaction) are asserted behaviourally in
+        # scripts/fish-tts-client.test.mjs, which runs in the same CI job. Only this generator has no
+        # JS test of its own, so its two runtime gates are checked here.
         generator = (
             ROOT
             / "examples/project-plateau/build/media/remotion/scripts/generate-tts-review-scenarios.mjs"
         ).read_text(encoding="utf-8")
-        for marker in (
-            "AbortSignal.timeout",
-            "retry-after",
-            "RETRYABLE_STATUSES",
-            "validateAudioResponse",
-            "getReader",
-            "reader.cancel",
-            "redirect: 'error'",
-            "[REDACTED]",
-        ):
-            self.assertIn(marker, client)
         self.assertIn("FISH_VOICE_RIGHTS_ATTESTED", generator)
         self.assertIn("requestSha256", generator)
 
@@ -683,7 +685,13 @@ class RepositoryValidationTests(unittest.TestCase):
         self.assertTrue(
             package["scripts"]["render"].startswith("npm run verify:voiceover:release")
         )
-        self.assertIn("voiceover-contract.test.mjs", package["scripts"]["test:tts"])
+        for suite in (
+            "fish-tts-client.test.mjs",
+            "audio-qa.test.mjs",
+            "tts-casting.test.mjs",
+            "voiceover-contract.test.mjs",
+        ):
+            self.assertIn(suite, package["scripts"]["test:tts"])
 
         review = json.loads(
             (remotion / "voiceover-review.json").read_text(encoding="utf-8")

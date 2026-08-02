@@ -118,6 +118,15 @@ for (const item of manifest.results || []) {
       });
     } else {
       const metadata = JSON.parse(await readFile(path.resolve(root, scenario.metadata_file), 'utf8'));
+      // Bind the recorded text hash to the narration script itself. The manifest copies textSha256
+      // out of this sidecar, so comparing the two back to each other proves nothing about the
+      // script that is actually shipped.
+      const scriptPath = path.resolve(repositoryRoot, scenario.source_ref || '');
+      if (!scenario.source_ref || !scriptPath.startsWith(`${repositoryRoot}${path.sep}`)) {
+        throw new Error('existing trial needs a repository-relative source_ref for its narration script');
+      }
+      const script = JSON.parse(await readFile(scriptPath, 'utf8'));
+      const scriptTextSha256 = createHash('sha256').update(String(script.text ?? '')).digest('hex');
       evaluation.checks.push({
         id: 'existing_provenance',
         passed:
@@ -125,8 +134,11 @@ for (const item of manifest.results || []) {
           metadata.sourceSha256 === metrics.sha256 &&
           item.textSha256 === metadata.textSha256 &&
           item.requestSha256 === metadata.requestSha256 &&
-          item.referenceSha256 === metadata.referenceSha256,
-        evidence: `schema ${metadata.schemaVersion}; source ${metadata.sourceSha256 || 'missing'}`,
+          item.referenceSha256 === metadata.referenceSha256 &&
+          metadata.textSha256 === scriptTextSha256,
+        evidence:
+          `schema ${metadata.schemaVersion}; source ${metadata.sourceSha256 || 'missing'}; ` +
+          `script ${scriptTextSha256} == recorded ${metadata.textSha256 || 'missing'}`,
       });
     }
     if (scenario?.scope === 'project-trial') {

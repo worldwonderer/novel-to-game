@@ -13,10 +13,14 @@ export function resolveVoiceoverReference(config, environment = process.env) {
   const configuredReferenceId = config.voice?.reference_id;
   const environmentReferenceId = environment.FISH_REFERENCE_ID;
   const referenceId = environmentReferenceId || configuredReferenceId;
+  // Only claim an environment override when the value actually differs from the committed one;
+  // otherwise re-verifying a take would require the same variable to still be exported.
+  const overridesConfigured =
+    Boolean(environmentReferenceId) && environmentReferenceId !== configuredReferenceId;
   return {
     referenceId,
     referenceSha256: referenceId ? sha256(referenceId) : null,
-    referenceSource: environmentReferenceId
+    referenceSource: overridesConfigured
       ? 'environment-provided-reference'
       : configuredReferenceId
         ? 'configured-public-reference'

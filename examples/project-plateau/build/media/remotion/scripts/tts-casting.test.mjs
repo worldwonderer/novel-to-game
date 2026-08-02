@@ -117,10 +117,84 @@ test('scenario coverage rejects missing, duplicate and extra manifest results', 
     manifest: {scope: 'project-trial', expectedScenarioIds: ['a', 'b'], results: [{id: 'a'}, {id: 'a'}]},
   });
   assert.equal(duplicate.find((check) => check.id === 'unique_scenario_ids').passed, false);
-  const misdeclared = scenarioCoverageChecks({
+  const extra = scenarioCoverageChecks({
     scope: 'project-trial',
     scenarios,
-    manifest: {scope: 'project-trial', expectedScenarioIds: ['a'], results: [{id: 'a'}, {id: 'b'}]},
+    manifest: {scope: 'project-trial', expectedScenarioIds: ['a', 'b'], results: [{id: 'a'}, {id: 'b'}, {id: 'c'}]},
   });
-  assert.equal(misdeclared.find((check) => check.id === 'declared_scenario_coverage').passed, false);
+  assert.equal(extra.find((check) => check.id === 'complete_scenario_coverage').passed, false);
+});
+
+test('an audition document cannot overwrite provider-owned scenario fields', async () => {
+  const auditionWith = (extra) => async () =>
+    JSON.stringify({
+      schemaVersion: 1,
+      status: 'AUDITION_APPROVED_NOT_RUNTIME_ADOPTED',
+      runtimeVoiceStrategy: 'none',
+      candidate: {
+        id: 'character-a',
+        project: 'game-a',
+        language: 'zh-Hans',
+        speaker: 'A',
+        voice_profile: profile('character-a', 'female'),
+        text: '一句试听。',
+        ...extra,
+      },
+    });
+  const scenario = {
+    id: 'character-a', project: 'game-a', scope: 'project-trial', source: 'generate',
+    reference_env: 'FISH_REFERENCE_ID_CHARACTER_A', candidate_ref: 'game-a/voice.json',
+  };
+  // Silently rescoping out of the trial set, or recasting onto the generic language voice, would
+  // otherwise pass every downstream check — they all compare the override against itself.
+  for (const override of [{scope: 'qa-matrix'}, {reference_env: 'FISH_REFERENCE_ID_ZH'}, {maximum_seconds: 999}]) {
+    await assert.rejects(
+      hydrateScenarioCandidates([scenario], {repositoryRoot: '/repo', readText: auditionWith(override)}),
+      /is owned by provider config/,
+    );
+  }
+  const [hydrated] = await hydrateScenarioCandidates([scenario], {
+    repositoryRoot: '/repo',
+    readText: auditionWith({}),
+  });
+  assert.equal(hydrated.scope, 'project-trial');
+  assert.equal(hydrated.reference_env, 'FISH_REFERENCE_ID_CHARACTER_A');
+});
+
+test('a candidate_ref cannot read outside the repository', async () => {
+  await assert.rejects(
+    hydrateScenarioCandidates(
+      [{id: 'character-a', project: 'game-a', scope: 'project-trial', source: 'generate', candidate_ref: '../secrets.json'}],
+      {repositoryRoot: '/repo', readText: async () => '{}'},
+    ),
+    /leaves the repository/,
+  );
+});
+
+test('an audition document that implies runtime adoption is rejected', async () => {
+  const document = (patch) => async () =>
+    JSON.stringify({
+      schemaVersion: 1,
+      status: 'AUDITION_APPROVED_NOT_RUNTIME_ADOPTED',
+      runtimeVoiceStrategy: 'none',
+      candidate: {id: 'character-a', project: 'game-a', speaker: 'A'},
+      ...patch,
+    });
+  const scenario = {
+    id: 'character-a', project: 'game-a', scope: 'project-trial', source: 'generate',
+    candidate_ref: 'game-a/voice.json',
+  };
+  for (const patch of [{schemaVersion: 2}, {status: 'APPROVED'}, {runtimeVoiceStrategy: 'key-lines'}]) {
+    await assert.rejects(
+      hydrateScenarioCandidates([scenario], {repositoryRoot: '/repo', readText: document(patch)}),
+      /incomplete or implies runtime adoption/,
+    );
+  }
+  await assert.rejects(
+    hydrateScenarioCandidates([scenario], {
+      repositoryRoot: '/repo',
+      readText: document({candidate: {id: 'someone-else', project: 'game-a'}}),
+    }),
+    /identity does not match/,
+  );
 });

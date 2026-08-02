@@ -13,6 +13,19 @@ const REQUIRED_PROFILE_FIELDS = [
   'must_not_sound_like',
 ];
 const CANDIDATE_OWNED_FIELDS = ['language', 'speaker', 'voice_profile', 'text', 'source_ref', 'reason'];
+// The ownership fence has to hold in both directions. Without this list an audition document could
+// overwrite its own scope, casting reference or duration bounds and every downstream check — which
+// hydrates the same way — would compare the override against itself and pass.
+const PROVIDER_OWNED_FIELDS = [
+  'scope',
+  'source',
+  'reference_env',
+  'file',
+  'metadata_file',
+  'minimum_seconds',
+  'maximum_seconds',
+  'candidate_ref',
+];
 
 export async function hydrateScenarioCandidates(scenarios, {repositoryRoot, readText = readFile} = {}) {
   const root = path.resolve(repositoryRoot);
@@ -38,6 +51,11 @@ export async function hydrateScenarioCandidates(scenarios, {repositoryRoot, read
       }
       if (document.candidate?.id !== scenario.id || document.candidate?.project !== scenario.project) {
         throw new Error(`${scenario.id}: audition candidate identity does not match provider config.`);
+      }
+      for (const field of PROVIDER_OWNED_FIELDS) {
+        if (document.candidate[field] !== undefined) {
+          throw new Error(`${scenario.id}: ${field} is owned by provider config, not ${scenario.candidate_ref}.`);
+        }
       }
       return {...scenario, ...document.candidate, candidateStatus: document.status};
     }),
@@ -71,11 +89,6 @@ export function scenarioCoverageChecks({scope, scenarios, manifest}) {
       id: 'unique_scenario_ids',
       passed: unique.length === actual.length,
       evidence: `${unique.length} unique == ${actual.length} result(s)`,
-    },
-    {
-      id: 'declared_scenario_coverage',
-      passed: JSON.stringify(manifest.expectedScenarioIds) === JSON.stringify(expected),
-      evidence: `declared ${JSON.stringify(manifest.expectedScenarioIds || [])}; expected ${JSON.stringify(expected)}`,
     },
     {
       id: 'complete_scenario_coverage',

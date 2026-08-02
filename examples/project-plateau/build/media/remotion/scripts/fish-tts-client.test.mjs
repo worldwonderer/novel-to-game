@@ -232,12 +232,18 @@ test('network failures retry only up to the configured attempt limit', async () 
       body: {text: 'hello', format: 'mp3'},
       fetchImpl: async () => {
         calls += 1;
-        throw new Error('socket closed');
+        throw new Error('socket closed while sending Bearer test-secret');
       },
       sleep: async () => {},
       maxAttempts: 2,
     }),
-    /socket closed/,
+    (error) => {
+      assert.match(error.message, /socket closed/);
+      // A transport error can echo the outgoing Authorization header back at us.
+      assert.doesNotMatch(error.message, /test-secret/);
+      assert.match(error.message, /\[REDACTED\]/);
+      return true;
+    },
   );
   assert.equal(calls, 2);
 });

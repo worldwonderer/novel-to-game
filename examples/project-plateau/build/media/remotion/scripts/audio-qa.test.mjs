@@ -83,6 +83,79 @@ test('audio evaluation records and enforces the declared bitrate budget', () => 
   assert.ok(result.checks.some((item) => item.id === 'bitrate' && !item.passed));
 });
 
+// The release verifier runs on gitignored audio, so CI never executes it. These pure cases are the
+// only thing standing between a neutered gate and a green build: hold a full pass baseline and break
+// one criterion at a time, using the exact criteria verify-voiceover.mjs applies to the final WAV.
+test('every declared audio gate fails on its own', () => {
+  const passing = {
+    bytes: 4096,
+    durationSeconds: 30,
+    codec: 'pcm_s16le',
+    sampleRate: 48000,
+    channels: 2,
+    activeSampleRatio: 0.7,
+    clippedSampleRatio: 0,
+    integratedLufs: -16,
+    truePeakDbfs: -5,
+    leadingSilenceSeconds: 0.1,
+    trailingSilenceSeconds: 0.1,
+  };
+  const criteria = {
+    codec: 'pcm_s16le',
+    sampleRate: 48000,
+    channels: 2,
+    minimumSeconds: 1,
+    maximumSeconds: 30.85,
+    minimumActiveRatio: 0.03,
+    maximumClippedRatio: 0.0001,
+    targetLufs: -16,
+    lufsTolerance: 1,
+    maximumTruePeakDbfs: -1.9,
+    maximumEdgeSilenceSeconds: 1,
+  };
+  assert.equal(evaluateAudio(passing, criteria).passed, true);
+
+  const breakages = [
+    ['non_empty_file', {bytes: 512}],
+    ['positive_duration', {durationSeconds: 0.1}],
+    ['duration_ceiling', {durationSeconds: 31}],
+    ['codec', {codec: 'mp3'}],
+    ['sample_rate', {sampleRate: 44100}],
+    ['channels', {channels: 1}],
+    ['audible_signal', {activeSampleRatio: 0.01}],
+    ['sample_clipping', {clippedSampleRatio: 0.01}],
+    ['integrated_loudness', {integratedLufs: -22}],
+    ['integrated_loudness', {integratedLufs: null}],
+    ['true_peak', {truePeakDbfs: -0.5}],
+    ['true_peak', {truePeakDbfs: null}],
+    ['leading_silence', {leadingSilenceSeconds: 2}],
+    ['leading_silence', {leadingSilenceSeconds: null}],
+    ['trailing_silence', {trailingSilenceSeconds: 2}],
+    ['trailing_silence', {trailingSilenceSeconds: null}],
+  ];
+  for (const [checkId, patch] of breakages) {
+    const result = evaluateAudio({...passing, ...patch}, criteria);
+    const label = JSON.stringify(patch);
+    assert.equal(result.passed, false, `evaluation survived ${label}`);
+    assert.equal(result.checks.find((item) => item.id === checkId).passed, false, `${checkId} ignored ${label}`);
+  }
+});
+
+test('loudness measurement reports a real integrated level and true peak', async (t) => {
+  const dir = await mkdtemp(path.join(os.tmpdir(), 'novel-to-game-audio-qa-loudness-'));
+  t.after(() => rm(dir, {recursive: true, force: true}));
+  const file = path.join(dir, 'tone.wav');
+  // A 0.25 full-scale sine has a deterministic true peak of 20*log10(0.25) = -12.04 dBFS. The
+  // integrated level varies between ffmpeg builds, so only assert that it was actually measured.
+  await writeFile(file, wavFixture({seconds: 4, amplitude: 0.25}));
+
+  const metrics = await inspectAudio(file);
+  assert.ok(Math.abs(metrics.truePeakDbfs - -12.04) <= 0.5, `true peak was ${metrics.truePeakDbfs}`);
+  assert.ok(Number.isFinite(metrics.integratedLufs), `integrated loudness was ${metrics.integratedLufs}`);
+  assert.ok(metrics.integratedLufs > -40 && metrics.integratedLufs < 0);
+  assert.ok(Number.isFinite(metrics.loudnessRangeLu));
+});
+
 test('audio inspection reports a silent file without mistaking it for usable speech', async (t) => {
   const dir = await mkdtemp(path.join(os.tmpdir(), 'novel-to-game-audio-qa-silence-'));
   t.after(() => rm(dir, {recursive: true, force: true}));

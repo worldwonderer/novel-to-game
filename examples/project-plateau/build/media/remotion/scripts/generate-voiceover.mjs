@@ -66,7 +66,7 @@ if (!reuseSource) {
   sourceMetadata = JSON.parse(rawMetadata);
   const sourceSha256 = sha256(sourceAudio);
   if (
-    ![3, VOICEOVER_METADATA_SCHEMA].includes(sourceMetadata.schemaVersion) ||
+    sourceMetadata.schemaVersion !== VOICEOVER_METADATA_SCHEMA ||
     sourceMetadata.provider !== 'fish-audio' ||
     sourceMetadata.endpoint !== requestContract.endpoint ||
     sourceMetadata.model !== config.model ||
@@ -79,11 +79,7 @@ if (!reuseSource) {
       'The ignored Fish Audio source does not match the current request contract. Regenerate it with a safe rotated environment credential; legacy sidecars are not silently trusted.',
     );
   }
-  console.log(
-    sourceMetadata.schemaVersion === 3
-      ? 'Reusing a fully hash-matched schema-3 Fish Audio source and upgrading its local sidecar.'
-      : 'Reusing the existing ignored Fish Audio source file.',
-  );
+  console.log('Reusing the existing ignored Fish Audio source file.');
 }
 
 const probe = spawnSync(

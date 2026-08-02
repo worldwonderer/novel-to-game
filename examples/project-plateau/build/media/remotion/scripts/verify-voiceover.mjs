@@ -1,4 +1,4 @@
-import {mkdir, readFile, writeFile} from 'node:fs/promises';
+import {mkdir, readFile, stat, writeFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';
 
@@ -8,6 +8,7 @@ import {
   buildVoiceoverRequestContract,
   evaluateVoiceoverProvenance,
   evaluateVoiceoverRelease,
+  sha256,
 } from './voiceover-contract.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -19,6 +20,20 @@ const normalizedPath = path.join(root, 'public', 'voiceover.wav');
 const metadataPath = path.join(root, 'public', 'voiceover-source.json');
 const reviewPath = path.join(root, 'voiceover-review.json');
 const outputPath = path.join(root, 'out', 'voiceover-qa.json');
+
+// The generated audio is ignored by Git, so a clean checkout has nothing to inspect. Report that as
+// NOT_RUN instead of letting ffprobe fail with a stack trace that reads like a broken toolchain.
+for (const target of [sourcePath, normalizedPath]) {
+  try {
+    await stat(target);
+  } catch {
+    console.error(
+      `NOT_RUN voiceover: ${path.relative(root, target)} is absent; ` +
+        'run `FISH_API_KEY=… FISH_VOICE_RIGHTS_ATTESTED=1 npm run voiceover` first.',
+    );
+    process.exit(2);
+  }
+}
 
 const [source, normalized] = await Promise.all([inspectAudio(sourcePath), inspectAudio(normalizedPath)]);
 const sourceEvaluation = evaluateAudio(source, {
@@ -57,14 +72,30 @@ try {
   review = {readError: error.code || error.message};
 }
 
+// Resolve the recorded reference by evidence, not by the free-text `reference` label the sidecar
+// carries: the label is not itself hash-bound, so trusting it turns a missing environment variable
+// into two opaque hash mismatches that read like tampering.
+const referenceCandidates = [
+  {id: process.env.FISH_REFERENCE_ID, origin: 'FISH_REFERENCE_ID'},
+  {id: config.voice?.reference_id, origin: 'voiceover.json voice.reference_id'},
+  {id: undefined, origin: 'provider default'},
+];
+const matchedReference = referenceCandidates.findIndex(
+  (candidate) => (candidate.id ? sha256(candidate.id) : null) === metadata.referenceSha256,
+);
 const referenceId =
-  metadata.reference === 'environment-provided-reference'
-    ? process.env.FISH_REFERENCE_ID
-    : metadata.reference === 'provider-default'
-      ? undefined
-      : config.voice?.reference_id;
+  matchedReference < 0 ? config.voice?.reference_id : referenceCandidates[matchedReference].id;
 const requestContract = buildVoiceoverRequestContract(config, referenceId);
-const normalizationPlan = buildNormalizationPlan(config, source.durationSeconds, source.sha256);
+// A source too long to fit even at 2x cannot have produced this WAV under this config. Record that
+// as a failed check rather than throwing, so out/voiceover-qa.json is still written for review.
+let normalizationPlan;
+let normalizationPlanError = null;
+try {
+  normalizationPlan = buildNormalizationPlan(config, source.durationSeconds, source.sha256);
+} catch (error) {
+  normalizationPlanError = error.message;
+  normalizationPlan = {speed: 1, filters: [], normalizationSha256: null};
+}
 const provenance = evaluateVoiceoverProvenance({
   metadata,
   config,
@@ -80,11 +111,31 @@ const release = evaluateVoiceoverRelease({
   normalizedSha256: normalized.sha256,
 });
 
+// Compare against the duration the normalization plan asked for, not against the raw source: the
+// plan deliberately time-compresses an overlong take by up to 2x, so a raw-source tolerance would
+// reject exactly the takes the safety valve exists to rescue.
+const plannedDurationSeconds = Number((source.durationSeconds / normalizationPlan.speed).toFixed(4));
 const crossChecks = [
   {
+    id: 'normalization_plan_is_buildable',
+    passed: normalizationPlanError === null,
+    evidence: normalizationPlanError || `${normalizationPlan.speed.toFixed(6)}x tempo plan`,
+  },
+  {
     id: 'source_and_normalized_duration_are_consistent',
-    passed: Math.abs(source.durationSeconds - normalized.durationSeconds) <= 2,
-    evidence: `${source.durationSeconds}s source; ${normalized.durationSeconds}s normalized`,
+    passed: Math.abs(normalized.durationSeconds - plannedDurationSeconds) <= 0.25,
+    evidence:
+      `${normalized.durationSeconds}s normalized; ${plannedDurationSeconds}s planned from ` +
+      `${source.durationSeconds}s at ${normalizationPlan.speed.toFixed(6)}x`,
+  },
+  {
+    id: 'recorded_reference_is_resolvable',
+    passed: matchedReference >= 0,
+    evidence:
+      matchedReference >= 0
+        ? `recorded reference resolved from ${referenceCandidates[matchedReference].origin}`
+        : `recorded referenceSha256 ${metadata.referenceSha256 ?? 'missing'} matches neither ` +
+          'FISH_REFERENCE_ID nor voiceover.json voice.reference_id; export the variable used at generation time',
   },
 ];
 const automatedPassed =
