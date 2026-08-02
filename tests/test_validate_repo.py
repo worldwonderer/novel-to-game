@@ -530,6 +530,20 @@ class RepositoryValidationTests(unittest.TestCase):
         self.assertIn("运行时不需要网络或密钥", contract)
         self.assertIn("人工试听", contract)
 
+        decision_method = (
+            ROOT / "skills/game-art-direction/references/art-direction-method.md"
+        ).read_text(encoding="utf-8")
+        for marker in (
+            "硬否决",
+            "增量价值",
+            "触发窗口",
+            "最小覆盖原则",
+            "宣传资产不自动变成游戏内资产",
+            "运行时动态",
+        ):
+            self.assertIn(marker, decision_method)
+        self.assertNotIn("Fish Audio", decision_method)
+
     def test_fish_audio_trials_are_sparse_and_never_release_assets_by_default(self) -> None:
         config = json.loads(
             (

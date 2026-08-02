@@ -42,8 +42,16 @@ PLUGIN_MANIFESTS = {
 MINIMAL_EVIDENCE_REQUIREMENTS = {
     "skills/game-art-direction/SKILL.md": (
         "语音策略",
+        "采用门禁",
         "静音 / 缺音降级",
         "音色权利",
+    ),
+    "skills/game-art-direction/references/art-direction-method.md": (
+        "硬否决",
+        "增量价值",
+        "触发窗口",
+        "最小覆盖原则",
+        "宣传资产不自动变成游戏内资产",
     ),
     "skills/game-build/references/build-brief-contract.md": (
         "targetRuntime:",
@@ -64,6 +72,8 @@ MINIMAL_EVIDENCE_REQUIREMENTS = {
         "服务端",
     ),
     "skills/game-build/references/tts-production-contract.md": (
+        "采用决策交接",
+        "决定=采用",
         "构建期优先",
         "最小发送",
         "Retry-After",
@@ -87,6 +97,8 @@ MINIMAL_EVIDENCE_REQUIREMENTS = {
         "API 密钥",
         "人工试听",
         "损坏文件",
+        "采用范围",
+        "scope drift",
     ),
 }
 EXAMPLE_PLANNING_FILES = {
