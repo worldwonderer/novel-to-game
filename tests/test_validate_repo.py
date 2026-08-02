@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import os
 import re
 import shutil
@@ -32,6 +33,8 @@ from validate_repo import (  # noqa: E402
     read_manifest,
     validate_example,
     validate_minimal_evidence_contract,
+    validate_publication,
+    validate_readme_publication_claims,
     validate_repository,
     validate_skill,
     validation_json_files,
@@ -40,6 +43,553 @@ from validate_repo import (  # noqa: E402
 
 
 class RepositoryValidationTests(unittest.TestCase):
+    def make_publication_fixture(
+        self, root: Path, *, tier: str = "showcase", target: str | None = None
+    ) -> Path:
+        example = root / "examples/demo"
+        (example / "qa").mkdir(parents=True)
+        (example / "build").mkdir()
+        (example / "design").mkdir()
+        target = target or tier
+        (example / "example.json").write_text(
+            json.dumps({"publicationTier": tier}), encoding="utf-8"
+        )
+        (example / "_progress.md").write_text(
+            "\n".join(
+                f"- gate:{gate} pass"
+                for gate in ("intake", "analyze", "concept", "design", "art", "build", "qa")
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        for relative in ("PRODUCT_BRIEF.md", "design/ART_DIRECTION.md"):
+            (example / relative).write_text(f"targetFinish: {target}\n", encoding="utf-8")
+        (example / "design/VISUAL_TARGETS.md").write_text(
+            f"targetFinish: {target}\n", encoding="utf-8"
+        )
+        (example / "qa/QA_REPORT.md").write_text(
+            f"targetFinish: {target}\n", encoding="utf-8"
+        )
+        (example / "build/BUILD_BRIEF.md").write_text(
+            f"targetFinish: {target}\n"
+            f"publicationTier: {tier}\n"
+            f"demonstratedTier: {tier}\n"
+            "grayboxReady: PASS\n"
+            "visualPromotion: PASS\n",
+            encoding="utf-8",
+        )
+        for relative in (
+            "qa/evidence/complete-run.json",
+            "qa/evidence/frame.png",
+            "qa/evidence/review.md",
+            "qa/evidence/promotion.md",
+            "build/evidence/hero.png",
+        ):
+            path = example / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text("evidence", encoding="utf-8")
+        verification = example / "qa/verification.json"
+        source_fingerprint = "f" * 64
+        verification.write_text(
+            json.dumps({"sourceFingerprint": source_fingerprint}), encoding="utf-8"
+        )
+        visual_manifest = example / "qa/evidence/visual-manifest.json"
+        visual_manifest.write_text(
+            json.dumps(
+                {"sourceFingerprint": source_fingerprint, "captures": []}
+            ),
+            encoding="utf-8",
+        )
+        visual_manifest_hash = hashlib.sha256(visual_manifest.read_bytes()).hexdigest()
+        (example / "build/asset-ledger.json").write_text(
+            json.dumps(
+                {
+                    "entries": [
+                        {
+                            "key": "hero",
+                            "tier": "release-gate",
+                            "status": "production",
+                            "releaseGatePassed": True,
+                            "evidence": ["evidence/hero.png"],
+                            "remaining": "none",
+                        }
+                    ]
+                }
+            ),
+            encoding="utf-8",
+        )
+        (example / "qa/release-gates.json").write_text(
+            json.dumps(
+                {
+                    "schemaVersion": 1,
+                    "sourceCommit": None,
+                    "evidenceCommit": None,
+                    "sourceFingerprint": source_fingerprint,
+                    "visualEvidenceManifests": [
+                        {
+                            "path": "qa/evidence/visual-manifest.json",
+                            "sha256": visual_manifest_hash,
+                        }
+                    ],
+                    "targetFinish": target,
+                    "publicationTier": tier,
+                    "demonstratedTier": tier,
+                    "pipelineGates": {
+                        "intake": "PASS",
+                        "analyze": "PASS",
+                        "concept": "PASS",
+                        "design": "PASS",
+                        "art": "PASS",
+                        "build": "PASS",
+                        "qa": "PASS",
+                    },
+                    "grayboxReady": {
+                        "status": "PASS",
+                        "evidence": ["qa/evidence/complete-run.json"],
+                    },
+                    "visualPromotion": {
+                        "status": "PASS",
+                        "evidence": ["qa/evidence/promotion.md"],
+                    },
+                    "visualFrames": [
+                        {
+                            "id": "signature",
+                            "status": "PASS",
+                            "operationPath": "Start a run and reach the signature frame.",
+                            "evidence": ["qa/evidence/frame.png"],
+                            "rubric": {
+                                "focus": "PASS",
+                                "silhouette": "PASS",
+                                "depth": "PASS",
+                                "materialLine": "PASS",
+                                "lightColor": "PASS",
+                                "hud": "PASS",
+                                "motionFeedback": "PASS",
+                                "artifacts": "PASS",
+                                "failureExamples": "PASS",
+                            },
+                        }
+                    ],
+                    "visualReview": {
+                        "required": True,
+                        "status": "PASS",
+                        "reviewer": "independent-reviewer",
+                        "independence": "Did not implement the build",
+                        "evidence": "qa/evidence/review.md",
+                    },
+                    "focalReleaseAssets": ["hero"],
+                    "degradableReleaseAssets": [],
+                    "unresolvedDefects": [],
+                }
+            ),
+            encoding="utf-8",
+        )
+        return example
+
+    def test_showcase_publication_requires_progress_gates(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            example = self.make_publication_fixture(Path(temporary))
+            (example / "_progress.md").write_text(
+                "- gate:art pass\n- gate:qa pass\n", encoding="utf-8"
+            )
+            issues = validate_publication(example, "showcase")
+            self.assertTrue(any("_progress.md: missing unambiguous gate:build pass" in issue for issue in issues), issues)
+
+    def test_showcase_publication_requires_release_gate_assets_to_pass(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            example = self.make_publication_fixture(Path(temporary))
+            ledger = json.loads((example / "build/asset-ledger.json").read_text())
+            ledger["entries"][0]["releaseGatePassed"] = False
+            (example / "build/asset-ledger.json").write_text(json.dumps(ledger))
+            issues = validate_publication(example, "showcase")
+            self.assertTrue(any("asset-ledger.json: hero.releaseGatePassed must be true" in issue for issue in issues), issues)
+
+    def test_showcase_publication_rejects_not_run_required_visual_review(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            example = self.make_publication_fixture(Path(temporary))
+            release = json.loads((example / "qa/release-gates.json").read_text())
+            release["visualReview"]["status"] = "NOT_RUN"
+            (example / "qa/release-gates.json").write_text(json.dumps(release))
+            issues = validate_publication(example, "showcase")
+            self.assertTrue(any("visualReview.status must be PASS" in issue for issue in issues), issues)
+
+    def test_showcase_publication_requires_matching_release_manifest_tier(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            example = self.make_publication_fixture(Path(temporary))
+            release = json.loads((example / "qa/release-gates.json").read_text())
+            release["publicationTier"] = "playable-prototype"
+            (example / "qa/release-gates.json").write_text(json.dumps(release))
+            issues = validate_publication(example, "showcase")
+            self.assertTrue(any("publicationTier must match example.json" in issue for issue in issues), issues)
+
+    def test_playable_publication_rejects_release_fingerprint_mismatch(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            example = self.make_publication_fixture(
+                Path(temporary), tier="playable-prototype"
+            )
+            release = json.loads((example / "qa/release-gates.json").read_text())
+            release["sourceFingerprint"] = "0" * 64
+            (example / "qa/release-gates.json").write_text(json.dumps(release))
+            issues = validate_publication(example, "playable-prototype")
+            self.assertTrue(any("sourceFingerprint must match qa/verification.json" in issue for issue in issues), issues)
+
+    def test_playable_visual_manifest_requires_embedded_source_fingerprint(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            example = self.make_publication_fixture(
+                Path(temporary), tier="playable-prototype"
+            )
+            manifest = example / "qa/evidence/visual-manifest.json"
+            manifest.write_text(json.dumps({"captures": []}), encoding="utf-8")
+            release = json.loads((example / "qa/release-gates.json").read_text())
+            release["visualEvidenceManifests"][0]["sha256"] = hashlib.sha256(
+                manifest.read_bytes()
+            ).hexdigest()
+            (example / "qa/release-gates.json").write_text(json.dumps(release))
+            issues = validate_publication(example, "playable-prototype")
+            self.assertTrue(any("sourceFingerprint is required above graybox" in issue for issue in issues), issues)
+
+    def test_playable_publication_rejects_stale_commit_with_current_fingerprint(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            example = self.make_publication_fixture(root, tier="playable-prototype")
+            app = example / "build/app"
+            app.mkdir()
+            (app / "index.html").write_text("old", encoding="utf-8")
+            subprocess.run(["git", "init", "-q"], cwd=root, check=True)
+            subprocess.run(["git", "config", "user.email", "qa@example.invalid"], cwd=root, check=True)
+            subprocess.run(["git", "config", "user.name", "QA"], cwd=root, check=True)
+            subprocess.run(["git", "add", "."], cwd=root, check=True)
+            subprocess.run(["git", "commit", "-qm", "old candidate"], cwd=root, check=True)
+            old_commit = subprocess.run(
+                ["git", "rev-parse", "HEAD"], cwd=root, check=True, capture_output=True, text=True
+            ).stdout.strip()
+            (app / "index.html").write_text("current", encoding="utf-8")
+            digest = hashlib.sha256()
+            digest.update(b"index.html\0current\0")
+            current_fingerprint = digest.hexdigest()
+            release = json.loads((example / "qa/release-gates.json").read_text())
+            release["sourceCommit"] = old_commit
+            release["sourceFingerprint"] = current_fingerprint
+            (example / "qa/release-gates.json").write_text(json.dumps(release))
+            (example / "qa/verification.json").write_text(
+                json.dumps({"sourceFingerprint": current_fingerprint}), encoding="utf-8"
+            )
+            issues = validate_publication(example, "playable-prototype")
+            self.assertTrue(any("sourceCommit fingerprint does not match" in issue for issue in issues), issues)
+
+    def test_graybox_and_playable_prototype_may_record_open_visual_work(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            for tier in ("graybox",):
+                example = self.make_publication_fixture(root / tier, tier=tier)
+                release = json.loads((example / "qa/release-gates.json").read_text())
+                release["sourceCommit"] = None
+                release["evidenceCommit"] = None
+                release["pipelineGates"]["art"] = "NOT_RUN"
+                release["visualReview"]["status"] = "NOT_RUN"
+                release["unresolvedDefects"] = [
+                    {"id": "V1", "severity": "major", "status": "OPEN", "summary": "open"}
+                ]
+                (example / "qa/release-gates.json").write_text(json.dumps(release))
+                self.assertEqual(validate_publication(example, tier), [])
+
+    def test_playable_prototype_rejects_open_major(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            example = self.make_publication_fixture(
+                Path(temporary), tier="playable-prototype"
+            )
+            release = json.loads((example / "qa/release-gates.json").read_text())
+            release["unresolvedDefects"] = [
+                {"id": "V1", "severity": "major", "status": "OPEN", "summary": "bad"}
+            ]
+            (example / "qa/release-gates.json").write_text(json.dumps(release))
+            self.assertTrue(any("open major" in issue for issue in validate_publication(example, "playable-prototype")))
+
+    def test_playable_prototype_requires_every_pipeline_gate(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            example = self.make_publication_fixture(Path(temporary), tier="playable-prototype")
+            release = json.loads((example / "qa/release-gates.json").read_text())
+            release["pipelineGates"]["concept"] = "NOT_RUN"
+            (example / "qa/release-gates.json").write_text(json.dumps(release))
+            issues = validate_publication(example, "playable-prototype")
+            self.assertTrue(any("pipelineGates.concept must be PASS" in issue for issue in issues), issues)
+
+    def test_progress_gate_parser_rejects_conflicting_anchored_statuses(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            example = self.make_publication_fixture(Path(temporary), tier="playable-prototype")
+            with (example / "_progress.md").open("a", encoding="utf-8") as progress:
+                progress.write("A note mentions gate:qa fail but is not a gate record.\n")
+                progress.write("- gate:qa fail (new verdict)\n")
+            issues = validate_publication(example, "playable-prototype")
+            self.assertTrue(any("conflicting statuses" in issue for issue in issues), issues)
+
+    def test_publication_tiers_must_follow_target_and_demonstrated_order(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            example = self.make_publication_fixture(Path(temporary), tier="showcase", target="playable-prototype")
+            release = json.loads((example / "qa/release-gates.json").read_text())
+            release["demonstratedTier"] = "graybox"
+            (example / "qa/release-gates.json").write_text(json.dumps(release))
+            issues = validate_publication(example, "showcase")
+            self.assertTrue(any("publicationTier exceeds targetFinish" in issue for issue in issues), issues)
+            self.assertTrue(any("publicationTier exceeds demonstratedTier" in issue for issue in issues), issues)
+
+    def test_demonstrated_tier_cannot_claim_playable_proof_under_graybox_publication(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            example = self.make_publication_fixture(
+                Path(temporary), tier="graybox", target="playable-prototype"
+            )
+            release = json.loads((example / "qa/release-gates.json").read_text())
+            release["demonstratedTier"] = "playable-prototype"
+            release["visualReview"]["status"] = "NOT_RUN"
+            (example / "qa/release-gates.json").write_text(json.dumps(release))
+            issues = validate_publication(example, "graybox")
+            self.assertTrue(any("visualReview.status must be PASS" in issue for issue in issues), issues)
+
+    def test_target_finish_must_be_inherited_without_conflicts(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            example = self.make_publication_fixture(Path(temporary), tier="graybox", target="playable-prototype")
+            (example / "design/ART_DIRECTION.md").write_text(
+                "targetFinish: playable-prototype\ntargetFinish: showcase\n", encoding="utf-8"
+            )
+            issues = validate_publication(example, "graybox")
+            self.assertTrue(any("ART_DIRECTION.md: conflicting targetFinish" in issue for issue in issues), issues)
+
+    def test_playable_prototype_requires_visual_frame_evidence(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            example = self.make_publication_fixture(Path(temporary), tier="playable-prototype")
+            release = json.loads((example / "qa/release-gates.json").read_text())
+            release["visualFrames"][0]["evidence"] = ["qa/evidence/missing.png"]
+            (example / "qa/release-gates.json").write_text(json.dumps(release))
+            issues = validate_publication(example, "playable-prototype")
+            self.assertTrue(any("visualFrames[0].evidence" in issue and "does not exist" in issue for issue in issues), issues)
+
+    def test_visual_frame_requires_operation_path_and_complete_rubric(self) -> None:
+        for field in ("operationPath", "rubric"):
+            with self.subTest(field=field), tempfile.TemporaryDirectory() as temporary:
+                example = self.make_publication_fixture(Path(temporary), tier="graybox")
+                release = json.loads((example / "qa/release-gates.json").read_text())
+                release["visualFrames"][0].pop(field)
+                (example / "qa/release-gates.json").write_text(json.dumps(release))
+                issues = validate_publication(example, "graybox")
+                self.assertTrue(any(f"visualFrames[0].{field}" in issue for issue in issues), issues)
+
+    def test_every_publication_tier_requires_graybox_ready_proof(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            example = self.make_publication_fixture(Path(temporary), tier="graybox")
+            release = json.loads((example / "qa/release-gates.json").read_text())
+            release["grayboxReady"]["evidence"] = []
+            (example / "qa/release-gates.json").write_text(json.dumps(release))
+            issues = validate_publication(example, "graybox")
+            self.assertTrue(any("grayboxReady.evidence must not be empty" in issue for issue in issues), issues)
+
+    def test_playable_prototype_requires_visual_promotion_proof(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            example = self.make_publication_fixture(Path(temporary), tier="playable-prototype")
+            release = json.loads((example / "qa/release-gates.json").read_text())
+            release["visualPromotion"]["evidence"] = []
+            (example / "qa/release-gates.json").write_text(json.dumps(release))
+            issues = validate_publication(example, "playable-prototype")
+            self.assertTrue(any("visualPromotion.evidence must not be empty" in issue for issue in issues), issues)
+
+    def test_playable_prototype_requires_review_identity_independence_and_evidence(self) -> None:
+        mutations = {
+            "reviewer": None,
+            "independence": "",
+            "evidence": "qa/evidence/missing-review.md",
+        }
+        for field, value in mutations.items():
+            with self.subTest(field=field), tempfile.TemporaryDirectory() as temporary:
+                example = self.make_publication_fixture(Path(temporary), tier="playable-prototype")
+                release = json.loads((example / "qa/release-gates.json").read_text())
+                release["visualReview"][field] = value
+                (example / "qa/release-gates.json").write_text(json.dumps(release))
+                issues = validate_publication(example, "playable-prototype")
+                self.assertTrue(any(f"visualReview.{field}" in issue for issue in issues), issues)
+
+    def test_playable_prototype_requires_review_to_be_required_and_passed(self) -> None:
+        for field, value in (("required", False), ("status", "NOT_RUN")):
+            with self.subTest(field=field), tempfile.TemporaryDirectory() as temporary:
+                example = self.make_publication_fixture(Path(temporary), tier="playable-prototype")
+                release = json.loads((example / "qa/release-gates.json").read_text())
+                release["visualReview"][field] = value
+                (example / "qa/release-gates.json").write_text(json.dumps(release))
+                issues = validate_publication(example, "playable-prototype")
+                self.assertTrue(any(f"visualReview.{field} must be" in issue for issue in issues), issues)
+
+    def test_release_evidence_cannot_escape_example_workspace(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            example = self.make_publication_fixture(Path(temporary), tier="playable-prototype")
+            release = json.loads((example / "qa/release-gates.json").read_text())
+            release["visualReview"]["evidence"] = "../../outside.md"
+            (example / "qa/release-gates.json").write_text(json.dumps(release))
+            issues = validate_publication(example, "playable-prototype")
+            self.assertTrue(any("visualReview.evidence leaves the example workspace" in issue for issue in issues), issues)
+
+    def test_playable_prototype_requires_focal_release_asset_proof(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            example = self.make_publication_fixture(Path(temporary), tier="playable-prototype")
+            ledger = json.loads((example / "build/asset-ledger.json").read_text())
+            ledger["entries"][0]["evidence"] = []
+            (example / "build/asset-ledger.json").write_text(json.dumps(ledger))
+            issues = validate_publication(example, "playable-prototype")
+            self.assertTrue(any("hero.evidence must not be empty" in issue for issue in issues), issues)
+
+    def test_playable_prototype_rejects_unclassified_release_gate_asset(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            example = self.make_publication_fixture(Path(temporary), tier="playable-prototype")
+            ledger = json.loads((example / "build/asset-ledger.json").read_text())
+            ledger["entries"].append(
+                {
+                    "key": "hidden-graybox",
+                    "tier": "release-gate",
+                    "status": "functional-graybox",
+                    "releaseGatePassed": False,
+                    "evidence": ["evidence/hero.png"],
+                    "remaining": "visual promotion",
+                }
+            )
+            (example / "build/asset-ledger.json").write_text(json.dumps(ledger))
+            issues = validate_publication(example, "playable-prototype")
+            self.assertTrue(any("unclassified release-gate asset hidden-graybox" in issue for issue in issues), issues)
+
+    def test_visual_targets_inherits_target_finish_when_present(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            example = self.make_publication_fixture(Path(temporary), tier="graybox")
+            (example / "design/VISUAL_TARGETS.md").write_text(
+                "targetFinish: showcase\n", encoding="utf-8"
+            )
+            issues = validate_publication(example, "graybox")
+            self.assertTrue(any("VISUAL_TARGETS.md: targetFinish must match" in issue for issue in issues), issues)
+
+    def test_qa_report_inherits_target_finish_without_conflicts(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            example = self.make_publication_fixture(Path(temporary), tier="graybox")
+            (example / "qa/QA_REPORT.md").write_text(
+                "targetFinish: graybox\ntargetFinish: showcase\n", encoding="utf-8"
+            )
+            issues = validate_publication(example, "graybox")
+            self.assertTrue(any("QA_REPORT.md: conflicting targetFinish" in issue for issue in issues), issues)
+
+    def test_build_brief_release_states_must_match_manifest(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            example = self.make_publication_fixture(Path(temporary), tier="graybox")
+            brief = example / "build/BUILD_BRIEF.md"
+            brief.write_text(
+                brief.read_text().replace("visualPromotion: PASS", "visualPromotion: FAIL"),
+                encoding="utf-8",
+            )
+            issues = validate_publication(example, "graybox")
+            self.assertTrue(any("BUILD_BRIEF.md: visualPromotion must match" in issue for issue in issues), issues)
+
+    def test_release_gate_ledger_requires_status_remaining_and_existing_evidence(self) -> None:
+        mutations = {
+            "status": None,
+            "remaining": None,
+            "evidence": ["evidence/missing.png"],
+        }
+        for field, value in mutations.items():
+            with self.subTest(field=field), tempfile.TemporaryDirectory() as temporary:
+                example = self.make_publication_fixture(Path(temporary), tier="playable-prototype")
+                ledger = json.loads((example / "build/asset-ledger.json").read_text())
+                ledger["entries"][0][field] = value
+                (example / "build/asset-ledger.json").write_text(json.dumps(ledger))
+                issues = validate_publication(example, "playable-prototype")
+                self.assertTrue(any(f".{field}" in issue for issue in issues), issues)
+
+    def test_degradable_asset_requires_structured_fallback_proof(self) -> None:
+        mutations = {
+            "missing": None,
+            "empty_behavior": {
+                "behavior": "",
+                "preserved": {key: True for key in ("coreAction", "state", "result", "readableFeedback", "restart")},
+                "evidence": ["evidence/hero.png"],
+            },
+            "bad_path": {
+                "behavior": "Use readable authored feedback.",
+                "preserved": {key: True for key in ("coreAction", "state", "result", "readableFeedback", "restart")},
+                "evidence": ["evidence/missing-fallback.png"],
+            },
+        }
+        for label, fallback in mutations.items():
+            with self.subTest(case=label), tempfile.TemporaryDirectory() as temporary:
+                example = self.make_publication_fixture(Path(temporary), tier="playable-prototype")
+                release = json.loads((example / "qa/release-gates.json").read_text())
+                release["focalReleaseAssets"] = []
+                release["degradableReleaseAssets"] = ["hero"]
+                (example / "qa/release-gates.json").write_text(json.dumps(release))
+                ledger = json.loads((example / "build/asset-ledger.json").read_text())
+                if fallback is None:
+                    ledger["entries"][0].pop("fallback", None)
+                else:
+                    ledger["entries"][0]["fallback"] = fallback
+                (example / "build/asset-ledger.json").write_text(json.dumps(ledger))
+                issues = validate_publication(example, "playable-prototype")
+                self.assertTrue(any("hero.fallback" in issue for issue in issues), issues)
+
+    def test_current_public_host_pass_requires_release_fingerprint(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            example = self.make_publication_fixture(Path(temporary), tier="playable-prototype")
+            report = example / "qa/evidence/public-host.json"
+            report.write_text(
+                json.dumps({"source": {"sha256": "a" * 64}}), encoding="utf-8"
+            )
+            release = json.loads((example / "qa/release-gates.json").read_text())
+            release["publicHost"] = {
+                "status": "PASS",
+                "evidence": "qa/evidence/public-host.json",
+                "sourceFingerprint": "a" * 64,
+            }
+            (example / "qa/release-gates.json").write_text(json.dumps(release))
+            issues = validate_publication(example, "playable-prototype")
+            self.assertTrue(any("publicHost PASS fingerprint must match release sourceFingerprint" in issue for issue in issues), issues)
+
+    def test_readme_featured_claim_must_point_to_showcase(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / "examples/demo").mkdir(parents=True)
+            (root / "examples/demo/example.json").write_text(
+                json.dumps({"publicationTier": "playable-prototype"})
+            )
+            (root / "README.md").write_text(
+                "## Play Online\n\n### Demo · Featured\n[Case](examples/demo/)\n", encoding="utf-8"
+            )
+            (root / "README_ZH.md").write_text(
+                "## 在线试玩\n\n### Demo · 精选\n[案例](examples/demo/)\n", encoding="utf-8"
+            )
+            issues = validate_readme_publication_claims(root)
+            self.assertTrue(any("README.md" in issue and "showcase" in issue for issue in issues), issues)
+            self.assertTrue(any("README_ZH.md" in issue and "showcase" in issue for issue in issues), issues)
+
+    def test_readme_example_link_order_must_match_between_languages(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / "README.md").write_text(
+                "[A](examples/a/) [B](examples/b/)", encoding="utf-8"
+            )
+            (root / "README_ZH.md").write_text(
+                "[乙](examples/b/) [甲](examples/a/)", encoding="utf-8"
+            )
+            issues = validate_readme_publication_claims(root)
+            self.assertTrue(any("example link order must match" in issue for issue in issues), issues)
+
+    def test_readme_public_listing_must_use_manifest_tier_label(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / "examples/demo").mkdir(parents=True)
+            (root / "examples/demo/example.json").write_text(
+                json.dumps({"publicationTier": "graybox"}), encoding="utf-8"
+            )
+            (root / "README.md").write_text(
+                "## Play Online\n\n### Demo · Playable prototype\n[Case](examples/demo/)\n",
+                encoding="utf-8",
+            )
+            (root / "README_ZH.md").write_text(
+                "## 在线试玩\n\n### Demo · 可玩原型\n[案例](examples/demo/)\n",
+                encoding="utf-8",
+            )
+            issues = validate_readme_publication_claims(root)
+            self.assertTrue(any("must be labelled graybox" in issue for issue in issues), issues)
+
     def test_repository_contract_is_valid(self) -> None:
         self.assertEqual(validate_repository(ROOT), [])
 

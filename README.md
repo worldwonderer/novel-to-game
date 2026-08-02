@@ -12,7 +12,7 @@ Bring a novel in any language and choose the target runtime. Generated artifacts
 
 ## Play Online
 
-### Project Plateau · Featured 3D adaptation
+### Project Plateau · Playable prototype · 3D
 
 A real-time **first-person 3D field-photography game** adapted from Arthur Conan Doyle's *The Lost World*. Cross a connected plateau, observe a living Iguanodon family, expose four glass plates under aerial pressure, and return with the views that survived.
 
@@ -20,11 +20,11 @@ A real-time **first-person 3D field-photography game** adapted from Arthur Conan
 
 https://github.com/user-attachments/assets/4d0b501e-09be-49b6-9070-c605afce3fae
 
-**[Play in your browser — no install](https://plateau.vibecoco.ai)** · **[Explore the complete case study](examples/project-plateau/)** · [Share feedback](https://github.com/worldwonderer/novel-to-game/discussions/7)
+**[Historical browser preview — not current release evidence](https://plateau.vibecoco.ai)** · **[Explore the complete case study](examples/project-plateau/)** · [Share feedback](https://github.com/worldwonderer/novel-to-game/discussions/7)
 
-### More playable adaptations
+### More works in progress
 
-| [Journey to the West · Three Borrowings of the Banana Fan](examples/journey-to-the-west/) | [Jin Ping Mei · Ledger of Desire](examples/jin-ping-mei/) |
+| [Journey to the West · Three Borrowings of the Banana Fan · Graybox](examples/journey-to-the-west/) | [Jin Ping Mei · Ledger of Desire · Graybox](examples/jin-ping-mei/) |
 |---|---|
 | [![Three Borrowings title screen](examples/journey-to-the-west/screenshots/title.jpg)](https://xiyouji.vibecoco.ai) | [![Ledger of Desire title screen](examples/jin-ping-mei/screenshots/title.jpg)](https://jinpingmei.vibecoco.ai) |
 | Turn-based systems RPG with elements, formations, transformations, a companion, and a multi-stage boss | 18+ six-day relationship strategy game built around character agency, resources, social debts, and three endings |
