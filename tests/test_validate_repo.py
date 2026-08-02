@@ -540,6 +540,8 @@ class RepositoryValidationTests(unittest.TestCase):
             "最小覆盖原则",
             "宣传资产不自动变成游戏内资产",
             "运行时动态",
+            "角色级选角",
+            "性别呈现",
         ):
             self.assertIn(marker, decision_method)
         self.assertNotIn("Fish Audio", decision_method)
@@ -566,12 +568,32 @@ class RepositoryValidationTests(unittest.TestCase):
             counts[trial["project"]] = counts.get(trial["project"], 0) + 1
             self.assertNotIn("source/", str(trial))
             self.assertIn("source_ref", trial)
+            self.assertIn("speaker", trial)
+            profile = trial["voice_profile"]
+            for field in (
+                "casting_id",
+                "role",
+                "gender_presentation",
+                "age_presentation",
+                "delivery",
+                "must_not_sound_like",
+            ):
+                self.assertTrue(profile[field])
             source_path = ROOT / trial["source_ref"].split("#", 1)[0]
             self.assertTrue(source_path.is_file(), source_path)
             if trial["source"] == "generate":
+                self.assertRegex(trial["reference_env"], r"^FISH_REFERENCE_ID_[A-Z0-9_]+$")
                 spoken_text = re.sub(r"^\[[^]]+\]\s*", "", trial["text"])
                 self.assertIn(spoken_text, source_path.read_text(encoding="utf-8"))
+            elif source_path.suffix == ".json":
+                source_voice = json.loads(source_path.read_text(encoding="utf-8"))["voice"]
+                self.assertEqual(trial["speaker"], source_voice["speaker"])
+                for field in ("casting_id", "role", "gender_presentation", "age_presentation"):
+                    self.assertEqual(profile[field], source_voice[field])
         self.assertTrue(all(count == 1 for count in counts.values()))
+        generated = [trial for trial in trials if trial["source"] == "generate"]
+        self.assertEqual(len(generated), len({trial["reference_env"] for trial in generated}))
+        self.assertEqual(len(trials), len({trial["voice_profile"]["casting_id"] for trial in trials}))
 
         jin_ping_mei = next(
             item for item in trials if item["project"] == "jin-ping-mei"

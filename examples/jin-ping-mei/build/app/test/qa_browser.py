@@ -246,6 +246,50 @@ def main() -> int:
             check("明确成人" in page.locator("#age-gate").inner_text(), "年龄门说明明确成人内容")
             check(page.locator("#scene-image,.title-art").count() == 0, "确认成年前不把 CG 放进 DOM")
             shot(page, SAFE, "01_age_gate")
+            page.evaluate("document.documentElement.style.fontSize = '200%'")
+            page.wait_for_timeout(80)
+            viewport_width = page.evaluate("innerWidth")
+            viewport_height = page.evaluate("innerHeight")
+            for selector in [".age-gate .eyebrow", ".age-gate h1", ".age-gate p:not(.eyebrow)", ".age-gate .button-row"]:
+                node = page.locator(selector)
+                box = node.bounding_box()
+                check(
+                    bool(
+                        box
+                        and box["x"] >= 0
+                        and box["x"] + box["width"] <= viewport_width
+                        and box["y"] >= 0
+                        and box["y"] + box["height"] <= viewport_height
+                    ),
+                    f"200% 文字缩放时 {selector} 不越出视口",
+                )
+            body_copy = page.locator(".age-gate p:not(.eyebrow)")
+            body_box = body_copy.bounding_box()
+            check(
+                bool(
+                    body_box
+                    and body_box["x"] >= viewport_width * 0.15
+                    and body_box["x"] + body_box["width"] <= viewport_width * 0.85
+                ),
+                "200% 文字缩放时年龄说明仍留在安全边距内",
+            )
+            frame_width = page.locator("#age-gate").evaluate("e => parseFloat(getComputedStyle(e, '::before').width)")
+            frame_left = (viewport_width - frame_width) / 2
+            check(
+                bool(
+                    body_box
+                    and body_box["x"] >= frame_left
+                    and body_box["x"] + body_box["width"] <= frame_left + frame_width
+                ),
+                "200% 文字缩放时年龄说明不越出装饰框",
+            )
+            check(
+                body_copy.evaluate("e => e.scrollWidth <= e.clientWidth"),
+                "200% 文字缩放时年龄说明内部无横向溢出",
+            )
+            shot(page, SAFE, "01_age_gate_200pct_text")
+            page.evaluate("document.documentElement.style.fontSize = ''")
+            page.wait_for_timeout(80)
             click(page, "#btn-age-yes")
             check(page.locator(".title-screen").count() == 1, "确认后进入标题")
             check("你是西门庆" in page.locator(".identity-line").inner_text(), "标题明确玩家是西门庆")

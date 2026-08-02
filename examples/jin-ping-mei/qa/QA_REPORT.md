@@ -4,6 +4,8 @@
 
 - 自动化工程验收：**`PASS`**（2026-07-28 复审：F1、F2 两条 `major` 已修复并加断言，
   证据路径由 `/tmp` 改落工作区内 `qa/evidence/`，零 `blocker`、零 `major`）
+- 2026-08-01 可读性复审：年龄门新增 200% 文字缩放与装饰框边界门禁；加速和正常速度路径均
+  **140 通过 / 0 失败**，控制台与资源错误均为 0。
 - 裁决沿革：2026-07-25 记 `PASS 0/0/0`（已作废）→ 2026-07-26 复审记 `FAIL`
   （`/tmp` 证据失效 + 2 `major`）→ 2026-07-28 修复后记 `PASS`
 - `blocker`：0
@@ -38,7 +40,7 @@ node test/ledger.mjs
 # 结果：52 通过，0 失败
 
 python3 test/qa_browser.py
-# 结果：133 通过，0 失败
+# 结果：140 通过，0 失败
 # 控制台错误：0；关键资源失败：0
 ```
 
@@ -49,6 +51,7 @@ python3 test/qa_browser.py
 `qa/evidence/`，安全截图落 `qa/evidence/browser/safe/`，18+ 内部截图落受限子目录
 `qa/evidence/browser/adult/`（已 gitignore，不随仓库发布）。加速与正常速度（`QA_SLOW=1`）
 各复跑一轮，均 133 通过 / 0 失败，下表截图证据已重新生成、恢复有效。
+2026-08-01 布局修复后再次以加速和正常速度各复跑一轮，最新均为 140 通过 / 0 失败。
 
 ## 关键不变量
 
@@ -57,7 +60,8 @@ python3 test/qa_browser.py
 
 | 检查 | 结果 | 证据 |
 |---|---|---|
-| 确认成年前无 CG 进入 DOM | 通过 | `safe/01_age_gate.png`、浏览器断言 |
+| 确认成年前无 CG 进入 DOM | 通过 | `safe/01_age_gate.jpg`、浏览器断言 |
+| 年龄门在 200% 文字缩放时不越出视口或装饰框 | 通过 | `safe/01_age_gate_200pct_text.jpg`、横纵 bounding box 与 scrollWidth 断言 |
 | 开场明确“你是西门庆” | 通过 | `safe/02_title.png` |
 | 首个有意义选择写入公开历史 | 通过 | `safe/03_opening_choice_done.png`、状态断言 |
 | 白天资源能改变当夜可用选择 | 通过 | 纯引擎前置测试、三条浏览器路线 |
@@ -126,7 +130,7 @@ python3 test/qa_browser.py
 - `qa/evidence/automated.json`
 - `qa/evidence/design-invariants.md`（2026-07-26 复审静态对照）
 - `qa/evidence/browser/evidence.json`（2026-07-28 复跑：请求域、转场延迟、长任务、包体）
-- `qa/evidence/browser/safe/` 共 11 张：01_age_gate、02_title、03_opening_choice_done、
+- `qa/evidence/browser/safe/` 共 12 张：01_age_gate、01_age_gate_200pct_text、02_title、03_opening_choice_done、
   04_delayed_yue_morning、06_banquet_conflict、07_exclusive_ending、08_gallery_after_yue、
   09_jealousy_chain，以及 household_meng_yulou / household_sun_xuee / household_li_jiaoer
 

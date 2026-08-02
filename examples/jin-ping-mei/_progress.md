@@ -26,7 +26,8 @@
   `qa/evidence/browser/`（安全帧入库；18+ 内部验收帧按 game-build 契约放受限子目录
   并经 .gitignore 排除，可由 `python3 build/app/test/qa_browser.py` 复跑重建）
 - 引擎自测：`node build/app/test/ledger.mjs` 52 项通过；
-  浏览器：`python3 build/app/test/qa_browser.py` 130 项通过 / 控制台 0 报错 / 资源 0 失败
+  浏览器：`QA_SLOW=1 python3 build/app/test/qa_browser.py` 140 项通过 / 控制台 0 报错 / 资源 0 失败；
+  年龄门另覆盖 200% 文字缩放与装饰框边界
 - 人工证据：第 1 轮线上反馈确认“好很多”，指出文案有 AI 味、宅中角色与内容需扩充；
   尚缺完整 6–8 人记录，未跨过完整六深线／18–24 回合扩展硬门
 - 授权状态：原作 `public_domain_source`；新 CG 为本次生成资产

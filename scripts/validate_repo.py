@@ -51,6 +51,7 @@ MINIMAL_EVIDENCE_REQUIREMENTS = {
         "增量价值",
         "触发窗口",
         "最小覆盖原则",
+        "角色级选角",
         "宣传资产不自动变成游戏内资产",
     ),
     "skills/game-build/references/build-brief-contract.md": (
@@ -80,6 +81,7 @@ MINIMAL_EVIDENCE_REQUIREMENTS = {
         "请求指纹",
         "NOT_RUN: 原因",
         "人工试听",
+        "不得只按语言选一个",
     ),
     "skills/game-qa/SKILL.md": (
         "ORPHANED_TEST_SUITE",
@@ -96,6 +98,7 @@ MINIMAL_EVIDENCE_REQUIREMENTS = {
         "同一个 source commit",
         "API 密钥",
         "人工试听",
+        "说话人与选角",
         "损坏文件",
         "采用范围",
         "scope drift",

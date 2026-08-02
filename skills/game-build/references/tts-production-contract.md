@@ -29,9 +29,12 @@
 
 生成前建立唯一真值：
 
-`line_id | 角色/旁白 | 触发状态 | 逐字台词 | 语言 | 字幕键 | 声口/情绪 | 专名读音 | 音色来源 | 权利证据 | 资产级别 | fallback`
+`line_id | 角色/旁白 | casting_id | 性别呈现/年龄感 | 触发状态 | 逐字台词 | 语言 | 字幕键 | 声口/情绪 | 专名读音 | 音色来源 | 权利证据 | 资产级别 | fallback`
 
 - 字幕与 TTS 输入由同一条 `line_id` 派生；修台词必须使旧音频指纹失效，不能只改字幕。
+- 每个角色从 ART_DIRECTION 的角色级选角表取得独立 `casting_id` 和音色引用；不得只按语言选一个
+  通用音色。原著 / 设计已锁定男声、女声或其他性别呈现时，构建须逐句保持；未锁定时不得猜测。
+  旁白与角色不得静默共用音色，一人分饰多角必须有方向层批准及可听辨差异。
 - 音色来源只用自录、授权真人、授权公共音色或合成设计音色。真人克隆须有书面许可；公共音色也要
   在发布时复核商业使用范围。权利证据不足的资产不得进入发布包。
 - 供应商条款、隐私、内容留存 / 训练用途、目标市场与商业发行许可在实际调用前复核；免费额度
@@ -68,7 +71,7 @@ HTTP 成功不等于音频可用。每个生成场景至少验证：
 
 `BUILD_BRIEF.md` 的语音资产台账在生成后逐条回写：
 
-`line_id | provider/model | voice provenance | request_sha256 | source path/sha256 | final path/sha256 | duration | codec/rate/channels | loudness | subtitle key | rights | generation result | listening result`
+`line_id | casting_id/speaker | provider/model | voice provenance | request_sha256 | source path/sha256 | final path/sha256 | duration | codec/rate/channels | loudness | subtitle key | rights | generation result | listening result`
 
 去密钥请求摘要、重试记录、解码 / 音频测量报告存入工作区内持久证据路径；临时 URL、供应商页面
 截图或“已经试听”口头说明都不算证据。生成音频能否进入 Git 由其授权与仓库体量政策决定，但最终

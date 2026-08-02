@@ -4,32 +4,33 @@ import {fileURLToPath} from 'node:url';
 import path from 'node:path';
 
 import {FISH_TTS_ENDPOINT, requestFingerprint, requestFishTts} from './fish-tts-client.mjs';
+import {resolveScenarioReference, validateProjectTrialCasting} from './tts-casting.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, '..');
-const config = JSON.parse(await readFile(path.join(root, 'tts-review-scenarios.json'), 'utf8'));
-const outputDir = path.join(root, 'out', 'tts-review-scenarios');
+const configText = await readFile(path.join(root, 'tts-review-scenarios.json'), 'utf8');
+const config = JSON.parse(configText);
 const scope = process.argv.includes('--matrix') ? 'qa-matrix' : 'project-trial';
+const outputDir = path.join(root, 'out', 'tts-review-scenarios', scope);
 const apiKey = process.env.FISH_API_KEY;
-const genericReferenceId = process.env.FISH_REFERENCE_ID;
-const chineseReferenceId = process.env.FISH_REFERENCE_ID_ZH;
+const selectedScenarios = config.scenarios.filter((item) => item.scope === scope && item.source === 'generate');
 
 if (!apiKey) throw new Error('FISH_API_KEY is required through the environment; a key pasted into chat must be rotated, not reused.');
-if (!genericReferenceId && !chineseReferenceId) {
-  throw new Error('FISH_REFERENCE_ID or FISH_REFERENCE_ID_ZH is required so the review voice and its usage rights are explicit.');
-}
 if (process.env.FISH_VOICE_RIGHTS_ATTESTED !== '1') {
   throw new Error('Set FISH_VOICE_RIGHTS_ATTESTED=1 to attest that the selected review voice may be used.');
 }
+validateProjectTrialCasting(config.scenarios);
+const preparedScenarios = selectedScenarios.map((scenario) => ({
+  scenario,
+  reference: resolveScenarioReference({scenario}),
+}));
 
 await mkdir(outputDir, {recursive: true, mode: 0o700});
 const results = [];
 const failures = [];
 
-for (const scenario of config.scenarios.filter((item) => item.scope === scope && item.source === 'generate')) {
-  const referenceId = scenario.language.startsWith('zh')
-    ? chineseReferenceId || genericReferenceId
-    : genericReferenceId || chineseReferenceId;
+for (const {scenario, reference} of preparedScenarios) {
+  const {referenceId, referenceEnv} = reference;
   const body = {
     text: scenario.text,
     reference_id: referenceId,
@@ -57,6 +58,8 @@ for (const scenario of config.scenarios.filter((item) => item.scope === scope &&
       status: 'GENERATED_NOT_APPROVED',
       project: scenario.project || null,
       language: scenario.language,
+      speaker: scenario.speaker || null,
+      voiceProfile: scenario.voice_profile || null,
       file: path.relative(root, target),
       provider: 'fish-audio',
       endpoint: FISH_TTS_ENDPOINT,
@@ -74,6 +77,7 @@ for (const scenario of config.scenarios.filter((item) => item.scope === scope &&
       minimumSeconds: scenario.minimum_seconds,
       maximumSeconds: scenario.maximum_seconds,
       reference: 'environment-provided-rights-attested-reference',
+      referenceEnv,
     });
     console.log(`Generated ${scenario.id} (${result.audio.length} bytes, ${result.attempts} attempt(s)).`);
   } catch (error) {
@@ -83,7 +87,8 @@ for (const scenario of config.scenarios.filter((item) => item.scope === scope &&
 }
 
 const manifest = {
-  schemaVersion: 1,
+  schemaVersion: 2,
+  scenarioConfigSha256: createHash('sha256').update(configText).digest('hex'),
   status: failures.length ? (results.length ? 'PARTIAL' : 'FAILED') : 'GENERATED_NOT_APPROVED',
   scope,
   policy: config.policy,
