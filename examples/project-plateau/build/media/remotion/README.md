@@ -62,10 +62,11 @@ repository. Review <https://docs.fish.audio/features/text-to-speech> and
 
 `tts-review-scenarios.json` deliberately selects only one high-value voice
 moment per game. Project Plateau reuses its existing launch narration;
-*Jin Ping Mei* tests the title hook, and *Journey to the West* tests the first
-Luosha confrontation. These are ignored review samples, not approved runtime
-assets. The tool sends only the selected line—never the novel, source bible or
-design documents—and requires an explicitly rights-attested voice reference.
+*Jin Ping Mei* tests one post-input Wu Yueniang boundary line, and *Journey to
+the West* tests the first Luosha confrontation. These are ignored review
+samples, not approved runtime assets. The tool sends only the selected
+line—never the novel, source bible or design documents—and requires an
+explicitly rights-attested voice reference.
 
 ```bash
 FISH_API_KEY=... \

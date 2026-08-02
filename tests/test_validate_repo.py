@@ -551,7 +551,19 @@ class RepositoryValidationTests(unittest.TestCase):
         for trial in trials:
             counts[trial["project"]] = counts.get(trial["project"], 0) + 1
             self.assertNotIn("source/", str(trial))
+            self.assertIn("source_ref", trial)
+            source_path = ROOT / trial["source_ref"].split("#", 1)[0]
+            self.assertTrue(source_path.is_file(), source_path)
+            if trial["source"] == "generate":
+                spoken_text = re.sub(r"^\[[^]]+\]\s*", "", trial["text"])
+                self.assertIn(spoken_text, source_path.read_text(encoding="utf-8"))
         self.assertTrue(all(count == 1 for count in counts.values()))
+
+        jin_ping_mei = next(
+            item for item in trials if item["project"] == "jin-ping-mei"
+        )
+        self.assertIn("yueniang", jin_ping_mei["id"])
+        self.assertNotIn("title", jin_ping_mei["id"])
 
         matrix_ids = {
             item["id"] for item in config["scenarios"] if item["scope"] == "qa-matrix"

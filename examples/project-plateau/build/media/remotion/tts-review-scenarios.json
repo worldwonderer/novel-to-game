@@ -24,18 +24,20 @@
       "language": "en-US",
       "source": "existing-file",
       "file": "public/voiceover-source.mp3",
+      "source_ref": "examples/project-plateau/build/media/remotion/voiceover.json",
       "reason": "Existing launch-video narration is the one approved voice-heavy surface."
     },
     {
-      "id": "jin-ping-mei-title-hook",
+      "id": "jin-ping-mei-yueniang-boundary",
       "scope": "project-trial",
       "project": "jin-ping-mei",
       "language": "zh-Hans",
       "source": "generate",
-      "text": "[calm, restrained] 今夜进谁的门，明早谁来敲你的门。",
+      "text": "[calm, firm, restrained] 官人，白日欠的话，先在这里说清。",
+      "source_ref": "examples/jin-ping-mei/build/app/js/data.js#HEROINES.wu_yueniang.voice",
       "minimum_seconds": 2,
       "maximum_seconds": 8,
-      "reason": "One title hook tests intimacy and social pressure without voicing the relationship scenes."
+      "reason": "One post-input character response tests period diction, restraint and relationship pressure without voicing every scene."
     },
     {
       "id": "journey-to-the-west-first-confrontation",
@@ -43,7 +45,8 @@
       "project": "journey-to-the-west",
       "language": "zh-Hans",
       "source": "generate",
-      "text": "[angry, controlled] 孙悟空！你还有脸上我这翠云山？",
+      "text": "[angry, controlled] 孙悟空!你还有脸上我这翠云山?",
+      "source_ref": "examples/journey-to-the-west/build/app/js/text.js#TEXT.story.luoshaPre1[0]",
       "minimum_seconds": 2,
       "maximum_seconds": 8,
       "reason": "One pivotal confrontation tests character presence without turning every dialogue box into speech."
