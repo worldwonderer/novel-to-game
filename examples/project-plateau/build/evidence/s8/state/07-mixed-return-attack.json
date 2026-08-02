@@ -6,18 +6,18 @@
   "renderer": "WebGL2",
   "player": {
     "position": {
-      "x": 2.682,
-      "z": 1.987
+      "x": 2.685,
+      "z": 1.992
     },
     "lastStablePosition": {
-      "x": 2.682,
-      "z": 1.987
+      "x": 2.685,
+      "z": 1.992
     },
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 23.124,
-    "distanceTravelled": 68.331,
+    "elapsedSeconds": 23.168,
+    "distanceTravelled": 68.323,
     "paused": false,
     "pauseReason": null,
     "boundaryRecoveries": 0,
@@ -38,7 +38,7 @@
     "threatAwareness": 3,
     "threatState": "attack",
     "lastThreatEvent": "plate-exposure:+2",
-    "attackSeconds": 0.084,
+    "attackSeconds": 0.08319999980926514,
     "examinedTrack": true,
     "observedBehavior": true,
     "lastObservation": "The young keep close while the adults feed.",
@@ -97,7 +97,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 156.876,
+    "remainingLight": 156.832,
     "returnRoute": null,
     "returnCostSeconds": 0,
     "returnStrike": false,
@@ -108,9 +108,9 @@
     "state": "attack",
     "response": "orbit",
     "position": {
-      "x": 5.66,
-      "y": 7.36,
-      "z": -13.32
+      "x": 5.03,
+      "y": 5.42,
+      "z": -13.42
     }
   },
   "familyVisual": {
@@ -156,7 +156,7 @@
         "young-play"
       ],
       "branchPresent": true,
-      "visibleParts": 57
+      "visibleParts": 142
     },
     "gladeComposition": {
       "sightlineHalfWidth": 22,
@@ -178,82 +178,82 @@
       {
         "cue": "examine",
         "caption": "[fern brushes aside; pencil marks the field card]",
-        "at": 58.16
+        "at": 57.856
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 58.165
+        "at": 57.867
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 58.24
+        "at": 57.952
       },
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 60.224
+        "at": 59.925
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 60.224
+        "at": 59.925
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 66.965
+        "at": 66.683
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 67.045
+        "at": 66.768
       },
       {
         "cue": "search",
         "caption": "[a near call circles overhead]",
-        "at": 69.029
+        "at": 68.752
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 69.029
+        "at": 68.752
       },
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 69.067
+        "at": 68.784
       },
       {
         "cue": "search",
         "caption": "[a near call circles overhead]",
-        "at": 72.683
+        "at": 72.411
       },
       {
         "cue": "examine",
         "caption": "[fern brushes aside; pencil marks the field card]",
-        "at": 72.992
+        "at": 72.731
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 72.997
+        "at": 72.736
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 73.072
+        "at": 72.816
       },
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 75.067
+        "at": 74.8
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 75.067
+        "at": 74.8
       }
     ]
   },
@@ -287,15 +287,15 @@
     "lightWatch": 157,
     "terminal": null
   },
-  "sceneChildren": 30,
-  "calls": 249,
-  "triangles": 49390,
-  "textures": 3,
-  "geometries": 95,
+  "sceneChildren": 36,
+  "calls": 1006,
+  "triangles": 140262,
+  "textures": 4,
+  "geometries": 338,
   "viewport": [
     1440,
     900
   ],
-  "firstRenderedAt": 192,
+  "firstRenderedAt": 187.90000009536743,
   "recentMedianFrameMs": 8.3
 }

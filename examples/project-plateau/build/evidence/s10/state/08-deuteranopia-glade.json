@@ -16,7 +16,7 @@
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 12.5,
+    "elapsedSeconds": 12.464,
     "distanceTravelled": 0,
     "paused": false,
     "pauseReason": null,
@@ -98,7 +98,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 167.5,
+    "remainingLight": 167.536,
     "returnRoute": null,
     "returnCostSeconds": 0,
     "returnStrike": false,
@@ -109,8 +109,8 @@
     "state": "search",
     "response": "orbit",
     "position": {
-      "x": -4.89,
-      "y": 10.66,
+      "x": -4.86,
+      "y": 8.66,
       "z": -28.7
     }
   },
@@ -157,7 +157,7 @@
         "young-play"
       ],
       "branchPresent": true,
-      "visibleParts": 57
+      "visibleParts": 142
     },
     "gladeComposition": {
       "sightlineHalfWidth": 22,
@@ -184,27 +184,27 @@
       {
         "cue": "examine",
         "caption": "[fern brushes aside; pencil marks the field card]",
-        "at": 0.197
+        "at": 0.181
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 0.208
+        "at": 0.192
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 0.293
+        "at": 0.283
       },
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 2.277
+        "at": 2.272
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 2.277
+        "at": 2.272
       },
       {
         "cue": "camera-raise",
@@ -214,7 +214,7 @@
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 2.533
+        "at": 2.539
       },
       {
         "cue": "attack",
@@ -229,12 +229,12 @@
       {
         "cue": "search",
         "caption": "[a near call circles overhead]",
-        "at": 10.597
+        "at": 10.603
       },
       {
         "cue": "examine",
         "caption": "[fern brushes aside; pencil marks the field card]",
-        "at": 10.699
+        "at": 10.688
       }
     ]
   },
@@ -268,15 +268,15 @@
     "lightWatch": 168,
     "terminal": null
   },
-  "sceneChildren": 30,
-  "calls": 248,
-  "triangles": 49480,
-  "textures": 3,
-  "geometries": 95,
+  "sceneChildren": 36,
+  "calls": 988,
+  "triangles": 139710,
+  "textures": 4,
+  "geometries": 338,
   "viewport": [
     1440,
     900
   ],
-  "firstRenderedAt": 220,
+  "firstRenderedAt": 176.79999995231628,
   "recentMedianFrameMs": 8.3
 }

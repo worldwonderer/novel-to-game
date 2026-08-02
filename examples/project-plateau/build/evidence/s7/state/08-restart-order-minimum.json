@@ -99,16 +99,16 @@
     "state": "distant",
     "response": "orbit",
     "position": {
-      "x": 28.07,
-      "y": 24.04,
-      "z": 50.1
+      "x": 28,
+      "y": 16.05,
+      "z": 50.15
     }
   },
   "familyVisual": {
     "moment": "glade-branch-pull",
     "adults": 2,
     "young": 3,
-    "branchAngle": 0.512,
+    "branchAngle": 0.513,
     "roles": [
       "graze",
       "branch-pull",
@@ -147,7 +147,7 @@
         "young-play"
       ],
       "branchPresent": true,
-      "visibleParts": 57
+      "visibleParts": 142
     },
     "gladeComposition": {
       "sightlineHalfWidth": 22,
@@ -174,27 +174,27 @@
       {
         "cue": "examine",
         "caption": "[fern brushes aside; pencil marks the field card]",
-        "at": 0.235
+        "at": 0.245
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 0.24
+        "at": 0.256
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 0.251
+        "at": 0.272
       },
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 2.245
+        "at": 2.251
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 2.245
+        "at": 2.251
       },
       {
         "cue": "search",
@@ -204,27 +204,27 @@
       {
         "cue": "examine",
         "caption": "[fern brushes aside; pencil marks the field card]",
-        "at": 2.315
+        "at": 2.32
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 2.32
+        "at": 2.331
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 2.405
+        "at": 2.416
       },
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 4.395
+        "at": 4.4
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 4.395
+        "at": 4.4
       },
       {
         "cue": "cover",
@@ -234,7 +234,7 @@
       {
         "cue": "result",
         "caption": "[glass plates settle on the light board]",
-        "at": 5.493
+        "at": 5.499
       }
     ]
   },
@@ -268,15 +268,15 @@
     "lightWatch": null,
     "terminal": null
   },
-  "sceneChildren": 30,
-  "calls": 248,
-  "triangles": 49360,
-  "textures": 3,
-  "geometries": 93,
+  "sceneChildren": 36,
+  "calls": 1024,
+  "triangles": 140638,
+  "textures": 4,
+  "geometries": 338,
   "viewport": [
     1280,
     720
   ],
-  "firstRenderedAt": 2215,
+  "firstRenderedAt": 2235.2000000476837,
   "recentMedianFrameMs": 8.3
 }

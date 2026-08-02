@@ -7,17 +7,17 @@
   "player": {
     "position": {
       "x": 3,
-      "z": 17.986
+      "z": 17.996
     },
     "lastStablePosition": {
       "x": 3,
-      "z": 17.986
+      "z": 17.996
     },
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 17.075,
-    "distanceTravelled": 52.014,
+    "elapsedSeconds": 17.001,
+    "distanceTravelled": 52.004,
     "paused": false,
     "pauseReason": null,
     "boundaryRecoveries": 0,
@@ -37,14 +37,14 @@
     "threatAwareness": 3,
     "threatState": "attack",
     "lastThreatEvent": "plate-exposure:+2",
-    "attackSeconds": 0.08359999990463256,
+    "attackSeconds": 0.0832999999523163,
     "examinedTrack": true,
     "observedBehavior": false,
     "lastObservation": "Three toes. Fresh. The brook runs back to camp.",
     "cameraRaised": false,
     "plateRailRevealed": true,
     "pendingExposure": null,
-    "previewSeconds": 3.9257000000476836,
+    "previewSeconds": 3.925000000000001,
     "lastProofEvent": {
       "plateIndex": 1,
       "frameKey": "basalt-scale",
@@ -96,7 +96,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 162.925,
+    "remainingLight": 162.998,
     "returnRoute": null,
     "returnCostSeconds": 0,
     "returnStrike": false,
@@ -107,9 +107,9 @@
     "state": "attack",
     "response": "orbit",
     "position": {
-      "x": 1.67,
-      "y": 10.97,
-      "z": 0.67
+      "x": 0.82,
+      "y": 9.94,
+      "z": 0.63
     }
   },
   "familyVisual": {
@@ -155,7 +155,7 @@
         "young-play"
       ],
       "branchPresent": true,
-      "visibleParts": 57
+      "visibleParts": 142
     },
     "gladeComposition": {
       "sightlineHalfWidth": 22,
@@ -177,52 +177,52 @@
       {
         "cue": "field-start",
         "caption": "[brook water and insects under the canopy]",
-        "at": 116.784
+        "at": 116.587
       },
       {
         "cue": "examine",
         "caption": "[fern brushes aside; pencil marks the field card]",
-        "at": 122.928
+        "at": 122.72
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 122.955
+        "at": 122.736
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 123.035
+        "at": 122.816
       },
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 125.024
+        "at": 124.8
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 125.024
+        "at": 124.8
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 131.685
+        "at": 131.435
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 131.776
+        "at": 131.52
       },
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 133.765
+        "at": 133.499
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 133.765
+        "at": 133.499
       }
     ]
   },
@@ -256,15 +256,15 @@
     "lightWatch": 163,
     "terminal": null
   },
-  "sceneChildren": 30,
-  "calls": 268,
-  "triangles": 50048,
-  "textures": 3,
-  "geometries": 98,
+  "sceneChildren": 36,
+  "calls": 1062,
+  "triangles": 142582,
+  "textures": 4,
+  "geometries": 341,
   "viewport": [
     1440,
     900
   ],
-  "firstRenderedAt": 192,
+  "firstRenderedAt": 187.90000009536743,
   "recentMedianFrameMs": 8.3
 }

@@ -2,7 +2,7 @@
   "stage": "s0-renderer",
   "source": {
     "scope": "index.html, package manifests, public assets and src",
-    "sha256": "e99883ce0a14f31782ac0dc6a91bd38f7e9869d86279d11ca04b5171a59af69d"
+    "sha256": "8329da6c8289acfa826e6cfb773e983f9fc270e366f5d375f679f21b5596c6c6"
   },
   "environment": {
     "node": "v25.9.0",
@@ -29,14 +29,14 @@
     "samples": 240,
     "medianFrameMs": 8.3,
     "medianFps": 120.5,
-    "onePercentLowFps": 106.4,
-    "worstFrameMs": 9.4
+    "onePercentLowFps": 100,
+    "worstFrameMs": 10.3
   },
   "loading": {
-    "observedTtiMs": 840.3,
+    "observedTtiMs": 1106.7,
     "budgetTtiMs": 8000,
-    "distRawBytes": 602904,
-    "distGzipBytes": 154906,
+    "distRawBytes": 615055,
+    "distGzipBytes": 158851,
     "initialCompressedBudgetBytes": 20971520
   },
   "render": {
@@ -57,7 +57,7 @@
       "heading": 0,
       "pitch": 0,
       "stance": "walk",
-      "elapsedSeconds": 1.006,
+      "elapsedSeconds": 1.005,
       "distanceTravelled": 0,
       "paused": false,
       "pauseReason": null,
@@ -129,7 +129,7 @@
       "failed": false,
       "failureCause": null,
       "contactCount": 0,
-      "remainingLight": 178.994,
+      "remainingLight": 178.995,
       "returnRoute": null,
       "returnCostSeconds": 0,
       "returnStrike": false,
@@ -140,9 +140,9 @@
       "state": "distant",
       "response": "orbit",
       "position": {
-        "x": 30.54,
-        "y": 23.71,
-        "z": 48.18
+        "x": 30.43,
+        "y": 15.74,
+        "z": 48.3
       }
     },
     "familyVisual": {
@@ -188,7 +188,7 @@
           "young-play"
         ],
         "branchPresent": true,
-        "visibleParts": 57
+        "visibleParts": 142
       },
       "gladeComposition": {
         "sightlineHalfWidth": 22,
@@ -244,16 +244,16 @@
       "lightWatch": null,
       "terminal": null
     },
-    "sceneChildren": 30,
-    "calls": 268,
-    "triangles": 50438,
-    "textures": 3,
-    "geometries": 93,
+    "sceneChildren": 36,
+    "calls": 1060,
+    "triangles": 142406,
+    "textures": 4,
+    "geometries": 336,
     "viewport": [
       1440,
       900
     ],
-    "firstRenderedAt": 184.70000004768372,
+    "firstRenderedAt": 185.90000009536743,
     "recentMedianFrameMs": 8.3
   },
   "minimumRender": {
@@ -274,7 +274,7 @@
       "heading": 0,
       "pitch": 0,
       "stance": "walk",
-      "elapsedSeconds": 3.805,
+      "elapsedSeconds": 3.821,
       "distanceTravelled": 0,
       "paused": false,
       "pauseReason": null,
@@ -346,7 +346,7 @@
       "failed": false,
       "failureCause": null,
       "contactCount": 0,
-      "remainingLight": 176.194,
+      "remainingLight": 176.179,
       "returnRoute": null,
       "returnCostSeconds": 0,
       "returnStrike": false,
@@ -357,9 +357,9 @@
       "state": "distant",
       "response": "orbit",
       "position": {
-        "x": 22.72,
-        "y": 24.2,
-        "z": 52.44
+        "x": 22.4,
+        "y": 16.19,
+        "z": 52.55
       }
     },
     "familyVisual": {
@@ -405,7 +405,7 @@
           "young-play"
         ],
         "branchPresent": true,
-        "visibleParts": 57
+        "visibleParts": 142
       },
       "gladeComposition": {
         "sightlineHalfWidth": 22,
@@ -461,16 +461,16 @@
       "lightWatch": null,
       "terminal": null
     },
-    "sceneChildren": 30,
-    "calls": 238,
-    "triangles": 49196,
-    "textures": 3,
-    "geometries": 93,
+    "sceneChildren": 36,
+    "calls": 642,
+    "triangles": 89982,
+    "textures": 4,
+    "geometries": 336,
     "viewport": [
       1280,
       720
     ],
-    "firstRenderedAt": 184.70000004768372,
+    "firstRenderedAt": 185.90000009536743,
     "recentMedianFrameMs": 8.3
   },
   "screenshots": [

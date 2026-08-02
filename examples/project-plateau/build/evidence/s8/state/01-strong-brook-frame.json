@@ -7,17 +7,17 @@
   "player": {
     "position": {
       "x": 3,
-      "z": 44.975
+      "z": 44.978
     },
     "lastStablePosition": {
       "x": 3,
-      "z": 44.975
+      "z": 44.978
     },
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 8.463,
-    "distanceTravelled": 25.025,
+    "elapsedSeconds": 8.414,
+    "distanceTravelled": 25.022,
     "paused": false,
     "pauseReason": null,
     "boundaryRecoveries": 0,
@@ -43,7 +43,7 @@
     "cameraRaised": false,
     "plateRailRevealed": true,
     "pendingExposure": null,
-    "previewSeconds": 3.9252999999523164,
+    "previewSeconds": 3.9250999999046323,
     "lastProofEvent": {
       "plateIndex": 0,
       "frameKey": "brook-partial",
@@ -95,7 +95,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 171.537,
+    "remainingLight": 171.586,
     "returnRoute": null,
     "returnCostSeconds": 0,
     "returnStrike": false,
@@ -106,9 +106,9 @@
     "state": "watch",
     "response": "orbit",
     "position": {
-      "x": -15.52,
-      "y": 10.8,
-      "z": 26.36
+      "x": -15.51,
+      "y": 8.8,
+      "z": 26.37
     }
   },
   "familyVisual": {
@@ -154,7 +154,7 @@
         "young-play"
       ],
       "branchPresent": true,
-      "visibleParts": 57
+      "visibleParts": 142
     },
     "gladeComposition": {
       "sightlineHalfWidth": 22,
@@ -181,27 +181,27 @@
       {
         "cue": "examine",
         "caption": "[fern brushes aside; pencil marks the field card]",
-        "at": 6.208
+        "at": 6.149
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 6.213
+        "at": 6.16
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 6.288
+        "at": 6.245
       },
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 8.277
+        "at": 8.229
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 8.277
+        "at": 8.229
       }
     ]
   },
@@ -235,15 +235,15 @@
     "lightWatch": 172,
     "terminal": null
   },
-  "sceneChildren": 30,
-  "calls": 270,
-  "triangles": 50460,
-  "textures": 3,
-  "geometries": 95,
+  "sceneChildren": 36,
+  "calls": 1050,
+  "triangles": 142326,
+  "textures": 4,
+  "geometries": 338,
   "viewport": [
     1440,
     900
   ],
-  "firstRenderedAt": 192,
+  "firstRenderedAt": 187.90000009536743,
   "recentMedianFrameMs": 8.3
 }

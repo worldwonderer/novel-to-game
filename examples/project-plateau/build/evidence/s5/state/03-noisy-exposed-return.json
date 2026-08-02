@@ -16,8 +16,8 @@
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 7.501,
-    "distanceTravelled": 1.256,
+    "elapsedSeconds": 7.543,
+    "distanceTravelled": 1.332,
     "paused": false,
     "pauseReason": null,
     "boundaryRecoveries": 0,
@@ -47,7 +47,7 @@
     "cameraRaised": false,
     "plateRailRevealed": true,
     "pendingExposure": null,
-    "previewSeconds": 3.257700000047688,
+    "previewSeconds": 3.2579000000953684,
     "lastProofEvent": {
       "plateIndex": 2,
       "frameKey": "glade-young-play",
@@ -99,7 +99,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 154.499,
+    "remainingLight": 154.457,
     "returnRoute": "exposed",
     "returnCostSeconds": 18,
     "returnStrike": false,
@@ -110,16 +110,16 @@
     "state": "watch",
     "response": "orbit",
     "position": {
-      "x": -36.11,
-      "y": 11.59,
-      "z": 28.57
+      "x": -36,
+      "y": 9.54,
+      "z": 28.78
     }
   },
   "familyVisual": {
     "moment": "glade-branch-pull",
     "adults": 2,
     "young": 3,
-    "branchAngle": 0.512,
+    "branchAngle": 0.507,
     "roles": [
       "graze",
       "branch-pull",
@@ -158,7 +158,7 @@
         "young-play"
       ],
       "branchPresent": true,
-      "visibleParts": 57
+      "visibleParts": 142
     },
     "gladeComposition": {
       "sightlineHalfWidth": 22,
@@ -180,82 +180,82 @@
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 3.637
+        "at": 3.563
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 3.701
+        "at": 3.632
       },
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 5.685
+        "at": 5.611
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 5.685
+        "at": 5.611
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 5.76
+        "at": 5.696
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 5.824
+        "at": 5.771
       },
       {
         "cue": "search",
         "caption": "[a near call circles overhead]",
-        "at": 7.819
+        "at": 7.755
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 7.819
+        "at": 7.755
       },
       {
         "cue": "examine",
         "caption": "[fern brushes aside; pencil marks the field card]",
-        "at": 7.893
+        "at": 7.829
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 7.904
+        "at": 7.84
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 7.968
+        "at": 7.909
       },
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 9.952
+        "at": 9.904
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 9.952
+        "at": 9.904
       },
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 10.379
+        "at": 10.336
       },
       {
         "cue": "rifle",
         "caption": "[rifle report; echo runs toward the brook]",
-        "at": 10.379
+        "at": 10.336
       },
       {
         "cue": "brook-response",
         "caption": "[brush thrashes beside the brook]",
-        "at": 10.459
+        "at": 10.411
       }
     ]
   },
@@ -289,15 +289,15 @@
     "lightWatch": 155,
     "terminal": null
   },
-  "sceneChildren": 30,
-  "calls": 278,
-  "triangles": 50536,
-  "textures": 3,
-  "geometries": 95,
+  "sceneChildren": 36,
+  "calls": 1068,
+  "triangles": 142798,
+  "textures": 4,
+  "geometries": 338,
   "viewport": [
     1440,
     900
   ],
-  "firstRenderedAt": 231.40000009536743,
+  "firstRenderedAt": 189.80000019073486,
   "recentMedianFrameMs": 8.3
 }

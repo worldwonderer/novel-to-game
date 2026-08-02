@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "command": "npm run capture:visual",
+  "sourceFingerprint": "8329da6c8289acfa826e6cfb773e983f9fc270e366f5d375f679f21b5596c6c6",
+  "scene": "glade-family-under-aerial-pressure",
+  "seed": 139,
+  "frozenAnimationSeconds": 4.25,
+  "captures": [
+    {
+      "id": "title-1440x900",
+      "path": "build/evidence/visual-upgrade/generated/title-1440x900.png",
+      "viewport": [
+        1440,
+        900
+      ],
+      "sha256": "0903b802f90cbbceec3f82f5b18a34c6e074e6e508d20cd8e6468ecb52e1930a",
+      "bytes": 771256,
+      "frozenAnimationSeconds": 4.25,
+      "familyMoment": null,
+      "threatState": "distant"
+    },
+    {
+      "id": "family-1440x900",
+      "path": "build/evidence/visual-upgrade/generated/family-1440x900.png",
+      "viewport": [
+        1440,
+        900
+      ],
+      "sha256": "7c7dc563cde0b789fa75cd6aaa41d47a940811a90572a8b64801d09092d81a6c",
+      "bytes": 783192,
+      "frozenAnimationSeconds": 4.25,
+      "familyMoment": "glade-young-play",
+      "threatState": "search"
+    },
+    {
+      "id": "dive-1440x900",
+      "path": "build/evidence/visual-upgrade/generated/dive-1440x900.png",
+      "viewport": [
+        1440,
+        900
+      ],
+      "sha256": "669703233b33c3c6753a0321c4bf0dfe0113ecd22537bc85aab8ec8916317f5d",
+      "bytes": 796062,
+      "frozenAnimationSeconds": 4.25,
+      "familyMoment": "glade-young-play",
+      "threatState": "attack"
+    },
+    {
+      "id": "title-1280x720",
+      "path": "build/evidence/visual-upgrade/generated/title-1280x720.png",
+      "viewport": [
+        1280,
+        720
+      ],
+      "sha256": "5141d5f878114572ea12f3fb66acae20a408bbce2bb58a974498c83d0fbe4c18",
+      "bytes": 593646,
+      "frozenAnimationSeconds": 4.25,
+      "familyMoment": null,
+      "threatState": "distant"
+    },
+    {
+      "id": "family-1280x720",
+      "path": "build/evidence/visual-upgrade/generated/family-1280x720.png",
+      "viewport": [
+        1280,
+        720
+      ],
+      "sha256": "d439b2f1693644885d48c93d09114e7c5b4075ba8cd76d7df5cf14ed02ef9e19",
+      "bytes": 590943,
+      "frozenAnimationSeconds": 4.25,
+      "familyMoment": "glade-young-play",
+      "threatState": "search"
+    },
+    {
+      "id": "dive-1280x720",
+      "path": "build/evidence/visual-upgrade/generated/dive-1280x720.png",
+      "viewport": [
+        1280,
+        720
+      ],
+      "sha256": "f7d5b789067a4680544bb0293407e5f5380788c0f397f7b530aa41d5f5b5c22b",
+      "bytes": 600457,
+      "frozenAnimationSeconds": 4.25,
+      "familyMoment": "glade-young-play",
+      "threatState": "attack"
+    }
+  ],
+  "contactSheet": {
+    "path": "build/evidence/visual-upgrade/generated/contact-sheet-supported-viewports.png",
+    "sha256": "61480871b2e06e015e572b282052ba229056492be167156055d0d0eb3eaca004",
+    "bytes": 589688
+  },
+  "targetHashes": {
+    "01-title-route.svg": "7a282e7165599ac6020a7abb015b1610e3593b17942989ddb326bbc3cf8cb274",
+    "02-glade-family.svg": "9d6af8aec91d2874092dda11ea9c109a6552442c7cf26c54a18dccc4f77f9e0a",
+    "03-aerial-pressure.svg": "15f57266802978a17751aa0b13f9174188af4fad27278d42d2adc2a17552da6a"
+  },
+  "consoleErrors": []
+}

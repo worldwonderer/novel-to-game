@@ -100,8 +100,8 @@
     "response": "orbit",
     "position": {
       "x": 31.94,
-      "y": 23.15,
-      "z": 45.64
+      "y": 15.16,
+      "z": 45.66
     }
   },
   "familyVisual": {
@@ -147,7 +147,7 @@
         "young-play"
       ],
       "branchPresent": true,
-      "visibleParts": 57
+      "visibleParts": 142
     },
     "gladeComposition": {
       "sightlineHalfWidth": 22,
@@ -197,15 +197,15 @@
     "lightWatch": null,
     "terminal": null
   },
-  "sceneChildren": 30,
-  "calls": 250,
-  "triangles": 49364,
-  "textures": 3,
-  "geometries": 81,
+  "sceneChildren": 36,
+  "calls": 1022,
+  "triangles": 140590,
+  "textures": 4,
+  "geometries": 324,
   "viewport": [
     1280,
     720
   ],
-  "firstRenderedAt": 2215,
+  "firstRenderedAt": 2235.2000000476837,
   "recentMedianFrameMs": 8.3
 }

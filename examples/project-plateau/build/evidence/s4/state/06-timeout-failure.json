@@ -16,7 +16,7 @@
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 180.141,
+    "elapsedSeconds": 180.142,
     "distanceTravelled": 0,
     "paused": false,
     "pauseReason": null,
@@ -107,7 +107,7 @@
     "response": "orbit",
     "position": {
       "x": -28.4,
-      "y": 22.52,
+      "y": 14.52,
       "z": 22.06
     }
   },
@@ -154,7 +154,7 @@
         "young-play"
       ],
       "branchPresent": true,
-      "visibleParts": 57
+      "visibleParts": 142
     },
     "gladeComposition": {
       "sightlineHalfWidth": 22,
@@ -176,12 +176,12 @@
       {
         "cue": "field-start",
         "caption": "[brook water and insects under the canopy]",
-        "at": 15.291
+        "at": 15.248
       },
       {
         "cue": "failure",
         "caption": "[the field sound narrows to wind and brook]",
-        "at": 15.419
+        "at": 15.381
       }
     ]
   },
@@ -221,15 +221,15 @@
       "callback": null
     }
   },
-  "sceneChildren": 30,
-  "calls": 269,
-  "triangles": 50458,
-  "textures": 3,
-  "geometries": 95,
+  "sceneChildren": 36,
+  "calls": 1058,
+  "triangles": 142718,
+  "textures": 4,
+  "geometries": 338,
   "viewport": [
     1440,
     900
   ],
-  "firstRenderedAt": 188.79999995231628,
+  "firstRenderedAt": 185.5,
   "recentMedianFrameMs": 8.3
 }

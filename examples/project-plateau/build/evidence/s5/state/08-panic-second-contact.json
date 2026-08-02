@@ -43,7 +43,7 @@
     "cameraRaised": false,
     "plateRailRevealed": true,
     "pendingExposure": null,
-    "previewSeconds": 1.0084000000953801,
+    "previewSeconds": 1.0087000000476882,
     "lastProofEvent": {
       "plateIndex": 1,
       "frameKey": "basalt-scale",
@@ -112,9 +112,9 @@
     "state": "attack",
     "response": "orbit",
     "position": {
-      "x": 10.71,
-      "y": 10.51,
-      "z": 5.57
+      "x": 10.69,
+      "y": 8.94,
+      "z": 5.58
     }
   },
   "familyVisual": {
@@ -160,7 +160,7 @@
         "young-play"
       ],
       "branchPresent": true,
-      "visibleParts": 57
+      "visibleParts": 142
     },
     "gladeComposition": {
       "sightlineHalfWidth": 22,
@@ -182,72 +182,72 @@
       {
         "cue": "field-start",
         "caption": "[brook water and insects under the canopy]",
-        "at": 30.267
+        "at": 30.32
       },
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 30.336
+        "at": 30.389
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 30.395
-      },
-      {
-        "cue": "shutter",
-        "caption": "[shutter releases]",
         "at": 30.459
       },
       {
+        "cue": "shutter",
+        "caption": "[shutter releases]",
+        "at": 30.533
+      },
+      {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 32.443
+        "at": 32.507
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 32.443
+        "at": 32.507
       },
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 35.445
+        "at": 35.499
       },
       {
         "cue": "contact",
         "caption": "[case strike; glass cracks]",
-        "at": 35.445
+        "at": 35.499
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 35.456
+        "at": 35.509
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 35.52
+        "at": 35.579
       },
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 37.504
+        "at": 37.557
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 37.504
+        "at": 37.557
       },
       {
         "cue": "contact",
         "caption": "[case strike; glass cracks]",
-        "at": 40.496
+        "at": 40.549
       },
       {
         "cue": "failure",
         "caption": "[the field sound narrows to wind and brook]",
-        "at": 40.496
+        "at": 40.549
       }
     ]
   },
@@ -287,15 +287,15 @@
       "callback": null
     }
   },
-  "sceneChildren": 30,
-  "calls": 257,
-  "triangles": 49770,
-  "textures": 3,
-  "geometries": 95,
+  "sceneChildren": 36,
+  "calls": 1030,
+  "triangles": 141310,
+  "textures": 4,
+  "geometries": 338,
   "viewport": [
     1440,
     900
   ],
-  "firstRenderedAt": 231.40000009536743,
+  "firstRenderedAt": 189.80000019073486,
   "recentMedianFrameMs": 8.3
 }

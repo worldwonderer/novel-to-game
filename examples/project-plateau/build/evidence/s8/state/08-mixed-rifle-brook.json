@@ -6,18 +6,18 @@
   "renderer": "WebGL2",
   "player": {
     "position": {
-      "x": 3.413,
-      "z": 3.214
+      "x": 3.421,
+      "z": 3.222
     },
     "lastStablePosition": {
-      "x": 3.413,
-      "z": 3.214
+      "x": 3.421,
+      "z": 3.222
     },
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 23.941,
-    "distanceTravelled": 70.289,
+    "elapsedSeconds": 24,
+    "distanceTravelled": 70.288,
     "paused": false,
     "pauseReason": null,
     "boundaryRecoveries": 0,
@@ -46,7 +46,7 @@
     "cameraRaised": false,
     "plateRailRevealed": true,
     "pendingExposure": null,
-    "previewSeconds": 3.108000000000006,
+    "previewSeconds": 3.0931999998092676,
     "lastProofEvent": {
       "plateIndex": 2,
       "frameKey": "glade-young-play",
@@ -98,7 +98,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 138.059,
+    "remainingLight": 138,
     "returnRoute": "exposed",
     "returnCostSeconds": 18,
     "returnStrike": false,
@@ -109,9 +109,9 @@
     "state": "watch",
     "response": "orbit",
     "position": {
-      "x": 21.71,
-      "y": 13.2,
-      "z": -15.32
+      "x": 22.65,
+      "y": 11.19,
+      "z": -15.65
     }
   },
   "familyVisual": {
@@ -157,7 +157,7 @@
         "young-play"
       ],
       "branchPresent": true,
-      "visibleParts": 57
+      "visibleParts": 142
     },
     "gladeComposition": {
       "sightlineHalfWidth": 22,
@@ -179,82 +179,82 @@
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 60.224
+        "at": 59.925
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 60.224
+        "at": 59.925
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 66.965
+        "at": 66.683
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 67.045
+        "at": 66.768
       },
       {
         "cue": "search",
         "caption": "[a near call circles overhead]",
-        "at": 69.029
+        "at": 68.752
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 69.029
+        "at": 68.752
       },
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 69.067
+        "at": 68.784
       },
       {
         "cue": "search",
         "caption": "[a near call circles overhead]",
-        "at": 72.683
+        "at": 72.411
       },
       {
         "cue": "examine",
         "caption": "[fern brushes aside; pencil marks the field card]",
-        "at": 72.992
+        "at": 72.731
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 72.997
+        "at": 72.736
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 73.072
+        "at": 72.816
       },
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 75.067
+        "at": 74.8
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 75.067
+        "at": 74.8
       },
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 75.243
+        "at": 74.987
       },
       {
         "cue": "rifle",
         "caption": "[rifle report; echo runs toward the brook]",
-        "at": 75.243
+        "at": 74.987
       },
       {
         "cue": "brook-response",
         "caption": "[brush thrashes beside the brook]",
-        "at": 75.84
+        "at": 75.579
       }
     ]
   },
@@ -288,15 +288,15 @@
     "lightWatch": 139,
     "terminal": null
   },
-  "sceneChildren": 30,
-  "calls": 251,
-  "triangles": 49412,
-  "textures": 3,
-  "geometries": 98,
+  "sceneChildren": 36,
+  "calls": 1006,
+  "triangles": 140262,
+  "textures": 4,
+  "geometries": 341,
   "viewport": [
     1440,
     900
   ],
-  "firstRenderedAt": 192,
+  "firstRenderedAt": 187.90000009536743,
   "recentMedianFrameMs": 8.3
 }

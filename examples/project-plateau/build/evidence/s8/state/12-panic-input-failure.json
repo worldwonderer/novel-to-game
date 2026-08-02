@@ -6,18 +6,18 @@
   "renderer": "WebGL2",
   "player": {
     "position": {
-      "x": 3.421,
-      "z": 13.165
+      "x": 3.427,
+      "z": 13.076
     },
     "lastStablePosition": {
-      "x": 3.421,
-      "z": 13.165
+      "x": 3.427,
+      "z": 13.076
     },
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 26.508,
-    "distanceTravelled": 79.597,
+    "elapsedSeconds": 26.543,
+    "distanceTravelled": 79.52,
     "paused": false,
     "pauseReason": null,
     "boundaryRecoveries": 0,
@@ -46,7 +46,7 @@
     "cameraRaised": false,
     "plateRailRevealed": true,
     "pendingExposure": null,
-    "previewSeconds": 1.009099999904646,
+    "previewSeconds": 1.0085999999046398,
     "lastProofEvent": {
       "plateIndex": 3,
       "frameKey": "glade-form",
@@ -98,7 +98,7 @@
     "failed": true,
     "failureCause": "second-unblocked-strike",
     "contactCount": 2,
-    "remainingLight": 135.492,
+    "remainingLight": 135.457,
     "returnRoute": "exposed",
     "returnCostSeconds": 18,
     "returnStrike": false,
@@ -115,16 +115,16 @@
     "state": "attack",
     "response": "orbit",
     "position": {
-      "x": 1.56,
-      "y": 6.72,
-      "z": 0.86
+      "x": 1.3,
+      "y": 5.56,
+      "z": 0.76
     }
   },
   "familyVisual": {
     "moment": "glade-branch-pull",
     "adults": 2,
     "young": 3,
-    "branchAngle": 0.494,
+    "branchAngle": 0.496,
     "roles": [
       "graze",
       "branch-pull",
@@ -163,7 +163,7 @@
         "young-play"
       ],
       "branchPresent": true,
-      "visibleParts": 57
+      "visibleParts": 142
     },
     "gladeComposition": {
       "sightlineHalfWidth": 22,
@@ -185,82 +185,82 @@
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 102.48
+        "at": 102.277
       },
       {
         "cue": "rifle",
         "caption": "[rifle report; echo runs toward the brook]",
-        "at": 102.48
+        "at": 102.277
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 102.576
+        "at": 102.368
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 102.651
+        "at": 102.448
       },
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 104.645
+        "at": 104.443
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 104.645
+        "at": 104.443
       },
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 107.643
+        "at": 107.435
       },
       {
         "cue": "contact",
         "caption": "[case strike; glass cracks]",
-        "at": 107.643
+        "at": 107.435
       },
       {
         "cue": "search",
         "caption": "[a near call circles overhead]",
-        "at": 111.259
+        "at": 111.051
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 111.579
+        "at": 111.371
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 111.653
+        "at": 111.456
       },
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 113.643
+        "at": 113.445
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 113.643
+        "at": 113.445
       },
       {
         "cue": "brook-response",
         "caption": "[brush thrashes beside the brook]",
-        "at": 114.133
+        "at": 113.952
       },
       {
         "cue": "contact",
         "caption": "[case strike; glass cracks]",
-        "at": 116.635
+        "at": 116.432
       },
       {
         "cue": "failure",
         "caption": "[the field sound narrows to wind and brook]",
-        "at": 116.635
+        "at": 116.432
       }
     ]
   },
@@ -300,15 +300,15 @@
       "callback": null
     }
   },
-  "sceneChildren": 30,
-  "calls": 253,
-  "triangles": 49724,
-  "textures": 3,
-  "geometries": 98,
+  "sceneChildren": 36,
+  "calls": 1004,
+  "triangles": 140414,
+  "textures": 4,
+  "geometries": 341,
   "viewport": [
     1440,
     900
   ],
-  "firstRenderedAt": 192,
+  "firstRenderedAt": 187.90000009536743,
   "recentMedianFrameMs": 8.3
 }

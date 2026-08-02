@@ -16,7 +16,7 @@
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 2.55,
+    "elapsedSeconds": 2.585,
     "distanceTravelled": 0,
     "paused": false,
     "pauseReason": null,
@@ -95,7 +95,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 177.45,
+    "remainingLight": 177.415,
     "returnRoute": null,
     "returnCostSeconds": 0,
     "returnStrike": false,
@@ -106,9 +106,9 @@
     "state": "watch",
     "response": "orbit",
     "position": {
-      "x": 16.71,
-      "y": 13.18,
-      "z": 26.97
+      "x": 16.25,
+      "y": 11.17,
+      "z": 27.1
     }
   },
   "familyVisual": {
@@ -154,7 +154,7 @@
         "young-play"
       ],
       "branchPresent": true,
-      "visibleParts": 57
+      "visibleParts": 142
     },
     "gladeComposition": {
       "sightlineHalfWidth": 22,
@@ -181,27 +181,27 @@
       {
         "cue": "examine",
         "caption": "[fern brushes aside; pencil marks the field card]",
-        "at": 0.219
+        "at": 0.235
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 0.32
+        "at": 0.347
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 0.464
+        "at": 0.507
       },
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 2.448
+        "at": 2.485
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 2.448
+        "at": 2.485
       }
     ]
   },
@@ -235,15 +235,15 @@
     "lightWatch": 178,
     "terminal": null
   },
-  "sceneChildren": 30,
-  "calls": 273,
-  "triangles": 50496,
-  "textures": 3,
-  "geometries": 93,
+  "sceneChildren": 36,
+  "calls": 1058,
+  "triangles": 142718,
+  "textures": 4,
+  "geometries": 336,
   "viewport": [
     1440,
     900
   ],
-  "firstRenderedAt": 208.89999985694885,
+  "firstRenderedAt": 194.39999985694885,
   "recentMedianFrameMs": 8.3
 }

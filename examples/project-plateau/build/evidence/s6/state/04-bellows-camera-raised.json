@@ -16,7 +16,7 @@
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 0.517,
+    "elapsedSeconds": 0.552,
     "distanceTravelled": 0,
     "paused": false,
     "pauseReason": null,
@@ -89,7 +89,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 179.483,
+    "remainingLight": 179.448,
     "returnRoute": null,
     "returnCostSeconds": 0,
     "returnStrike": false,
@@ -100,9 +100,9 @@
     "state": "distant",
     "response": "orbit",
     "position": {
-      "x": 28.11,
-      "y": 23.57,
-      "z": 22.5
+      "x": 27.99,
+      "y": 15.61,
+      "z": 22.66
     }
   },
   "familyVisual": {
@@ -148,7 +148,7 @@
         "young-play"
       ],
       "branchPresent": true,
-      "visibleParts": 57
+      "visibleParts": 142
     },
     "gladeComposition": {
       "sightlineHalfWidth": 22,
@@ -175,12 +175,12 @@
       {
         "cue": "examine",
         "caption": "[fern brushes aside; pencil marks the field card]",
-        "at": 0.219
+        "at": 0.235
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 0.32
+        "at": 0.347
       }
     ]
   },
@@ -214,15 +214,15 @@
     "lightWatch": 180,
     "terminal": null
   },
-  "sceneChildren": 30,
-  "calls": 266,
-  "triangles": 50422,
-  "textures": 3,
-  "geometries": 93,
+  "sceneChildren": 36,
+  "calls": 1058,
+  "triangles": 142718,
+  "textures": 4,
+  "geometries": 336,
   "viewport": [
     1440,
     900
   ],
-  "firstRenderedAt": 208.89999985694885,
+  "firstRenderedAt": 194.39999985694885,
   "recentMedianFrameMs": 8.3
 }

@@ -16,7 +16,7 @@
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 4.534,
+    "elapsedSeconds": 4.565,
     "distanceTravelled": 0,
     "paused": false,
     "pauseReason": null,
@@ -47,7 +47,7 @@
     "cameraRaised": false,
     "plateRailRevealed": true,
     "pendingExposure": null,
-    "previewSeconds": 3.791500000000001,
+    "previewSeconds": 3.776400000095368,
     "lastProofEvent": {
       "plateIndex": 1,
       "frameKey": "basalt-scale",
@@ -99,7 +99,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 163.466,
+    "remainingLight": 163.434,
     "returnRoute": "exposed",
     "returnCostSeconds": 12,
     "returnStrike": true,
@@ -113,7 +113,7 @@
       "survivingPlates": 1,
       "route": "exposed",
       "brookResponse": null,
-      "remainingLight": 163.5,
+      "remainingLight": 163.4,
       "gunshotCallback": null
     }
   },
@@ -121,9 +121,9 @@
     "state": "watch",
     "response": "orbit",
     "position": {
-      "x": -7.1,
-      "y": 11.37,
-      "z": 53.75
+      "x": -6.99,
+      "y": 9.38,
+      "z": 53.76
     }
   },
   "familyVisual": {
@@ -169,7 +169,7 @@
         "young-play"
       ],
       "branchPresent": true,
-      "visibleParts": 57
+      "visibleParts": 142
     },
     "gladeComposition": {
       "sightlineHalfWidth": 22,
@@ -191,57 +191,57 @@
       {
         "cue": "field-start",
         "caption": "[brook water and insects under the canopy]",
-        "at": 10.789
+        "at": 10.757
       },
       {
         "cue": "examine",
         "caption": "[fern brushes aside; pencil marks the field card]",
-        "at": 10.907
+        "at": 10.88
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 10.917
+        "at": 10.891
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 10.981
+        "at": 10.965
       },
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 12.965
+        "at": 12.944
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 12.965
+        "at": 12.944
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 13.045
+        "at": 13.035
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 13.109
+        "at": 13.104
       },
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 15.099
+        "at": 15.088
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 15.099
+        "at": 15.088
       },
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 15.179
+        "at": 15.173
       },
       {
         "cue": "result",
@@ -286,15 +286,15 @@
       "callback": null
     }
   },
-  "sceneChildren": 30,
-  "calls": 273,
-  "triangles": 50478,
-  "textures": 3,
-  "geometries": 95,
+  "sceneChildren": 36,
+  "calls": 1060,
+  "triangles": 142406,
+  "textures": 4,
+  "geometries": 338,
   "viewport": [
     1440,
     900
   ],
-  "firstRenderedAt": 231.40000009536743,
+  "firstRenderedAt": 189.80000019073486,
   "recentMedianFrameMs": 8.3
 }

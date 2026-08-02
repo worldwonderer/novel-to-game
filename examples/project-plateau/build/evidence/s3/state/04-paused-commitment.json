@@ -16,7 +16,7 @@
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 1.35,
+    "elapsedSeconds": 1.395,
     "distanceTravelled": 0,
     "paused": true,
     "pauseReason": "manual",
@@ -48,7 +48,7 @@
       "label": "PARTIAL \u2014 foliage hides the flank.",
       "exposure": 1,
       "plateIndex": 0,
-      "remainingSeconds": 1.3592000000476832,
+      "remainingSeconds": 1.3419000000953663,
       "zone": "brook-blind"
     },
     "previewSeconds": 0,
@@ -97,7 +97,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 178.65,
+    "remainingLight": 178.605,
     "returnRoute": null,
     "returnCostSeconds": 0,
     "returnStrike": false,
@@ -108,9 +108,9 @@
     "state": "distant",
     "response": "orbit",
     "position": {
-      "x": 28.61,
-      "y": 23.39,
-      "z": 21.66
+      "x": 28.58,
+      "y": 15.4,
+      "z": 21.71
     }
   },
   "familyVisual": {
@@ -156,7 +156,7 @@
         "young-play"
       ],
       "branchPresent": true,
-      "visibleParts": 57
+      "visibleParts": 142
     },
     "gladeComposition": {
       "sightlineHalfWidth": 22,
@@ -183,17 +183,17 @@
       {
         "cue": "examine",
         "caption": "[fern brushes aside; pencil marks the field card]",
-        "at": 0.357
+        "at": 0.352
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 0.48
+        "at": 0.485
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 0.624
+        "at": 0.651
       }
     ]
   },
@@ -227,15 +227,15 @@
     "lightWatch": 179,
     "terminal": null
   },
-  "sceneChildren": 30,
-  "calls": 266,
-  "triangles": 50422,
-  "textures": 3,
-  "geometries": 93,
+  "sceneChildren": 36,
+  "calls": 1058,
+  "triangles": 142718,
+  "textures": 4,
+  "geometries": 336,
   "viewport": [
     1440,
     900
   ],
-  "firstRenderedAt": 179.70000004768372,
+  "firstRenderedAt": 183.90000009536743,
   "recentMedianFrameMs": 8.3
 }

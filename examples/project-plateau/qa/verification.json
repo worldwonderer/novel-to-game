@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "sourceCommit": "8793fb904ca6ac1aedf62f296febff6c68a9bb3d",
-  "sourceFingerprint": "e99883ce0a14f31782ac0dc6a91bd38f7e9869d86279d11ca04b5171a59af69d",
+  "sourceCommit": "9d7f8736e5de17024569934df3da299358713adc",
+  "sourceFingerprint": "8329da6c8289acfa826e6cfb773e983f9fc270e366f5d375f679f21b5596c6c6",
   "environment": {
     "runtime": "Node.js",
     "runtimeVersion": "v25.9.0",
@@ -21,7 +21,7 @@
     "command": "npm run verify",
     "log": "qa/evidence/verify.log",
     "exitCode": 0,
-    "durationMs": 509894,
+    "durationMs": 485406,
     "suites": [
       {
         "id": "unit:simulation",
@@ -37,7 +37,7 @@
           {
             "command": "npm test",
             "exitCode": 0,
-            "durationMs": 386
+            "durationMs": 419
           }
         ]
       },
@@ -54,7 +54,7 @@
           {
             "command": "npm run build",
             "exitCode": 0,
-            "durationMs": 514
+            "durationMs": 506
           }
         ]
       },
@@ -77,47 +77,47 @@
           {
             "command": "python3 test/qa_s0.py",
             "exitCode": 0,
-            "durationMs": 6968
+            "durationMs": 7198
           },
           {
             "command": "python3 test/qa_s1.py",
             "exitCode": 0,
-            "durationMs": 71474
+            "durationMs": 81611
           },
           {
             "command": "python3 test/qa_s2.py",
             "exitCode": 0,
-            "durationMs": 19538
+            "durationMs": 19153
           },
           {
             "command": "python3 test/qa_s3.py",
             "exitCode": 0,
-            "durationMs": 15471
+            "durationMs": 15599
           },
           {
             "command": "python3 test/qa_s4.py",
             "exitCode": 0,
-            "durationMs": 39276
+            "durationMs": 31650
           },
           {
             "command": "python3 test/qa_s5.py",
             "exitCode": 0,
-            "durationMs": 48372
+            "durationMs": 49959
           },
           {
             "command": "python3 test/qa_s6.py",
             "exitCode": 0,
-            "durationMs": 14008
+            "durationMs": 13357
           },
           {
             "command": "python3 test/qa_s7.py",
             "exitCode": 0,
-            "durationMs": 37938
+            "durationMs": 25945
           },
           {
             "command": "python3 test/qa_s9.py",
             "exitCode": 0,
-            "durationMs": 37994
+            "durationMs": 26721
           }
         ]
       },
@@ -132,14 +132,15 @@
           {
             "command": "python3 test/qa_s8.py",
             "exitCode": 0,
-            "durationMs": 175390
+            "durationMs": 174471
           }
         ]
       },
       {
         "id": "browser:current-visual",
         "locations": [
-          "test/qa_s10.py"
+          "test/qa_s10.py",
+          "test/capture_visual_upgrade.py"
         ],
         "executed": true,
         "passed": true,
@@ -147,7 +148,12 @@
           {
             "command": "python3 test/qa_s10.py",
             "exitCode": 0,
-            "durationMs": 39597
+            "durationMs": 29618
+          },
+          {
+            "command": "python3 test/capture_visual_upgrade.py",
+            "exitCode": 0,
+            "durationMs": 6674
           }
         ]
       },
@@ -162,7 +168,7 @@
           {
             "command": "python3 qa/check_design_invariants.py",
             "exitCode": 0,
-            "durationMs": 58
+            "durationMs": 46
           }
         ]
       },
@@ -178,12 +184,12 @@
           {
             "command": "python3 scripts/validate_repo.py",
             "exitCode": 0,
-            "durationMs": 713
+            "durationMs": 453
           },
           {
             "command": "python3 -m unittest discover -s tests -v",
             "exitCode": 0,
-            "durationMs": 1077
+            "durationMs": 910
           }
         ]
       }
@@ -192,6 +198,7 @@
       "discovered": [
         "test/audio.test.js",
         "test/capture_demo_clip.py",
+        "test/capture_visual_upgrade.py",
         "test/foundation.test.js",
         "test/qa_s0.py",
         "test/qa_s1.py",
@@ -210,6 +217,7 @@
       ],
       "registered": [
         "test/audio.test.js",
+        "test/capture_visual_upgrade.py",
         "test/foundation.test.js",
         "test/qa_s0.py",
         "test/qa_s1.py",

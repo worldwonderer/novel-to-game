@@ -2,7 +2,7 @@
   "stage": "s1-controller",
   "source": {
     "scope": "index.html, package manifests, public assets and src",
-    "sha256": "e99883ce0a14f31782ac0dc6a91bd38f7e9869d86279d11ca04b5171a59af69d"
+    "sha256": "8329da6c8289acfa826e6cfb773e983f9fc270e366f5d375f679f21b5596c6c6"
   },
   "environment": {
     "node": "v25.9.0",
@@ -34,20 +34,20 @@
   "continuousSmoke": {
     "requestedSeconds": 60.0,
     "wallSeconds": 60.01,
-    "simulatedElapsedGain": 59.933,
+    "simulatedElapsedGain": 60.008,
     "inputSegments": 30,
     "lifecycleRestarts": 0,
     "memory": {
-      "used": 20748579,
-      "total": 29255659
+      "used": 23841739,
+      "total": 57951711
     }
   },
   "performance": {
     "samples": 240,
     "medianFrameMs": 8.3,
     "medianFps": 120.5,
-    "onePercentLowFps": 107.5,
-    "worstFrameMs": 9.3
+    "onePercentLowFps": 98,
+    "worstFrameMs": 10.2
   },
   "checkpoints": [
     {
@@ -70,7 +70,7 @@
           "heading": 0,
           "pitch": 0,
           "stance": "walk",
-          "elapsedSeconds": 0.307,
+          "elapsedSeconds": 0.299,
           "distanceTravelled": 0,
           "paused": false,
           "pauseReason": null,
@@ -142,7 +142,7 @@
           "failed": false,
           "failureCause": null,
           "contactCount": 0,
-          "remainingLight": 179.693,
+          "remainingLight": 179.701,
           "returnRoute": null,
           "returnCostSeconds": 0,
           "returnStrike": false,
@@ -154,8 +154,8 @@
           "response": "orbit",
           "position": {
             "x": 31.52,
-            "y": 23.43,
-            "z": 46.84
+            "y": 15.43,
+            "z": 46.85
           }
         },
         "familyVisual": {
@@ -201,7 +201,7 @@
               "young-play"
             ],
             "branchPresent": true,
-            "visibleParts": 57
+            "visibleParts": 142
           },
           "gladeComposition": {
             "sightlineHalfWidth": 22,
@@ -257,17 +257,17 @@
           "lightWatch": null,
           "terminal": null
         },
-        "sceneChildren": 30,
-        "calls": 268,
-        "triangles": 50426,
-        "textures": 3,
-        "geometries": 93,
+        "sceneChildren": 36,
+        "calls": 1060,
+        "triangles": 142406,
+        "textures": 4,
+        "geometries": 336,
         "viewport": [
           1440,
           900
         ],
-        "firstRenderedAt": 175.39999985694885,
-        "recentMedianFrameMs": 8.4
+        "firstRenderedAt": 178.5,
+        "recentMedianFrameMs": 8.3
       },
       "visual": "build/evidence/s1/01-clean-start.jpg"
     },
@@ -282,17 +282,17 @@
         "player": {
           "position": {
             "x": 3,
-            "z": 66.413
+            "z": 66.395
           },
           "lastStablePosition": {
             "x": 3,
-            "z": 66.413
+            "z": 66.395
           },
           "heading": 0,
           "pitch": 0,
           "stance": "walk",
-          "elapsedSeconds": 1.294,
-          "distanceTravelled": 3.587,
+          "elapsedSeconds": 1.282,
+          "distanceTravelled": 3.605,
           "paused": false,
           "pauseReason": null,
           "boundaryRecoveries": 0,
@@ -363,7 +363,7 @@
           "failed": false,
           "failureCause": null,
           "contactCount": 0,
-          "remainingLight": 178.706,
+          "remainingLight": 178.718,
           "returnRoute": null,
           "returnCostSeconds": 0,
           "returnStrike": false,
@@ -375,8 +375,8 @@
           "response": "orbit",
           "position": {
             "x": 30.14,
-            "y": 23.79,
-            "z": 44.99
+            "y": 15.79,
+            "z": 44.97
           }
         },
         "familyVisual": {
@@ -422,7 +422,7 @@
               "young-play"
             ],
             "branchPresent": true,
-            "visibleParts": 57
+            "visibleParts": 142
           },
           "gladeComposition": {
             "sightlineHalfWidth": 22,
@@ -478,16 +478,16 @@
           "lightWatch": null,
           "terminal": null
         },
-        "sceneChildren": 30,
-        "calls": 271,
-        "triangles": 50474,
-        "textures": 3,
-        "geometries": 93,
+        "sceneChildren": 36,
+        "calls": 1067,
+        "triangles": 142786,
+        "textures": 4,
+        "geometries": 336,
         "viewport": [
           1440,
           900
         ],
-        "firstRenderedAt": 175.39999985694885,
+        "firstRenderedAt": 178.5,
         "recentMedianFrameMs": 8.3
       },
       "visual": "build/evidence/s1/02-walk.jpg"
@@ -502,18 +502,18 @@
         "renderer": "WebGL2",
         "player": {
           "position": {
-            "x": -6.705,
-            "z": 78.442
+            "x": -6.706,
+            "z": 78.441
           },
           "lastStablePosition": {
-            "x": -6.705,
-            "z": 78.442
+            "x": -6.706,
+            "z": 78.441
           },
           "heading": 0,
           "pitch": 0,
           "stance": "walk",
-          "elapsedSeconds": 2.802,
-          "distanceTravelled": 8.795,
+          "elapsedSeconds": 2.808,
+          "distanceTravelled": 8.767,
           "paused": false,
           "pauseReason": null,
           "boundaryRecoveries": 0,
@@ -584,7 +584,7 @@
           "failed": false,
           "failureCause": null,
           "contactCount": 0,
-          "remainingLight": 177.198,
+          "remainingLight": 177.192,
           "returnRoute": null,
           "returnCostSeconds": 0,
           "returnStrike": false,
@@ -595,9 +595,9 @@
           "state": "distant",
           "response": "orbit",
           "position": {
-            "x": 16.7,
-            "y": 24.14,
-            "z": 59.43
+            "x": 16.65,
+            "y": 16.15,
+            "z": 59.46
           }
         },
         "familyVisual": {
@@ -643,7 +643,7 @@
               "young-play"
             ],
             "branchPresent": true,
-            "visibleParts": 57
+            "visibleParts": 142
           },
           "gladeComposition": {
             "sightlineHalfWidth": 22,
@@ -699,16 +699,16 @@
           "lightWatch": null,
           "terminal": null
         },
-        "sceneChildren": 30,
-        "calls": 276,
-        "triangles": 50664,
-        "textures": 3,
-        "geometries": 95,
+        "sceneChildren": 36,
+        "calls": 1072,
+        "triangles": 142974,
+        "textures": 4,
+        "geometries": 338,
         "viewport": [
           1440,
           900
         ],
-        "firstRenderedAt": 175.39999985694885,
+        "firstRenderedAt": 178.5,
         "recentMedianFrameMs": 8.3
       },
       "visual": "build/evidence/s1/03-collision-slide.jpg"
@@ -724,17 +724,17 @@
         "player": {
           "position": {
             "x": 0,
-            "z": -89.377
+            "z": -89.376
           },
           "lastStablePosition": {
             "x": 0,
-            "z": -89.377
+            "z": -89.376
           },
           "heading": 0,
           "pitch": 0,
           "stance": "walk",
-          "elapsedSeconds": 3.285,
-          "distanceTravelled": 8.972,
+          "elapsedSeconds": 3.3,
+          "distanceTravelled": 8.943,
           "paused": false,
           "pauseReason": null,
           "boundaryRecoveries": 39,
@@ -806,7 +806,7 @@
           "failed": false,
           "failureCause": null,
           "contactCount": 0,
-          "remainingLight": 176.715,
+          "remainingLight": 176.7,
           "returnRoute": null,
           "returnCostSeconds": 0,
           "returnStrike": false,
@@ -817,9 +817,9 @@
           "state": "search",
           "response": "orbit",
           "position": {
-            "x": 4.19,
-            "y": 10.57,
-            "z": -108.61
+            "x": 4.05,
+            "y": 8.55,
+            "z": -108.6
           }
         },
         "familyVisual": {
@@ -865,7 +865,7 @@
               "young-play"
             ],
             "branchPresent": true,
-            "visibleParts": 57
+            "visibleParts": 142
           },
           "gladeComposition": {
             "sightlineHalfWidth": 22,
@@ -892,7 +892,7 @@
             {
               "cue": "search",
               "caption": "[a near call circles overhead]",
-              "at": 2.747
+              "at": 2.736
             }
           ]
         },
@@ -926,16 +926,16 @@
           "lightWatch": null,
           "terminal": null
         },
-        "sceneChildren": 30,
-        "calls": 146,
-        "triangles": 45022,
-        "textures": 3,
-        "geometries": 96,
+        "sceneChildren": 36,
+        "calls": 447,
+        "triangles": 113586,
+        "textures": 4,
+        "geometries": 340,
         "viewport": [
           1440,
           900
         ],
-        "firstRenderedAt": 175.39999985694885,
+        "firstRenderedAt": 178.5,
         "recentMedianFrameMs": 8.3
       },
       "visual": "build/evidence/s1/04-boundary-recovery.jpg"
@@ -960,8 +960,8 @@
           "heading": 0,
           "pitch": 0,
           "stance": "walk",
-          "elapsedSeconds": 4.877,
-          "distanceTravelled": 8.972,
+          "elapsedSeconds": 4.891,
+          "distanceTravelled": 8.943,
           "paused": true,
           "pauseReason": "manual",
           "boundaryRecoveries": 39,
@@ -1034,7 +1034,7 @@
           "failed": false,
           "failureCause": null,
           "contactCount": 0,
-          "remainingLight": 175.123,
+          "remainingLight": 175.108,
           "returnRoute": null,
           "returnCostSeconds": 0,
           "returnStrike": false,
@@ -1045,9 +1045,9 @@
           "state": "search",
           "response": "orbit",
           "position": {
-            "x": 14.58,
-            "y": 11.2,
-            "z": 49.36
+            "x": 14.53,
+            "y": 9.2,
+            "z": 49.37
           }
         },
         "familyVisual": {
@@ -1093,7 +1093,7 @@
               "young-play"
             ],
             "branchPresent": true,
-            "visibleParts": 57
+            "visibleParts": 142
           },
           "gladeComposition": {
             "sightlineHalfWidth": 22,
@@ -1120,7 +1120,7 @@
             {
               "cue": "search",
               "caption": "[a near call circles overhead]",
-              "at": 2.747
+              "at": 2.736
             }
           ]
         },
@@ -1154,16 +1154,16 @@
           "lightWatch": null,
           "terminal": null
         },
-        "sceneChildren": 30,
-        "calls": 278,
-        "triangles": 50536,
-        "textures": 3,
-        "geometries": 97,
+        "sceneChildren": 36,
+        "calls": 1068,
+        "triangles": 142798,
+        "textures": 4,
+        "geometries": 340,
         "viewport": [
           1440,
           900
         ],
-        "firstRenderedAt": 175.39999985694885,
+        "firstRenderedAt": 178.5,
         "recentMedianFrameMs": 8.3
       },
       "visual": "build/evidence/s1/05-manual-pause.jpg"
@@ -1188,7 +1188,7 @@
           "heading": 0,
           "pitch": 0,
           "stance": "walk",
-          "elapsedSeconds": 0.104,
+          "elapsedSeconds": 0.11,
           "distanceTravelled": 0,
           "paused": false,
           "pauseReason": null,
@@ -1260,7 +1260,7 @@
           "failed": false,
           "failureCause": null,
           "contactCount": 0,
-          "remainingLight": 179.896,
+          "remainingLight": 179.891,
           "returnRoute": null,
           "returnCostSeconds": 0,
           "returnStrike": false,
@@ -1271,16 +1271,16 @@
           "state": "distant",
           "response": "orbit",
           "position": {
-            "x": 14.79,
-            "y": 23.89,
-            "z": 54.27
+            "x": 14.56,
+            "y": 15.88,
+            "z": 54.31
           }
         },
         "familyVisual": {
           "moment": "glade-branch-pull",
           "adults": 2,
           "young": 3,
-          "branchAngle": 0.541,
+          "branchAngle": 0.543,
           "roles": [
             "graze",
             "branch-pull",
@@ -1319,7 +1319,7 @@
               "young-play"
             ],
             "branchPresent": true,
-            "visibleParts": 57
+            "visibleParts": 142
           },
           "gladeComposition": {
             "sightlineHalfWidth": 22,
@@ -1341,7 +1341,7 @@
             {
               "cue": "field-start",
               "caption": "[brook water and insects under the canopy]",
-              "at": 5.488
+              "at": 5.483
             }
           ]
         },
@@ -1375,16 +1375,16 @@
           "lightWatch": null,
           "terminal": null
         },
-        "sceneChildren": 30,
-        "calls": 270,
-        "triangles": 50460,
-        "textures": 3,
-        "geometries": 97,
+        "sceneChildren": 36,
+        "calls": 1077,
+        "triangles": 143161,
+        "textures": 4,
+        "geometries": 340,
         "viewport": [
           1440,
           900
         ],
-        "firstRenderedAt": 175.39999985694885,
+        "firstRenderedAt": 178.5,
         "recentMedianFrameMs": 8.3
       },
       "visual": "build/evidence/s1/06-clean-restart.jpg"
@@ -1399,18 +1399,18 @@
         "renderer": "WebGL2",
         "player": {
           "position": {
-            "x": -0.188,
-            "z": 61.559
+            "x": 10.127,
+            "z": 61.629
           },
           "lastStablePosition": {
-            "x": -0.188,
-            "z": 61.559
+            "x": 10.127,
+            "z": 61.629
           },
           "heading": 0,
           "pitch": 0,
           "stance": "walk",
-          "elapsedSeconds": 60.071,
-          "distanceTravelled": 250.843,
+          "elapsedSeconds": 60.158,
+          "distanceTravelled": 251.44,
           "paused": false,
           "pauseReason": null,
           "boundaryRecoveries": 0,
@@ -1496,7 +1496,7 @@
           "failed": false,
           "failureCause": null,
           "contactCount": 0,
-          "remainingLight": 119.929,
+          "remainingLight": 119.842,
           "returnRoute": null,
           "returnCostSeconds": 0,
           "returnStrike": false,
@@ -1507,16 +1507,16 @@
           "state": "distant",
           "response": "orbit",
           "position": {
-            "x": 23.41,
-            "y": 21.86,
-            "z": 30.66
+            "x": 34.11,
+            "y": 13.88,
+            "z": 30.93
           }
         },
         "familyVisual": {
           "moment": "glade-branch-pull",
           "adults": 2,
           "young": 3,
-          "branchAngle": 0.459,
+          "branchAngle": 0.453,
           "roles": [
             "graze",
             "branch-pull",
@@ -1555,7 +1555,7 @@
               "young-play"
             ],
             "branchPresent": true,
-            "visibleParts": 57
+            "visibleParts": 142
           },
           "gladeComposition": {
             "sightlineHalfWidth": 22,
@@ -1577,7 +1577,7 @@
             {
               "cue": "field-start",
               "caption": "[brook water and insects under the canopy]",
-              "at": 5.488
+              "at": 5.483
             }
           ]
         },
@@ -1611,16 +1611,16 @@
           "lightWatch": null,
           "terminal": null
         },
-        "sceneChildren": 30,
-        "calls": 275,
-        "triangles": 50500,
-        "textures": 3,
-        "geometries": 97,
+        "sceneChildren": 36,
+        "calls": 1052,
+        "triangles": 142476,
+        "textures": 4,
+        "geometries": 340,
         "viewport": [
           1440,
           900
         ],
-        "firstRenderedAt": 175.39999985694885,
+        "firstRenderedAt": 178.5,
         "recentMedianFrameMs": 8.3
       },
       "visual": "build/evidence/s1/07-smoke-end.jpg"

@@ -1,55 +1,55 @@
 command=npm run verify
-sourceCommit=8793fb904ca6ac1aedf62f296febff6c68a9bb3d
-sourceFingerprint=e99883ce0a14f31782ac0dc6a91bd38f7e9869d86279d11ca04b5171a59af69d
+sourceCommit=9d7f8736e5de17024569934df3da299358713adc
+sourceFingerprint=8329da6c8289acfa826e6cfb773e983f9fc270e366f5d375f679f21b5596c6c6
 runtime=Node.js
 runtimeVersion=v25.9.0
 packageManager=npm@11.12.1
 pythonVersion=3.14.5
 browser=Google Chrome 150.0.7871.187
-registered=test/audio.test.js,test/foundation.test.js,test/qa_s0.py,test/qa_s1.py,test/qa_s10.py,test/qa_s2.py,test/qa_s3.py,test/qa_s4.py,test/qa_s5.py,test/qa_s6.py,test/qa_s7.py,test/qa_s8.py,test/qa_s9.py,test/settings.test.js,test/simulation.test.js
+registered=test/audio.test.js,test/capture_visual_upgrade.py,test/foundation.test.js,test/qa_s0.py,test/qa_s1.py,test/qa_s10.py,test/qa_s2.py,test/qa_s3.py,test/qa_s4.py,test/qa_s5.py,test/qa_s6.py,test/qa_s7.py,test/qa_s8.py,test/qa_s9.py,test/settings.test.js,test/simulation.test.js
 excluded={"test/capture_demo_clip.py": "reproducible delivery-media recorder, not a pass/fail test suite", "test/verify.py": "authoritative suite orchestrator; registering it would recurse"}
 suite=unit:simulation
-cwd=game-adaptations/project-plateau/build/app
+cwd=examples/project-plateau/build/app
 command=npm test
 
 > project-plateau-proof-before-dark@0.1.0 test
 > node --test test/*.test.js
 
-✔ every core field cue has a concise sound caption (1.617833ms)
-✔ audio settings clamp channel volumes and expose caption state (0.150041ms)
-✔ cue history and threat transitions stay observable without Web Audio (0.242792ms)
-✔ cue history remains bounded during a long field session (0.12175ms)
-✔ foundation exposes the locked viewport and performance budgets (1.570833ms)
-✔ procedural placement is deterministic for a recorded seed (0.109833ms)
-✔ representative scene contains all declared subject and pressure groups (0.087041ms)
-✔ the family asset exposes two adults, three young and both authored behaviors (15.028167ms)
-✔ the glade composition protects a lit family-and-basalt sightline (5.202042ms)
-✔ frame percentile is stable and keeps the slow tail visible (0.132542ms)
-✔ runtime sources contain no remote asset or CDN request (5.000959ms)
-✔ presentation settings normalize invalid persisted values (1.54275ms)
-✔ settings round-trip through versioned storage and can be reset (0.173542ms)
-✔ blocked or malformed storage falls back without disabling controls (0.1695ms)
-✔ the measured compact route starts with a 180-second light budget (1.068208ms)
-✔ fresh and restarted player states are clean copies (0.868958ms)
-✔ walking, sprinting and crouching have ordered deterministic speeds (0.553917ms)
-✔ pause freezes both world time and movement (0.22ms)
-✔ a solid obstacle blocks penetration and permits axis sliding (0.220291ms)
-✔ leaving the navigable world recovers the last stable position (0.128667ms)
-✔ zone topology distinguishes the observation fork and both return routes (0.082916ms)
-✔ territory, glade, open proof and cover produce four readable threat states (0.443208ms)
-✔ examining the brook makes context eligible without awarding evidence (0.13225ms)
-✔ successive observed glade plates record young play and branch pull separately (0.212417ms)
-✔ camera raise slows movement and shutter commits one physical plate for two live seconds (0.172416ms)
-✔ open proof adds two awareness states and contact cracks the best intact plate (0.182792ms)
-✔ a later contact without body margin fails while the first contact remains recoverable (0.06275ms)
-✔ a timely raised-rifle shot spends one cartridge and interrupts attack (0.154084ms)
-✔ pause freezes a raised camera and live shutter commitment without spending a plate (0.086333ms)
-✔ restart clears observation, proof, damage and action history (0.0785ms)
-✔ intact evidence and all four result thresholds are deterministic (0.086084ms)
-✔ covered return commits its deterministic cost once and submits intact proof at Fort (0.166208ms)
-✔ an attack-state exposed return cracks the best plate without spending body margin (0.099667ms)
-✔ a fired-shot exposed return costs eighteen seconds and preserves its best plate (0.078333ms)
-✔ remaining light expires outside Fort with exact cause and actionable cue (0.06975ms)
+✔ every core field cue has a concise sound caption (1.672709ms)
+✔ audio settings clamp channel volumes and expose caption state (0.163084ms)
+✔ cue history and threat transitions stay observable without Web Audio (0.251792ms)
+✔ cue history remains bounded during a long field session (0.124917ms)
+✔ foundation exposes the locked viewport and performance budgets (1.582667ms)
+✔ procedural placement is deterministic for a recorded seed (0.109334ms)
+✔ representative scene contains all declared subject and pressure groups (0.098625ms)
+✔ the family asset exposes two adults, three young and both authored behaviors (30.317292ms)
+✔ the glade composition protects a lit family-and-basalt sightline (16.029709ms)
+✔ frame percentile is stable and keeps the slow tail visible (0.508708ms)
+✔ runtime sources contain no remote asset or CDN request (6.014208ms)
+✔ presentation settings normalize invalid persisted values (1.642958ms)
+✔ settings round-trip through versioned storage and can be reset (0.196458ms)
+✔ blocked or malformed storage falls back without disabling controls (0.175875ms)
+✔ the measured compact route starts with a 180-second light budget (0.979666ms)
+✔ fresh and restarted player states are clean copies (0.85725ms)
+✔ walking, sprinting and crouching have ordered deterministic speeds (0.538875ms)
+✔ pause freezes both world time and movement (0.102958ms)
+✔ a solid obstacle blocks penetration and permits axis sliding (1.54075ms)
+✔ leaving the navigable world recovers the last stable position (0.139708ms)
+✔ zone topology distinguishes the observation fork and both return routes (0.067583ms)
+✔ territory, glade, open proof and cover produce four readable threat states (0.431ms)
+✔ examining the brook makes context eligible without awarding evidence (0.133875ms)
+✔ successive observed glade plates record young play and branch pull separately (0.237208ms)
+✔ camera raise slows movement and shutter commits one physical plate for two live seconds (0.17825ms)
+✔ open proof adds two awareness states and contact cracks the best intact plate (0.184833ms)
+✔ a later contact without body margin fails while the first contact remains recoverable (0.067834ms)
+✔ a timely raised-rifle shot spends one cartridge and interrupts attack (0.134833ms)
+✔ pause freezes a raised camera and live shutter commitment without spending a plate (0.068709ms)
+✔ restart clears observation, proof, damage and action history (0.078917ms)
+✔ intact evidence and all four result thresholds are deterministic (0.088333ms)
+✔ covered return commits its deterministic cost once and submits intact proof at Fort (0.168042ms)
+✔ an attack-state exposed return cracks the best plate without spending body margin (0.110667ms)
+✔ a fired-shot exposed return costs eighteen seconds and preserves its best plate (0.090125ms)
+✔ remaining light expires outside Fort with exact cause and actionable cue (0.078916ms)
 ℹ tests 35
 ℹ suites 0
 ℹ pass 35
@@ -57,11 +57,11 @@ command=npm test
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 156.785417
+ℹ duration_ms 191.1035
 exitCode=0
-durationMs=386
+durationMs=419
 suite=build:production
-cwd=game-adaptations/project-plateau/build/app
+cwd=examples/project-plateau/build/app
 command=npm run build
 
 > project-plateau-proof-before-dark@0.1.0 build
@@ -73,10 +73,10 @@ transforming...✓ 12 modules transformed.
 rendering chunks...
 computing gzip size...
 dist/index.html                   6.78 kB │ gzip:   2.09 kB
-dist/assets/index-BtoLHCaQ.css   13.35 kB │ gzip:   4.21 kB
-dist/assets/index-CWtQHXh1.js   582.58 kB │ gzip: 150.82 kB
+dist/assets/index-Cmrc17od.css   13.39 kB │ gzip:   4.25 kB
+dist/assets/index-CkCjGB2C.js   594.70 kB │ gzip: 154.77 kB
 
-✓ built in 167ms
+✓ built in 168ms
 
 [plugin builtin:vite-reporter]
 (!) Some chunks are larger than 500 kB after minification. Consider:
@@ -84,15 +84,15 @@ dist/assets/index-CWtQHXh1.js   582.58 kB │ gzip: 150.82 kB
 - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
 - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
 exitCode=0
-durationMs=514
+durationMs=506
 suite=browser:checkpoint-history
-cwd=game-adaptations/project-plateau/build/app
+cwd=examples/project-plateau/build/app
 command=python3 test/qa_s0.py
 {
   "stage": "s0-renderer",
   "source": {
     "scope": "index.html, package manifests, public assets and src",
-    "sha256": "e99883ce0a14f31782ac0dc6a91bd38f7e9869d86279d11ca04b5171a59af69d"
+    "sha256": "8329da6c8289acfa826e6cfb773e983f9fc270e366f5d375f679f21b5596c6c6"
   },
   "environment": {
     "node": "v25.9.0",
@@ -119,14 +119,14 @@ command=python3 test/qa_s0.py
     "samples": 240,
     "medianFrameMs": 8.3,
     "medianFps": 120.5,
-    "onePercentLowFps": 106.4,
-    "worstFrameMs": 9.4
+    "onePercentLowFps": 100,
+    "worstFrameMs": 10.3
   },
   "loading": {
-    "observedTtiMs": 840.3,
+    "observedTtiMs": 1106.7,
     "budgetTtiMs": 8000,
-    "distRawBytes": 602904,
-    "distGzipBytes": 154906,
+    "distRawBytes": 615055,
+    "distGzipBytes": 158851,
     "initialCompressedBudgetBytes": 20971520
   },
   "render": {
@@ -147,7 +147,7 @@ command=python3 test/qa_s0.py
       "heading": 0,
       "pitch": 0,
       "stance": "walk",
-      "elapsedSeconds": 1.006,
+      "elapsedSeconds": 1.005,
       "distanceTravelled": 0,
       "paused": false,
       "pauseReason": null,
@@ -219,7 +219,7 @@ command=python3 test/qa_s0.py
       "failed": false,
       "failureCause": null,
       "contactCount": 0,
-      "remainingLight": 178.994,
+      "remainingLight": 178.995,
       "returnRoute": null,
       "returnCostSeconds": 0,
       "returnStrike": false,
@@ -230,9 +230,9 @@ command=python3 test/qa_s0.py
       "state": "distant",
       "response": "orbit",
       "position": {
-        "x": 30.54,
-        "y": 23.71,
-        "z": 48.18
+        "x": 30.43,
+        "y": 15.74,
+        "z": 48.3
       }
     },
     "familyVisual": {
@@ -278,7 +278,7 @@ command=python3 test/qa_s0.py
           "young-play"
         ],
         "branchPresent": true,
-        "visibleParts": 57
+        "visibleParts": 142
       },
       "gladeComposition": {
         "sightlineHalfWidth": 22,
@@ -334,16 +334,16 @@ command=python3 test/qa_s0.py
       "lightWatch": null,
       "terminal": null
     },
-    "sceneChildren": 30,
-    "calls": 268,
-    "triangles": 50438,
-    "textures": 3,
-    "geometries": 93,
+    "sceneChildren": 36,
+    "calls": 1060,
+    "triangles": 142406,
+    "textures": 4,
+    "geometries": 336,
     "viewport": [
       1440,
       900
     ],
-    "firstRenderedAt": 184.70000004768372,
+    "firstRenderedAt": 185.90000009536743,
     "recentMedianFrameMs": 8.3
   },
   "minimumRender": {
@@ -364,7 +364,7 @@ command=python3 test/qa_s0.py
       "heading": 0,
       "pitch": 0,
       "stance": "walk",
-      "elapsedSeconds": 3.805,
+      "elapsedSeconds": 3.821,
       "distanceTravelled": 0,
       "paused": false,
       "pauseReason": null,
@@ -436,7 +436,7 @@ command=python3 test/qa_s0.py
       "failed": false,
       "failureCause": null,
       "contactCount": 0,
-      "remainingLight": 176.194,
+      "remainingLight": 176.179,
       "returnRoute": null,
       "returnCostSeconds": 0,
       "returnStrike": false,
@@ -447,9 +447,9 @@ command=python3 test/qa_s0.py
       "state": "distant",
       "response": "orbit",
       "position": {
-        "x": 22.72,
-        "y": 24.2,
-        "z": 52.44
+        "x": 22.4,
+        "y": 16.19,
+        "z": 52.55
       }
     },
     "familyVisual": {
@@ -495,7 +495,7 @@ command=python3 test/qa_s0.py
           "young-play"
         ],
         "branchPresent": true,
-        "visibleParts": 57
+        "visibleParts": 142
       },
       "gladeComposition": {
         "sightlineHalfWidth": 22,
@@ -551,16 +551,16 @@ command=python3 test/qa_s0.py
       "lightWatch": null,
       "terminal": null
     },
-    "sceneChildren": 30,
-    "calls": 238,
-    "triangles": 49196,
-    "textures": 3,
-    "geometries": 93,
+    "sceneChildren": 36,
+    "calls": 642,
+    "triangles": 89982,
+    "textures": 4,
+    "geometries": 336,
     "viewport": [
       1280,
       720
     ],
-    "firstRenderedAt": 184.70000004768372,
+    "firstRenderedAt": 185.90000009536743,
     "recentMedianFrameMs": 8.3
   },
   "screenshots": [
@@ -577,9 +577,9 @@ command=python3 test/qa_s0.py
 }
 S0 PASS: build/evidence/s0/report.json
 exitCode=0
-durationMs=6968
+durationMs=7198
 suite=browser:checkpoint-history
-cwd=game-adaptations/project-plateau/build/app
+cwd=examples/project-plateau/build/app
 command=python3 test/qa_s1.py
 {
   "stage": "s1-controller",
@@ -601,31 +601,31 @@ command=python3 test/qa_s1.py
   "continuousSmoke": {
     "requestedSeconds": 60.0,
     "wallSeconds": 60.01,
-    "simulatedElapsedGain": 59.933,
+    "simulatedElapsedGain": 60.008,
     "inputSegments": 30,
     "lifecycleRestarts": 0,
     "memory": {
-      "used": 20748579,
-      "total": 29255659
+      "used": 23841739,
+      "total": 57951711
     }
   },
   "performance": {
     "samples": 240,
     "medianFrameMs": 8.3,
     "medianFps": 120.5,
-    "onePercentLowFps": 107.5,
-    "worstFrameMs": 9.3
+    "onePercentLowFps": 98,
+    "worstFrameMs": 10.2
   },
   "source": {
     "scope": "index.html, package manifests, public assets and src",
-    "sha256": "e99883ce0a14f31782ac0dc6a91bd38f7e9869d86279d11ca04b5171a59af69d"
+    "sha256": "8329da6c8289acfa826e6cfb773e983f9fc270e366f5d375f679f21b5596c6c6"
   }
 }
 S1 PASS: build/evidence/s1/report.json
 exitCode=0
-durationMs=71474
+durationMs=81611
 suite=browser:checkpoint-history
-cwd=game-adaptations/project-plateau/build/app
+cwd=examples/project-plateau/build/app
 command=python3 test/qa_s2.py
 {
   "stage": "s2-topology",
@@ -647,19 +647,19 @@ command=python3 test/qa_s2.py
     "samples": 240,
     "medianFrameMs": 8.3,
     "medianFps": 120.5,
-    "onePercentLowFps": 106.4,
-    "worstFrameMs": 9.4
+    "onePercentLowFps": 98,
+    "worstFrameMs": 10.3
   },
   "source": {
     "scope": "index.html, package manifests, public assets and src",
-    "sha256": "e99883ce0a14f31782ac0dc6a91bd38f7e9869d86279d11ca04b5171a59af69d"
+    "sha256": "8329da6c8289acfa826e6cfb773e983f9fc270e366f5d375f679f21b5596c6c6"
   }
 }
 S2 PASS: build/evidence/s2/report.json
 exitCode=0
-durationMs=19538
+durationMs=19153
 suite=browser:checkpoint-history
-cwd=game-adaptations/project-plateau/build/app
+cwd=examples/project-plateau/build/app
 command=python3 test/qa_s3.py
 {
   "stage": "s3-exposed-proof",
@@ -683,19 +683,19 @@ command=python3 test/qa_s3.py
     "samples": 240,
     "medianFrameMs": 8.3,
     "medianFps": 120.5,
-    "onePercentLowFps": 106.4,
-    "worstFrameMs": 9.4
+    "onePercentLowFps": 98,
+    "worstFrameMs": 10.3
   },
   "source": {
     "scope": "index.html, package manifests, public assets and src",
-    "sha256": "e99883ce0a14f31782ac0dc6a91bd38f7e9869d86279d11ca04b5171a59af69d"
+    "sha256": "8329da6c8289acfa826e6cfb773e983f9fc270e366f5d375f679f21b5596c6c6"
   }
 }
 S3 PASS: build/evidence/s3/report.json
 exitCode=0
-durationMs=15471
+durationMs=15599
 suite=browser:checkpoint-history
-cwd=game-adaptations/project-plateau/build/app
+cwd=examples/project-plateau/build/app
 command=python3 test/qa_s4.py
 {
   "stage": "s4-complete-loop",
@@ -720,19 +720,19 @@ command=python3 test/qa_s4.py
     "samples": 240,
     "medianFrameMs": 8.3,
     "medianFps": 120.5,
-    "onePercentLowFps": 106.4,
-    "worstFrameMs": 9.4
+    "onePercentLowFps": 98,
+    "worstFrameMs": 10.3
   },
   "source": {
     "scope": "index.html, package manifests, public assets and src",
-    "sha256": "e99883ce0a14f31782ac0dc6a91bd38f7e9869d86279d11ca04b5171a59af69d"
+    "sha256": "8329da6c8289acfa826e6cfb773e983f9fc270e366f5d375f679f21b5596c6c6"
   }
 }
 S4 PASS: build/evidence/s4/report.json
 exitCode=0
-durationMs=39276
+durationMs=31650
 suite=browser:checkpoint-history
-cwd=game-adaptations/project-plateau/build/app
+cwd=examples/project-plateau/build/app
 command=python3 test/qa_s5.py
 {
   "stage": "s5-route-outcomes",
@@ -760,19 +760,19 @@ command=python3 test/qa_s5.py
     "samples": 240,
     "medianFrameMs": 8.3,
     "medianFps": 120.5,
-    "onePercentLowFps": 106.4,
-    "worstFrameMs": 9.4
+    "onePercentLowFps": 98,
+    "worstFrameMs": 10.4
   },
   "source": {
     "scope": "index.html, package manifests, public assets and src",
-    "sha256": "e99883ce0a14f31782ac0dc6a91bd38f7e9869d86279d11ca04b5171a59af69d"
+    "sha256": "8329da6c8289acfa826e6cfb773e983f9fc270e366f5d375f679f21b5596c6c6"
   }
 }
 S5 PASS: build/evidence/s5/report.json
 exitCode=0
-durationMs=48372
+durationMs=49959
 suite=browser:checkpoint-history
-cwd=game-adaptations/project-plateau/build/app
+cwd=examples/project-plateau/build/app
 command=python3 test/qa_s6.py
 {
   "stage": "s6-field-feedback",
@@ -797,19 +797,19 @@ command=python3 test/qa_s6.py
     "samples": 240,
     "medianFrameMs": 8.3,
     "medianFps": 120.5,
-    "onePercentLowFps": 106.4,
-    "worstFrameMs": 9.4
+    "onePercentLowFps": 98,
+    "worstFrameMs": 10.3
   },
   "source": {
     "scope": "index.html, package manifests, public assets and src",
-    "sha256": "e99883ce0a14f31782ac0dc6a91bd38f7e9869d86279d11ca04b5171a59af69d"
+    "sha256": "8329da6c8289acfa826e6cfb773e983f9fc270e366f5d375f679f21b5596c6c6"
   }
 }
 S6 PASS: build/evidence/s6/report.json
 exitCode=0
-durationMs=14008
+durationMs=13357
 suite=browser:checkpoint-history
-cwd=game-adaptations/project-plateau/build/app
+cwd=examples/project-plateau/build/app
 command=python3 test/qa_s7.py
 {
   "stage": "s7-lifecycle",
@@ -832,15 +832,15 @@ command=python3 test/qa_s7.py
   },
   "loading": {
     "firstNoCacheNavigation": {
-      "timeToFirstFrameMs": 2198.3,
-      "domInteractiveMs": 54.3,
-      "loadEventMs": 2281.9,
+      "timeToFirstFrameMs": 2223.2,
+      "domInteractiveMs": 43.2,
+      "loadEventMs": 2572.4,
       "resourceCount": 11
     },
     "finalNavigation": {
-      "timeToFirstFrameMs": 2196,
-      "domInteractiveMs": 79.3,
-      "loadEventMs": 2262.2,
+      "timeToFirstFrameMs": 2234.6,
+      "domInteractiveMs": 80.8,
+      "loadEventMs": 2528.1,
       "resourceCount": 12
     },
     "budgetMs": 8000
@@ -848,14 +848,14 @@ command=python3 test/qa_s7.py
   "payload": {
     "files": [
       {
-        "path": "assets/index-BtoLHCaQ.css",
-        "rawBytes": 13357,
-        "gzipBytes": 4179
+        "path": "assets/index-CkCjGB2C.js",
+        "rawBytes": 594704,
+        "gzipBytes": 152369
       },
       {
-        "path": "assets/index-CWtQHXh1.js",
-        "rawBytes": 582588,
-        "gzipBytes": 148450
+        "path": "assets/index-Cmrc17od.css",
+        "rawBytes": 13392,
+        "gzipBytes": 4206
       },
       {
         "path": "favicon.svg",
@@ -865,11 +865,11 @@ command=python3 test/qa_s7.py
       {
         "path": "index.html",
         "rawBytes": 6789,
-        "gzipBytes": 2119
+        "gzipBytes": 2118
       }
     ],
-    "rawBytes": 602904,
-    "gzipBytes": 154906,
+    "rawBytes": 615055,
+    "gzipBytes": 158851,
     "initialCompressedBudgetBytes": 20971520,
     "totalBudgetBytes": 52428800
   },
@@ -878,27 +878,27 @@ command=python3 test/qa_s7.py
       "samples": 120,
       "medianFrameMs": 8.3,
       "medianFps": 120.5,
-      "onePercentLowFps": 107.5,
-      "worstFrameMs": 9.4
+      "onePercentLowFps": 98,
+      "worstFrameMs": 10.4
     },
     "targetViewport": {
       "samples": 240,
       "medianFrameMs": 8.3,
       "medianFps": 120.5,
-      "onePercentLowFps": 106.4,
-      "worstFrameMs": 9.4
+      "onePercentLowFps": 97.1,
+      "worstFrameMs": 10.4
     }
   },
   "source": {
     "scope": "index.html, package manifests, public assets and src",
-    "sha256": "e99883ce0a14f31782ac0dc6a91bd38f7e9869d86279d11ca04b5171a59af69d"
+    "sha256": "8329da6c8289acfa826e6cfb773e983f9fc270e366f5d375f679f21b5596c6c6"
   }
 }
 S7 PASS: build/evidence/s7/report.json
 exitCode=0
-durationMs=37938
+durationMs=25945
 suite=browser:checkpoint-history
-cwd=game-adaptations/project-plateau/build/app
+cwd=examples/project-plateau/build/app
 command=python3 test/qa_s9.py
 {
   "stage": "s9-living-plates",
@@ -919,26 +919,26 @@ command=python3 test/qa_s9.py
   "plateImages": [
     {
       "plate": 1,
-      "bytesInCssValue": 75858,
-      "sha256": "da1dede28d4d38e25c9b7536a354c438faad3151ccc1974cff077750d84078d0",
+      "bytesInCssValue": 82934,
+      "sha256": "3f867457067170cd2ea58ae86ae86b144c196286c7929492875d0c6f1c4a2592",
       "filter": "grayscale(1) contrast(1.14) brightness(0.86)"
     },
     {
       "plate": 2,
-      "bytesInCssValue": 76566,
-      "sha256": "6bab45577bf37277078b3ca495d6c6caec7eda013236ca1ae393c1611290e9f9",
+      "bytesInCssValue": 83342,
+      "sha256": "8820aabbc5e8f6622aa1d85677658ab4e40b6861eb0a23cd1dfde74cc9b3bf4e",
       "filter": "grayscale(1) contrast(1.14) brightness(0.86)"
     },
     {
       "plate": 3,
-      "bytesInCssValue": 75454,
-      "sha256": "1af332940e68dcf43646b1bcc4856a67c36d7cf722fd750b0350111997ace859",
+      "bytesInCssValue": 83606,
+      "sha256": "2dbabb5a682a330549b18508bb862907f2c06fb32a905d19213235113d7d5e78",
       "filter": "grayscale(1) contrast(1.14) brightness(0.86)"
     },
     {
       "plate": 4,
-      "bytesInCssValue": 79514,
-      "sha256": "4daa4e01a7034255265d3ab80c64f00ed6e33b68e2e9ea0742d933d6c6624cc1",
+      "bytesInCssValue": 85206,
+      "sha256": "7046e7c113cdaf31bf75bdad66391e546865f04d3dc79996c6299d81b45a320c",
       "filter": "grayscale(1) contrast(1.14) brightness(0.86)"
     }
   ],
@@ -946,19 +946,19 @@ command=python3 test/qa_s9.py
     "samples": 240,
     "medianFrameMs": 8.3,
     "medianFps": 120.5,
-    "onePercentLowFps": 106.4,
-    "worstFrameMs": 9.4
+    "onePercentLowFps": 99,
+    "worstFrameMs": 10.3
   },
   "source": {
     "scope": "index.html, package manifests, public assets and src",
-    "sha256": "e99883ce0a14f31782ac0dc6a91bd38f7e9869d86279d11ca04b5171a59af69d"
+    "sha256": "8329da6c8289acfa826e6cfb773e983f9fc270e366f5d375f679f21b5596c6c6"
   }
 }
 S9 PASS: build/evidence/s9/report.json
 exitCode=0
-durationMs=37994
+durationMs=26721
 suite=browser:complete-run
-cwd=game-adaptations/project-plateau/build/app
+cwd=examples/project-plateau/build/app
 command=python3 test/qa_s8.py
 {
   "stage": "s8-input-paths",
@@ -983,10 +983,10 @@ command=python3 test/qa_s8.py
   },
   "pathMetrics": {
     "Strong": {
-      "wallSeconds": 51.865,
-      "simulationSeconds": 51.996,
+      "wallSeconds": 51.589,
+      "simulationSeconds": 51.681,
       "distanceTravelled": 128.35,
-      "remainingLight": 100.004,
+      "remainingLight": 100.319,
       "returnCostSeconds": 28,
       "route": "covered",
       "result": {
@@ -998,16 +998,16 @@ command=python3 test/qa_s8.py
         "survivingPlates": 4,
         "route": "covered",
         "brookResponse": null,
-        "remainingLight": 100,
+        "remainingLight": 100.3,
         "gunshotCallback": null
       },
       "visionMode": "full-colour"
     },
     "Mixed": {
-      "wallSeconds": 37.995,
-      "simulationSeconds": 37.983,
-      "distanceTravelled": 129.089,
-      "remainingLight": 124.017,
+      "wallSeconds": 38.057,
+      "simulationSeconds": 38.043,
+      "distanceTravelled": 129.093,
+      "remainingLight": 123.957,
       "returnCostSeconds": 18,
       "route": "exposed",
       "result": {
@@ -1025,10 +1025,10 @@ command=python3 test/qa_s8.py
       "visionMode": "full-colour"
     },
     "Panic": {
-      "wallSeconds": 26.524,
-      "simulationSeconds": 26.508,
-      "distanceTravelled": 79.597,
-      "remainingLight": 135.492,
+      "wallSeconds": 26.562,
+      "simulationSeconds": 26.543,
+      "distanceTravelled": 79.52,
+      "remainingLight": 135.457,
       "returnCostSeconds": 18,
       "route": "exposed",
       "result": {
@@ -1041,10 +1041,10 @@ command=python3 test/qa_s8.py
       "visionMode": "full-colour"
     },
     "Achromatopsia Strong": {
-      "wallSeconds": 51.667,
-      "simulationSeconds": 51.633,
-      "distanceTravelled": 128.354,
-      "remainingLight": 100.367,
+      "wallSeconds": 51.651,
+      "simulationSeconds": 51.626,
+      "distanceTravelled": 128.393,
+      "remainingLight": 100.374,
       "returnCostSeconds": 28,
       "route": "covered",
       "result": {
@@ -1066,19 +1066,19 @@ command=python3 test/qa_s8.py
     "samples": 240,
     "medianFrameMs": 8.3,
     "medianFps": 120.5,
-    "onePercentLowFps": 106.4,
-    "worstFrameMs": 9.4
+    "onePercentLowFps": 96.2,
+    "worstFrameMs": 10.4
   },
   "source": {
     "scope": "index.html, package manifests, public assets and src",
-    "sha256": "e99883ce0a14f31782ac0dc6a91bd38f7e9869d86279d11ca04b5171a59af69d"
+    "sha256": "8329da6c8289acfa826e6cfb773e983f9fc270e366f5d375f679f21b5596c6c6"
   }
 }
 S8 PASS: build/evidence/s8/report.json
 exitCode=0
-durationMs=175390
+durationMs=174471
 suite=browser:current-visual
-cwd=game-adaptations/project-plateau/build/app
+cwd=examples/project-plateau/build/app
 command=python3 test/qa_s10.py
 {
   "stage": "s10-glade-clarity",
@@ -1102,72 +1102,214 @@ command=python3 test/qa_s10.py
   "focusRegion": {
     "width": 777,
     "height": 504,
-    "darkRatio": 0.1981,
-    "brightRatio": 0.5926,
-    "chromaticRatio": 0.8211
+    "darkRatio": 0.1666,
+    "brightRatio": 0.5851,
+    "chromaticRatio": 0.7505
   },
   "performance": {
     "samples": 240,
     "medianFrameMs": 8.3,
     "medianFps": 120.5,
-    "onePercentLowFps": 106.4,
-    "worstFrameMs": 9.4
+    "onePercentLowFps": 96.2,
+    "worstFrameMs": 10.4
   },
   "source": {
     "scope": "index.html, package manifests, public assets and src",
-    "sha256": "e99883ce0a14f31782ac0dc6a91bd38f7e9869d86279d11ca04b5171a59af69d"
+    "sha256": "8329da6c8289acfa826e6cfb773e983f9fc270e366f5d375f679f21b5596c6c6"
   }
 }
 S10 PASS: build/evidence/s10/report.json
 exitCode=0
-durationMs=39597
+durationMs=29618
+suite=browser:current-visual
+cwd=examples/project-plateau/build/app
+command=python3 test/capture_visual_upgrade.py
+{
+  "schemaVersion": 1,
+  "command": "npm run capture:visual",
+  "sourceFingerprint": "8329da6c8289acfa826e6cfb773e983f9fc270e366f5d375f679f21b5596c6c6",
+  "scene": "glade-family-under-aerial-pressure",
+  "seed": 139,
+  "frozenAnimationSeconds": 4.25,
+  "captures": [
+    {
+      "id": "title-1440x900",
+      "path": "build/evidence/visual-upgrade/generated/title-1440x900.png",
+      "viewport": [
+        1440,
+        900
+      ],
+      "sha256": "0903b802f90cbbceec3f82f5b18a34c6e074e6e508d20cd8e6468ecb52e1930a",
+      "bytes": 771256,
+      "frozenAnimationSeconds": 4.25,
+      "familyMoment": null,
+      "threatState": "distant"
+    },
+    {
+      "id": "family-1440x900",
+      "path": "build/evidence/visual-upgrade/generated/family-1440x900.png",
+      "viewport": [
+        1440,
+        900
+      ],
+      "sha256": "7c7dc563cde0b789fa75cd6aaa41d47a940811a90572a8b64801d09092d81a6c",
+      "bytes": 783192,
+      "frozenAnimationSeconds": 4.25,
+      "familyMoment": "glade-young-play",
+      "threatState": "search"
+    },
+    {
+      "id": "dive-1440x900",
+      "path": "build/evidence/visual-upgrade/generated/dive-1440x900.png",
+      "viewport": [
+        1440,
+        900
+      ],
+      "sha256": "669703233b33c3c6753a0321c4bf0dfe0113ecd22537bc85aab8ec8916317f5d",
+      "bytes": 796062,
+      "frozenAnimationSeconds": 4.25,
+      "familyMoment": "glade-young-play",
+      "threatState": "attack"
+    },
+    {
+      "id": "title-1280x720",
+      "path": "build/evidence/visual-upgrade/generated/title-1280x720.png",
+      "viewport": [
+        1280,
+        720
+      ],
+      "sha256": "5141d5f878114572ea12f3fb66acae20a408bbce2bb58a974498c83d0fbe4c18",
+      "bytes": 593646,
+      "frozenAnimationSeconds": 4.25,
+      "familyMoment": null,
+      "threatState": "distant"
+    },
+    {
+      "id": "family-1280x720",
+      "path": "build/evidence/visual-upgrade/generated/family-1280x720.png",
+      "viewport": [
+        1280,
+        720
+      ],
+      "sha256": "d439b2f1693644885d48c93d09114e7c5b4075ba8cd76d7df5cf14ed02ef9e19",
+      "bytes": 590943,
+      "frozenAnimationSeconds": 4.25,
+      "familyMoment": "glade-young-play",
+      "threatState": "search"
+    },
+    {
+      "id": "dive-1280x720",
+      "path": "build/evidence/visual-upgrade/generated/dive-1280x720.png",
+      "viewport": [
+        1280,
+        720
+      ],
+      "sha256": "f7d5b789067a4680544bb0293407e5f5380788c0f397f7b530aa41d5f5b5c22b",
+      "bytes": 600457,
+      "frozenAnimationSeconds": 4.25,
+      "familyMoment": "glade-young-play",
+      "threatState": "attack"
+    }
+  ],
+  "contactSheet": {
+    "path": "build/evidence/visual-upgrade/generated/contact-sheet-supported-viewports.png",
+    "sha256": "61480871b2e06e015e572b282052ba229056492be167156055d0d0eb3eaca004",
+    "bytes": 589688
+  },
+  "targetHashes": {
+    "01-title-route.svg": "7a282e7165599ac6020a7abb015b1610e3593b17942989ddb326bbc3cf8cb274",
+    "02-glade-family.svg": "9d6af8aec91d2874092dda11ea9c109a6552442c7cf26c54a18dccc4f77f9e0a",
+    "03-aerial-pressure.svg": "15f57266802978a17751aa0b13f9174188af4fad27278d42d2adc2a17552da6a"
+  },
+  "consoleErrors": []
+}
+exitCode=0
+durationMs=6674
 suite=qa:design-invariants
-cwd=game-adaptations/project-plateau
+cwd=examples/project-plateau
 command=python3 qa/check_design_invariants.py
 design invariants: PASS (10/10)
 exitCode=0
-durationMs=58
+durationMs=46
 suite=repo:contract
 cwd=.
 command=python3 scripts/validate_repo.py
 Validation passed: 7 skills checked.
 exitCode=0
-durationMs=713
+durationMs=453
 suite=repo:contract
 cwd=.
 command=python3 -m unittest discover -s tests -v
+test_asset_ledgers_reference_existing_evidence (test_validate_repo.RepositoryValidationTests.test_asset_ledgers_reference_existing_evidence) ... ok
+test_build_brief_release_states_must_match_manifest (test_validate_repo.RepositoryValidationTests.test_build_brief_release_states_must_match_manifest) ... ok
 test_chinese_readme_avoids_stock_contrast_and_awkward_example_copy (test_validate_repo.RepositoryValidationTests.test_chinese_readme_avoids_stock_contrast_and_awkward_example_copy) ... ok
 test_community_contribution_surface_is_complete (test_validate_repo.RepositoryValidationTests.test_community_contribution_surface_is_complete) ... ok
+test_current_public_host_pass_requires_release_fingerprint (test_validate_repo.RepositoryValidationTests.test_current_public_host_pass_requires_release_fingerprint) ... ok
+test_degradable_asset_requires_structured_fallback_proof (test_validate_repo.RepositoryValidationTests.test_degradable_asset_requires_structured_fallback_proof) ... ok
+test_demonstrated_tier_cannot_claim_playable_proof_under_graybox_publication (test_validate_repo.RepositoryValidationTests.test_demonstrated_tier_cannot_claim_playable_proof_under_graybox_publication) ... ok
 test_downstream_skills_restate_the_output_language_rule (test_validate_repo.RepositoryValidationTests.test_downstream_skills_restate_the_output_language_rule) ... ok
+test_every_publication_tier_requires_graybox_ready_proof (test_validate_repo.RepositoryValidationTests.test_every_publication_tier_requires_graybox_ready_proof) ... ok
 test_every_skill_description_leads_with_english (test_validate_repo.RepositoryValidationTests.test_every_skill_description_leads_with_english) ... ok
 test_example_source_and_citations_are_structurally_valid (test_validate_repo.RepositoryValidationTests.test_example_source_and_citations_are_structurally_valid) ... ok
 test_example_source_bible_accounts_for_every_source_chapter (test_validate_repo.RepositoryValidationTests.test_example_source_bible_accounts_for_every_source_chapter) ... ok
 test_examples_use_compact_planning_artifacts (test_validate_repo.RepositoryValidationTests.test_examples_use_compact_planning_artifacts) ... ok
+test_fish_audio_trials_are_sparse_and_never_release_assets_by_default (test_validate_repo.RepositoryValidationTests.test_fish_audio_trials_are_sparse_and_never_release_assets_by_default) ... ok
+test_graybox_and_playable_prototype_may_record_open_visual_work (test_validate_repo.RepositoryValidationTests.test_graybox_and_playable_prototype_may_record_open_visual_work) ... ok
 test_manifest_validator_rejects_a_bad_manifest (test_validate_repo.RepositoryValidationTests.test_manifest_validator_rejects_a_bad_manifest) ... ok
 test_minimal_evidence_contract_rejects_each_missing_marker (test_validate_repo.RepositoryValidationTests.test_minimal_evidence_contract_rejects_each_missing_marker) ... ok
 test_minimal_evidence_fixture_reports_an_orphaned_suite (test_validate_repo.RepositoryValidationTests.test_minimal_evidence_fixture_reports_an_orphaned_suite) ... ok
 test_minimal_evidence_fixture_runs_one_complete_verification (test_validate_repo.RepositoryValidationTests.test_minimal_evidence_fixture_runs_one_complete_verification) ... ok
 test_native_plugins_expose_one_shared_skill_bundle (test_validate_repo.RepositoryValidationTests.test_native_plugins_expose_one_shared_skill_bundle) ... ok
 test_numeral_parsing_covers_every_declared_kind (test_validate_repo.RepositoryValidationTests.test_numeral_parsing_covers_every_declared_kind) ... ok
+test_playable_prototype_rejects_open_major (test_validate_repo.RepositoryValidationTests.test_playable_prototype_rejects_open_major) ... ok
+test_playable_prototype_rejects_unclassified_release_gate_asset (test_validate_repo.RepositoryValidationTests.test_playable_prototype_rejects_unclassified_release_gate_asset) ... ok
+test_playable_prototype_requires_every_pipeline_gate (test_validate_repo.RepositoryValidationTests.test_playable_prototype_requires_every_pipeline_gate) ... ok
+test_playable_prototype_requires_focal_release_asset_proof (test_validate_repo.RepositoryValidationTests.test_playable_prototype_requires_focal_release_asset_proof) ... ok
+test_playable_prototype_requires_review_identity_independence_and_evidence (test_validate_repo.RepositoryValidationTests.test_playable_prototype_requires_review_identity_independence_and_evidence) ... ok
+test_playable_prototype_requires_review_to_be_required_and_passed (test_validate_repo.RepositoryValidationTests.test_playable_prototype_requires_review_to_be_required_and_passed) ... ok
+test_playable_prototype_requires_visual_frame_evidence (test_validate_repo.RepositoryValidationTests.test_playable_prototype_requires_visual_frame_evidence) ... ok
+test_playable_prototype_requires_visual_promotion_proof (test_validate_repo.RepositoryValidationTests.test_playable_prototype_requires_visual_promotion_proof) ... ok
+test_playable_publication_rejects_release_fingerprint_mismatch (test_validate_repo.RepositoryValidationTests.test_playable_publication_rejects_release_fingerprint_mismatch) ... ok
+test_playable_publication_rejects_stale_commit_with_current_fingerprint (test_validate_repo.RepositoryValidationTests.test_playable_publication_rejects_stale_commit_with_current_fingerprint) ... ok
+test_playable_visual_manifest_requires_embedded_source_fingerprint (test_validate_repo.RepositoryValidationTests.test_playable_visual_manifest_requires_embedded_source_fingerprint) ... ok
 test_plugin_manifest_descriptions_lead_with_english (test_validate_repo.RepositoryValidationTests.test_plugin_manifest_descriptions_lead_with_english) ... ok
+test_progress_gate_parser_rejects_conflicting_anchored_statuses (test_validate_repo.RepositoryValidationTests.test_progress_gate_parser_rejects_conflicting_anchored_statuses) ... ok
 test_public_product_copy_does_not_limit_the_pipeline_to_web_games (test_validate_repo.RepositoryValidationTests.test_public_product_copy_does_not_limit_the_pipeline_to_web_games) ... ok
+test_publication_tiers_must_follow_target_and_demonstrated_order (test_validate_repo.RepositoryValidationTests.test_publication_tiers_must_follow_target_and_demonstrated_order) ... ok
+test_qa_report_inherits_target_finish_without_conflicts (test_validate_repo.RepositoryValidationTests.test_qa_report_inherits_target_finish_without_conflicts) ... ok
+test_readme_defaults_to_english_with_a_chinese_counterpart (test_validate_repo.RepositoryValidationTests.test_readme_defaults_to_english_with_a_chinese_counterpart) ... ok
+test_readme_example_link_order_must_match_between_languages (test_validate_repo.RepositoryValidationTests.test_readme_example_link_order_must_match_between_languages) ... ok
+test_readme_featured_claim_must_point_to_showcase (test_validate_repo.RepositoryValidationTests.test_readme_featured_claim_must_point_to_showcase) ... ok
+test_readme_public_listing_must_use_manifest_tier_label (test_validate_repo.RepositoryValidationTests.test_readme_public_listing_must_use_manifest_tier_label) ... ok
+test_release_evidence_cannot_escape_example_workspace (test_validate_repo.RepositoryValidationTests.test_release_evidence_cannot_escape_example_workspace) ... ok
+test_release_gate_ledger_requires_status_remaining_and_existing_evidence (test_validate_repo.RepositoryValidationTests.test_release_gate_ledger_requires_status_remaining_and_existing_evidence) ... ok
 test_repo_local_discovery_resolves_the_same_skill_set (test_validate_repo.RepositoryValidationTests.test_repo_local_discovery_resolves_the_same_skill_set) ... ok
 test_repository_contract_is_valid (test_validate_repo.RepositoryValidationTests.test_repository_contract_is_valid) ... ok
 test_repository_json_scan_skips_generated_dependency_trees (test_validate_repo.RepositoryValidationTests.test_repository_json_scan_skips_generated_dependency_trees) ... ok
+test_review_scenario_generator_attests_rights_and_records_requests (test_validate_repo.RepositoryValidationTests.test_review_scenario_generator_attests_rights_and_records_requests) ... ok
 test_runtime_markdown_headings_match_the_declared_language (test_validate_repo.RepositoryValidationTests.test_runtime_markdown_headings_match_the_declared_language)
 技能与 references 恒为简体中文；示例按自己 manifest 声明的语言判。 ... ok
 test_runtime_pipeline_follows_the_selected_target_platform (test_validate_repo.RepositoryValidationTests.test_runtime_pipeline_follows_the_selected_target_platform) ... ok
+test_showcase_publication_rejects_not_run_required_visual_review (test_validate_repo.RepositoryValidationTests.test_showcase_publication_rejects_not_run_required_visual_review) ... ok
+test_showcase_publication_requires_matching_release_manifest_tier (test_validate_repo.RepositoryValidationTests.test_showcase_publication_requires_matching_release_manifest_tier) ... ok
+test_showcase_publication_requires_progress_gates (test_validate_repo.RepositoryValidationTests.test_showcase_publication_requires_progress_gates) ... ok
+test_showcase_publication_requires_release_gate_assets_to_pass (test_validate_repo.RepositoryValidationTests.test_showcase_publication_requires_release_gate_assets_to_pass) ... ok
 test_skill_validator_rejects_chinese_first_description (test_validate_repo.RepositoryValidationTests.test_skill_validator_rejects_chinese_first_description) ... ok
 test_skill_validator_rejects_cross_skill_link (test_validate_repo.RepositoryValidationTests.test_skill_validator_rejects_cross_skill_link) ... ok
 test_skill_validator_rejects_missing_output_language_rule (test_validate_repo.RepositoryValidationTests.test_skill_validator_rejects_missing_output_language_rule) ... ok
 test_skill_validator_rejects_todo_and_broken_link (test_validate_repo.RepositoryValidationTests.test_skill_validator_rejects_todo_and_broken_link) ... ok
+test_target_finish_must_be_inherited_without_conflicts (test_validate_repo.RepositoryValidationTests.test_target_finish_must_be_inherited_without_conflicts) ... ok
+test_tts_contract_stays_provider_neutral_and_minimizes_source_disclosure (test_validate_repo.RepositoryValidationTests.test_tts_contract_stays_provider_neutral_and_minimizes_source_disclosure) ... ok
 test_visible_directories_skips_agent_state_dirs (test_validate_repo.RepositoryValidationTests.test_visible_directories_skips_agent_state_dirs) ... ok
+test_visual_frame_requires_operation_path_and_complete_rubric (test_validate_repo.RepositoryValidationTests.test_visual_frame_requires_operation_path_and_complete_rubric) ... ok
+test_visual_targets_inherits_target_finish_when_present (test_validate_repo.RepositoryValidationTests.test_visual_targets_inherits_target_finish_when_present) ... ok
+test_voiceover_release_is_hash_bound_and_fail_closed (test_validate_repo.RepositoryValidationTests.test_voiceover_release_is_hash_bound_and_fail_closed) ... ok
 
 ----------------------------------------------------------------------
-Ran 25 tests in 0.814s
+Ran 63 tests in 0.839s
 
 OK
 exitCode=0
-durationMs=1077
+durationMs=910
 authoritativeExitCode=0
-authoritativeDurationMs=509894
+authoritativeDurationMs=485405
