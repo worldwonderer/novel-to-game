@@ -146,6 +146,13 @@ def check_scaled_age_gate(page, label: str) -> None:
         body_copy.evaluate("e => e.scrollWidth <= e.clientWidth"),
         f"{label} 200% 文字缩放时年龄说明内部无横向溢出",
     )
+    # 印章是年龄门里唯一可压缩的 flex 子项。只断言 bounding box 不越界的话，"不溢出"可以靠把
+    # 印章压成矩形买到——那不是修好了布局，是把失败挪到了看不见的地方。
+    seal = page.locator(".age-gate .age-seal").bounding_box()
+    check(
+        bool(seal and abs(seal["width"] - seal["height"]) <= max(2.0, seal["width"] * 0.06)),
+        f"{label} 200% 文字缩放时 18+ 印章未被压扁（{seal['width']:.1f}×{seal['height']:.1f}）" if seal else f"{label} 200% 文字缩放时 18+ 印章可测量",
+    )
 
 
 # 本作是纯 DOM/CSS 视觉小说：全项目零 requestAnimationFrame、零 canvas，没有逐帧渲染循环。
@@ -494,14 +501,15 @@ def main() -> int:
     )
     check(worst_transition <= TRANSITION_BUDGET_MS,
           f"最重转场 点击→绘制 {worst_transition} ms ≤ {TRANSITION_BUDGET_MS} ms")
-    # 长任务按归因分档：启动期（首屏资产解码，已由 local_load_ms 门单独裁决）与
-    # 游戏中（玩家正在操作时的主线程阻塞，才是真卡顿）。
-    boot = [t for t in longtasks if t["at"] <= 1500]
-    ingame = [t for t in longtasks if t["at"] > 1500]
+    # 长任务按归因分档：启动期（年龄门/首屏，玩家还没进入游戏）与游戏中（玩家正在操作时的
+    # 主线程阻塞，才是真卡顿）。用观察器已记录的 phase 归因，不用挂钟时间——挂钟阈值会随
+    # 测试自身新增的步骤漂移，把真实的游戏中卡顿挪进"启动期"豁免里。
+    boot = [t for t in longtasks if t["phase"] == "?"]
+    ingame = [t for t in longtasks if t["phase"] != "?"]
     worst_boot = max((t["ms"] for t in boot), default=0)
     worst_ingame = max((t["ms"] for t in ingame), default=0)
     if boot:
-        print(f"  启动期长任务: {sorted((t['ms'] for t in boot), reverse=True)}（首屏资产解码，见 local_load_ms 门）")
+        print(f"  启动期长任务: {sorted((t['ms'] for t in boot), reverse=True)}（年龄门/首屏，玩家尚未进入游戏）")
     check(worst_ingame < STALL_MS,
           f"游戏中无 >{STALL_MS:.0f} ms 主线程长任务（最坏 {worst_ingame} ms，共 {len(ingame)} 次 >50 ms）")
 
@@ -535,11 +543,6 @@ def main() -> int:
     }
     run_evidence = SHOTS / ("evidence-normal.json" if SLOW else "evidence-fast.json")
     run_evidence.write_text(json.dumps(evidence, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    if SLOW:
-        (SHOTS / "evidence.json").write_text(
-            json.dumps(evidence, ensure_ascii=False, indent=2) + "\n",
-            encoding="utf-8",
-        )
     print(f"\n控制台错误: {len(errors)}；资源失败: {len(network_errors)}")
     print(f"包体: {size_bytes/1048576:.2f} MB；外部域: {external or '无'}")
     print(f"结果: {passed} 通过, {failed} 失败；证据 → {SHOTS}")

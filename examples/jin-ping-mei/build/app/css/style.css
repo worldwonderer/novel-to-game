@@ -113,6 +113,8 @@ button:focus-visible { outline: 3px solid var(--gold-bright); outline-offset: 3p
 .age-seal {
   width: 78px;
   height: 78px;
+  /* 唯一可压缩的 flex 子项：不锁死会在 200% 文字缩放下被压扁成矩形来换取"不溢出"。 */
+  flex: none;
   display: grid;
   place-content: center;
   margin-bottom: 1.4rem;

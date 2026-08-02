@@ -16,7 +16,7 @@
       "fast": "qa/evidence/browser/evidence-fast.json",
       "normal": "qa/evidence/browser/evidence-normal.json"
     },
-    "passed_per_run": 165,
+    "passed_per_run": 167,
     "failed_per_run": 0,
     "console_errors": 0,
     "network_errors": 0,

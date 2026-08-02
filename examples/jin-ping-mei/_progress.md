@@ -26,7 +26,7 @@
   `qa/evidence/browser/`（安全帧入库；18+ 内部验收帧按 game-build 契约放受限子目录
   并经 .gitignore 排除，可由 `python3 build/app/test/qa_browser.py` 复跑重建）
 - 引擎自测：`node build/app/test/ledger.mjs` 52 项通过；
-  浏览器：加速与 `QA_SLOW=1` 正常速度各 165 项通过 / 控制台 0 报错 / 资源 0 失败；
+  浏览器：加速与 `QA_SLOW=1` 正常速度各 167 项通过 / 控制台 0 报错 / 资源 0 失败；
   原始摘要分别为 `evidence-fast.json`、`evidence-normal.json`，年龄门在 1280×800 与
   1920×1080 均覆盖 200% 文字缩放、按钮、正文和装饰框边界
 - 人工证据：第 1 轮线上反馈确认“好很多”，指出文案有 AI 味、宅中角色与内容需扩充；

@@ -5,7 +5,7 @@
 - 自动化工程验收：**`PASS`**（2026-07-28 复审：F1、F2 两条 `major` 已修复并加断言，
   证据路径由 `/tmp` 改落工作区内 `qa/evidence/`，零 `blocker`、零 `major`）
 - 2026-08-01 可读性复审：年龄门新增 200% 文字缩放与装饰框边界门禁；加速和正常速度路径均
-  **165 通过 / 0 失败**，覆盖 `1280×800` 与 `1920×1080` 两个视口，控制台与资源错误均为 0。
+  **167 通过 / 0 失败**，覆盖 `1280×800` 与 `1920×1080` 两个视口，控制台与资源错误均为 0。
 - 裁决沿革：2026-07-25 记 `PASS 0/0/0`（已作废）→ 2026-07-26 复审记 `FAIL`
   （`/tmp` 证据失效 + 2 `major`）→ 2026-07-28 修复后记 `PASS`
 - `blocker`：0
@@ -41,7 +41,7 @@ node test/ledger.mjs
 
 python3 test/qa_browser.py
 QA_SLOW=1 python3 test/qa_browser.py
-# 两次结果均为：165 通过，0 失败
+# 两次结果均为：167 通过，0 失败
 # 控制台错误：0；关键资源失败：0
 ```
 
@@ -52,8 +52,8 @@ QA_SLOW=1 python3 test/qa_browser.py
 `qa/evidence/`，安全截图落 `qa/evidence/browser/safe/`，18+ 内部截图落受限子目录
 `qa/evidence/browser/adult/`（已 gitignore，不随仓库发布）。加速与正常速度（`QA_SLOW=1`）
 各复跑一轮，均 133 通过 / 0 失败，下表截图证据已重新生成、恢复有效。
-2026-08-01 布局修复后再次以加速和正常速度各复跑一轮，最新均为 165 通过 / 0 失败；
-原始摘要分别落在 `evidence-fast.json` 与 `evidence-normal.json`，`evidence.json` 保留为正常速度兼容副本。
+2026-08-01 布局修复后再次以加速和正常速度各复跑一轮，最新均为 167 通过 / 0 失败；
+两轮原始摘要分别落在 `evidence-fast.json` 与 `evidence-normal.json`，各自独立留存，不再另写合并副本。
 
 ## 关键不变量
 
@@ -89,9 +89,9 @@ QA_SLOW=1 python3 test/qa_browser.py
 | 缺关键 CG 失败而非灰盒回退 | 通过 | 资产加载器与缺失资产测试 |
 | 同 seed + 同选择可复现 | 通过 | 纯引擎快照比较 |
 | 目标视口无关键遮挡或溢出 | 通过 | 双视口 bounding box 断言 |
-| 首屏、转场延迟、包体达到预算 | 通过 | 30.9 ms 首屏、最重转场 8.1 ms（正常速度）、6.0 MB |
+| 首屏、转场延迟、包体达到预算 | 通过 | 25.5 ms 首屏、最重转场 38.2 ms（正常速度）、6.0 MB |
 | 无外部请求域（切片自包含） | 通过 | 全程请求域仅 `127.0.0.1:5173` |
-| 游戏中无主线程长任务 | 通过 | longtask 观测：游戏中 0 次 >50 ms；正常速度启动期 1 次 170 ms（首屏解码，由 30.9 ms 本地加载门单独约束） |
+| 游戏中无主线程长任务 | 通过 | longtask 按观察器 `phase` 归因（非挂钟时间）：玩家进入游戏后 0 次 >50 ms；年龄门/首屏各 1 次，加速 171 ms、正常速度 181 ms，均低于 200 ms 门 |
 | 最小视口文字达到可读地板 | 通过 | 功能标签 13px、正文 14px、人物原因 12px |
 | 键盘与降运动路径 | 通过 | Tab 聚焦、`prefers-reduced-motion` 断言 |
 | 静音持久化 | 通过 | UI 切换后新页面仍读取 `jpm_mute` |
@@ -133,7 +133,6 @@ QA_SLOW=1 python3 test/qa_browser.py
 - `qa/evidence/design-invariants.md`（2026-07-26 复审静态对照）
 - `qa/evidence/browser/evidence-fast.json`（2026-08-01 加速复跑）
 - `qa/evidence/browser/evidence-normal.json`（2026-08-01 正常速度复跑）
-- `qa/evidence/browser/evidence.json`（正常速度结果的兼容副本）
 - `qa/evidence/browser/safe/` 共 12 张：01_age_gate、01_age_gate_200pct_text、02_title、03_opening_choice_done、
   04_delayed_yue_morning、06_banquet_conflict、07_exclusive_ending、08_gallery_after_yue、
   09_jealousy_chain，以及 household_meng_yulou / household_sun_xuee / household_li_jiaoer

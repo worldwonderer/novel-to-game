@@ -9,29 +9,29 @@
     "1280x800@200%-text",
     "1920x1080@200%-text"
   ],
-  "passed": 165,
+  "passed": 167,
   "failed": 0,
   "console_errors": [],
   "network_errors": [],
   "http_errors": [],
   "performance": {
     "note": "纯 DOM/CSS，无 rAF 渲染循环；帧率对本作无意义，改测转场延迟与主线程长任务",
-    "local_load_ms": 40.1,
+    "local_load_ms": 30.9,
     "transitions": {
       "banquet_conflict_close": {
-        "transition_to_paint_ms": 14.1
+        "transition_to_paint_ms": 12.3
       }
     },
     "transition_budget_ms": 200.0,
     "longtasks_over_50ms": [
       {
-        "ms": 203,
-        "at": 981,
+        "ms": 171,
+        "at": 960,
         "phase": "?"
       }
     ],
     "stall_gate_ms": 200.0,
-    "build_bytes": 6265981
+    "build_bytes": 6266888
   },
   "request_hosts": [
     "127.0.0.1:5173"
