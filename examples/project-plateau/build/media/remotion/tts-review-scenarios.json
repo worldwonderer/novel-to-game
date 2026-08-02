@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "policy": {
+    "purpose": "Review a few high-value voice moments; do not narrate every screen or upload source manuscripts.",
+    "defaultScope": "project-trials",
+    "maximumSelectedLinesPerGame": 1,
+    "generatedFilesAreReleaseAssets": false,
+    "humanListeningRequiredBeforeIntegration": true
+  },
+  "defaults": {
+    "model": "s2.1-pro-free",
+    "format": "mp3",
+    "sample_rate": 44100,
+    "mp3_bitrate": 192,
+    "temperature": 0.7,
+    "top_p": 0.7,
+    "speed": 1
+  },
+  "scenarios": [
+    {
+      "id": "project-plateau-release-narration",
+      "scope": "project-trial",
+      "project": "project-plateau",
+      "language": "en-US",
+      "source": "existing-file",
+      "file": "public/voiceover-source.mp3",
+      "reason": "Existing launch-video narration is the one approved voice-heavy surface."
+    },
+    {
+      "id": "jin-ping-mei-title-hook",
+      "scope": "project-trial",
+      "project": "jin-ping-mei",
+      "language": "zh-Hans",
+      "source": "generate",
+      "text": "[calm, restrained] 今夜进谁的门，明早谁来敲你的门。",
+      "minimum_seconds": 2,
+      "maximum_seconds": 8,
+      "reason": "One title hook tests intimacy and social pressure without voicing the relationship scenes."
+    },
+    {
+      "id": "journey-to-the-west-first-confrontation",
+      "scope": "project-trial",
+      "project": "journey-to-the-west",
+      "language": "zh-Hans",
+      "source": "generate",
+      "text": "[angry, controlled] 孙悟空！你还有脸上我这翠云山？",
+      "minimum_seconds": 2,
+      "maximum_seconds": 8,
+      "reason": "One pivotal confrontation tests character presence without turning every dialogue box into speech."
+    },
+    {
+      "id": "qa-en-short-bark",
+      "scope": "qa-matrix",
+      "language": "en-US",
+      "source": "generate",
+      "text": "[urgent] Back to cover. Now.",
+      "minimum_seconds": 0.5,
+      "maximum_seconds": 5
+    },
+    {
+      "id": "qa-zh-short-bark",
+      "scope": "qa-matrix",
+      "language": "zh-Hans",
+      "source": "generate",
+      "text": "[urgent] 快退到石后！",
+      "minimum_seconds": 0.5,
+      "maximum_seconds": 5
+    },
+    {
+      "id": "qa-emotion-transition",
+      "scope": "qa-matrix",
+      "language": "zh-Hans",
+      "source": "generate",
+      "text": "[whispering] 别出声。 [excited] 它飞过去了！",
+      "minimum_seconds": 1,
+      "maximum_seconds": 8
+    },
+    {
+      "id": "qa-pause-and-laughter",
+      "scope": "qa-matrix",
+      "language": "en-US",
+      "source": "generate",
+      "text": "Wait. [laughing] That was closer than I expected.",
+      "minimum_seconds": 1,
+      "maximum_seconds": 8
+    },
+    {
+      "id": "qa-names-and-numbers",
+      "scope": "qa-matrix",
+      "language": "mixed",
+      "source": "generate",
+      "text": "孙悟空 crossed Project Plateau with four glass plates at 18:40.",
+      "minimum_seconds": 2,
+      "maximum_seconds": 10
+    },
+    {
+      "id": "qa-long-continuity",
+      "scope": "qa-matrix",
+      "language": "en-US",
+      "source": "generate",
+      "text": "[measured] The trail leaves the fort, follows the brook beneath the canopy, crosses the exposed basalt shelf, and ends at the glade. Photograph the family only when the adults turn away, then carry every surviving plate back through cover before the light fails.",
+      "minimum_seconds": 8,
+      "maximum_seconds": 24
+    }
+  ]
+}

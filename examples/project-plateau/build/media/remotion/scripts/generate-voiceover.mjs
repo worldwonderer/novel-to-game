@@ -4,6 +4,12 @@ import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';
 
+import {
+  FISH_TTS_ENDPOINT,
+  requestFingerprint,
+  requestFishTts,
+} from './fish-tts-client.mjs';
+
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, '..');
 const publicDir = path.join(root, 'public');
@@ -22,6 +28,9 @@ const referenceSha256 = referenceId
 
 if (!reuseSource && !apiKey) {
   throw new Error('FISH_API_KEY is required. Pass it through the environment; never add it to this repository.');
+}
+if (process.env.FISH_REFERENCE_ID && process.env.FISH_VOICE_RIGHTS_ATTESTED !== '1') {
+  throw new Error('Set FISH_VOICE_RIGHTS_ATTESTED=1 before using an environment-provided voice reference.');
 }
 
 await mkdir(publicDir, {recursive: true});
@@ -44,32 +53,38 @@ const body = {
 
 if (referenceId) body.reference_id = referenceId;
 
+const endpoint = FISH_TTS_ENDPOINT;
+const requestSha256 = requestFingerprint({
+  endpoint,
+  model: config.model,
+  body,
+  context: {language: config.language},
+});
+
 let sourceMetadata;
 if (!reuseSource) {
-  const response = await fetch('https://api.fish.audio/v1/tts', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-      model: config.model,
-    },
-    body: JSON.stringify(body),
+  const result = await requestFishTts({
+    apiKey,
+    endpoint,
+    model: config.model,
+    language: config.language,
+    body,
+    timeoutMs: config.request?.timeout_ms ?? 60_000,
+    maxAttempts: config.request?.max_attempts ?? 3,
   });
-
-  if (!response.ok) {
-    const error = (await response.text()).slice(0, 500);
-    throw new Error(`Fish Audio TTS failed with HTTP ${response.status}: ${error}`);
-  }
-
-  const audio = Buffer.from(await response.arrayBuffer());
-  if (audio.length < 1024) throw new Error('Fish Audio returned an unexpectedly small response.');
+  const {audio} = result;
   await writeFile(source, audio, {mode: 0o600});
   sourceMetadata = {
-    schemaVersion: 2,
+    schemaVersion: 3,
+    provider: 'fish-audio',
+    endpoint,
     model: config.model,
     textSha256,
+    requestSha256,
     sourceSha256: createHash('sha256').update(audio).digest('hex'),
     referenceSha256,
+    attempts: result.attempts,
+    contentType: result.contentType,
     reference: process.env.FISH_REFERENCE_ID
       ? 'environment-provided-reference'
       : configuredReferenceId
@@ -85,12 +100,18 @@ if (!reuseSource) {
   sourceMetadata = JSON.parse(rawMetadata);
   const sourceSha256 = createHash('sha256').update(sourceAudio).digest('hex');
   if (
+    sourceMetadata.schemaVersion !== 3 ||
+    sourceMetadata.provider !== 'fish-audio' ||
+    sourceMetadata.endpoint !== endpoint ||
     sourceMetadata.model !== config.model ||
     sourceMetadata.textSha256 !== textSha256 ||
+    sourceMetadata.requestSha256 !== requestSha256 ||
     sourceMetadata.sourceSha256 !== sourceSha256 ||
     sourceMetadata.referenceSha256 !== referenceSha256
   ) {
-    throw new Error('The ignored Fish Audio source does not match the current model, script, or recorded hash.');
+    throw new Error(
+      'The ignored Fish Audio source does not match the current request contract. Regenerate it with a safe rotated environment credential; legacy sidecars are not silently trusted.',
+    );
   }
   console.log('Reusing the existing ignored Fish Audio source file.');
 }

@@ -520,6 +520,73 @@ class RepositoryValidationTests(unittest.TestCase):
                 content = (ROOT / relative_path).read_text(encoding="utf-8")
                 self.assertIn(marker, content)
 
+    def test_tts_contract_stays_provider_neutral_and_minimizes_source_disclosure(self) -> None:
+        contract = (
+            ROOT / "skills/game-build/references/tts-production-contract.md"
+        ).read_text(encoding="utf-8")
+        self.assertNotIn("Fish Audio", contract)
+        self.assertNotIn("s2.1", contract)
+        self.assertIn("不上传完整小说", contract)
+        self.assertIn("运行时不需要网络或密钥", contract)
+        self.assertIn("人工试听", contract)
+
+    def test_fish_audio_trials_are_sparse_and_never_release_assets_by_default(self) -> None:
+        config = json.loads(
+            (
+                ROOT
+                / "examples/project-plateau/build/media/remotion/tts-review-scenarios.json"
+            ).read_text(encoding="utf-8")
+        )
+        policy = config["policy"]
+        self.assertEqual(policy["maximumSelectedLinesPerGame"], 1)
+        self.assertFalse(policy["generatedFilesAreReleaseAssets"])
+        self.assertTrue(policy["humanListeningRequiredBeforeIntegration"])
+
+        trials = [item for item in config["scenarios"] if item["scope"] == "project-trial"]
+        self.assertEqual(
+            {item["project"] for item in trials},
+            {"project-plateau", "jin-ping-mei", "journey-to-the-west"},
+        )
+        counts: dict[str, int] = {}
+        for trial in trials:
+            counts[trial["project"]] = counts.get(trial["project"], 0) + 1
+            self.assertNotIn("source/", str(trial))
+        self.assertTrue(all(count == 1 for count in counts.values()))
+
+        matrix_ids = {
+            item["id"] for item in config["scenarios"] if item["scope"] == "qa-matrix"
+        }
+        self.assertTrue(
+            {
+                "qa-en-short-bark",
+                "qa-zh-short-bark",
+                "qa-emotion-transition",
+                "qa-pause-and-laughter",
+                "qa-names-and-numbers",
+                "qa-long-continuity",
+            }.issubset(matrix_ids)
+        )
+
+    def test_fish_audio_adapter_has_secret_retry_and_response_guards(self) -> None:
+        client = (
+            ROOT
+            / "examples/project-plateau/build/media/remotion/scripts/fish-tts-client.mjs"
+        ).read_text(encoding="utf-8")
+        generator = (
+            ROOT
+            / "examples/project-plateau/build/media/remotion/scripts/generate-tts-review-scenarios.mjs"
+        ).read_text(encoding="utf-8")
+        for marker in (
+            "AbortSignal.timeout",
+            "retry-after",
+            "RETRYABLE_STATUSES",
+            "validateAudioResponse",
+            "[REDACTED]",
+        ):
+            self.assertIn(marker, client)
+        self.assertIn("FISH_VOICE_RIGHTS_ATTESTED", generator)
+        self.assertIn("requestSha256", generator)
+
     def test_readme_defaults_to_english_with_a_chinese_counterpart(self) -> None:
         english = (ROOT / "README.md").read_text(encoding="utf-8")
         chinese = (ROOT / "README_ZH.md").read_text(encoding="utf-8")

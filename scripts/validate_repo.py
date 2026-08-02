@@ -40,6 +40,11 @@ PLUGIN_MANIFESTS = {
 # The repository validator checks only its own skill prose; it does not impose a
 # framework, schema package, or runtime dependency on generated projects.
 MINIMAL_EVIDENCE_REQUIREMENTS = {
+    "skills/game-art-direction/SKILL.md": (
+        "语音策略",
+        "静音 / 缺音降级",
+        "音色权利",
+    ),
     "skills/game-build/references/build-brief-contract.md": (
         "targetRuntime:",
         "testedRuntime:",
@@ -47,18 +52,31 @@ MINIMAL_EVIDENCE_REQUIREMENTS = {
         "verify:",
         "completeRun: qa/verification.json#completeRun",
         "evidenceIndex: qa/verification.json#checkpoints",
+        "语音资产台账",
+        "request_sha256",
     ),
     "skills/game-build/SKILL.md": (
         "权威验证命令",
         "verify.log",
         "executed: true",
         "clean start",
+        "tts-production-contract.md",
+        "服务端",
+    ),
+    "skills/game-build/references/tts-production-contract.md": (
+        "构建期优先",
+        "最小发送",
+        "Retry-After",
+        "请求指纹",
+        "NOT_RUN: 原因",
+        "人工试听",
     ),
     "skills/game-qa/SKILL.md": (
         "ORPHANED_TEST_SUITE",
         "qa/verification.json",
         "discovered from",
         "clean start",
+        "语音与 TTS",
     ),
     "skills/game-qa/references/qa-contract.md": (
         "目标运行环境",
@@ -66,6 +84,9 @@ MINIMAL_EVIDENCE_REQUIREMENTS = {
         "NOT_RUN: reason",
         "同一个 complete-run step",
         "同一个 source commit",
+        "API 密钥",
+        "人工试听",
+        "损坏文件",
     ),
 }
 EXAMPLE_PLANNING_FILES = {
