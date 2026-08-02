@@ -65,6 +65,24 @@ test('audio evaluation rejects silence and clipping', () => {
   );
 });
 
+test('audio evaluation records and enforces the declared bitrate budget', () => {
+  const result = evaluateAudio(
+    {
+      bytes: 4096,
+      durationSeconds: 1,
+      activeSampleRatio: 0.5,
+      clippedSampleRatio: 0,
+      codec: 'mp3',
+      sampleRate: 44100,
+      channels: 1,
+      bitrate: 128000,
+    },
+    {bitrate: 192000, bitrateTolerance: 4000},
+  );
+  assert.equal(result.passed, false);
+  assert.ok(result.checks.some((item) => item.id === 'bitrate' && !item.passed));
+});
+
 test('audio inspection reports a silent file without mistaking it for usable speech', async (t) => {
   const dir = await mkdtemp(path.join(os.tmpdir(), 'novel-to-game-audio-qa-silence-'));
   t.after(() => rm(dir, {recursive: true, force: true}));

@@ -1,6 +1,6 @@
 {
-  "url": "http://127.0.0.1:5173/?seed=42",
-  "normal_speed_run": true,
+  "url": "http://127.0.0.1:5173/?seed=42&fast=1",
+  "normal_speed_run": false,
   "viewports": [
     "1280x800",
     "1920x1080"
@@ -16,17 +16,17 @@
   "http_errors": [],
   "performance": {
     "note": "纯 DOM/CSS，无 rAF 渲染循环；帧率对本作无意义，改测转场延迟与主线程长任务",
-    "local_load_ms": 30.9,
+    "local_load_ms": 40.1,
     "transitions": {
       "banquet_conflict_close": {
-        "transition_to_paint_ms": 8.1
+        "transition_to_paint_ms": 14.1
       }
     },
     "transition_budget_ms": 200.0,
     "longtasks_over_50ms": [
       {
-        "ms": 170,
-        "at": 962,
+        "ms": 203,
+        "at": 981,
         "phase": "?"
       }
     ],

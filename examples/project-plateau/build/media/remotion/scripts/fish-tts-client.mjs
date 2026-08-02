@@ -72,6 +72,30 @@ export function validateAudioResponse({audio, contentType, format, maximumAudioB
 
 const defaultSleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
 
+async function readResponseWithLimit(response, maximumAudioBytes) {
+  if (!response.body?.getReader) {
+    const audio = Buffer.from(await response.arrayBuffer());
+    if (audio.length > maximumAudioBytes) {
+      throw new Error('Fish Audio returned an unexpectedly large response.');
+    }
+    return audio;
+  }
+  const reader = response.body.getReader();
+  const chunks = [];
+  let total = 0;
+  while (true) {
+    const {done, value} = await reader.read();
+    if (done) break;
+    total += value.byteLength;
+    if (total > maximumAudioBytes) {
+      await reader.cancel('response exceeded maximumAudioBytes');
+      throw new Error('Fish Audio returned an unexpectedly large response.');
+    }
+    chunks.push(Buffer.from(value));
+  }
+  return Buffer.concat(chunks, total);
+}
+
 export async function requestFishTts({
   apiKey,
   model,
@@ -115,6 +139,7 @@ export async function requestFishTts({
         },
         body: JSON.stringify(body),
         signal: AbortSignal.timeout(timeoutMs),
+        redirect: 'error',
       });
     } catch (error) {
       lastError = new Error(`Fish Audio request failed before a response: ${redact(error?.message, apiKey)}`);
@@ -144,7 +169,7 @@ export async function requestFishTts({
       await response.body?.cancel();
       throw new Error('Fish Audio declared an unexpectedly large response.');
     }
-    const audio = Buffer.from(await response.arrayBuffer());
+    const audio = await readResponseWithLimit(response, maximumAudioBytes);
     const contentType = response.headers.get('content-type');
     validateAudioResponse({audio, contentType, format: body.format, maximumAudioBytes});
     return {audio, attempts: attempt, contentType: contentType || 'not-reported'};

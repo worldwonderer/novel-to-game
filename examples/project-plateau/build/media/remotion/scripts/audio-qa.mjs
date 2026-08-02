@@ -78,7 +78,7 @@ export async function inspectAudio(filePath, {silenceDb = -50} = {}) {
     '-v',
     'error',
     '-show_entries',
-    'format=duration,size:stream=index,codec_name,codec_type,sample_rate,channels',
+    'format=duration,size,bit_rate:stream=index,codec_name,codec_type,sample_rate,channels,bit_rate',
     '-of',
     'json',
     filePath,
@@ -100,6 +100,7 @@ export async function inspectAudio(filePath, {silenceDb = -50} = {}) {
     codec: audio.codec_name,
     sampleRate: Number(audio.sample_rate),
     channels: audio.channels,
+    bitrate: Number(audio.bit_rate || data.format?.bit_rate),
     durationSeconds: round(Number(data.format?.duration)),
     ...pcmMetrics(decoded.stdout, 16000, silenceDb),
     ...loudnessMetrics(filePath),
@@ -126,6 +127,14 @@ export function evaluateAudio(metrics, criteria = {}) {
   if (criteria.codec) check('codec', metrics.codec === criteria.codec, `${metrics.codec} == ${criteria.codec}`);
   if (criteria.sampleRate) {
     check('sample_rate', metrics.sampleRate === criteria.sampleRate, `${metrics.sampleRate} == ${criteria.sampleRate}`);
+  }
+  if (criteria.bitrate) {
+    const tolerance = criteria.bitrateTolerance ?? 1000;
+    check(
+      'bitrate',
+      Number.isFinite(metrics.bitrate) && Math.abs(metrics.bitrate - criteria.bitrate) <= tolerance,
+      `${metrics.bitrate} bps; target ${criteria.bitrate} ±${tolerance}`,
+    );
   }
   if (criteria.channels) check('channels', metrics.channels === criteria.channels, `${metrics.channels} == ${criteria.channels}`);
   check(

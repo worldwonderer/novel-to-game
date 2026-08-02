@@ -133,6 +133,7 @@ test('invalid requests fail once and requests always receive a timeout signal', 
       fetchImpl: async (_endpoint, options) => {
         calls += 1;
         assert.ok(options.signal instanceof AbortSignal);
+        assert.equal(options.redirect, 'error');
         return response(400, 'text must not be empty');
       },
       sleep: async () => assert.fail('400 must not retry'),
@@ -195,6 +196,31 @@ test('declared oversized audio is rejected before buffering the body', async () 
     }),
     /declared an unexpectedly large response/,
   );
+});
+
+test('chunked audio is cancelled as soon as actual bytes exceed the response limit', async () => {
+  let cancelled = false;
+  let chunk = 0;
+  const stream = new ReadableStream({
+    pull(controller) {
+      controller.enqueue(chunk === 0 ? mp3Fixture() : Buffer.alloc(2048));
+      chunk += 1;
+    },
+    cancel() {
+      cancelled = true;
+    },
+  });
+  await assert.rejects(
+    requestFishTts({
+      apiKey: 'test-secret',
+      model: 's2.1-pro-free',
+      body: {text: 'hello', format: 'mp3'},
+      fetchImpl: async () => response(200, stream, {'content-type': 'audio/mpeg'}),
+      maximumAudioBytes: 2048,
+    }),
+    /unexpectedly large response/,
+  );
+  assert.equal(cancelled, true);
 });
 
 test('network failures retry only up to the configured attempt limit', async () => {

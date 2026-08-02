@@ -33,52 +33,31 @@
       },
       "source": "existing-file",
       "file": "public/voiceover-source.mp3",
+      "metadata_file": "public/voiceover-source.json",
       "source_ref": "examples/project-plateau/build/media/remotion/voiceover.json",
-      "reason": "Existing launch-video narration is the one approved voice-heavy surface."
+      "minimum_seconds": 1,
+      "maximum_seconds": 30.8,
+      "reason": "Existing launch-video narration is checked as the third technical trial; release approval remains separate."
     },
     {
       "id": "jin-ping-mei-yueniang-boundary",
       "scope": "project-trial",
       "project": "jin-ping-mei",
-      "language": "zh-Hans",
-      "speaker": "吴月娘",
-      "voice_profile": {
-        "casting_id": "jin-ping-mei-wu-yueniang-zh",
-        "role": "character",
-        "gender_presentation": "female",
-        "age_presentation": "mature adult",
-        "delivery": "lower-mid register, measured pace, restrained household authority and period diction",
-        "must_not_sound_like": "a coquettish young heroine, customer-service narration or a male voice"
-      },
+      "candidate_ref": "examples/jin-ping-mei/design/VOICE_AUDITION.json",
       "reference_env": "FISH_REFERENCE_ID_JPM_YUENIANG",
       "source": "generate",
-      "text": "[calm, firm, restrained] 官人，白日欠的话，先在这里说清。",
-      "source_ref": "examples/jin-ping-mei/build/app/js/data.js#HEROINES.wu_yueniang.voice",
       "minimum_seconds": 2,
-      "maximum_seconds": 8,
-      "reason": "One post-input character response tests period diction, restraint and relationship pressure without voicing every scene."
+      "maximum_seconds": 8
     },
     {
       "id": "journey-to-the-west-first-confrontation",
       "scope": "project-trial",
       "project": "journey-to-the-west",
-      "language": "zh-Hans",
-      "speaker": "铁扇公主（罗刹女）",
-      "voice_profile": {
-        "casting_id": "journey-to-the-west-princess-iron-fan-zh",
-        "role": "character",
-        "gender_presentation": "female",
-        "age_presentation": "mature adult",
-        "delivery": "commanding lower register, clipped martial hostility, controlled anger",
-        "must_not_sound_like": "吴月娘的克制持家声线、甜美动漫少女、温和旁白或 a male voice"
-      },
+      "candidate_ref": "examples/journey-to-the-west/design/VOICE_AUDITION.json",
       "reference_env": "FISH_REFERENCE_ID_XIYOU_LUOSHA",
       "source": "generate",
-      "text": "[angry, controlled] 孙悟空!你还有脸上我这翠云山?",
-      "source_ref": "examples/journey-to-the-west/build/app/js/text.js#TEXT.story.luoshaPre1[0]",
       "minimum_seconds": 2,
-      "maximum_seconds": 8,
-      "reason": "One pivotal confrontation tests character presence without turning every dialogue box into speech."
+      "maximum_seconds": 8
     },
     {
       "id": "qa-en-short-bark",

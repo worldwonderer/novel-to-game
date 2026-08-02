@@ -1,3 +1,7 @@
+import {createHash} from 'node:crypto';
+import {readFile} from 'node:fs/promises';
+import path from 'node:path';
+
 const REFERENCE_ENV = /^FISH_REFERENCE_ID_[A-Z0-9_]+$/;
 
 const REQUIRED_PROFILE_FIELDS = [
@@ -8,11 +12,84 @@ const REQUIRED_PROFILE_FIELDS = [
   'delivery',
   'must_not_sound_like',
 ];
+const CANDIDATE_OWNED_FIELDS = ['language', 'speaker', 'voice_profile', 'text', 'source_ref', 'reason'];
+
+export async function hydrateScenarioCandidates(scenarios, {repositoryRoot, readText = readFile} = {}) {
+  const root = path.resolve(repositoryRoot);
+  return Promise.all(
+    scenarios.map(async (scenario) => {
+      if (!scenario.candidate_ref) return scenario;
+      for (const field of CANDIDATE_OWNED_FIELDS) {
+        if (scenario[field] !== undefined) {
+          throw new Error(`${scenario.id}: ${field} must be owned by ${scenario.candidate_ref}, not provider config.`);
+        }
+      }
+      const candidatePath = path.resolve(root, scenario.candidate_ref);
+      if (!candidatePath.startsWith(`${root}${path.sep}`)) {
+        throw new Error(`${scenario.id}: candidate_ref leaves the repository.`);
+      }
+      const document = JSON.parse(await readText(candidatePath, 'utf8'));
+      if (
+        document.schemaVersion !== 1 ||
+        document.status !== 'AUDITION_APPROVED_NOT_RUNTIME_ADOPTED' ||
+        document.runtimeVoiceStrategy !== 'none'
+      ) {
+        throw new Error(`${scenario.id}: audition ownership document is incomplete or implies runtime adoption.`);
+      }
+      if (document.candidate?.id !== scenario.id || document.candidate?.project !== scenario.project) {
+        throw new Error(`${scenario.id}: audition candidate identity does not match provider config.`);
+      }
+      return {...scenario, ...document.candidate, candidateStatus: document.status};
+    }),
+  );
+}
+
+export function scenarioContractSha256(config, hydratedScenarios) {
+  return createHash('sha256')
+    .update(
+      JSON.stringify({
+        schemaVersion: config.schemaVersion,
+        policy: config.policy,
+        defaults: config.defaults,
+        scenarios: hydratedScenarios,
+      }),
+    )
+    .digest('hex');
+}
+
+export function scenarioCoverageChecks({scope, scenarios, manifest}) {
+  const expected = scenarios.filter((scenario) => scenario.scope === scope).map((scenario) => scenario.id).sort();
+  const actual = (manifest.results || []).map((item) => item.id);
+  const unique = [...new Set(actual)].sort();
+  return [
+    {
+      id: 'manifest_scope',
+      passed: manifest.scope === scope,
+      evidence: `${manifest.scope || 'missing'} == ${scope}`,
+    },
+    {
+      id: 'unique_scenario_ids',
+      passed: unique.length === actual.length,
+      evidence: `${unique.length} unique == ${actual.length} result(s)`,
+    },
+    {
+      id: 'declared_scenario_coverage',
+      passed: JSON.stringify(manifest.expectedScenarioIds) === JSON.stringify(expected),
+      evidence: `declared ${JSON.stringify(manifest.expectedScenarioIds || [])}; expected ${JSON.stringify(expected)}`,
+    },
+    {
+      id: 'complete_scenario_coverage',
+      passed: JSON.stringify(unique) === JSON.stringify(expected),
+      evidence: `actual ${JSON.stringify(unique)}; expected ${JSON.stringify(expected)}`,
+    },
+  ];
+}
 
 export function validateProjectTrialCasting(scenarios) {
   const trials = scenarios.filter((scenario) => scenario.scope === 'project-trial');
   const castingIds = new Set();
   const generatedReferenceEnvs = new Set();
+  const projects = new Set();
 
   for (const scenario of trials) {
     if (!scenario.speaker?.trim()) throw new Error(`${scenario.id}: speaker is required for a project trial.`);
@@ -25,6 +102,11 @@ export function validateProjectTrialCasting(scenarios) {
       throw new Error(`${scenario.id}: casting_id ${profile.casting_id} is already assigned to another trial.`);
     }
     castingIds.add(profile.casting_id);
+    if (!scenario.project?.trim()) throw new Error(`${scenario.id}: project is required for a project trial.`);
+    if (projects.has(scenario.project)) {
+      throw new Error(`${scenario.id}: project ${scenario.project} already has a trial; keep the audition sparse.`);
+    }
+    projects.add(scenario.project);
 
     if (scenario.source !== 'generate') continue;
     if (!REFERENCE_ENV.test(scenario.reference_env || '')) {

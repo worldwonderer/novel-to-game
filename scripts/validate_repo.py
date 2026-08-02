@@ -116,6 +116,7 @@ EXAMPLE_PLANNING_FILES = {
 OPTIONAL_PLANNING_FILES = {
     "analysis/_coverage.md",
     "build/asset-ledger.json",
+    "design/VOICE_AUDITION.json",
 }
 FRONTMATTER_RE = re.compile(r"^---\n(.*?)\n---", re.DOTALL)
 FIELD_RE = re.compile(r"^([a-zA-Z][a-zA-Z0-9_-]*):\s*(.*)$")

@@ -85,8 +85,12 @@ button:focus-visible { outline: 3px solid var(--gold-bright); outline-offset: 3p
 .age-gate::before {
   content: "";
   position: absolute;
+  top: 50%;
+  left: 50%;
   width: min(82vw, 72rem);
   height: min(84vh, 44rem);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
   border: 1px solid rgba(215,181,113,.28);
   box-shadow: inset 0 0 0 10px rgba(16,12,10,.55), inset 0 0 0 11px rgba(215,181,113,.16);
 }

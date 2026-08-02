@@ -558,7 +558,42 @@ class RepositoryValidationTests(unittest.TestCase):
         self.assertFalse(policy["generatedFilesAreReleaseAssets"])
         self.assertTrue(policy["humanListeningRequiredBeforeIntegration"])
 
-        trials = [item for item in config["scenarios"] if item["scope"] == "project-trial"]
+        trials = []
+        for configured in config["scenarios"]:
+            if configured["scope"] != "project-trial":
+                continue
+            trial = dict(configured)
+            if candidate_ref := trial.get("candidate_ref"):
+                for owned_field in (
+                    "language",
+                    "speaker",
+                    "voice_profile",
+                    "text",
+                    "source_ref",
+                    "player_action",
+                    "incremental_value",
+                    "trigger_window",
+                    "expected_repeats",
+                    "muted_result",
+                    "rights_status",
+                    "reason",
+                ):
+                    self.assertNotIn(owned_field, configured)
+                candidate_document = json.loads(
+                    (ROOT / candidate_ref).read_text(encoding="utf-8")
+                )
+                self.assertEqual(
+                    candidate_document["status"],
+                    "AUDITION_APPROVED_NOT_RUNTIME_ADOPTED",
+                )
+                self.assertEqual(candidate_document["runtimeVoiceStrategy"], "none")
+                art_direction = (
+                    ROOT / candidate_ref
+                ).with_name("ART_DIRECTION.md").read_text(encoding="utf-8")
+                self.assertIn("VOICE_AUDITION.json", art_direction)
+                self.assertIn("不等于", art_direction)
+                trial.update(candidate_document["candidate"])
+            trials.append(trial)
         self.assertEqual(
             {item["project"] for item in trials},
             {"project-plateau", "jin-ping-mei", "journey-to-the-west"},
@@ -594,6 +629,10 @@ class RepositoryValidationTests(unittest.TestCase):
         generated = [trial for trial in trials if trial["source"] == "generate"]
         self.assertEqual(len(generated), len({trial["reference_env"] for trial in generated}))
         self.assertEqual(len(trials), len({trial["voice_profile"]["casting_id"] for trial in trials}))
+        gender_presentations = {
+            trial["voice_profile"]["gender_presentation"] for trial in trials
+        }
+        self.assertTrue({"male", "女性"}.issubset(gender_presentations))
 
         jin_ping_mei = next(
             item for item in trials if item["project"] == "jin-ping-mei"
@@ -629,11 +668,45 @@ class RepositoryValidationTests(unittest.TestCase):
             "retry-after",
             "RETRYABLE_STATUSES",
             "validateAudioResponse",
+            "getReader",
+            "reader.cancel",
+            "redirect: 'error'",
             "[REDACTED]",
         ):
             self.assertIn(marker, client)
         self.assertIn("FISH_VOICE_RIGHTS_ATTESTED", generator)
         self.assertIn("requestSha256", generator)
+
+    def test_voiceover_release_is_hash_bound_and_fail_closed(self) -> None:
+        remotion = ROOT / "examples/project-plateau/build/media/remotion"
+        package = json.loads((remotion / "package.json").read_text(encoding="utf-8"))
+        self.assertTrue(
+            package["scripts"]["render"].startswith("npm run verify:voiceover:release")
+        )
+        self.assertIn("voiceover-contract.test.mjs", package["scripts"]["test:tts"])
+
+        review = json.loads(
+            (remotion / "voiceover-review.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(review["releaseStatus"], "BLOCKED")
+        self.assertEqual(review["rights"]["status"], "NOT_RUN")
+        self.assertEqual(review["listening"]["status"], "NOT_RUN")
+
+        verifier = (remotion / "scripts/verify-voiceover.mjs").read_text(
+            encoding="utf-8"
+        )
+        for marker in (
+            "normalizedSha256",
+            "normalizationSha256",
+            "evaluateVoiceoverRelease",
+            "releaseMode",
+        ):
+            self.assertIn(marker, verifier)
+
+        workflow = (ROOT / ".github/workflows/validate.yml").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("npm run test:tts", workflow)
 
     def test_readme_defaults_to_english_with_a_chinese_counterpart(self) -> None:
         english = (ROOT / "README.md").read_text(encoding="utf-8")
