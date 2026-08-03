@@ -2,7 +2,7 @@
   "stage": "s2-topology",
   "source": {
     "scope": "index.html, package manifests, public assets and src",
-    "sha256": "8329da6c8289acfa826e6cfb773e983f9fc270e366f5d375f679f21b5596c6c6"
+    "sha256": "1b0ae8218849f5621b0c4e97245b9267843be3aea4180fae2cff689632844a0f"
   },
   "environment": {
     "browser": "Google Chrome 150.0.7871.187",
@@ -54,7 +54,7 @@
           "heading": 0,
           "pitch": 0,
           "stance": "walk",
-          "elapsedSeconds": 0.299,
+          "elapsedSeconds": 0.291,
           "distanceTravelled": 0,
           "paused": false,
           "pauseReason": null,
@@ -126,7 +126,7 @@
           "failed": false,
           "failureCause": null,
           "contactCount": 0,
-          "remainingLight": 179.701,
+          "remainingLight": 179.709,
           "returnRoute": null,
           "returnCostSeconds": 0,
           "returnStrike": false,
@@ -137,9 +137,9 @@
           "state": "distant",
           "response": "orbit",
           "position": {
-            "x": 31.51,
-            "y": 15.43,
-            "z": 46.87
+            "x": 31.53,
+            "y": 15.42,
+            "z": 46.82
           }
         },
         "familyVisual": {
@@ -185,7 +185,7 @@
               "young-play"
             ],
             "branchPresent": true,
-            "visibleParts": 142
+            "visibleParts": 172
           },
           "gladeComposition": {
             "sightlineHalfWidth": 22,
@@ -241,16 +241,16 @@
           "lightWatch": null,
           "terminal": null
         },
-        "sceneChildren": 36,
-        "calls": 1060,
-        "triangles": 142406,
+        "sceneChildren": 37,
+        "calls": 1222,
+        "triangles": 148256,
         "textures": 4,
-        "geometries": 336,
+        "geometries": 390,
         "viewport": [
           1440,
           900
         ],
-        "firstRenderedAt": 176.29999995231628,
+        "firstRenderedAt": 153,
         "recentMedianFrameMs": 8.3
       },
       "visual": "build/evidence/s2/01-fort-distant.jpg"
@@ -275,7 +275,7 @@
           "heading": 0,
           "pitch": 0,
           "stance": "walk",
-          "elapsedSeconds": 3.875,
+          "elapsedSeconds": 3.891,
           "distanceTravelled": 0,
           "paused": false,
           "pauseReason": null,
@@ -289,7 +289,7 @@
           ],
           "reachedGlade": false,
           "inCover": true,
-          "coverSeconds": 3.532900000095363,
+          "coverSeconds": 3.5588999998569397,
           "sprintExposureSeconds": 0,
           "sprintEscalationCharged": false,
           "threatAwareness": 1,
@@ -348,7 +348,7 @@
           "failed": false,
           "failureCause": null,
           "contactCount": 0,
-          "remainingLight": 176.125,
+          "remainingLight": 176.109,
           "returnRoute": null,
           "returnCostSeconds": 0,
           "returnStrike": false,
@@ -407,7 +407,7 @@
               "young-play"
             ],
             "branchPresent": true,
-            "visibleParts": 142
+            "visibleParts": 172
           },
           "gladeComposition": {
             "sightlineHalfWidth": 22,
@@ -434,7 +434,7 @@
             {
               "cue": "watch",
               "caption": "[one wing call answers at a distance]",
-              "at": 0.24
+              "at": 0.229
             }
           ]
         },
@@ -468,16 +468,16 @@
           "lightWatch": null,
           "terminal": null
         },
-        "sceneChildren": 36,
-        "calls": 1058,
-        "triangles": 142635,
+        "sceneChildren": 37,
+        "calls": 1220,
+        "triangles": 148485,
         "textures": 4,
-        "geometries": 337,
+        "geometries": 391,
         "viewport": [
           1440,
           900
         ],
-        "firstRenderedAt": 176.29999995231628,
+        "firstRenderedAt": 153,
         "recentMedianFrameMs": 8.3
       },
       "visual": "build/evidence/s2/02-canopy-watch.jpg"
@@ -502,7 +502,7 @@
           "heading": 0,
           "pitch": 0,
           "stance": "walk",
-          "elapsedSeconds": 4.142,
+          "elapsedSeconds": 4.158,
           "distanceTravelled": 0,
           "paused": false,
           "pauseReason": null,
@@ -576,7 +576,7 @@
           "failed": false,
           "failureCause": null,
           "contactCount": 0,
-          "remainingLight": 175.858,
+          "remainingLight": 175.842,
           "returnRoute": null,
           "returnCostSeconds": 0,
           "returnStrike": false,
@@ -587,7 +587,7 @@
           "state": "search",
           "response": "orbit",
           "position": {
-            "x": -0.72,
+            "x": -0.71,
             "y": 7.9,
             "z": -29.06
           }
@@ -635,7 +635,7 @@
               "young-play"
             ],
             "branchPresent": true,
-            "visibleParts": 142
+            "visibleParts": 172
           },
           "gladeComposition": {
             "sightlineHalfWidth": 22,
@@ -662,12 +662,12 @@
             {
               "cue": "watch",
               "caption": "[one wing call answers at a distance]",
-              "at": 0.24
+              "at": 0.229
             },
             {
               "cue": "search",
               "caption": "[a near call circles overhead]",
-              "at": 3.808
+              "at": 3.819
             }
           ]
         },
@@ -701,16 +701,16 @@
           "lightWatch": null,
           "terminal": null
         },
-        "sceneChildren": 36,
-        "calls": 986,
-        "triangles": 139630,
+        "sceneChildren": 37,
+        "calls": 1148,
+        "triangles": 145480,
         "textures": 4,
-        "geometries": 338,
+        "geometries": 392,
         "viewport": [
           1440,
           900
         ],
-        "firstRenderedAt": 176.29999995231628,
+        "firstRenderedAt": 153,
         "recentMedianFrameMs": 8.3
       },
       "visual": "build/evidence/s2/03-glade-search.jpg"
@@ -735,7 +735,7 @@
           "heading": 0,
           "pitch": 0,
           "stance": "walk",
-          "elapsedSeconds": 7.092,
+          "elapsedSeconds": 6.281,
           "distanceTravelled": 0,
           "paused": false,
           "pauseReason": null,
@@ -756,14 +756,14 @@
           "threatAwareness": 3,
           "threatState": "attack",
           "lastThreatEvent": "plate-exposure:+2",
-          "attackSeconds": 0.8667000000476835,
+          "attackSeconds": 0.023199999809265133,
           "examinedTrack": false,
           "observedBehavior": false,
           "lastObservation": null,
           "cameraRaised": false,
           "plateRailRevealed": true,
           "pendingExposure": null,
-          "previewSeconds": 3.1415999999046336,
+          "previewSeconds": 3.9848000001907344,
           "lastProofEvent": {
             "plateIndex": 0,
             "frameKey": "glade-form",
@@ -815,7 +815,7 @@
           "failed": false,
           "failureCause": null,
           "contactCount": 0,
-          "remainingLight": 172.908,
+          "remainingLight": 173.718,
           "returnRoute": null,
           "returnCostSeconds": 0,
           "returnStrike": false,
@@ -826,16 +826,16 @@
           "state": "attack",
           "response": "orbit",
           "position": {
-            "x": -5,
-            "y": 7.12,
-            "z": -24.48
+            "x": -7.01,
+            "y": 8.91,
+            "z": -24.01
           }
         },
         "familyVisual": {
           "moment": "glade-branch-pull",
           "adults": 2,
           "young": 3,
-          "branchAngle": 0.544,
+          "branchAngle": 0.559,
           "roles": [
             "graze",
             "branch-pull",
@@ -874,7 +874,7 @@
               "young-play"
             ],
             "branchPresent": true,
-            "visibleParts": 142
+            "visibleParts": 172
           },
           "gladeComposition": {
             "sightlineHalfWidth": 22,
@@ -901,32 +901,32 @@
             {
               "cue": "watch",
               "caption": "[one wing call answers at a distance]",
-              "at": 0.24
+              "at": 0.229
             },
             {
               "cue": "search",
               "caption": "[a near call circles overhead]",
-              "at": 3.808
+              "at": 3.819
             },
             {
               "cue": "camera-raise",
               "caption": "[wood frame lifts; bellows opens]",
-              "at": 4.069
+              "at": 4.101
             },
             {
               "cue": "shutter",
               "caption": "[shutter releases]",
-              "at": 4.139
+              "at": 4.176
             },
             {
               "cue": "attack",
               "caption": "[wingbeats tighten into a dive]",
-              "at": 6.123
+              "at": 6.155
             },
             {
               "cue": "plate-slide",
               "caption": "[glass plate seats in its case]",
-              "at": 6.123
+              "at": 6.155
             }
           ]
         },
@@ -957,19 +957,19 @@
           "contactNote": null,
           "cartridgesVisible": true,
           "caption": "[glass plate seats in its case]",
-          "lightWatch": 173,
+          "lightWatch": 174,
           "terminal": null
         },
-        "sceneChildren": 36,
-        "calls": 986,
-        "triangles": 139630,
+        "sceneChildren": 37,
+        "calls": 1148,
+        "triangles": 145480,
         "textures": 4,
-        "geometries": 338,
+        "geometries": 392,
         "viewport": [
           1440,
           900
         ],
-        "firstRenderedAt": 176.29999995231628,
+        "firstRenderedAt": 153,
         "recentMedianFrameMs": 8.3
       },
       "visual": "build/evidence/s2/04-creek-attack.jpg"
@@ -994,7 +994,7 @@
           "heading": 0,
           "pitch": 0,
           "stance": "walk",
-          "elapsedSeconds": 13.392,
+          "elapsedSeconds": 12.582,
           "distanceTravelled": 0,
           "paused": false,
           "pauseReason": null,
@@ -1010,7 +1010,7 @@
           ],
           "reachedGlade": true,
           "inCover": true,
-          "coverSeconds": 0.2593999998569518,
+          "coverSeconds": 0.2570000000000121,
           "sprintExposureSeconds": 0,
           "sprintEscalationCharged": false,
           "threatAwareness": 2,
@@ -1075,7 +1075,7 @@
           "failed": false,
           "failureCause": null,
           "contactCount": 0,
-          "remainingLight": 138.608,
+          "remainingLight": 139.418,
           "returnRoute": "covered",
           "returnCostSeconds": 28,
           "returnStrike": false,
@@ -1086,9 +1086,9 @@
           "state": "search",
           "response": "orbit",
           "position": {
-            "x": -0.61,
-            "y": 8.09,
-            "z": -12.95
+            "x": -5.18,
+            "y": 8.7,
+            "z": -12.67
           }
         },
         "familyVisual": {
@@ -1134,7 +1134,7 @@
               "young-play"
             ],
             "branchPresent": true,
-            "visibleParts": 142
+            "visibleParts": 172
           },
           "gladeComposition": {
             "sightlineHalfWidth": 22,
@@ -1161,42 +1161,42 @@
             {
               "cue": "watch",
               "caption": "[one wing call answers at a distance]",
-              "at": 0.24
+              "at": 0.229
             },
             {
               "cue": "search",
               "caption": "[a near call circles overhead]",
-              "at": 3.808
+              "at": 3.819
             },
             {
               "cue": "camera-raise",
               "caption": "[wood frame lifts; bellows opens]",
-              "at": 4.069
+              "at": 4.101
             },
             {
               "cue": "shutter",
               "caption": "[shutter releases]",
-              "at": 4.139
+              "at": 4.176
             },
             {
               "cue": "attack",
               "caption": "[wingbeats tighten into a dive]",
-              "at": 6.123
+              "at": 6.155
             },
             {
               "cue": "plate-slide",
               "caption": "[glass plate seats in its case]",
-              "at": 6.123
+              "at": 6.155
             },
             {
               "cue": "cover",
               "caption": "[branches scrape the camera; wingbeats widen]",
-              "at": 7.029
+              "at": 6.219
             },
             {
               "cue": "search",
               "caption": "[a near call circles overhead]",
-              "at": 13.024
+              "at": 12.219
             }
           ]
         },
@@ -1227,19 +1227,19 @@
           "contactNote": null,
           "cartridgesVisible": false,
           "caption": "[a near call circles overhead]",
-          "lightWatch": 139,
+          "lightWatch": 140,
           "terminal": null
         },
-        "sceneChildren": 36,
-        "calls": 1018,
-        "triangles": 141118,
+        "sceneChildren": 37,
+        "calls": 1180,
+        "triangles": 146968,
         "textures": 4,
-        "geometries": 338,
+        "geometries": 392,
         "viewport": [
           1440,
           900
         ],
-        "firstRenderedAt": 176.29999995231628,
+        "firstRenderedAt": 153,
         "recentMedianFrameMs": 8.3
       },
       "visual": "build/evidence/s2/05-covered-deescalation.jpg"

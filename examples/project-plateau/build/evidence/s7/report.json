@@ -2,7 +2,7 @@
   "stage": "s7-lifecycle",
   "source": {
     "scope": "index.html, package manifests, public assets and src",
-    "sha256": "8329da6c8289acfa826e6cfb773e983f9fc270e366f5d375f679f21b5596c6c6"
+    "sha256": "1b0ae8218849f5621b0c4e97245b9267843be3aea4180fae2cff689632844a0f"
   },
   "environment": {
     "browser": "Google Chrome 150.0.7871.187",
@@ -41,15 +41,15 @@
   },
   "loading": {
     "firstNoCacheNavigation": {
-      "timeToFirstFrameMs": 2223.2,
-      "domInteractiveMs": 43.2,
-      "loadEventMs": 2572.4,
+      "timeToFirstFrameMs": 2213.5,
+      "domInteractiveMs": 41.6,
+      "loadEventMs": 2559.2,
       "resourceCount": 11
     },
     "finalNavigation": {
-      "timeToFirstFrameMs": 2234.6,
-      "domInteractiveMs": 80.8,
-      "loadEventMs": 2528.1,
+      "timeToFirstFrameMs": 2244,
+      "domInteractiveMs": 84.4,
+      "loadEventMs": 2534.7,
       "resourceCount": 12
     },
     "budgetMs": 8000
@@ -57,14 +57,14 @@
   "payload": {
     "files": [
       {
-        "path": "assets/index-CkCjGB2C.js",
-        "rawBytes": 594704,
-        "gzipBytes": 152369
+        "path": "assets/index-0JPrGzkL.js",
+        "rawBytes": 596072,
+        "gzipBytes": 152830
       },
       {
-        "path": "assets/index-Cmrc17od.css",
-        "rawBytes": 13392,
-        "gzipBytes": 4206
+        "path": "assets/index-DPLrcaVp.css",
+        "rawBytes": 13472,
+        "gzipBytes": 4218
       },
       {
         "path": "favicon.svg",
@@ -74,11 +74,11 @@
       {
         "path": "index.html",
         "rawBytes": 6789,
-        "gzipBytes": 2118
+        "gzipBytes": 2119
       }
     ],
-    "rawBytes": 615055,
-    "gzipBytes": 158851,
+    "rawBytes": 616503,
+    "gzipBytes": 159325,
     "initialCompressedBudgetBytes": 20971520,
     "totalBudgetBytes": 52428800
   },
@@ -87,14 +87,14 @@
       "samples": 120,
       "medianFrameMs": 8.3,
       "medianFps": 120.5,
-      "onePercentLowFps": 98,
-      "worstFrameMs": 10.4
+      "onePercentLowFps": 101,
+      "worstFrameMs": 10.3
     },
     "targetViewport": {
       "samples": 240,
       "medianFrameMs": 8.3,
       "medianFps": 120.5,
-      "onePercentLowFps": 97.1,
+      "onePercentLowFps": 98,
       "worstFrameMs": 10.4
     }
   },

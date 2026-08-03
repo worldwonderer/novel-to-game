@@ -24,6 +24,10 @@ ROOT_DOCUMENTS = (
 )
 
 
+class EvidenceRetentionError(RuntimeError):
+    """Block inventory and deletion when the authority graph is not trustworthy."""
+
+
 def evidence_path(project: Path, value: str) -> Path | None:
     clean = value.split("#", 1)[0].rstrip(".,:;)'\"]}")
     if clean.startswith("build/evidence/"):
@@ -36,7 +40,7 @@ def evidence_path(project: Path, value: str) -> Path | None:
         candidate.resolve().relative_to((project / "build" / "evidence").resolve())
     except ValueError:
         return None
-    return candidate
+    return candidate.absolute()
 
 
 def strings(value: object) -> Iterable[str]:
@@ -53,37 +57,83 @@ def strings(value: object) -> Iterable[str]:
 def references(document: Path, project: Path) -> set[Path]:
     try:
         if document.suffix == ".json":
-            values = strings(json.loads(document.read_text(encoding="utf-8")))
+            payload = json.loads(document.read_text(encoding="utf-8"))
+            if not isinstance(payload, dict):
+                raise EvidenceRetentionError(
+                    f"authoritative JSON must be an object: {document}"
+                )
+            values = strings(payload)
         else:
             values = PATH_PATTERN.findall(document.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError):
-        return set()
-    return {
-        path.resolve()
-        for value in values
-        if (path := evidence_path(project, value)) is not None
-    }
+    except (OSError, json.JSONDecodeError) as error:
+        raise EvidenceRetentionError(
+            f"cannot read authoritative document {document}: {error}"
+        ) from error
+    found: set[Path] = set()
+    for value in values:
+        if (
+            document.suffix != ".json"
+            and document.parent == project / "qa"
+            and value.startswith("evidence/")
+        ):
+            # Markdown links in qa/ resolve to qa/evidence/, not build/evidence/.
+            continue
+        path = evidence_path(project, value)
+        if path is not None:
+            found.add(path)
+        elif value.startswith(("build/evidence/", "evidence/")):
+            raise EvidenceRetentionError(
+                f"authoritative reference escapes evidence root: {value}"
+            )
+    return found
 
 
 def inventory(project: Path) -> dict[str, object]:
     evidence = project / "build" / "evidence"
-    all_files = {path.resolve() for path in evidence.rglob("*") if path.is_file()}
+    if not evidence.is_dir() or evidence.is_symlink():
+        raise EvidenceRetentionError(f"evidence root is missing or unsafe: {evidence}")
+    all_files: set[Path] = set()
+    for path in evidence.rglob("*"):
+        if path.is_symlink():
+            raise EvidenceRetentionError(f"symlinks are forbidden in evidence: {path}")
+        if path.is_file():
+            all_files.add(path.absolute())
     protected: set[Path] = set()
     queue = [project / relative for relative in ROOT_DOCUMENTS]
     # Stage reports are the authoritative indexes for historical browser runs.
-    queue += sorted(evidence.glob("s*/report.json"))
+    for stage in sorted(evidence.iterdir()):
+        if stage.is_dir() and re.fullmatch(r"s\d+", stage.name):
+            report = stage / "report.json"
+            if not report.is_file() or report.is_symlink():
+                raise EvidenceRetentionError(
+                    f"stage evidence is missing a safe report.json: {stage}"
+                )
+            queue.append(report)
+    missing_roots = [
+        document for document in queue if not document.is_file() or document.is_symlink()
+    ]
+    if missing_roots:
+        raise EvidenceRetentionError(
+            "missing authoritative roots: "
+            + ", ".join(path.relative_to(project).as_posix() for path in missing_roots)
+        )
     seen_documents: set[Path] = set()
     while queue:
         document = queue.pop()
-        resolved = document.resolve()
-        if resolved in seen_documents or not document.is_file():
+        resolved = document.absolute()
+        if resolved in seen_documents:
             continue
         seen_documents.add(resolved)
         if resolved in all_files:
             protected.add(resolved)
         for target in references(document, project):
+            if target not in all_files:
+                raise EvidenceRetentionError(
+                    f"authoritative reference is missing or unsafe: "
+                    f"{target.relative_to(project).as_posix()}"
+                )
             protected.add(target)
-            if target.suffix == ".json" and target.is_file():
+            if target.suffix == ".json":
                 queue.append(target)
 
     candidates = sorted(all_files - protected)
@@ -113,12 +163,39 @@ def main() -> int:
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args()
     project = args.project.resolve()
-    result = inventory(project)
-    if args.apply:
-        for item in result["candidates"]:
-            (project / item["path"]).unlink()
-        result["mode"] = "apply"
-        result["removedFiles"] = len(result["candidates"])
+    try:
+        result = inventory(project)
+        if args.apply:
+            evidence_root = (project / "build" / "evidence").resolve()
+            verified_candidates: list[Path] = []
+            for item in result["candidates"]:
+                candidate = project / item["path"]
+                if candidate.is_symlink() or not candidate.is_file():
+                    raise EvidenceRetentionError(
+                        f"candidate changed after inventory: {candidate}"
+                    )
+                try:
+                    candidate.resolve(strict=True).relative_to(evidence_root)
+                except (OSError, ValueError) as error:
+                    raise EvidenceRetentionError(
+                        f"candidate escaped evidence root after inventory: {candidate}"
+                    ) from error
+                verified_candidates.append(candidate)
+            for candidate in verified_candidates:
+                candidate.unlink()
+            result["mode"] = "apply"
+            result["removedFiles"] = len(result["candidates"])
+    except EvidenceRetentionError as error:
+        if args.json:
+            print(
+                json.dumps(
+                    {"schemaVersion": 1, "mode": "blocked", "error": str(error)},
+                    indent=2,
+                )
+            )
+        else:
+            print(f"blocked: {error}")
+        return 2
     if args.json:
         print(json.dumps(result, indent=2))
     else:

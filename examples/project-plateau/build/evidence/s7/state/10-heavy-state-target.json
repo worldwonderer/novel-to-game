@@ -16,7 +16,7 @@
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 4.3,
+    "elapsedSeconds": 4.291,
     "distanceTravelled": 0,
     "paused": false,
     "pauseReason": null,
@@ -36,14 +36,14 @@
     "threatAwareness": 3,
     "threatState": "attack",
     "lastThreatEvent": "plate-exposure:+2",
-    "attackSeconds": 2.017100000143051,
+    "attackSeconds": 2.0167000000476856,
     "examinedTrack": false,
     "observedBehavior": true,
     "lastObservation": "The young keep close while the adults feed.",
     "cameraRaised": false,
     "plateRailRevealed": true,
     "pendingExposure": null,
-    "previewSeconds": 1.991199999809272,
+    "previewSeconds": 1.9915999999046405,
     "lastProofEvent": {
       "plateIndex": 0,
       "frameKey": "glade-young-play",
@@ -95,7 +95,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 175.7,
+    "remainingLight": 175.709,
     "returnRoute": null,
     "returnCostSeconds": 0,
     "returnStrike": false,
@@ -106,8 +106,8 @@
     "state": "attack",
     "response": "orbit",
     "position": {
-      "x": -1.77,
-      "y": 6.19,
+      "x": -1.76,
+      "y": 6.21,
       "z": -21.98
     }
   },
@@ -154,7 +154,7 @@
         "young-play"
       ],
       "branchPresent": true,
-      "visibleParts": 142
+      "visibleParts": 172
     },
     "gladeComposition": {
       "sightlineHalfWidth": 22,
@@ -191,7 +191,7 @@
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 0.16
+        "at": 0.165
       },
       {
         "cue": "shutter",
@@ -201,12 +201,12 @@
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 2.24
+        "at": 2.235
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 2.24
+        "at": 2.235
       }
     ]
   },
@@ -240,15 +240,15 @@
     "lightWatch": 176,
     "terminal": null
   },
-  "sceneChildren": 36,
-  "calls": 986,
-  "triangles": 139630,
+  "sceneChildren": 37,
+  "calls": 1148,
+  "triangles": 145480,
   "textures": 4,
-  "geometries": 338,
+  "geometries": 392,
   "viewport": [
     1440,
     900
   ],
-  "firstRenderedAt": 2234.5999999046326,
+  "firstRenderedAt": 2244,
   "recentMedianFrameMs": 8.3
 }

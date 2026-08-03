@@ -16,7 +16,7 @@
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 14.757,
+    "elapsedSeconds": 20.999,
     "distanceTravelled": 0,
     "paused": false,
     "pauseReason": null,
@@ -28,6 +28,7 @@
       "fort",
       "brook-blind",
       "basalt-shelf",
+      "canopy-overlook",
       "iguanodon-glade",
       "covered-return",
       "fort"
@@ -47,7 +48,7 @@
     "cameraRaised": false,
     "plateRailRevealed": true,
     "pendingExposure": null,
-    "previewSeconds": 3.984299999952316,
+    "previewSeconds": 3.984100000143051,
     "lastProofEvent": {
       "plateIndex": 3,
       "frameKey": "return-occluded",
@@ -99,7 +100,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 137.243,
+    "remainingLight": 131.001,
     "returnRoute": "covered",
     "returnCostSeconds": 28,
     "returnStrike": false,
@@ -113,7 +114,7 @@
       "survivingPlates": 4,
       "route": "covered",
       "brookResponse": null,
-      "remainingLight": 137.2,
+      "remainingLight": 131,
       "gunshotCallback": null
     }
   },
@@ -121,16 +122,16 @@
     "state": "attack",
     "response": "orbit",
     "position": {
-      "x": 2.08,
-      "y": 5.3,
-      "z": 54.43
+      "x": 2.81,
+      "y": 5.67,
+      "z": 57.01
     }
   },
   "familyVisual": {
-    "moment": "glade-branch-pull",
+    "moment": "glade-young-play",
     "adults": 2,
     "young": 3,
-    "branchAngle": 0.506,
+    "branchAngle": 0.08,
     "roles": [
       "graze",
       "branch-pull",
@@ -169,7 +170,7 @@
         "young-play"
       ],
       "branchPresent": true,
-      "visibleParts": 142
+      "visibleParts": 172
     },
     "gladeComposition": {
       "sightlineHalfWidth": 22,
@@ -189,84 +190,84 @@
     "threatState": "attack",
     "recentCues": [
       {
-        "cue": "plate-slide",
-        "caption": "[glass plate seats in its case]",
-        "at": 17.568
-      },
-      {
-        "cue": "camera-raise",
-        "caption": "[wood frame lifts; bellows opens]",
-        "at": 17.653
-      },
-      {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 17.723
+        "at": 17.712
       },
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 19.701
+        "at": 19.691
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 19.701
-      },
-      {
-        "cue": "examine",
-        "caption": "[fern brushes aside; pencil marks the field card]",
-        "at": 19.771
-      },
-      {
-        "cue": "camera-raise",
-        "caption": "[wood frame lifts; bellows opens]",
-        "at": 19.776
-      },
-      {
-        "cue": "shutter",
-        "caption": "[shutter releases]",
-        "at": 19.856
-      },
-      {
-        "cue": "plate-slide",
-        "caption": "[glass plate seats in its case]",
-        "at": 21.835
-      },
-      {
-        "cue": "cover",
-        "caption": "[branches scrape the camera; wingbeats widen]",
-        "at": 21.851
+        "at": 19.691
       },
       {
         "cue": "search",
         "caption": "[a near call circles overhead]",
-        "at": 27.851
+        "at": 25.707
+      },
+      {
+        "cue": "examine",
+        "caption": "[fern brushes aside; pencil marks the field card]",
+        "at": 25.968
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 28.053
+        "at": 25.979
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 28.117
+        "at": 26.053
       },
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 30.101
+        "at": 28.043
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 30.101
+        "at": 28.043
+      },
+      {
+        "cue": "cover",
+        "caption": "[branches scrape the camera; wingbeats widen]",
+        "at": 28.059
+      },
+      {
+        "cue": "search",
+        "caption": "[a near call circles overhead]",
+        "at": 34.059
+      },
+      {
+        "cue": "camera-raise",
+        "caption": "[wood frame lifts; bellows opens]",
+        "at": 34.272
+      },
+      {
+        "cue": "shutter",
+        "caption": "[shutter releases]",
+        "at": 34.347
+      },
+      {
+        "cue": "attack",
+        "caption": "[wingbeats tighten into a dive]",
+        "at": 36.325
+      },
+      {
+        "cue": "plate-slide",
+        "caption": "[glass plate seats in its case]",
+        "at": 36.325
       },
       {
         "cue": "result",
         "caption": "[glass plates settle on the light board]",
-        "at": 30.117
+        "at": 36.341
       }
     ]
   },
@@ -297,24 +298,24 @@
     "contactNote": null,
     "cartridgesVisible": true,
     "caption": "[glass plates settle on the light board]",
-    "lightWatch": 138,
+    "lightWatch": 132,
     "terminal": {
       "kind": "alive",
       "title": "Strong field record",
       "copy": "Scale. Living form. Behavior. The field record holds.",
-      "detail": "6 evidence cues \u00b7 4 recorded plates \u00b7 covered return \u00b7 138s light",
+      "detail": "6 evidence cues \u00b7 4 recorded plates \u00b7 covered return \u00b7 131s light",
       "callback": null
     }
   },
-  "sceneChildren": 36,
-  "calls": 1068,
-  "triangles": 142798,
+  "sceneChildren": 37,
+  "calls": 1225,
+  "triangles": 148271,
   "textures": 4,
-  "geometries": 338,
+  "geometries": 392,
   "viewport": [
     1280,
     720
   ],
-  "firstRenderedAt": 189.80000019073486,
+  "firstRenderedAt": 159.09999990463257,
   "recentMedianFrameMs": 8.3
 }

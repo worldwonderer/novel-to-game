@@ -42,6 +42,37 @@ def source_fingerprint() -> str:
     return digest.hexdigest()
 
 
+def reusable_motion_cadence(fingerprint: str) -> dict[str, object] | None:
+    """Reuse a hash-valid uncut take for unchanged publishable app inputs."""
+    manifest_path = OUTPUT / "manifest.json"
+    if not manifest_path.is_file():
+        return None
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        cadence = manifest["motionCadence"]
+    except (json.JSONDecodeError, KeyError, TypeError):
+        return None
+    if manifest.get("sourceFingerprint") != fingerprint or not isinstance(cadence, dict):
+        return None
+    samples = cadence.get("samples")
+    if not isinstance(samples, list) or cadence.get("consoleErrors") != []:
+        return None
+    resources = [cadence.get("video"), *samples]
+    project_root = PROJECT.resolve()
+    for resource in resources:
+        if not isinstance(resource, dict) or not isinstance(resource.get("path"), str):
+            return None
+        path = (PROJECT / resource["path"]).resolve()
+        if (
+            not path.is_relative_to(project_root)
+            or not path.is_file()
+            or path.stat().st_size != resource.get("bytes")
+            or sha256(path) != resource.get("sha256")
+        ):
+            return None
+    return cadence
+
+
 def start_server() -> tuple[subprocess.Popen[str], str]:
     """Start an owned Vite process without touching the interactive port 4173."""
     with socket.socket() as reservation:
@@ -78,6 +109,8 @@ def start_server() -> tuple[subprocess.Popen[str], str]:
 
 
 def run(base_url: str) -> dict[str, object]:
+    fingerprint = source_fingerprint()
+    retained_motion = reusable_motion_cadence(fingerprint)
     OUTPUT.mkdir(parents=True, exist_ok=True)
     for stale in (*OUTPUT.glob("*.png"), *OUTPUT.glob("*.jpg")):
         stale.unlink()
@@ -150,7 +183,7 @@ def run(base_url: str) -> dict[str, object]:
         sheet.screenshot(path=sheet_path, type="jpeg", quality=JPEG_QUALITY)
         sheet.close()
 
-        motion = capture_motion_cadence(browser, base_url)
+        motion = retained_motion or capture_motion_cadence(browser, base_url)
         browser.close()
 
     assert not errors, errors
@@ -169,7 +202,7 @@ def run(base_url: str) -> dict[str, object]:
     result = {
         "schemaVersion": 1,
         "command": "npm run capture:visual",
-        "sourceFingerprint": source_fingerprint(),
+        "sourceFingerprint": fingerprint,
         "scene": "glade-family-under-aerial-pressure",
         "seed": 139,
         "frozenAnimationSeconds": FROZEN_TIME,

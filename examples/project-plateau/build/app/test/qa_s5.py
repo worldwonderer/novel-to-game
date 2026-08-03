@@ -261,6 +261,9 @@ def run() -> dict[str, object]:
         page.evaluate("window.__projectPlateau.teleportForTest({x: 8, z: 18})")
         page.wait_for_timeout(60)
         expose_plate(1)
+        page.evaluate("window.__projectPlateau.teleportForTest({x: 0, z: 18})")
+        page.wait_for_timeout(6200)
+        assert snapshot(page)["player"]["threatState"] == "search"
         page.evaluate("window.__projectPlateau.teleportForTest({x: 0, z: -10})")
         page.wait_for_timeout(50)
         page.keyboard.press("KeyE")

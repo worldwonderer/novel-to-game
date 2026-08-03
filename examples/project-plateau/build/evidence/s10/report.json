@@ -2,7 +2,7 @@
   "stage": "s10-glade-clarity",
   "source": {
     "scope": "index.html, package manifests, public assets and src",
-    "sha256": "8329da6c8289acfa826e6cfb773e983f9fc270e366f5d375f679f21b5596c6c6"
+    "sha256": "1b0ae8218849f5621b0c4e97245b9267843be3aea4180fae2cff689632844a0f"
   },
   "environment": {
     "browser": "Google Chrome 150.0.7871.187",
@@ -32,9 +32,9 @@
   "focusRegion": {
     "width": 777,
     "height": 504,
-    "darkRatio": 0.1666,
-    "brightRatio": 0.5851,
-    "chromaticRatio": 0.7505
+    "darkRatio": 0.1715,
+    "brightRatio": 0.5714,
+    "chromaticRatio": 0.7485
   },
   "colourVisionMatrix": {
     "protanopia": {
@@ -59,110 +59,110 @@
   "visuals": [
     {
       "path": "build/evidence/s10/00a-protanopia-field-order.jpg",
-      "bytes": 89639,
-      "sha256": "164868fd1150527113177d5fc58c60285f741f67a639ae7349cbfdbadc8314a8",
+      "bytes": 89647,
+      "sha256": "dc7d9c8cda765b71e6b17cce0bd49a2a8d30e1973d624be51832a59a741f5b32",
       "visionMode": "protanopia"
     },
     {
       "path": "build/evidence/s10/00b-deuteranopia-field-order.jpg",
-      "bytes": 92147,
-      "sha256": "ac966922b8c76ca4b96aa767813cb5899d1a9d26906911f8e8924e484f2d7f26",
+      "bytes": 92159,
+      "sha256": "dd585f172226ac37a7ac86970c580bc48a0504632846c90e0a3fe3cd401b2248",
       "visionMode": "deuteranopia"
     },
     {
       "path": "build/evidence/s10/00c-tritanopia-field-order.jpg",
-      "bytes": 95393,
-      "sha256": "fefd37515048244427f15dfa13cbbfd8317af495811fe75ae13ead16133280b9",
+      "bytes": 95411,
+      "sha256": "f92b339dd7522efeff0d01cd80573a685b1bd4f0cbff7d1fc65ea0585a97d2a4",
       "visionMode": "tritanopia"
     },
     {
       "path": "build/evidence/s10/01-clear-family-sightline.jpg",
-      "bytes": 113347,
-      "sha256": "453ad2adf2945f8a4527ee00de252aeedc8cf038eb53197ca693ebef0d588954",
+      "bytes": 113367,
+      "sha256": "e8448cd41fcacf2b07ec9b30a9ff0908998393e47ebc35616e1e841cb2b651b3",
       "visionMode": "full-colour"
     },
     {
       "path": "build/evidence/s10/07-protanopia-glade.jpg",
-      "bytes": 108620,
-      "sha256": "e18468ee8c228edead8db73f9ad1f634f7d8d7470e08031611d1034ca5c9e105",
+      "bytes": 108709,
+      "sha256": "f40fa2ae1d4490468481ac9abc1c5d7f9a3170deee15d95daa0e12023a0652c7",
       "visionMode": "protanopia"
     },
     {
       "path": "build/evidence/s10/08-deuteranopia-glade.jpg",
-      "bytes": 109937,
-      "sha256": "e9e07ab81900abe8e4a778ca8b270446266636de3bcb277f18c07035f57db699",
+      "bytes": 109886,
+      "sha256": "f726033ec9c528460e850d304f859dfea423cf8f8fff65c9b9363fe5d2e1ef7c",
       "visionMode": "deuteranopia"
     },
     {
       "path": "build/evidence/s10/09-tritanopia-glade.jpg",
-      "bytes": 111971,
-      "sha256": "40a065d280f7986ed5fc462f0678624bc7ec1bfa57fbc678dad0299a8188c953",
+      "bytes": 111926,
+      "sha256": "3b2715d2c52d378b49d144e9d8cb4d7342842d3ca2c40dbc69acb790626921f8",
       "visionMode": "tritanopia"
     },
     {
       "path": "build/evidence/s10/02-young-play-silver-frame.jpg",
-      "bytes": 116697,
-      "sha256": "7c9d6b733b7bee66befc16101fc7bfbf07296834e7fe82ce35abb44bbe310762",
+      "bytes": 116732,
+      "sha256": "ab6da578011534eb587ef8228610545fe87546d2c00efcff980e60aed17f8ce5",
       "visionMode": "full-colour"
     },
     {
       "path": "build/evidence/s10/03-branch-pull-silver-frame.jpg",
-      "bytes": 117187,
-      "sha256": "13fda7ca0cd149f8dfbd0555fac7a3a875cbc73e01a53f580ee083b980718e9d",
+      "bytes": 117030,
+      "sha256": "6c56b4379b1c3395c14c2212c7e0456eb7e98d9a8a095ca8a9d431d3b71c0d5d",
       "visionMode": "full-colour"
     },
     {
       "path": "build/evidence/s10/04-achromatopsia-attack.jpg",
-      "bytes": 110025,
-      "sha256": "7128e184d7ffe121896664eadd33f3a4e2ef6d388b189588b6133897644ac929",
+      "bytes": 110041,
+      "sha256": "4ac6cc1ebcf02743e4f5f423fd633d44b8cfc78305a165fd35bbde8b002c7073",
       "visionMode": "achromatopsia"
     },
     {
       "path": "build/evidence/s10/10-protanopia-attack-defense.jpg",
-      "bytes": 121729,
-      "sha256": "b129dc9db368af9ccc7d9cd640ef358314a710a0b720e60ea30e79a4427c33f3",
+      "bytes": 122040,
+      "sha256": "def33cacffe8793f53edd3f706a6e54ddbaf4cdb35aed81bb8a97dedf39d1788",
       "visionMode": "protanopia"
     },
     {
       "path": "build/evidence/s10/11-deuteranopia-attack-defense.jpg",
-      "bytes": 123412,
-      "sha256": "0ca340c280b5b05e6f7b31a2ea3015dbb16cb87f4153ff4c031b00b14bb7bdfb",
+      "bytes": 123531,
+      "sha256": "b69d84b1f1d03eddbe2df3c7e7eac0a0143a7bdc6bf58d90b113fc661bc024e1",
       "visionMode": "deuteranopia"
     },
     {
       "path": "build/evidence/s10/12-tritanopia-attack-defense.jpg",
-      "bytes": 124515,
-      "sha256": "3e80d58560a80fa7c0628a6c8d6a7d0009e4e2857511071e71803e5cd0ecf20e",
+      "bytes": 124564,
+      "sha256": "551cdfc89fff8163a0ba55938a032b2914d61899dda37ce50427d9c5f3c233d2",
       "visionMode": "tritanopia"
     },
     {
       "path": "build/evidence/s10/05-strong-plate-board.jpg",
-      "bytes": 96279,
-      "sha256": "c7bf0df6eafe3ad6c130618ac9a2be8f6ae1290f4305d75ce3e6bfd4f9c0f71f",
+      "bytes": 96190,
+      "sha256": "d97b66333b49d9bbc11fc8feeba6f2b5ee7c626ecb1fa7a8770b1e9726390fb2",
       "visionMode": "full-colour"
     },
     {
       "path": "build/evidence/s10/13-protanopia-strong-result.jpg",
-      "bytes": 93733,
-      "sha256": "caa158d84fd1a08d7141c061482b0fda09145b588a4a438a57de284146ced013",
+      "bytes": 93638,
+      "sha256": "4b71c16a1d61d98f349c90f0e06bfc886747b0fbf4286849dccf8a927b22de21",
       "visionMode": "protanopia"
     },
     {
       "path": "build/evidence/s10/14-deuteranopia-strong-result.jpg",
-      "bytes": 95092,
-      "sha256": "0dccfa2ed086fa21b06a61b886aa9b04bf698a304ecef61b52f49fa8e7bc4055",
+      "bytes": 94965,
+      "sha256": "8497a9e7278fb9152614acb8ec71399a573bba537a263e74446ad8bf9e591e2a",
       "visionMode": "deuteranopia"
     },
     {
       "path": "build/evidence/s10/15-tritanopia-strong-result.jpg",
-      "bytes": 96195,
-      "sha256": "f4eaf66feb0d5402415d4785d95c30a98216edc45b66facf17a4cc1da1027d98",
+      "bytes": 96074,
+      "sha256": "51e3ad523036fae9f71a401358c810469330cf7b1babf0c5becf9fb428a10d2e",
       "visionMode": "tritanopia"
     },
     {
       "path": "build/evidence/s10/06-clean-restart.jpg",
-      "bytes": 95690,
-      "sha256": "aebb0d0cc93988bcc1ec32d715793e0be489892379b1c045ae4161b4c8eac1ba",
+      "bytes": 95671,
+      "sha256": "3866f64762c2302bcbe8087a1c35a5543e3d6f33dca3425b444a177f668f79ab",
       "visionMode": "full-colour"
     }
   ],
@@ -170,8 +170,8 @@
     "samples": 240,
     "medianFrameMs": 8.3,
     "medianFps": 120.5,
-    "onePercentLowFps": 96.2,
-    "worstFrameMs": 10.4
+    "onePercentLowFps": 101,
+    "worstFrameMs": 10.3
   },
   "checkpoints": [
     {

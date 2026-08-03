@@ -126,6 +126,9 @@ class RepositoryValidationTests(unittest.TestCase):
                     "verify": {
                         "command": "run authoritative verification",
                         "log": "qa/evidence/verify.log",
+                        "logSha256": hashlib.sha256(
+                            (example / "qa/evidence/verify.log").read_bytes()
+                        ).hexdigest(),
                         "exitCode": 0,
                         "durationMs": 1,
                         "suites": [
@@ -396,6 +399,9 @@ class RepositoryValidationTests(unittest.TestCase):
         mutations = {
             "missing_verify": lambda value: value.pop("verify"),
             "failed_verify": lambda value: value["verify"].update({"exitCode": 1}),
+            "invalid_log_hash": lambda value: value["verify"].update(
+                {"logSha256": "0" * 64}
+            ),
             "nan_duration": lambda value: value["verify"].update(
                 {"durationMs": float("nan")}
             ),
@@ -456,6 +462,51 @@ class RepositoryValidationTests(unittest.TestCase):
                     any("qa/verification.json" in issue for issue in issues), issues
                 )
 
+    def test_hidden_verification_candidate_does_not_replace_authoritative_record(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            example = self.make_publication_fixture(
+                Path(temporary), tier="playable-prototype"
+            )
+            authoritative_path = example / "qa/verification.json"
+            authoritative = json.loads(authoritative_path.read_text(encoding="utf-8"))
+            candidate_path = example / "qa/.verification-candidate.json"
+            candidate_path.write_text(json.dumps(authoritative), encoding="utf-8")
+            authoritative["verify"]["exitCode"] = 1
+            authoritative_path.write_text(json.dumps(authoritative), encoding="utf-8")
+
+            failed = validate_publication(example, "playable-prototype")
+            self.assertTrue(
+                any("verify.exitCode must be 0" in issue for issue in failed), failed
+            )
+            staged = validate_publication(
+                example,
+                "playable-prototype",
+                verification_candidate=candidate_path,
+            )
+            self.assertFalse(
+                any("verify.exitCode must be 0" in issue for issue in staged), staged
+            )
+            self.assertEqual(
+                json.loads(authoritative_path.read_text(encoding="utf-8"))["verify"][
+                    "exitCode"
+                ],
+                1,
+            )
+
+    def test_authoritative_verification_log_is_content_bound(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            example = self.make_publication_fixture(
+                Path(temporary), tier="playable-prototype"
+            )
+            (example / "qa/evidence/verify.log").write_text(
+                "tampered after verification\n", encoding="utf-8"
+            )
+            issues = validate_publication(example, "playable-prototype")
+            self.assertTrue(
+                any("verify.logSha256 does not match verify.log" in issue for issue in issues),
+                issues,
+            )
+
     def test_web_verification_registry_must_match_actual_test_files(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             example = self.make_publication_fixture(
@@ -487,6 +538,25 @@ class RepositoryValidationTests(unittest.TestCase):
                 )
 
     def test_visual_manifest_binds_ordered_motion_cadence(self) -> None:
+        def replace_video_with_bound_non_media(
+            example: Path, manifest: dict[str, object]
+        ) -> None:
+            video = example / "qa/evidence/cadence.webm"
+            video.write_bytes(b"not media")
+            binding = manifest["motionCadence"]["video"]
+            binding["sha256"] = hashlib.sha256(video.read_bytes()).hexdigest()
+            binding["bytes"] = video.stat().st_size
+
+        def truncate_video_with_consistent_binding(
+            example: Path, manifest: dict[str, object]
+        ) -> None:
+            video = example / "qa/evidence/cadence.webm"
+            payload = video.read_bytes()
+            video.write_bytes(payload[: len(payload) // 10])
+            binding = manifest["motionCadence"]["video"]
+            binding["sha256"] = hashlib.sha256(video.read_bytes()).hexdigest()
+            binding["bytes"] = video.stat().st_size
+
         mutations = {
             "valid": lambda _example, _manifest: None,
             "tampered_video": lambda example, manifest: (
@@ -498,6 +568,17 @@ class RepositoryValidationTests(unittest.TestCase):
             "console_error": lambda _example, manifest: manifest["motionCadence"].update(
                 {"consoleErrors": ["render failed"]}
             ),
+            "hash_consistent_non_media": replace_video_with_bound_non_media,
+            "hash_consistent_truncated_video": truncate_video_with_consistent_binding,
+            "decodable_video_too_short": lambda _example, manifest: (
+                manifest["motionCadence"].update({"authoredCycleSeconds": 999}),
+                manifest["motionCadence"]["transitions"][-1].update(
+                    {"atMs": 999000}
+                ),
+            ),
+            "wrong_threat_mapping": lambda _example, manifest: manifest[
+                "motionCadence"
+            ]["samples"][0].update({"threatState": "attack"}),
         }
         for label, mutate in mutations.items():
             with self.subTest(case=label), tempfile.TemporaryDirectory() as temporary:
@@ -505,11 +586,15 @@ class RepositoryValidationTests(unittest.TestCase):
                     Path(temporary), tier="playable-prototype"
                 )
                 video = example / "qa/evidence/cadence.webm"
-                video.write_bytes(b"uncut cadence")
+                source_motion = (
+                    ROOT
+                    / "examples/project-plateau/build/evidence/visual-upgrade/generated/motion"
+                )
+                shutil.copyfile(source_motion / "watch-bank-dive-pull-up.webm", video)
                 samples = []
                 for index, phase in enumerate(("watch", "bank", "dive", "pull-up")):
                     path = example / f"qa/evidence/{phase}.jpg"
-                    path.write_bytes(phase.encode())
+                    shutil.copyfile(source_motion / f"{phase}.jpg", path)
                     samples.append(
                         {
                             "phase": phase,
@@ -524,7 +609,7 @@ class RepositoryValidationTests(unittest.TestCase):
                 manifest_path = example / "qa/evidence/visual-manifest.json"
                 manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
                 manifest["motionCadence"] = {
-                    "authoredCycleSeconds": 2.0,
+                    "authoredCycleSeconds": 3.2,
                     "transitions": [
                         {
                             "phase": "watch",
@@ -540,7 +625,7 @@ class RepositoryValidationTests(unittest.TestCase):
                         },
                         {
                             "phase": "cycle-complete",
-                            "atMs": 2200,
+                            "atMs": 3400,
                             "threatState": "attack",
                             "rendererResponse": "orbit",
                         },

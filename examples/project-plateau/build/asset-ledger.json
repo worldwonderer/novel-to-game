@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updated": "2026-08-02 PT · playable-prototype promotion after independent visual review and authoritative verification",
+  "updated": "2026-08-02 PT \u00b7 playable-prototype promotion after independent visual review and authoritative verification",
   "policy": "Every shipped non-code asset must be original, public domain, or redistribution-compatible. Modern adaptation assets are prohibited.",
   "entries": [
     {
@@ -34,13 +34,10 @@
         "evidence/s9/03-branch-pull-commitment.jpg",
         "evidence/s10/01-clear-family-sightline.jpg",
         "evidence/s10/02-young-play-silver-frame.jpg",
-        "evidence/visual-upgrade/after-glade-1440x900.jpg",
-        "evidence/visual-upgrade/contact-sheet-glade-1440x900.jpg",
         "evidence/visual-upgrade/generated/manifest.json",
-        "evidence/visual-upgrade/generated/contact-sheet-supported-viewports.png",
-        "evidence/visual-upgrade/review2-before-after.png",
         "../qa/verification.json",
-        "../qa/evidence/independent-visual-review-2026-08-02.md"
+        "evidence/visual-upgrade/generated/contact-sheet-supported-viewports.jpg",
+        "../qa/evidence/independent-visual-review-2026-08-03.md"
       ],
       "remaining": "none"
     },
@@ -59,7 +56,7 @@
         "evidence/s3/05-partial-plate.jpg",
         "evidence/s6/04-bellows-camera-raised.jpg",
         "../qa/verification.json",
-        "../qa/evidence/independent-visual-review-2026-08-02.md"
+        "../qa/evidence/independent-visual-review-2026-08-03.md"
       ],
       "remaining": "none"
     },
@@ -88,7 +85,7 @@
         "evidence/s9/05-distinct-recovered-plates.jpg",
         "evidence/s9/06-clean-order-no-plates.jpg",
         "../qa/verification.json",
-        "../qa/evidence/independent-visual-review-2026-08-02.md"
+        "../qa/evidence/independent-visual-review-2026-08-03.md"
       ],
       "remaining": "none"
     },
@@ -110,7 +107,7 @@
         "evidence/s8/11-panic-first-contact.jpg",
         "evidence/s8/12-panic-input-failure.jpg",
         "../qa/verification.json",
-        "../qa/evidence/independent-visual-review-2026-08-02.md"
+        "../qa/evidence/independent-visual-review-2026-08-03.md"
       ],
       "remaining": "none"
     },
@@ -131,13 +128,10 @@
         "evidence/s10/01-clear-family-sightline.jpg",
         "evidence/s10/02-young-play-silver-frame.jpg",
         "evidence/s10/03-branch-pull-silver-frame.jpg",
-        "evidence/visual-upgrade/after-glade-1440x900.jpg",
-        "evidence/visual-upgrade/contact-sheet-glade-1440x900.jpg",
         "evidence/visual-upgrade/generated/manifest.json",
-        "evidence/visual-upgrade/generated/contact-sheet-supported-viewports.png",
-        "evidence/visual-upgrade/review2-before-after.png",
         "../qa/verification.json",
-        "../qa/evidence/independent-visual-review-2026-08-02.md"
+        "evidence/visual-upgrade/generated/contact-sheet-supported-viewports.jpg",
+        "../qa/evidence/independent-visual-review-2026-08-03.md"
       ],
       "remaining": "none"
     },
@@ -176,13 +170,11 @@
         "evidence/s10/10-protanopia-attack-defense.jpg",
         "evidence/s10/11-deuteranopia-attack-defense.jpg",
         "evidence/s10/12-tritanopia-attack-defense.jpg",
-        "evidence/visual-upgrade/after-glade-1440x900.jpg",
-        "evidence/visual-upgrade/contact-sheet-glade-1440x900.jpg",
         "evidence/visual-upgrade/generated/manifest.json",
-        "evidence/visual-upgrade/generated/contact-sheet-supported-viewports.png",
-        "evidence/visual-upgrade/review2-before-after.png",
         "../qa/verification.json",
-        "../qa/evidence/independent-visual-review-2026-08-02.md"
+        "evidence/visual-upgrade/generated/contact-sheet-supported-viewports.jpg",
+        "../qa/evidence/independent-visual-review-2026-08-03.md",
+        "evidence/visual-upgrade/generated/motion/watch-bank-dive-pull-up.webm"
       ],
       "remaining": "none"
     },
@@ -237,10 +229,9 @@
         "evidence/s10/06-clean-restart.jpg",
         "evidence/s10/report.json",
         "evidence/visual-upgrade/generated/manifest.json",
-        "evidence/visual-upgrade/generated/contact-sheet-supported-viewports.png",
-        "evidence/visual-upgrade/review2-before-after.png",
         "../qa/verification.json",
-        "../qa/evidence/independent-visual-review-2026-08-02.md"
+        "evidence/visual-upgrade/generated/contact-sheet-supported-viewports.jpg",
+        "../qa/evidence/independent-visual-review-2026-08-03.md"
       ],
       "remaining": "none"
     },
@@ -263,13 +254,10 @@
         "evidence/s8/12-panic-input-failure.jpg",
         "evidence/s10/01-clear-family-sightline.jpg",
         "evidence/s10/02-young-play-silver-frame.jpg",
-        "evidence/visual-upgrade/after-glade-1440x900.jpg",
-        "evidence/visual-upgrade/contact-sheet-glade-1440x900.jpg",
         "evidence/visual-upgrade/generated/manifest.json",
-        "evidence/visual-upgrade/generated/contact-sheet-supported-viewports.png",
-        "evidence/visual-upgrade/review2-before-after.png",
         "../qa/verification.json",
-        "../qa/evidence/independent-visual-review-2026-08-02.md"
+        "evidence/visual-upgrade/generated/contact-sheet-supported-viewports.jpg",
+        "../qa/evidence/independent-visual-review-2026-08-03.md"
       ],
       "remaining": "none"
     },
@@ -343,7 +331,7 @@
         "evidence/s10/04-achromatopsia-attack.jpg",
         "evidence/s10/report.json",
         "../qa/verification.json",
-        "../qa/evidence/independent-visual-review-2026-08-02.md"
+        "../qa/evidence/independent-visual-review-2026-08-03.md"
       ],
       "remaining": "none"
     },

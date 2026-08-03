@@ -2,7 +2,7 @@
   "stage": "s3-exposed-proof",
   "source": {
     "scope": "index.html, package manifests, public assets and src",
-    "sha256": "8329da6c8289acfa826e6cfb773e983f9fc270e366f5d375f679f21b5596c6c6"
+    "sha256": "1b0ae8218849f5621b0c4e97245b9267843be3aea4180fae2cff689632844a0f"
   },
   "environment": {
     "browser": "Google Chrome 150.0.7871.187",
@@ -32,7 +32,7 @@
     "samples": 240,
     "medianFrameMs": 8.3,
     "medianFps": 120.5,
-    "onePercentLowFps": 98,
+    "onePercentLowFps": 101,
     "worstFrameMs": 10.3
   },
   "checkpoints": [

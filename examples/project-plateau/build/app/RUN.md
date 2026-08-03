@@ -163,11 +163,11 @@ S7 persists one validated, versioned presentation record,
 offers a visible defaults reset and exercises title, settings, order, field,
 manual pause, focus-loss pause, result and restart at `1440×900` and
 `1280×720`, including 150% text. Its no-cache 25 Mbps run reached the first
-frame in 2.16 seconds; the built app measured 596,121 raw / 152,779 gzip bytes.
+frame in 2.26 seconds; the built app measured 616,503 raw / 159,325 gzip bytes.
 Public-host cold loading, final non-colour review and uncompressed reference
 runs remained open at that checkpoint. S8 replaces the earlier paper timing
-assumption with measured traversal: its Strong path finishes in about 51.6 seconds,
-travels 128.3 world units, preserves seven cues and returns with about 100.3 seconds
+assumption with measured traversal: its Strong path finishes in about 58.4 seconds,
+travels 130.8 world units, preserves seven cues and returns with about 93.5 seconds
 of the revised 180-second light budget. Mixed reaches the four-cue result with
 one shot and its creek callback; Panic reaches the second-contact failure after
 spending both rounds. All three use keyboard/mouse movement without teleport or
@@ -191,8 +191,8 @@ visible eyes. Its matrix clears the observation prose before the hero frame,
 preserves both behavior commitments, exercises a Chromium achromatopsia attack
 state, retains the Strong board/reset, and adds order, glade, attack/defense and
 result checkpoints under protanopia, deuteranopia and tritanopia. The focus
-region records about 19.8% dark / 59.3% bright / 82.1% chromatic pixels at
-120.5/106.4 FPS. These numeric and state floors catch gross omissions; they do
+region records about 17.1% dark / 57.1% bright / 74.9% chromatic pixels at
+120.5/97.1 FPS. These numeric and state floors catch gross omissions; they do
 not replace independent composition, anatomy, motion, colour-cue or premise
 review.
 
@@ -202,8 +202,8 @@ source window and pass all 14 container/codec/profile/pixel/aspect/frame-rate/
 duration/size/audio/first-frame/fast-start checks. Because their playback is
 time-compressed, S8—not the delivery clips—remains the timing authority.
 
-The latest clean-install `npm run verify` handoff passed seven suites and all
-sixteen commands, indexed 41 direct checkpoints and produced a separate 10/10
+The latest authoritative `npm run verify` handoff passed seven suites and all
+seventeen commands, indexed 41 direct checkpoints and produced a separate 10/10
 design-invariant audit. See [`../../qa/QA_REPORT.md`](../../qa/QA_REPORT.md) and
 [`../../qa/verification.json`](../../qa/verification.json). Independent
 first-time sessions and perception review now have

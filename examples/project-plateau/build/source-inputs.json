@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "basePath": "build/app",
-  "sourceFingerprint": "8329da6c8289acfa826e6cfb773e983f9fc270e366f5d375f679f21b5596c6c6",
+  "sourceFingerprint": "1b0ae8218849f5621b0c4e97245b9267843be3aea4180fae2cff689632844a0f",
   "inputs": [
     {
       "path": "index.html",
@@ -50,13 +50,13 @@
     },
     {
       "path": "src/styles.css",
-      "sha256": "87bd08d21a6f786dc018c22cf8683063614d12984fed691cb442331afaafe081",
-      "bytes": 15880
+      "sha256": "6be47fd16525b52a8d0a142187be432b9b0b49315e43e2e28c4efb064f0277c7",
+      "bytes": 16048
     },
     {
       "path": "src/world.js",
-      "sha256": "4a225ef76f45c46f9ec0093f1cabf3e14201b0a541a0fbd4cfb7fbfc7cfdfab8",
-      "bytes": 41255
+      "sha256": "fb3df486bc196f9afe566452c22363a309ca3eef90d534d0590fc074a567a0cd",
+      "bytes": 44294
     }
   ]
 }

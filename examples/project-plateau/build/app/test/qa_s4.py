@@ -144,6 +144,12 @@ def run() -> dict[str, object]:
         page.evaluate("window.__projectPlateau.teleportForTest({x: 8, z: 18})")
         page.wait_for_timeout(80)
         expose_plate(1)
+        # The basalt frame raises awareness to attack.  Prove the authored
+        # canopy de-escalation before committing the two-second glade exposure,
+        # rather than racing the contact timer on a busy browser.
+        page.evaluate("window.__projectPlateau.teleportForTest({x: 0, z: 18})")
+        page.wait_for_timeout(6200)
+        assert snapshot(page)["player"]["threatState"] == "search"
         page.evaluate("window.__projectPlateau.teleportForTest({x: 0, z: -10})")
         page.wait_for_timeout(60)
         page.keyboard.press("KeyE")

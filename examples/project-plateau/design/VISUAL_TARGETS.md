@@ -49,6 +49,7 @@ The first implementation spike was rejected for creature silhouettes, material
 separation, HUD hierarchy and non-reproducible review framing. The replacement
 candidate addresses those concrete majors and is captured by
 `npm run capture:visual`. The current authoritative run passes 7/7 suites, and
-independent reviewer `/root/visual_review` passes this package for
-`playable-prototype` with 0 blockers, 0 majors and 6 disclosed minors. The
+independent reviewer `/root/visual_verdict_round1` passes this package at
+93/100 for `playable-prototype`, with 0 blockers and 0 majors. The six prior
+visual minors are closed by the current still and motion evidence. The
 package does not support polished/showcase promotion.

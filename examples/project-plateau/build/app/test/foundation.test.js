@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
-import { mkdtempSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import {
+  mkdtempSync, mkdirSync, readFileSync, symlinkSync, writeFileSync,
+} from 'node:fs';
 import { globSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
@@ -10,6 +12,15 @@ import { PRODUCT_BUDGET, SCENE_BUDGET, percentile, seededRandom } from '../src/c
 import { createWorld } from '../src/world.js';
 
 const root = new URL('../', import.meta.url);
+
+function writeRetentionRoots(project, release = {}) {
+  mkdirSync(join(project, 'qa'), { recursive: true });
+  mkdirSync(join(project, 'build'), { recursive: true });
+  writeFileSync(join(project, 'qa/release-gates.json'), JSON.stringify(release));
+  writeFileSync(join(project, 'qa/verification.json'), '{}');
+  writeFileSync(join(project, 'qa/QA_REPORT.md'), '# QA\n');
+  writeFileSync(join(project, 'build/asset-ledger.json'), '{}');
+}
 
 test('foundation exposes the locked viewport and performance budgets', () => {
   assert.deepEqual(PRODUCT_BUDGET.targetViewport, [1440, 900]);
@@ -77,16 +88,15 @@ test('runtime sources contain no remote asset or CDN request', () => {
 
 test('evidence retention never removes a release-bound resource', () => {
   const project = mkdtempSync(join(tmpdir(), 'plateau-retention-'));
-  mkdirSync(join(project, 'qa'), { recursive: true });
   mkdirSync(join(project, 'build/evidence/candidate'), { recursive: true });
   writeFileSync(join(project, 'build/evidence/candidate/manifest.json'), JSON.stringify({
     capture: { path: 'build/evidence/candidate/frame.jpg' },
   }));
   writeFileSync(join(project, 'build/evidence/candidate/frame.jpg'), 'bound');
   writeFileSync(join(project, 'build/evidence/orphan.jpg'), 'orphan');
-  writeFileSync(join(project, 'qa/release-gates.json'), JSON.stringify({
+  writeRetentionRoots(project, {
     evidence: ['build/evidence/candidate/manifest.json'],
-  }));
+  });
 
   const tool = new URL('./evidence_retention', import.meta.url);
   const result = spawnSync('python3', [tool.pathname, '--project', project, '--apply', '--json'], {
@@ -101,6 +111,7 @@ test('evidence retention never removes a release-bound resource', () => {
 test('evidence retention defaults to a non-destructive dry run', () => {
   const project = mkdtempSync(join(tmpdir(), 'plateau-retention-dry-'));
   mkdirSync(join(project, 'build/evidence'), { recursive: true });
+  writeRetentionRoots(project);
   writeFileSync(join(project, 'build/evidence/orphan.jpg'), 'orphan');
   const tool = new URL('./evidence_retention', import.meta.url);
   const result = spawnSync('python3', [tool.pathname, '--project', project, '--json'], {
@@ -109,4 +120,82 @@ test('evidence retention defaults to a non-destructive dry run', () => {
   assert.equal(result.status, 0, result.stderr);
   assert.equal(JSON.parse(result.stdout).mode, 'dry-run');
   assert.equal(readFileSync(join(project, 'build/evidence/orphan.jpg'), 'utf8'), 'orphan');
+});
+
+test('evidence retention blocks apply when an authoritative root is missing or malformed', () => {
+  const project = mkdtempSync(join(tmpdir(), 'plateau-retention-root-error-'));
+  mkdirSync(join(project, 'qa'), { recursive: true });
+  mkdirSync(join(project, 'build/evidence'), { recursive: true });
+  writeFileSync(join(project, 'build/evidence/orphan.jpg'), 'orphan');
+  writeFileSync(join(project, 'qa/release-gates.json'), '{}');
+  writeFileSync(join(project, 'qa/QA_REPORT.md'), '# QA\n');
+  writeFileSync(join(project, 'build/asset-ledger.json'), '{}');
+  const tool = new URL('./evidence_retention', import.meta.url);
+
+  const missing = spawnSync('python3', [tool.pathname, '--project', project, '--apply', '--json'], {
+    encoding: 'utf8',
+  });
+  assert.equal(missing.status, 2, missing.stderr);
+  assert.equal(JSON.parse(missing.stdout).mode, 'blocked');
+  assert.equal(readFileSync(join(project, 'build/evidence/orphan.jpg'), 'utf8'), 'orphan');
+
+  writeFileSync(join(project, 'qa/verification.json'), '{');
+  const malformed = spawnSync('python3', [tool.pathname, '--project', project, '--apply', '--json'], {
+    encoding: 'utf8',
+  });
+  assert.equal(malformed.status, 2, malformed.stderr);
+  assert.equal(JSON.parse(malformed.stdout).mode, 'blocked');
+  assert.equal(readFileSync(join(project, 'build/evidence/orphan.jpg'), 'utf8'), 'orphan');
+});
+
+test('evidence retention blocks malformed transitive manifests', () => {
+  const project = mkdtempSync(join(tmpdir(), 'plateau-retention-transitive-error-'));
+  mkdirSync(join(project, 'build/evidence/candidate'), { recursive: true });
+  writeFileSync(join(project, 'build/evidence/candidate/manifest.json'), '{');
+  writeFileSync(join(project, 'build/evidence/orphan.jpg'), 'orphan');
+  writeRetentionRoots(project, {
+    evidence: ['build/evidence/candidate/manifest.json'],
+  });
+  const tool = new URL('./evidence_retention', import.meta.url);
+  const result = spawnSync('python3', [tool.pathname, '--project', project, '--apply', '--json'], {
+    encoding: 'utf8',
+  });
+  assert.equal(result.status, 2, result.stderr);
+  assert.equal(JSON.parse(result.stdout).mode, 'blocked');
+  assert.equal(readFileSync(join(project, 'build/evidence/orphan.jpg'), 'utf8'), 'orphan');
+});
+
+test('evidence retention rejects symlinks without touching their targets', () => {
+  const project = mkdtempSync(join(tmpdir(), 'plateau-retention-symlink-'));
+  mkdirSync(join(project, 'build/evidence'), { recursive: true });
+  writeRetentionRoots(project);
+  writeFileSync(join(project, 'secret.txt'), 'keep');
+  symlinkSync(join(project, 'secret.txt'), join(project, 'build/evidence/link.txt'));
+  const tool = new URL('./evidence_retention', import.meta.url);
+  const result = spawnSync('python3', [tool.pathname, '--project', project, '--apply', '--json'], {
+    encoding: 'utf8',
+  });
+  assert.equal(result.status, 2, result.stderr);
+  assert.equal(JSON.parse(result.stdout).mode, 'blocked');
+  assert.equal(readFileSync(join(project, 'secret.txt'), 'utf8'), 'keep');
+});
+
+test('authoritative verification stages recovery outside the authoritative record', () => {
+  const probe = spawnSync('python3', ['-c', [
+    'import json, runpy',
+    "module = runpy.run_path('test/verify.py')",
+    "suite = module['SUITES'][-1]",
+    "print(json.dumps({'projected': module['projected_success_result'](suite), 'authoritative': str(module['VERIFICATION']), 'candidate': str(module['CANDIDATE_VERIFICATION']), 'authoritativeLog': str(module['LOG']), 'candidateLog': str(module['CANDIDATE_LOG'])}))",
+  ].join('; ')], { cwd: root, encoding: 'utf8' });
+  assert.equal(probe.status, 0, probe.stderr);
+  const recovery = JSON.parse(probe.stdout);
+  const projected = recovery.projected;
+  assert.notEqual(recovery.candidate, recovery.authoritative);
+  assert.notEqual(recovery.candidateLog, recovery.authoritativeLog);
+  assert.match(recovery.candidate, /\.verification-candidate\.json$/);
+  assert.equal(projected.id, 'repo:contract');
+  assert.equal(projected.executed, true);
+  assert.equal(projected.passed, true);
+  assert.ok(projected.commands.length > 0);
+  assert.ok(projected.commands.every((command) => command.exitCode === 0));
 });

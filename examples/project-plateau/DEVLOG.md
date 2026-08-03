@@ -1,11 +1,25 @@
 # Project Plateau build devlog
 
-## 2026-08-02 · Playable-prototype visual promotion
+## 2026-08-03 · Review-debt closeout
 
 - Current `npm run verify` passes 7/7 suites and 17/17 commands against
-  fingerprint `8329da6c…`, including the deterministic dual-viewport capture.
-- Independent reviewer `/root/visual_review` made no implementation edits and
-  passes the approved target at playable-prototype: 0 blocker, 0 major, 6 minor.
+  fingerprint `1b0ae821…`, including deterministic dual-viewport JPEG capture
+  and a hash-bound uncut watch → bank → dive → pull-up take.
+- Independent reviewer `/root/visual_verdict_round1` made no implementation
+  edits and passes the approved target at playable-prototype: 93/100,
+  0 blockers and 0 majors. All six prior visual minors are closed.
+- Publication validation is split into bounded identity, verification, visual
+  and asset helpers. A dry-run-first retention tool protects every transitively
+  referenced resource before removing superseded evidence; missing roots,
+  malformed manifests and symlinks fail closed.
+- Authoritative verification stages its self-check in a hidden candidate and
+  atomically publishes only measured results. The structured record content-binds
+  its log by SHA-256, and motion evidence must decode with the expected codec,
+  dimensions and duration rather than merely resemble WebM/JPEG signatures.
+- S2 and S4 no longer race cosmetic flight timing or an active contact timer;
+  their paths assert the authored cover/de-escalation state before continuing.
+  S3 and S8 likewise wait on observed pause/attack/cover state instead of
+  relying on machine-speed timing.
 - Nine focal release assets now pass. Audio remains degradable through its
   tested authored-caption and visual/state fallback; no polished/showcase claim
   is made.

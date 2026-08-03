@@ -6,18 +6,18 @@
   "renderer": "WebGL2",
   "player": {
     "position": {
-      "x": 2.68,
-      "z": 3.218
+      "x": 2.685,
+      "z": 3.215
     },
     "lastStablePosition": {
-      "x": 2.68,
-      "z": 3.218
+      "x": 2.685,
+      "z": 3.215
     },
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 37.638,
-    "distanceTravelled": 69.551,
+    "elapsedSeconds": 44.275,
+    "distanceTravelled": 72.003,
     "paused": false,
     "pauseReason": null,
     "boundaryRecoveries": 0,
@@ -30,11 +30,13 @@
       "basalt-shelf",
       "canopy-overlook",
       "iguanodon-glade",
+      "covered-return",
+      "iguanodon-glade",
       "covered-return"
     ],
     "reachedGlade": true,
     "inCover": true,
-    "coverSeconds": 0.006799999952318281,
+    "coverSeconds": 0.00839999985695951,
     "sprintExposureSeconds": 0,
     "sprintEscalationCharged": false,
     "threatAwareness": 2,
@@ -99,7 +101,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 114.362,
+    "remainingLight": 107.725,
     "returnRoute": "covered",
     "returnCostSeconds": 28,
     "returnStrike": false,
@@ -110,16 +112,16 @@
     "state": "search",
     "response": "orbit",
     "position": {
-      "x": 19.42,
-      "y": 8.41,
-      "z": -20.75
+      "x": -9.39,
+      "y": 6.8,
+      "z": -17.6
     }
   },
   "familyVisual": {
-    "moment": "glade-young-play",
+    "moment": "glade-branch-pull",
     "adults": 2,
     "young": 3,
-    "branchAngle": 0.08,
+    "branchAngle": 0.462,
     "roles": [
       "graze",
       "branch-pull",
@@ -158,7 +160,7 @@
         "young-play"
       ],
       "branchPresent": true,
-      "visibleParts": 142
+      "visibleParts": 172
     },
     "gladeComposition": {
       "sightlineHalfWidth": 22,
@@ -178,39 +180,29 @@
     "threatState": "search",
     "recentCues": [
       {
-        "cue": "plate-slide",
-        "caption": "[glass plate seats in its case]",
-        "at": 8.229
-      },
-      {
-        "cue": "camera-raise",
-        "caption": "[wood frame lifts; bellows opens]",
-        "at": 14.859
-      },
-      {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 14.944
+        "at": 14.949
       },
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 16.923
+        "at": 16.933
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 16.923
+        "at": 16.933
       },
       {
         "cue": "search",
         "caption": "[a near call circles overhead]",
-        "at": 23.056
+        "at": 23.051
       },
       {
         "cue": "examine",
         "caption": "[fern brushes aside; pencil marks the field card]",
-        "at": 26.955
+        "at": 26.949
       },
       {
         "cue": "camera-raise",
@@ -233,29 +225,39 @@
         "at": 29.024
       },
       {
-        "cue": "camera-raise",
-        "caption": "[wood frame lifts; bellows opens]",
-        "at": 29.109
-      },
-      {
-        "cue": "shutter",
-        "caption": "[shutter releases]",
-        "at": 29.189
-      },
-      {
-        "cue": "plate-slide",
-        "caption": "[glass plate seats in its case]",
-        "at": 31.173
-      },
-      {
         "cue": "cover",
         "caption": "[branches scrape the camera; wingbeats widen]",
-        "at": 31.531
+        "at": 29.349
       },
       {
         "cue": "search",
         "caption": "[a near call circles overhead]",
-        "at": 37.531
+        "at": 35.339
+      },
+      {
+        "cue": "camera-raise",
+        "caption": "[wood frame lifts; bellows opens]",
+        "at": 35.739
+      },
+      {
+        "cue": "shutter",
+        "caption": "[shutter releases]",
+        "at": 35.819
+      },
+      {
+        "cue": "attack",
+        "caption": "[wingbeats tighten into a dive]",
+        "at": 37.797
+      },
+      {
+        "cue": "plate-slide",
+        "caption": "[glass plate seats in its case]",
+        "at": 37.797
+      },
+      {
+        "cue": "search",
+        "caption": "[a near call circles overhead]",
+        "at": 44.155
       }
     ]
   },
@@ -286,18 +288,18 @@
     "contactNote": null,
     "cartridgesVisible": false,
     "caption": "[a near call circles overhead]",
-    "lightWatch": 115,
+    "lightWatch": 108,
     "terminal": null
   },
-  "sceneChildren": 36,
-  "calls": 991,
-  "triangles": 139725,
+  "sceneChildren": 37,
+  "calls": 1174,
+  "triangles": 146400,
   "textures": 4,
-  "geometries": 338,
+  "geometries": 392,
   "viewport": [
     1440,
     900
   ],
-  "firstRenderedAt": 187.90000009536743,
+  "firstRenderedAt": 159.29999995231628,
   "recentMedianFrameMs": 8.3
 }

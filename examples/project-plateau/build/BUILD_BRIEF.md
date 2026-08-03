@@ -359,9 +359,9 @@ are not claimed by automated verification.
 ## Final scope reconciliation
 
 Reconciled on 2026-08-02 against the current publishable-input fingerprint
-`8329da6c8289acfa826e6cfb773e983f9fc270e366f5d375f679f21b5596c6c6` and
-authoritative command `npm run verify`. The 481.532-second run executed all
-seven registered suites and all seventeen underlying commands; its log and
+`1b0ae8218849f5621b0c4e97245b9267843be3aea4180fae2cff689632844a0f` and
+authoritative command `npm run verify`. The run executed all seven registered
+suites and all seventeen underlying commands; its exact duration, log and
 structured handoff are `../qa/evidence/verify.log` and
 `../qa/verification.json`. The deterministic visual-capture manifest carries
 the same fingerprint.
@@ -377,9 +377,9 @@ the same fingerprint.
 | Strong, partial and failure outcomes followed by a clean restart | Delivered | S4/S5 plus per-terminal S8 restart checkpoints |
 | Local audio/captions, HUD, sensitivity, motion reduction and text scaling | Delivered | S6/S7; subjective mix and comfort remain outside automated proof |
 | Non-colour redundancy across the supported colour-vision modes | Delivered and independently reviewed | S8 complete full-colour and achromatopsia routes plus S10 protanopia/deuteranopia/tritanopia order, glade, attack/defence and result checkpoints; independent visual review PASS at playable-prototype threshold |
-| Payload, loading, lifecycle and heaviest-state performance budgets | Delivered locally | 154,906 gzip bytes; 2,198.3 ms local 25 Mbps first frame; 120.5/106.4 target median/1%-low FPS in S7 |
+| Payload, loading, lifecycle and heaviest-state performance budgets | Delivered locally | 159,325 gzip bytes; 2,263.6 ms local 25 Mbps first frame; 120.5/100.0 target median/1%-low FPS in S7 |
 | First-time premise, genre and route comprehension | Not delivered as evidence | Three independent raw player records remain NOT_RUN; automation cannot substitute |
-| Independent anatomy, motion and composition approval | Delivered for playable-prototype | Independent review PASS: 0 blockers, 0 majors and 6 disclosed minors in `../qa/evidence/independent-visual-review-2026-08-02.md` |
+| Independent anatomy, motion and composition approval | Delivered for playable-prototype | Read-only independent review PASS: 93/100, 0 blockers and 0 majors in `../qa/evidence/independent-visual-review-2026-08-03.md` |
 | Public deployment | Not claimed for the current candidate | `../qa/evidence/public-host/report.json` is retained as historical evidence only; its deployed fingerprint does not match the current visual candidate |
 
 The earlier paper target of 5–8 minutes and 420 seconds was deliberately revised

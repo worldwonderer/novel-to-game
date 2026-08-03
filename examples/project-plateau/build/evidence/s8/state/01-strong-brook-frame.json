@@ -7,17 +7,17 @@
   "player": {
     "position": {
       "x": 3,
-      "z": 44.978
+      "z": 44.975
     },
     "lastStablePosition": {
       "x": 3,
-      "z": 44.978
+      "z": 44.975
     },
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 8.414,
-    "distanceTravelled": 25.022,
+    "elapsedSeconds": 8.425,
+    "distanceTravelled": 25.025,
     "paused": false,
     "pauseReason": null,
     "boundaryRecoveries": 0,
@@ -43,7 +43,7 @@
     "cameraRaised": false,
     "plateRailRevealed": true,
     "pendingExposure": null,
-    "previewSeconds": 3.9250999999046323,
+    "previewSeconds": 3.925,
     "lastProofEvent": {
       "plateIndex": 0,
       "frameKey": "brook-partial",
@@ -95,7 +95,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 171.586,
+    "remainingLight": 171.575,
     "returnRoute": null,
     "returnCostSeconds": 0,
     "returnStrike": false,
@@ -106,16 +106,16 @@
     "state": "watch",
     "response": "orbit",
     "position": {
-      "x": -15.51,
+      "x": -15.39,
       "y": 8.8,
-      "z": 26.37
+      "z": 26.41
     }
   },
   "familyVisual": {
     "moment": "glade-branch-pull",
     "adults": 2,
     "young": 3,
-    "branchAngle": 0.459,
+    "branchAngle": 0.461,
     "roles": [
       "graze",
       "branch-pull",
@@ -154,7 +154,7 @@
         "young-play"
       ],
       "branchPresent": true,
-      "visibleParts": 142
+      "visibleParts": 172
     },
     "gladeComposition": {
       "sightlineHalfWidth": 22,
@@ -181,27 +181,27 @@
       {
         "cue": "examine",
         "caption": "[fern brushes aside; pencil marks the field card]",
-        "at": 6.149
+        "at": 6.16
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 6.16
+        "at": 6.171
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 6.245
+        "at": 6.256
       },
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 8.229
+        "at": 8.24
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 8.229
+        "at": 8.24
       }
     ]
   },
@@ -235,15 +235,15 @@
     "lightWatch": 172,
     "terminal": null
   },
-  "sceneChildren": 36,
-  "calls": 1050,
-  "triangles": 142326,
+  "sceneChildren": 37,
+  "calls": 1212,
+  "triangles": 148176,
   "textures": 4,
-  "geometries": 338,
+  "geometries": 392,
   "viewport": [
     1440,
     900
   ],
-  "firstRenderedAt": 187.90000009536743,
+  "firstRenderedAt": 159.29999995231628,
   "recentMedianFrameMs": 8.3
 }

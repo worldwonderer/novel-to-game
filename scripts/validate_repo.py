@@ -3,9 +3,11 @@
 
 from __future__ import annotations
 
+import argparse
 import json
 import hashlib
 import math
+import os
 import re
 import subprocess
 import sys
@@ -21,6 +23,8 @@ EXPECTED_SKILLS = {
     "game-build",
     "game-qa",
 }
+REPO_ROOT = Path(__file__).resolve().parents[1]
+VERIFICATION_CANDIDATE_ENV = "NOVEL_TO_GAME_VERIFICATION_CANDIDATE"
 EXAMPLE_MANIFEST = "example.json"
 # 示例的原著结构因语言而异（回目写法、章数、覆盖节标题、引用格式），
 # 不能写死在校验器里，否则仓库结构上只容得下中文章回体原著。
@@ -652,6 +656,15 @@ def _validate_verification(
     log_issue = _workspace_evidence_issue(example_dir, verify.get("log"), "verify.log")
     if log_issue:
         issues.append(log_issue.replace("qa/release-gates.json", "qa/verification.json"))
+    expected_log_hash = verify.get("logSha256")
+    if not isinstance(expected_log_hash, str) or not re.fullmatch(
+        r"[0-9a-f]{64}", expected_log_hash
+    ):
+        issues.append(f"{label}: verify.logSha256 must be a lowercase sha256")
+    elif not log_issue:
+        log_path = example_dir / str(verify["log"])
+        if hashlib.sha256(log_path.read_bytes()).hexdigest() != expected_log_hash:
+            issues.append(f"{label}: verify.logSha256 does not match verify.log")
     if verify.get("exitCode") != 0:
         issues.append(f"{label}: verify.exitCode must be 0")
     duration = verify.get("durationMs")
@@ -883,6 +896,68 @@ def _validate_manifest_resource(
     return issues, not issues
 
 
+def _probe_media(path: Path) -> tuple[dict[str, object] | None, str | None]:
+    """Decode media metadata with the repository's existing ffprobe toolchain."""
+    try:
+        result = subprocess.run(
+            [
+                "ffprobe",
+                "-v",
+                "error",
+                "-show_entries",
+                "stream=codec_name,width,height:format=duration",
+                "-of",
+                "json",
+                str(path),
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    except OSError as error:
+        return None, f"ffprobe is unavailable: {error}"
+    if result.returncode != 0:
+        return None, result.stderr.strip() or "ffprobe could not decode the resource"
+    try:
+        payload = json.loads(result.stdout)
+    except json.JSONDecodeError as error:
+        return None, f"ffprobe returned invalid JSON: {error}"
+    if not isinstance(payload, dict):
+        return None, "ffprobe result must be an object"
+    return payload, None
+
+
+def _fully_decode_media(path: Path) -> str | None:
+    """Reject streams whose container metadata survives but payload is corrupt."""
+    try:
+        result = subprocess.run(
+            [
+                "ffmpeg",
+                "-v",
+                "error",
+                "-i",
+                str(path),
+                "-map",
+                "0:v:0",
+                "-f",
+                "null",
+                "-",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=30,
+        )
+    except OSError as error:
+        return f"ffmpeg is unavailable: {error}"
+    except subprocess.TimeoutExpired:
+        return "ffmpeg did not finish within 30 seconds"
+    errors = result.stderr.strip()
+    if result.returncode != 0 or errors:
+        return errors.splitlines()[0] if errors else "ffmpeg could not decode the resource"
+    return None
+
+
 def _validate_motion_cadence(
     example_dir: Path, cadence: object, field: str
 ) -> tuple[list[str], bool, set[str]]:
@@ -907,6 +982,20 @@ def _validate_motion_cadence(
     if not isinstance(transitions, list) or len(transitions) < 3:
         issues.append(f"{prefix}: {field}.transitions must contain at least three records")
     else:
+        expected_transition_phases = [
+            "watch",
+            "bank-dive-pull-up-cycle",
+            "cycle-complete",
+        ]
+        actual_transition_phases = [
+            transition.get("phase") if isinstance(transition, dict) else None
+            for transition in transitions
+        ]
+        if actual_transition_phases != expected_transition_phases:
+            issues.append(
+                f"{prefix}: {field}.transitions phases must be "
+                f"{expected_transition_phases} in order"
+            )
         for index, transition in enumerate(transitions):
             transition_field = f"{field}.transitions[{index}]"
             if not isinstance(transition, dict):
@@ -928,8 +1017,13 @@ def _validate_motion_cadence(
                 issues.append(f"{prefix}: {transition_field}.atMs must be non-negative")
             else:
                 transition_times.append(float(at_ms))
-        if transition_times != sorted(transition_times):
-            issues.append(f"{prefix}: {field}.transitions must use chronological atMs values")
+        if any(
+            later <= earlier
+            for earlier, later in zip(transition_times, transition_times[1:])
+        ):
+            issues.append(
+                f"{prefix}: {field}.transitions must use strictly increasing atMs values"
+            )
         if (
             transition_times
             and isinstance(cycle, (int, float))
@@ -945,7 +1039,58 @@ def _validate_motion_cadence(
     )
     issues.extend(video_issues)
     if video_valid and isinstance(video, dict):
-        paths.add(str(video["path"]))
+        video_path = str(video["path"])
+        paths.add(video_path)
+        video_bytes = (example_dir / video_path).read_bytes()
+        if not video_path.endswith(".webm") or not video_bytes.startswith(
+            b"\x1a\x45\xdf\xa3"
+        ):
+            issues.append(
+                f"{prefix}: {field}.video must be an EBML WebM resource"
+            )
+        video_probe, probe_error = _probe_media(example_dir / video_path)
+        if probe_error:
+            issues.append(f"{prefix}: {field}.video is not decodable: {probe_error}")
+        elif video_probe is not None:
+            streams = video_probe.get("streams")
+            stream = streams[0] if isinstance(streams, list) and streams else None
+            if not isinstance(stream, dict) or stream.get("codec_name") not in {
+                "vp8",
+                "vp9",
+                "av1",
+            }:
+                issues.append(f"{prefix}: {field}.video must contain a WebM video stream")
+            else:
+                width = stream.get("width")
+                height = stream.get("height")
+                if (
+                    not isinstance(width, int)
+                    or not isinstance(height, int)
+                    or width < 640
+                    or height < 360
+                ):
+                    issues.append(
+                        f"{prefix}: {field}.video dimensions must be at least 640x360"
+                    )
+            format_record = video_probe.get("format")
+            try:
+                duration = float(format_record["duration"])
+            except (KeyError, TypeError, ValueError):
+                duration = 0
+            required_duration = max(
+                float(cycle) if isinstance(cycle, (int, float)) else 0,
+                transition_times[-1] / 1000 if transition_times else 0,
+            )
+            if duration < required_duration:
+                issues.append(
+                    f"{prefix}: {field}.video duration {duration:g}s is shorter "
+                    f"than the required {required_duration:g}s cadence"
+                )
+        decode_error = _fully_decode_media(example_dir / video_path)
+        if decode_error:
+            issues.append(
+                f"{prefix}: {field}.video fails full-frame decoding: {decode_error}"
+            )
 
     samples = cadence.get("samples")
     expected_phases = ["watch", "bank", "dive", "pull-up"]
@@ -960,6 +1105,9 @@ def _validate_motion_cadence(
             f"{prefix}: {field}.samples phases must be {expected_phases} in order"
         )
     renderer_times: list[float] = []
+    sample_hashes: list[str] = []
+    sample_dimensions: list[tuple[int, int]] = []
+    expected_threat_states = ["watch", "attack", "attack", "attack"]
     for index, sample in enumerate(samples):
         sample_field = f"{field}.samples[{index}]"
         if not isinstance(sample, dict):
@@ -988,10 +1136,65 @@ def _validate_motion_cadence(
         )
         issues.extend(resource_issues)
         if resource_valid:
-            paths.add(str(sample["path"]))
-    if renderer_times != sorted(renderer_times):
+            sample_path = str(sample["path"])
+            paths.add(sample_path)
+            sample_hashes.append(str(sample["sha256"]))
+            sample_bytes = (example_dir / sample_path).read_bytes()
+            if (
+                not sample_path.endswith((".jpg", ".jpeg"))
+                or not sample_bytes.startswith(b"\xff\xd8")
+                or not sample_bytes.endswith(b"\xff\xd9")
+            ):
+                issues.append(
+                    f"{prefix}: {sample_field} must be a complete JPEG resource"
+                )
+            sample_probe, probe_error = _probe_media(example_dir / sample_path)
+            if probe_error:
+                issues.append(
+                    f"{prefix}: {sample_field} is not a decodable JPEG: {probe_error}"
+                )
+            elif sample_probe is not None:
+                streams = sample_probe.get("streams")
+                stream = streams[0] if isinstance(streams, list) and streams else None
+                if not isinstance(stream, dict) or stream.get("codec_name") != "mjpeg":
+                    issues.append(f"{prefix}: {sample_field} must decode as JPEG")
+                else:
+                    width = stream.get("width")
+                    height = stream.get("height")
+                    if isinstance(width, int) and isinstance(height, int):
+                        sample_dimensions.append((width, height))
+                    else:
+                        issues.append(
+                            f"{prefix}: {sample_field} must expose pixel dimensions"
+                        )
+            decode_error = _fully_decode_media(example_dir / sample_path)
+            if decode_error:
+                issues.append(
+                    f"{prefix}: {sample_field} fails full-frame decoding: {decode_error}"
+                )
+        if index < len(expected_threat_states) and sample.get(
+            "threatState"
+        ) != expected_threat_states[index]:
+            issues.append(
+                f"{prefix}: {sample_field}.threatState must be "
+                f"{expected_threat_states[index]}"
+            )
+    if any(
+        later <= earlier for earlier, later in zip(renderer_times, renderer_times[1:])
+    ):
         issues.append(
-            f"{prefix}: {field}.samples must use chronological rendererSeconds values"
+            f"{prefix}: {field}.samples must use strictly increasing rendererSeconds values"
+        )
+    if len(sample_hashes) == len(samples) and len(set(sample_hashes)) != len(sample_hashes):
+        issues.append(f"{prefix}: {field}.samples must bind distinct phase images")
+    if sample_dimensions and (
+        len(sample_dimensions) != len(samples)
+        or len(set(sample_dimensions)) != 1
+        or sample_dimensions[0][0] < 640
+        or sample_dimensions[0][1] < 360
+    ):
+        issues.append(
+            f"{prefix}: {field}.samples must share dimensions of at least 640x360"
         )
     if cadence.get("consoleErrors") != []:
         issues.append(f"{prefix}: {field}.consoleErrors must be empty")
@@ -1305,7 +1508,9 @@ def _validate_release_asset_keys(
 
 
 def _validate_release_identity(
-    example_dir: Path, release: dict[str, object]
+    example_dir: Path,
+    release: dict[str, object],
+    verification_candidate: Path | None = None,
 ) -> tuple[object, dict[str, object] | None, list[str]]:
     prefix = f"{example_dir.name}/qa/release-gates.json"
     issues: list[str] = []
@@ -1348,7 +1553,7 @@ def _validate_release_identity(
         issues.append(
             f"{prefix}: sourceFingerprint must be a lowercase sha256 or null"
         )
-    verification_path = example_dir / "qa/verification.json"
+    verification_path = verification_candidate or example_dir / "qa/verification.json"
     verification: dict[str, object] | None = None
     if verification_path.is_file():
         verification, verification_issues = _read_json_object(
@@ -1761,7 +1966,11 @@ def _validate_promoted_assets(
     return issues
 
 
-def validate_publication(example_dir: Path, publication_tier: str) -> list[str]:
+def validate_publication(
+    example_dir: Path,
+    publication_tier: str,
+    verification_candidate: Path | None = None,
+) -> list[str]:
     """Validate ordered publication claims against retained, workspace-local proof."""
     issues: list[str] = []
     prefix = f"{example_dir.name}/qa/release-gates.json"
@@ -1927,7 +2136,7 @@ def validate_publication(example_dir: Path, publication_tier: str) -> list[str]:
     )
     issues.extend(asset_key_issues)
     source_fingerprint, verification, identity_issues = _validate_release_identity(
-        example_dir, release
+        example_dir, release, verification_candidate
     )
     issues.extend(identity_issues)
 
@@ -2145,11 +2354,32 @@ def validate_readme_publication_claims(root: Path) -> list[str]:
     return issues
 
 
-def validate_example(example_dir: Path) -> list[str]:
+def validate_example(
+    example_dir: Path, verification_candidate: Path | None = None
+) -> list[str]:
+    if verification_candidate is None:
+        raw_candidate = os.environ.get(VERIFICATION_CANDIDATE_ENV)
+        if raw_candidate:
+            environment_candidate = Path(raw_candidate)
+            if not environment_candidate.is_absolute():
+                environment_candidate = REPO_ROOT / environment_candidate
+            environment_candidate = environment_candidate.resolve()
+            expected_candidate = (
+                example_dir / "qa/.verification-candidate.json"
+            ).resolve()
+            if (
+                environment_candidate == expected_candidate
+                and environment_candidate.is_file()
+            ):
+                verification_candidate = environment_candidate
     manifest, issues = read_manifest(example_dir)
     if manifest is None:
         return issues
-    issues.extend(validate_publication(example_dir, str(manifest["publicationTier"])))
+    issues.extend(
+        validate_publication(
+            example_dir, str(manifest["publicationTier"]), verification_candidate
+        )
+    )
     actual_planning_files = {
         path.relative_to(example_dir).as_posix()
         for directory in ("analysis", "concepts", "design", "build")
@@ -2340,7 +2570,9 @@ def validate_minimal_evidence_contract(root: Path) -> list[str]:
     return issues
 
 
-def validate_repository(root: Path) -> list[str]:
+def validate_repository(
+    root: Path, verification_candidate: Path | None = None
+) -> list[str]:
     issues: list[str] = []
     for required in ("README.md", "README_ZH.md", "LICENSE", "AGENTS.md", "VERSION"):
         if not (root / required).is_file():
@@ -2361,7 +2593,14 @@ def validate_repository(root: Path) -> list[str]:
     if not actual_examples:
         issues.append("repository: no examples found")
     for name in sorted(actual_examples):
-        issues.extend(validate_example(examples_root / name))
+        example_dir = examples_root / name
+        candidate = (
+            verification_candidate
+            if verification_candidate is not None
+            and verification_candidate.parent == example_dir / "qa"
+            else None
+        )
+        issues.extend(validate_example(example_dir, candidate))
     issues.extend(validate_readme_publication_claims(root))
 
     for json_file in validation_json_files(root):
@@ -2377,8 +2616,34 @@ def validate_repository(root: Path) -> list[str]:
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--verification-candidate",
+        type=Path,
+        help="validate one hidden staged verification record before atomic publication",
+    )
+    args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
-    issues = validate_repository(root)
+    candidate = args.verification_candidate
+    if candidate is not None:
+        candidate = candidate.resolve()
+        try:
+            relative = candidate.relative_to(root)
+        except ValueError:
+            print("FAIL: verification candidate must remain inside the repository")
+            return 1
+        if (
+            len(relative.parts) != 4
+            or relative.parts[0] != "examples"
+            or relative.parts[2:] != ("qa", ".verification-candidate.json")
+            or not candidate.is_file()
+        ):
+            print(
+                "FAIL: verification candidate must be an existing "
+                "examples/<slug>/qa/.verification-candidate.json"
+            )
+            return 1
+    issues = validate_repository(root, candidate)
     if issues:
         for issue in issues:
             print(f"FAIL: {issue}")

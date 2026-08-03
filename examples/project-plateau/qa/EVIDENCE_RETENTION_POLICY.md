@@ -24,18 +24,19 @@
 
 ## 安全清理流程
 
-在项目根运行：
+在 `examples/project-plateau/` 运行：
 
 ```bash
 python3 build/app/test/evidence_retention --json
 ```
 
-该命令默认为 dry-run，只列出没有被权威根传递引用的候选。当前盘点为 323 个文件、18,199,302 字节；其中 308 个文件、16,709,137 字节受保护，15 个候选约 1.49 MB。主要候选是 `visual-upgrade/review2-before/` 的旧 PNG 和各阶段已被统一 `qa/evidence/verify.log` 取代的重复 `verify-s*.log`。
+该命令默认为 dry-run，只列出没有被权威根传递引用的候选。本轮清理前盘点为 328 个文件、15,291,179 字节；安全删除 18 个未引用文件（当时合计 2,445,566 字节），包括旧视觉对照图和已被统一 `qa/evidence/verify.log` 取代的重复 `verify-s*.log`。最终全量验证后共有 310 个文件、12,851,860 字节，全部受传递保护，候选为零。任何权威根缺失、JSON 损坏、传递引用缺失或证据目录 symlink 都会以非零状态阻断 dry-run 与 apply。
 
 确认 dry-run 清单后才可执行：
 
 ```bash
 python3 build/app/test/evidence_retention --apply --json
+cd ../..
 python3 scripts/validate_repo.py
 python3 -m unittest discover -s tests -v
 ```

@@ -10,15 +10,15 @@ The current `npm run verify` invocation passes 7/7 suites and 17/17 commands,
 including input-only Strong/Mixed/Panic paths, terminal results, clean restart,
 S10 visual/state coverage and the registered deterministic dual-viewport capture.
 The source fingerprint is
-`8329da6c8289acfa826e6cfb773e983f9fc270e366f5d375f679f21b5596c6c6`.
+`1b0ae8218849f5621b0c4e97245b9267843be3aea4180fae2cff689632844a0f`.
 Exact command timings remain in the structured handoff rather than duplicated here.
 
-Independent reviewer `/root/visual_review` (`vision`) made no implementation
+Independent reviewer `/root/visual_verdict_round1` (`vision`) made no implementation
 edits and judged only the approved targets and captured evidence. The verdict is
-PASS for `playable-prototype`: 0 blockers, 0 majors and 6 disclosed minors. The
-folded diagonal dive and material-response majors are closed. The durable rubric,
-minor wording and reviewed paths are in
-[`evidence/independent-visual-review-2026-08-02.md`](evidence/independent-visual-review-2026-08-02.md).
+PASS for `playable-prototype`: 93/100, 0 blockers and 0 majors. All six prior
+visual minors are closed at the approved target finish. The durable rubric and
+reviewed paths are in
+[`evidence/independent-visual-review-2026-08-03.md`](evidence/independent-visual-review-2026-08-03.md).
 
 Nine focal release assets pass current runtime and review evidence. Audio remains
 an explicitly degradable asset: authored sound captions and existing visual/state
@@ -29,16 +29,16 @@ or showcase quality.
 
 | Field | Observed |
 |---|---|
-| Candidate identity | App fingerprint is authoritative; release `sourceCommit` `4576e2f856a58fc38dd9f16d0a0c0616e5ca13ee` is only a historical locator whose app bytes match it |
-| App fingerprint | `8329da6c8289acfa826e6cfb773e983f9fc270e366f5d375f679f21b5596c6c6` |
+| Candidate identity | App fingerprint is authoritative; release `sourceCommit` `4ee6f47bac6f0d4be248569a24c310a78e588d0a` identifies matching candidate app bytes |
+| App fingerprint | `1b0ae8218849f5621b0c4e97245b9267843be3aea4180fae2cff689632844a0f` |
 | Verify | `npm run verify` |
 | Result | exit `0`; 7/7 suites; 17/17 commands |
 | Duration | See `verification.json#verify.durationMs`; not duplicated here |
 | Log | [`evidence/verify.log`](evidence/verify.log) |
 | Structured handoff | [`verification.json`](verification.json) |
-| Visual review | [`evidence/independent-visual-review-2026-08-02.md`](evidence/independent-visual-review-2026-08-02.md) — PASS, 0 blocker / 0 major / 6 minor |
+| Visual review | [`evidence/independent-visual-review-2026-08-03.md`](evidence/independent-visual-review-2026-08-03.md) — PASS, 93/100, 0 blocker / 0 major |
 
-The retained verification locator `4576e2f856a58fc38dd9f16d0a0c0616e5ca13ee`
+The retained verification locator `4ee6f47bac6f0d4be248569a24c310a78e588d0a`
 matches the candidate app bytes. The fingerprint remains the authoritative
 current-run identity; the commit is historical location metadata.
 
@@ -52,12 +52,12 @@ evidence only and is superseded by the current structured handoff above.
 | Runtime | Node.js `v25.9.0`; npm `11.12.1`; Python `3.14.5` | PASS |
 | Browser | Google Chrome `150.0.7871.187` | PASS |
 | Viewports | target `1440×900`; minimum `1280×720` | PASS |
-| Target heaviest state | median `120.5 FPS`; 1% low `106.4 FPS` | PASS vs `45/30` |
-| Minimum heaviest state | median `120.5 FPS`; 1% low `107.5 FPS` | PASS vs `45/30` |
-| Built payload | `602904` raw bytes; `154906` gzip bytes | PASS vs `50/20 MiB` |
-| First local no-cache frame | `2198.3 ms` at simulated 25 Mbps | PASS vs `8000 ms` locally |
+| Target heaviest state | median `120.5 FPS`; 1% low `100.0 FPS` | PASS vs `45/30` |
+| Minimum heaviest state | median `120.5 FPS`; 1% low `99.0 FPS` | PASS vs `45/30` |
+| Built payload | `616503` raw bytes; `159325` gzip bytes | PASS vs `50/20 MiB` |
+| First local no-cache frame | `2263.6 ms` at simulated 25 Mbps | PASS vs `8000 ms` locally |
 | Runtime requests | only `127.0.0.1:4173`; no external host | PASS |
-| Historical public preview | `https://plateau.vibecoco.ai`; Google Chrome `150.0.7871.187` | `HISTORICAL / NOT_CURRENT`; the retained run is bound to `e99883ce…`, not the current `8329da6c…` candidate, and does not count as current release proof |
+| Historical public preview | `https://plateau.vibecoco.ai`; Google Chrome `150.0.7871.187` | `HISTORICAL / NOT_CURRENT`; the retained run is bound to `e99883ce…`, not the current `1b0ae821…` candidate, and does not count as current release proof |
 
 The loading measurement uses Chrome DevTools throttling against local Vite. It
 does not measure public-host cold-cache timing. The separate historical
@@ -69,7 +69,7 @@ No deployed current-fingerprint PASS is claimed.
 
 | Suite | Discovered files or surfaces | Same-run result |
 |---|---|---|
-| `unit:simulation` | four `test/*.test.js` files, 35 assertions | PASS |
+| `unit:simulation` | four `test/*.test.js` files, 41 assertions | PASS |
 | `build:production` | `index.html`, `src/`, `public/` | PASS; Vite production build |
 | `browser:checkpoint-history` | `qa_s0.py`–`qa_s7.py`, `qa_s9.py` | PASS; 9/9 commands |
 | `browser:complete-run` | `qa_s8.py` | PASS; Strong/Mixed/Panic plus achromatopsia Strong by keyboard/mouse |
@@ -92,7 +92,7 @@ invoke `teleportForTest` or `advanceTimeForTest`.
 | Restart | Choose “Take the route again”; restore unexposed plates and zero travel | [`06`](../build/evidence/s8/state/06-strong-clean-restart.json) | [`06`](../build/evidence/s8/browser/06-strong-clean-restart.json) | [`06`](../build/evidence/s8/06-strong-clean-restart.jpg) |
 
 Observed Strong result: 7 evidence, 4 surviving plates, covered return, no shot,
-body margin retained, 100.004 seconds remaining. Mixed reached corroborating
+body margin retained, 93.5 seconds remaining. Mixed reached corroborating
 evidence 4 with three plates, one shot and the brook callback. Panic spent both
 rounds and failed on the second unblocked strike. Each terminal state has its
 own clean restart checkpoint.
@@ -134,9 +134,9 @@ their findings still require the live-run evidence and disposition defined by
 | Three first-time players recognize 3D action/exploration and not a text/VN presentation | INFORMAL_PLAY_REPORTED / CRITERION_NOT_RECORDED | accepted for example publication; evidence-qualified PASS remains open | Three raw sessions using [`PLAYTEST_PROTOCOL.md`](PLAYTEST_PROTOCOL.md); at least two meet the stated threshold |
 | First meaningful interaction within 90 seconds and result within 15 minutes | INFORMAL_PLAY_REPORTED / CRITERION_NOT_RECORDED | accepted for example publication; evidence-qualified PASS remains open | Timestamped, uncoached player records using the same protocol |
 | Players can restate scout/proof/extract rather than “shoot dinosaurs” | INFORMAL_PLAY_REPORTED / CRITERION_NOT_RECORDED | accepted for example publication; evidence-qualified PASS remains open | Verbatim post-run answers linked to each raw session |
-| Independent anatomy, motion and composition review | PASS — 0 blocker / 0 major / 6 minor | clears playable-prototype visual gate | [`evidence/independent-visual-review-2026-08-02.md`](evidence/independent-visual-review-2026-08-02.md) |
-| Input routes and checkpoints under colour-vision modes | PASS for playable-prototype | current automated matrix plus independent achromatopsia attack judgment | [`verification.json`](verification.json), [`evidence/independent-visual-review-2026-08-02.md`](evidence/independent-visual-review-2026-08-02.md) |
-| Anonymous public HTTPS load, play, result and restart | HISTORICAL / NOT_CURRENT | does not count as current release proof; local evidence remains sufficient for the playable-prototype tier | [`evidence/public-host/report.json`](evidence/public-host/report.json) is bound to `e99883ce…`, not the current `8329da6c…` candidate |
+| Independent anatomy, motion and composition review | PASS — 93/100, 0 blocker / 0 major | clears playable-prototype visual gate | [`evidence/independent-visual-review-2026-08-03.md`](evidence/independent-visual-review-2026-08-03.md) |
+| Input routes and checkpoints under colour-vision modes | PASS for playable-prototype | current automated matrix plus independent motion and achromatopsia judgment | [`verification.json`](verification.json), [`evidence/independent-visual-review-2026-08-03.md`](evidence/independent-visual-review-2026-08-03.md) |
+| Anonymous public HTTPS load, play, result and restart | HISTORICAL / NOT_CURRENT | does not count as current release proof; local evidence remains sufficient for the playable-prototype tier | [`evidence/public-host/report.json`](evidence/public-host/report.json) is bound to `e99883ce…`, not the current `1b0ae821…` candidate |
 | Platform upload/transcode for short media | NOT_RUN | not required for the hosted example; still blocks claiming an uploaded attachment | Uploaded file hash and playback check |
 
 No subjective fun, balance or production audio-mix claim is marked PASS.

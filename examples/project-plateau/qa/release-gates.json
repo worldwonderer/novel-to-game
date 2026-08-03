@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCommit": "4576e2f856a58fc38dd9f16d0a0c0616e5ca13ee",
+  "sourceCommit": "4ee6f47bac6f0d4be248569a24c310a78e588d0a",
   "evidenceCommit": null,
   "targetFinish": "playable-prototype",
   "demonstratedTier": "playable-prototype",
@@ -25,7 +25,7 @@
     "evidence": [
       "qa/verification.json",
       "build/evidence/visual-upgrade/generated/manifest.json",
-      "qa/evidence/independent-visual-review-2026-08-02.md"
+      "qa/evidence/independent-visual-review-2026-08-03.md"
     ]
   },
   "visualFrames": [
@@ -34,8 +34,8 @@
       "status": "PASS",
       "operationPath": "cd build/app && npm run capture:visual; inspect title at both supported viewports",
       "evidence": [
-        "build/evidence/visual-upgrade/generated/title-1440x900.png",
-        "build/evidence/visual-upgrade/generated/title-1280x720.png"
+        "build/evidence/visual-upgrade/generated/title-1440x900.jpg",
+        "build/evidence/visual-upgrade/generated/title-1280x720.jpg"
       ],
       "rubric": {
         "focus": "PASS",
@@ -54,8 +54,8 @@
       "status": "PASS",
       "operationPath": "cd build/app && npm run capture:visual; inspect the fixed glade family state at both supported viewports",
       "evidence": [
-        "build/evidence/visual-upgrade/generated/family-1440x900.png",
-        "build/evidence/visual-upgrade/generated/family-1280x720.png"
+        "build/evidence/visual-upgrade/generated/family-1440x900.jpg",
+        "build/evidence/visual-upgrade/generated/family-1280x720.jpg"
       ],
       "rubric": {
         "focus": "PASS",
@@ -72,10 +72,11 @@
     {
       "id": "aerial-pressure",
       "status": "PASS",
-      "operationPath": "cd build/app && npm run capture:visual; inspect the fixed dive state at both supported viewports",
+      "operationPath": "cd build/app && npm run capture:visual; inspect the fixed dive at both viewports and the bound watch \u2192 bank \u2192 dive \u2192 pull-up cadence",
       "evidence": [
-        "build/evidence/visual-upgrade/generated/dive-1440x900.png",
-        "build/evidence/visual-upgrade/generated/dive-1280x720.png"
+        "build/evidence/visual-upgrade/generated/dive-1440x900.jpg",
+        "build/evidence/visual-upgrade/generated/dive-1280x720.jpg",
+        "build/evidence/visual-upgrade/generated/motion/watch-bank-dive-pull-up.webm"
       ],
       "rubric": {
         "focus": "PASS",
@@ -93,11 +94,11 @@
   "visualReview": {
     "required": true,
     "status": "PASS",
-    "reviewer": "/root/visual_review (vision, original 2026-08-02); /root/architecture_review_final (architect, read-only independent re-attestor, 2026-08-03)",
-    "independence": "Original vision reviewer made no implementation edits; read-only architect independently re-attested all three targets and nine dimensions against the updated bound manifest.",
-    "evidence": "qa/evidence/independent-visual-review-2026-08-02.md",
-    "reviewedSourceFingerprint": "8329da6c8289acfa826e6cfb773e983f9fc270e366f5d375f679f21b5596c6c6",
-    "reviewedManifestSha256": "f9d55becf0d69f6f89c1d35aea24520756ee686c74dce7e77dde081c1e4ef896"
+    "reviewer": "/root/visual_verdict_round1 (vision, read-only independent reviewer, 2026-08-03)",
+    "independence": "The read-only vision reviewer made no implementation, capture, manifest or QA edits and judged the approved targets against current runtime stills plus the uncut motion take.",
+    "evidence": "qa/evidence/independent-visual-review-2026-08-03.md",
+    "reviewedSourceFingerprint": "1b0ae8218849f5621b0c4e97245b9267843be3aea4180fae2cff689632844a0f",
+    "reviewedManifestSha256": "119ed5ebfc32938cde2d8c3ca0b3e541565da92c74617fa777b83eed520b9d36"
   },
   "focalReleaseAssets": [
     "world.connected_route",
@@ -118,7 +119,7 @@
       "summary": "Independent visual review completed with zero blockers and zero majors.",
       "owner": "build",
       "evidence": [
-        "qa/evidence/independent-visual-review-2026-08-02.md"
+        "qa/evidence/independent-visual-review-2026-08-03.md"
       ]
     },
     {
@@ -128,62 +129,86 @@
       "summary": "Folded diagonal dive corridor and directly visible material responses passed independent re-review.",
       "owner": "build",
       "evidence": [
-        "qa/evidence/independent-visual-review-2026-08-02.md",
-        "build/evidence/visual-upgrade/generated/contact-sheet-supported-viewports.png"
+        "qa/evidence/independent-visual-review-2026-08-03.md",
+        "build/evidence/visual-upgrade/generated/contact-sheet-supported-viewports.jpg"
       ]
     },
     {
       "id": "VIS-MINOR-01",
       "severity": "minor",
-      "status": "OPEN",
-      "summary": "Iguanodon round eyes and blunt muzzle remain slightly toy-like; hands and thumb accents are understated.",
-      "owner": "build"
+      "status": "CLOSED",
+      "summary": "Iguanodon eyes, muzzle, hands, fingers and thumb accents now meet playable-prototype readability.",
+      "owner": "build",
+      "evidence": [
+        "qa/evidence/independent-visual-review-2026-08-03.md",
+        "build/evidence/visual-upgrade/generated/manifest.json"
+      ]
     },
     {
       "id": "VIS-MINOR-02",
       "severity": "minor",
-      "status": "OPEN",
-      "summary": "The dive wingtip exits the top edge.",
-      "owner": "build"
+      "status": "CLOSED",
+      "summary": "The representative dive now retains safe upper-edge clearance at both supported viewports.",
+      "owner": "build",
+      "evidence": [
+        "qa/evidence/independent-visual-review-2026-08-03.md",
+        "build/evidence/visual-upgrade/generated/manifest.json"
+      ]
     },
     {
       "id": "VIS-MINOR-03",
       "severity": "minor",
-      "status": "OPEN",
-      "summary": "The cover mouth / defensive choice is not explicit enough.",
-      "owner": "build"
+      "status": "CLOSED",
+      "summary": "World-space low cover and the foreground rifle now provide the approved defensive choice without a HUD label.",
+      "owner": "build",
+      "evidence": [
+        "qa/evidence/independent-visual-review-2026-08-03.md",
+        "build/evidence/visual-upgrade/generated/manifest.json"
+      ]
     },
     {
       "id": "VIS-MINOR-04",
       "severity": "minor",
-      "status": "OPEN",
-      "summary": "Material differentiation is functional prototype quality, not showcase surface detail.",
-      "owner": "build"
+      "status": "CLOSED",
+      "summary": "Creature and world material separation now meets the approved playable-prototype target finish.",
+      "owner": "build",
+      "evidence": [
+        "qa/evidence/independent-visual-review-2026-08-03.md",
+        "build/evidence/visual-upgrade/generated/manifest.json"
+      ]
     },
     {
       "id": "VIS-MINOR-05",
       "severity": "minor",
-      "status": "OPEN",
-      "summary": "The title right tree canopy and menu form a heavy dark block.",
-      "owner": "build"
+      "status": "CLOSED",
+      "summary": "The title canopy and menu no longer form an independent heavy dark block.",
+      "owner": "build",
+      "evidence": [
+        "qa/evidence/independent-visual-review-2026-08-03.md",
+        "build/evidence/visual-upgrade/generated/manifest.json"
+      ]
     },
     {
       "id": "VIS-MINOR-06",
       "severity": "minor",
-      "status": "OPEN",
-      "summary": "Still frames do not prove the full watch → bank → dive → pull-up cadence.",
-      "owner": "build"
+      "status": "CLOSED",
+      "summary": "An uncut hash-bound WebM and ordered phase samples now prove watch \u2192 bank \u2192 dive \u2192 pull-up cadence.",
+      "owner": "build",
+      "evidence": [
+        "qa/evidence/independent-visual-review-2026-08-03.md",
+        "build/evidence/visual-upgrade/generated/manifest.json"
+      ]
     }
   ],
-  "notes": "Independent visual review passes playable-prototype with 0 blockers, 0 majors and 6 disclosed minors. The current authoritative local run passes 7/7 suites and 17/17 commands and is bound to sourceFingerprint. Nine focal assets pass; audio remains an explicit tested captioned fallback. The retained public-host run is historical/not-current and no deployed current-fingerprint PASS is claimed.",
+  "notes": "Independent read-only visual review scores the final candidate 93/100 with 0 blockers and 0 majors. All six prior visual minors are closed at playable-prototype target finish. The visual manifest binds dual-viewport JPEG stills plus an uncut WebM and ordered watch/bank/dive/pull-up samples. Evidence retention is fail-safe and current-candidate resources remain protected.",
   "degradableReleaseAssets": [
     "audio.core_world"
   ],
-  "sourceFingerprint": "8329da6c8289acfa826e6cfb773e983f9fc270e366f5d375f679f21b5596c6c6",
+  "sourceFingerprint": "1b0ae8218849f5621b0c4e97245b9267843be3aea4180fae2cff689632844a0f",
   "visualEvidenceManifests": [
     {
       "path": "build/evidence/visual-upgrade/generated/manifest.json",
-      "sha256": "f9d55becf0d69f6f89c1d35aea24520756ee686c74dce7e77dde081c1e4ef896"
+      "sha256": "119ed5ebfc32938cde2d8c3ca0b3e541565da92c74617fa777b83eed520b9d36"
     }
   ],
   "publicHost": {
@@ -193,6 +218,6 @@
   },
   "sourceInputManifest": {
     "path": "build/source-inputs.json",
-    "sha256": "94e4bd694f30dda9c0b70cd14a6597ed75e2442fe1c5959a4b5b467846c698e1"
+    "sha256": "385164e9bf9a4e413d46a8c36509fcd18b43e44f3eb70c0343bacb4153a35434"
   }
 }
