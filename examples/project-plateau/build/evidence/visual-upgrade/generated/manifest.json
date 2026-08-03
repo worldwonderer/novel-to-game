@@ -90,10 +90,25 @@
     "sha256": "61480871b2e06e015e572b282052ba229056492be167156055d0d0eb3eaca004",
     "bytes": 589688
   },
-  "targetHashes": {
-    "01-title-route.svg": "7a282e7165599ac6020a7abb015b1610e3593b17942989ddb326bbc3cf8cb274",
-    "02-glade-family.svg": "9d6af8aec91d2874092dda11ea9c109a6552442c7cf26c54a18dccc4f77f9e0a",
-    "03-aerial-pressure.svg": "15f57266802978a17751aa0b13f9174188af4fad27278d42d2adc2a17552da6a"
-  },
+  "targets": [
+    {
+      "id": "title-route",
+      "path": "design/visual-targets/01-title-route.svg",
+      "sha256": "7a282e7165599ac6020a7abb015b1610e3593b17942989ddb326bbc3cf8cb274",
+      "bytes": 993
+    },
+    {
+      "id": "glade-family",
+      "path": "design/visual-targets/02-glade-family.svg",
+      "sha256": "9d6af8aec91d2874092dda11ea9c109a6552442c7cf26c54a18dccc4f77f9e0a",
+      "bytes": 1151
+    },
+    {
+      "id": "aerial-pressure",
+      "path": "design/visual-targets/03-aerial-pressure.svg",
+      "sha256": "15f57266802978a17751aa0b13f9174188af4fad27278d42d2adc2a17552da6a",
+      "bytes": 903
+    }
+  ],
   "consoleErrors": []
 }

@@ -143,6 +143,52 @@ def git_head() -> str:
     ).stdout.strip()
 
 
+def git_app_fingerprint(commit: str) -> str | None:
+    """Hash the publishable app inputs from one commit using app_fingerprint order."""
+    app_relative = APP.relative_to(REPO).as_posix()
+    listed = subprocess.run(
+        ["git", "ls-tree", "-r", "--name-only", commit, "--", app_relative],
+        cwd=REPO,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if listed.returncode != 0:
+        return None
+    selected: dict[str, str] = {}
+    for repository_path in listed.stdout.splitlines():
+        relative = Path(repository_path).relative_to(app_relative).as_posix()
+        if relative in {"index.html", "package.json", "package-lock.json"} or relative.startswith(
+            ("public/", "src/")
+        ):
+            selected[relative] = repository_path
+    ordered = [
+        relative
+        for relative in ("index.html", "package.json", "package-lock.json")
+        if relative in selected
+    ]
+    ordered += sorted(
+        relative for relative in selected if relative.startswith(("public/", "src/"))
+    )
+    if not ordered:
+        return None
+    digest = hashlib.sha256()
+    for relative in ordered:
+        blob = subprocess.run(
+            ["git", "show", f"{commit}:{selected[relative]}"],
+            cwd=REPO,
+            capture_output=True,
+            check=False,
+        )
+        if blob.returncode != 0:
+            return None
+        digest.update(relative.encode())
+        digest.update(b"\0")
+        digest.update(blob.stdout)
+        digest.update(b"\0")
+    return digest.hexdigest()
+
+
 def audit_registry() -> dict[str, object]:
     discovered = {
         path.relative_to(APP).as_posix()
@@ -226,15 +272,14 @@ def environment() -> dict[str, object]:
 
 def write_verification(
     *,
-    source_commit: str,
+    source_commit: str | None,
     fingerprint: str,
     environment_record: dict[str, object],
-    started: float,
+    duration_ms: int,
     registry: dict[str, object],
     suite_results: list[dict[str, object]],
     exit_code: int,
 ) -> None:
-    duration_ms = round((time.monotonic() - started) * 1000)
     verification: dict[str, object] = {
         "schemaVersion": 1,
         "sourceCommit": source_commit,
@@ -347,12 +392,13 @@ def main() -> int:
 
     QA_EVIDENCE.mkdir(parents=True, exist_ok=True)
     started = time.monotonic()
-    source_commit = git_head()
     fingerprint = app_fingerprint()
+    head = git_head()
+    source_commit = head if git_app_fingerprint(head) == fingerprint else None
     environment_record = environment()
     log_lines = [
         "command=npm run verify",
-        f"sourceCommit={source_commit}",
+        f"sourceCommit={source_commit or 'null'}",
         f"sourceFingerprint={fingerprint}",
         f"runtime={environment_record['runtime']}",
         f"runtimeVersion={environment_record['runtimeVersion']}",
@@ -421,7 +467,7 @@ def main() -> int:
         source_commit=source_commit,
         fingerprint=fingerprint,
         environment_record=environment_record,
-        started=started,
+        duration_ms=duration_ms,
         registry=registry,
         suite_results=suite_results,
         exit_code=exit_code,

@@ -2,7 +2,7 @@
 
 `targetFinish: playable-prototype`
 
-## Current verdict · 2026-08-02
+## Current verdict · 2026-08-03
 
 **Authoritative runtime QA: PASS. Independent visual review: PASS. Visual promotion: PASS. Demonstrated/publication tier: `playable-prototype`.**
 
@@ -10,8 +10,8 @@ The current `npm run verify` invocation passes 7/7 suites and 17/17 commands,
 including input-only Strong/Mixed/Panic paths, terminal results, clean restart,
 S10 visual/state coverage and the registered deterministic dual-viewport capture.
 The source fingerprint is
-`8329da6c8289acfa826e6cfb773e983f9fc270e366f5d375f679f21b5596c6c6`;
-the run completed in `481532 ms` with no failed command.
+`8329da6c8289acfa826e6cfb773e983f9fc270e366f5d375f679f21b5596c6c6`.
+Exact command timings remain in the structured handoff rather than duplicated here.
 
 Independent reviewer `/root/visual_review` (`vision`) made no implementation
 edits and judged only the approved targets and captured evidence. The verdict is
@@ -29,14 +29,18 @@ or showcase quality.
 
 | Field | Observed |
 |---|---|
-| Source commit | Uncommitted current candidate; commit fields remain null until source and evidence are committed together |
+| Candidate identity | App fingerprint is authoritative; release `sourceCommit` `4576e2f856a58fc38dd9f16d0a0c0616e5ca13ee` is only a historical locator whose app bytes match it |
 | App fingerprint | `8329da6c8289acfa826e6cfb773e983f9fc270e366f5d375f679f21b5596c6c6` |
 | Verify | `npm run verify` |
 | Result | exit `0`; 7/7 suites; 17/17 commands |
-| Duration | `481532 ms` |
+| Duration | See `verification.json#verify.durationMs`; not duplicated here |
 | Log | [`evidence/verify.log`](evidence/verify.log) |
 | Structured handoff | [`verification.json`](verification.json) |
 | Visual review | [`evidence/independent-visual-review-2026-08-02.md`](evidence/independent-visual-review-2026-08-02.md) — PASS, 0 blocker / 0 major / 6 minor |
+
+The retained verification locator `4576e2f856a58fc38dd9f16d0a0c0616e5ca13ee`
+matches the candidate app bytes. The fingerprint remains the authoritative
+current-run identity; the commit is historical location metadata.
 
 The earlier `8793fb9` / `e99883ce…` 16-command run is historical gameplay
 evidence only and is superseded by the current structured handoff above.
@@ -71,7 +75,7 @@ No deployed current-fingerprint PASS is claimed.
 | `browser:complete-run` | `qa_s8.py` | PASS; Strong/Mixed/Panic plus achromatopsia Strong by keyboard/mouse |
 | `browser:current-visual` | `qa_s10.py`, `capture_visual_upgrade.py` | PASS; glade/plates, four-state checkpoints for three additional vision deficiencies and deterministic dual-viewport captures |
 | `qa:design-invariants` | `qa/check_design_invariants.py` | PASS; 10/10 design-derived checks |
-| `repo:contract` | validator and repository unit discovery | PASS; 7 skills, 63 tests |
+| `repo:contract` | validator and repository unit discovery | PASS; exact discovered test count is retained in the structured verify log |
 
 ## Complete run
 

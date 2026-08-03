@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "basePath": "build/app",
+  "sourceFingerprint": "8329da6c8289acfa826e6cfb773e983f9fc270e366f5d375f679f21b5596c6c6",
+  "inputs": [
+    {
+      "path": "index.html",
+      "sha256": "8be6a6fdf2fff4a6e11601facde6e212d8766a4cd5cbb154da44ce17d503d91a",
+      "bytes": 6690
+    },
+    {
+      "path": "package.json",
+      "sha256": "baaa15d01f65bae017f217a432d9c177dab2afcc72ac28e77bacb0c737df8938",
+      "bytes": 1779
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "dc813de790af81a1b988d4658e8aa651460318102913cc5c1eeb8ddefd8b0fc7",
+      "bytes": 28586
+    },
+    {
+      "path": "public/favicon.svg",
+      "sha256": "b7a11528ee25cc03b147e7969333d2bcd1c8d3a0b7061622bd5319d329425593",
+      "bytes": 170
+    },
+    {
+      "path": "src/audio.js",
+      "sha256": "d1e02d33e4a50e44abf4eed40dc2ef7272af08a5ebc128011affd9b6f6fa68bd",
+      "bytes": 7483
+    },
+    {
+      "path": "src/config.js",
+      "sha256": "565ebb3aba5d328db6b507a372be1a34afb86ba6e6801f4fb3efe7ec6001ec7c",
+      "bytes": 1151
+    },
+    {
+      "path": "src/main.js",
+      "sha256": "1b6352ddfd7bbfd96a9336f9cd99cf94ec66d69e1eab3d7a910ec11f67662986",
+      "bytes": 33520
+    },
+    {
+      "path": "src/settings.js",
+      "sha256": "119ceeef83cae1b160951bd2075e308c704937f3cd7687885333120a253af75a",
+      "bytes": 1994
+    },
+    {
+      "path": "src/simulation.js",
+      "sha256": "9b4f818a05c510fa5687862dac69b1b0eae4e781f7bf549b71b4d0cfbba61369",
+      "bytes": 21307
+    },
+    {
+      "path": "src/styles.css",
+      "sha256": "87bd08d21a6f786dc018c22cf8683063614d12984fed691cb442331afaafe081",
+      "bytes": 15880
+    },
+    {
+      "path": "src/world.js",
+      "sha256": "4a225ef76f45c46f9ec0093f1cabf3e14201b0a541a0fbd4cfb7fbfc7cfdfab8",
+      "bytes": 41255
+    }
+  ]
+}

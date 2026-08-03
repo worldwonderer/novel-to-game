@@ -81,22 +81,129 @@ class RepositoryValidationTests(unittest.TestCase):
         for relative in (
             "qa/evidence/complete-run.json",
             "qa/evidence/frame.png",
+            "qa/evidence/state.json",
+            "qa/evidence/browser.json",
             "qa/evidence/review.md",
             "qa/evidence/promotion.md",
+            "qa/evidence/target.svg",
+            "qa/evidence/verify.log",
             "build/evidence/hero.png",
         ):
             path = example / relative
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text("evidence", encoding="utf-8")
+        source_input = example / "build/candidate.bin"
+        source_input.write_bytes(b"candidate")
+        digest = hashlib.sha256()
+        digest.update(b"candidate.bin\0candidate\0")
+        source_fingerprint = digest.hexdigest()
+        source_manifest = example / "build/source-inputs.json"
+        source_manifest.write_text(
+            json.dumps(
+                {
+                    "schemaVersion": 1,
+                    "basePath": "build",
+                    "sourceFingerprint": source_fingerprint,
+                    "inputs": [
+                        {
+                            "path": "candidate.bin",
+                            "sha256": hashlib.sha256(source_input.read_bytes()).hexdigest(),
+                            "bytes": source_input.stat().st_size,
+                        }
+                    ],
+                }
+            ),
+            encoding="utf-8",
+        )
+        source_manifest_hash = hashlib.sha256(source_manifest.read_bytes()).hexdigest()
         verification = example / "qa/verification.json"
-        source_fingerprint = "f" * 64
         verification.write_text(
-            json.dumps({"sourceFingerprint": source_fingerprint}), encoding="utf-8"
+            json.dumps(
+                {
+                    "schemaVersion": 1,
+                    "sourceCommit": None,
+                    "sourceFingerprint": source_fingerprint,
+                    "verify": {
+                        "command": "run authoritative verification",
+                        "log": "qa/evidence/verify.log",
+                        "exitCode": 0,
+                        "durationMs": 1,
+                        "suites": [
+                            {
+                                "id": "authoritative",
+                                "locations": ["test/basic.js"],
+                                "executed": True,
+                                "passed": True,
+                                "commands": [
+                                    {
+                                        "command": "run tests",
+                                        "exitCode": 0,
+                                        "durationMs": 1,
+                                    }
+                                ],
+                            }
+                        ],
+                        "registry": {
+                            "discovered": ["test/basic.js"],
+                            "registered": ["test/basic.js"],
+                            "excluded": {},
+                            "problems": [],
+                        },
+                    },
+                    "completeRun": {
+                        "id": "complete-run",
+                        "cleanContext": True,
+                        "steps": [
+                            {
+                                "id": "step-1",
+                                "input": "start, act, finish, restart",
+                                "expected": "complete loop",
+                                "checkpoint": "complete-run:result",
+                            }
+                        ],
+                        "terminal": "result",
+                        "restart": "clean-start",
+                    },
+                    "checkpoints": [
+                        {
+                            "id": "complete-run:result",
+                            "state": "qa/evidence/state.json",
+                            "browser": "qa/evidence/browser.json",
+                            "visual": "qa/evidence/frame.png",
+                        }
+                    ],
+                }
+            ),
+            encoding="utf-8",
         )
         visual_manifest = example / "qa/evidence/visual-manifest.json"
+        frame = example / "qa/evidence/frame.png"
+        target_asset = example / "qa/evidence/target.svg"
         visual_manifest.write_text(
             json.dumps(
-                {"sourceFingerprint": source_fingerprint, "captures": []}
+                {
+                    "sourceFingerprint": source_fingerprint,
+                    "captures": [
+                        {
+                            "path": "qa/evidence/frame.png",
+                            "sha256": hashlib.sha256(frame.read_bytes()).hexdigest(),
+                            "bytes": frame.stat().st_size,
+                        }
+                    ],
+                    "contactSheet": {
+                        "path": "qa/evidence/frame.png",
+                        "sha256": hashlib.sha256(frame.read_bytes()).hexdigest(),
+                        "bytes": frame.stat().st_size,
+                    },
+                    "targets": [
+                        {
+                            "id": "signature",
+                            "path": "qa/evidence/target.svg",
+                            "sha256": hashlib.sha256(target_asset.read_bytes()).hexdigest(),
+                            "bytes": target_asset.stat().st_size,
+                        }
+                    ],
+                }
             ),
             encoding="utf-8",
         )
@@ -125,6 +232,10 @@ class RepositoryValidationTests(unittest.TestCase):
                     "sourceCommit": None,
                     "evidenceCommit": None,
                     "sourceFingerprint": source_fingerprint,
+                    "sourceInputManifest": {
+                        "path": "build/source-inputs.json",
+                        "sha256": source_manifest_hash,
+                    },
                     "visualEvidenceManifests": [
                         {
                             "path": "qa/evidence/visual-manifest.json",
@@ -176,6 +287,8 @@ class RepositoryValidationTests(unittest.TestCase):
                         "reviewer": "independent-reviewer",
                         "independence": "Did not implement the build",
                         "evidence": "qa/evidence/review.md",
+                        "reviewedSourceFingerprint": source_fingerprint,
+                        "reviewedManifestSha256": visual_manifest_hash,
                     },
                     "focalReleaseAssets": ["hero"],
                     "degradableReleaseAssets": [],
@@ -232,6 +345,251 @@ class RepositoryValidationTests(unittest.TestCase):
             (example / "qa/release-gates.json").write_text(json.dumps(release))
             issues = validate_publication(example, "playable-prototype")
             self.assertTrue(any("sourceFingerprint must match qa/verification.json" in issue for issue in issues), issues)
+
+    def test_non_graybox_recomputes_current_workspace_app_fingerprint(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            example = self.make_publication_fixture(
+                Path(temporary), tier="playable-prototype"
+            )
+            app = example / "build/app"
+            (app / "src").mkdir(parents=True)
+            (app / "index.html").write_text("candidate", encoding="utf-8")
+            (app / "src/main.js").write_text("console.log('changed')", encoding="utf-8")
+            issues = validate_publication(example, "playable-prototype")
+            self.assertTrue(
+                any("current workspace app fingerprint" in issue for issue in issues),
+                issues,
+            )
+
+    def test_non_graybox_requires_recursive_source_input_manifest(self) -> None:
+        mutations = {
+            "missing_binding": lambda example, release, manifest: release.pop(
+                "sourceInputManifest"
+            ),
+            "empty_inputs": lambda example, release, manifest: manifest.update(
+                {"inputs": []}
+            ),
+            "tampered_input": lambda example, release, manifest: (
+                example / "build/candidate.bin"
+            ).write_bytes(b"tampered"),
+        }
+        for label, mutate in mutations.items():
+            with self.subTest(case=label), tempfile.TemporaryDirectory() as temporary:
+                example = self.make_publication_fixture(
+                    Path(temporary), tier="playable-prototype"
+                )
+                release_path = example / "qa/release-gates.json"
+                manifest_path = example / "build/source-inputs.json"
+                release = json.loads(release_path.read_text(encoding="utf-8"))
+                manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+                mutate(example, release, manifest)
+                if label == "empty_inputs":
+                    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+                    release["sourceInputManifest"]["sha256"] = hashlib.sha256(
+                        manifest_path.read_bytes()
+                    ).hexdigest()
+                release_path.write_text(json.dumps(release), encoding="utf-8")
+                issues = validate_publication(example, "playable-prototype")
+                self.assertTrue(any("sourceInputManifest" in issue for issue in issues), issues)
+
+    def test_non_graybox_requires_structured_successful_verification(self) -> None:
+        mutations = {
+            "missing_verify": lambda value: value.pop("verify"),
+            "failed_verify": lambda value: value["verify"].update({"exitCode": 1}),
+            "nan_duration": lambda value: value["verify"].update(
+                {"durationMs": float("nan")}
+            ),
+            "empty_suites": lambda value: value["verify"].update({"suites": []}),
+            "duplicate_suites": lambda value: value["verify"]["suites"].append(
+                dict(value["verify"]["suites"][0])
+            ),
+            "unexecuted_suite": lambda value: value["verify"]["suites"][0].update(
+                {"executed": False}
+            ),
+            "failed_command": lambda value: value["verify"]["suites"][0][
+                "commands"
+            ][0].update({"exitCode": 1}),
+            "infinite_command_duration": lambda value: value["verify"]["suites"][0][
+                "commands"
+            ][0].update({"durationMs": float("inf")}),
+            "missing_complete_run": lambda value: value.pop("completeRun"),
+            "missing_checkpoints": lambda value: value.pop("checkpoints"),
+            "unbound_step": lambda value: value["completeRun"]["steps"][0].update(
+                {"checkpoint": "missing"}
+            ),
+            "missing_evidence": lambda value: value["checkpoints"][0].update(
+                {"visual": "qa/evidence/missing.png"}
+            ),
+            "registry_problem": lambda value: value["verify"]["registry"][
+                "problems"
+            ].append("orphan"),
+            "registry_mismatch": lambda value: value["verify"]["registry"].update(
+                {"discovered": ["test/basic.js", "test/orphan.js"]}
+            ),
+            "empty_registry": lambda value: value["verify"]["registry"].update(
+                {"discovered": [], "registered": []}
+            ),
+            "registered_not_covered": lambda value: value["verify"]["registry"].update(
+                {
+                    "discovered": ["test/basic.js", "test/missed.js"],
+                    "registered": ["test/basic.js", "test/missed.js"],
+                }
+            ),
+            "empty_exclusion_reason": lambda value: value["verify"]["registry"].update(
+                {
+                    "discovered": ["test/basic.js", "test/excluded.py"],
+                    "excluded": {"test/excluded.py": ""},
+                }
+            ),
+        }
+        for label, mutate in mutations.items():
+            with self.subTest(case=label), tempfile.TemporaryDirectory() as temporary:
+                example = self.make_publication_fixture(
+                    Path(temporary), tier="playable-prototype"
+                )
+                path = example / "qa/verification.json"
+                verification = json.loads(path.read_text(encoding="utf-8"))
+                mutate(verification)
+                path.write_text(json.dumps(verification), encoding="utf-8")
+                issues = validate_publication(example, "playable-prototype")
+                self.assertTrue(
+                    any("qa/verification.json" in issue for issue in issues), issues
+                )
+
+    def test_web_verification_registry_must_match_actual_test_files(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            example = self.make_publication_fixture(
+                Path(temporary), tier="playable-prototype"
+            )
+            test_dir = example / "build/app/test"
+            test_dir.mkdir(parents=True)
+            (test_dir / "injected.py").write_text("pass\n", encoding="utf-8")
+            issues = validate_publication(example, "playable-prototype")
+            self.assertTrue(
+                any("registry.discovered does not match build/app/test files" in issue for issue in issues),
+                issues,
+            )
+
+    def test_visual_manifest_recursively_binds_referenced_files(self) -> None:
+        for relative in ("qa/evidence/frame.png", "qa/evidence/target.svg"):
+            with self.subTest(relative=relative), tempfile.TemporaryDirectory() as temporary:
+                example = self.make_publication_fixture(
+                    Path(temporary), tier="playable-prototype"
+                )
+                (example / relative).write_text("tampered", encoding="utf-8")
+                issues = validate_publication(example, "playable-prototype")
+                self.assertTrue(
+                    any(
+                        "visualEvidenceManifests[0]" in issue and relative in issue
+                        for issue in issues
+                    ),
+                    issues,
+                )
+
+    def test_non_graybox_visual_manifest_requires_non_empty_resources(self) -> None:
+        for field in ("captures", "targets"):
+            with self.subTest(field=field), tempfile.TemporaryDirectory() as temporary:
+                example = self.make_publication_fixture(
+                    Path(temporary), tier="playable-prototype"
+                )
+                manifest_path = example / "qa/evidence/visual-manifest.json"
+                manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+                manifest[field] = []
+                manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+                manifest_hash = hashlib.sha256(manifest_path.read_bytes()).hexdigest()
+                release_path = example / "qa/release-gates.json"
+                release = json.loads(release_path.read_text(encoding="utf-8"))
+                release["visualEvidenceManifests"][0]["sha256"] = manifest_hash
+                release["visualReview"]["reviewedManifestSha256"] = manifest_hash
+                release_path.write_text(json.dumps(release), encoding="utf-8")
+                issues = validate_publication(example, "playable-prototype")
+                self.assertTrue(
+                    any(f"visualEvidenceManifests[0].{field} must not be empty" in issue for issue in issues),
+                    issues,
+                )
+
+    def test_visual_frames_must_bind_verified_runtime_resources_and_target_ids(self) -> None:
+        mutations = {
+            "unhashed_frame": lambda release: release["visualFrames"][0].update(
+                {"evidence": ["qa/evidence/review.md"]}
+            ),
+            "target_as_runtime_frame": lambda release: release["visualFrames"][0].update(
+                {"evidence": ["qa/evidence/target.svg"]}
+            ),
+            "wrong_target_id": lambda release: release["visualFrames"][0].update(
+                {"id": "not-the-target"}
+            ),
+        }
+        for label, mutate in mutations.items():
+            with self.subTest(case=label), tempfile.TemporaryDirectory() as temporary:
+                example = self.make_publication_fixture(
+                    Path(temporary), tier="playable-prototype"
+                )
+                release_path = example / "qa/release-gates.json"
+                release = json.loads(release_path.read_text(encoding="utf-8"))
+                mutate(release)
+                release_path.write_text(json.dumps(release), encoding="utf-8")
+                issues = validate_publication(example, "playable-prototype")
+                self.assertTrue(
+                    any("visualFrames" in issue and ("verified" in issue or "target" in issue) for issue in issues),
+                    issues,
+                )
+
+    def test_visual_review_must_bind_current_source_and_verified_manifest(self) -> None:
+        mutations = {
+            "reviewedSourceFingerprint": "0" * 64,
+            "reviewedManifestSha256": "0" * 64,
+        }
+        for field, value in mutations.items():
+            with self.subTest(field=field), tempfile.TemporaryDirectory() as temporary:
+                example = self.make_publication_fixture(
+                    Path(temporary), tier="playable-prototype"
+                )
+                release_path = example / "qa/release-gates.json"
+                release = json.loads(release_path.read_text(encoding="utf-8"))
+                release["visualReview"][field] = value
+                release_path.write_text(json.dumps(release), encoding="utf-8")
+                issues = validate_publication(example, "playable-prototype")
+                self.assertTrue(any(f"visualReview.{field}" in issue for issue in issues), issues)
+
+    def test_verification_source_commit_must_bind_its_app_bytes(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            example = self.make_publication_fixture(
+                root, tier="playable-prototype"
+            )
+            app = example / "build/app"
+            app.mkdir()
+            (app / "index.html").write_text("committed app", encoding="utf-8")
+            subprocess.run(["git", "init", "-q"], cwd=root, check=True)
+            subprocess.run(
+                ["git", "config", "user.email", "qa@example.invalid"],
+                cwd=root,
+                check=True,
+            )
+            subprocess.run(["git", "config", "user.name", "QA"], cwd=root, check=True)
+            subprocess.run(["git", "add", "."], cwd=root, check=True)
+            subprocess.run(["git", "commit", "-qm", "candidate"], cwd=root, check=True)
+            commit = subprocess.run(
+                ["git", "rev-parse", "HEAD"],
+                cwd=root,
+                check=True,
+                capture_output=True,
+                text=True,
+            ).stdout.strip()
+            verification_path = example / "qa/verification.json"
+            verification = json.loads(verification_path.read_text(encoding="utf-8"))
+            verification["sourceCommit"] = commit
+            verification_path.write_text(json.dumps(verification), encoding="utf-8")
+            issues = validate_publication(example, "playable-prototype")
+            self.assertTrue(
+                any(
+                    "qa/verification.json: sourceCommit fingerprint does not match"
+                    in issue
+                    for issue in issues
+                ),
+                issues,
+            )
 
     def test_playable_visual_manifest_requires_embedded_source_fingerprint(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -525,6 +883,45 @@ class RepositoryValidationTests(unittest.TestCase):
                 (example / "build/asset-ledger.json").write_text(json.dumps(ledger))
                 issues = validate_publication(example, "playable-prototype")
                 self.assertTrue(any("hero.fallback" in issue for issue in issues), issues)
+
+    def test_playable_allows_failed_degradable_asset_with_valid_fallback(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            example = self.make_publication_fixture(
+                Path(temporary), tier="playable-prototype"
+            )
+            release_path = example / "qa/release-gates.json"
+            release = json.loads(release_path.read_text(encoding="utf-8"))
+            release["focalReleaseAssets"] = ["hero"]
+            release["degradableReleaseAssets"] = ["audio"]
+            release_path.write_text(json.dumps(release), encoding="utf-8")
+            ledger_path = example / "build/asset-ledger.json"
+            ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+            ledger["entries"].append(
+                {
+                    "key": "audio",
+                    "tier": "release-gate",
+                    "status": "fallback",
+                    "releaseGatePassed": False,
+                    "remaining": "production asset unavailable",
+                    "evidence": ["evidence/hero.png"],
+                    "fallback": {
+                        "behavior": "Use readable authored feedback.",
+                        "preserved": {
+                            key: True
+                            for key in (
+                                "coreAction",
+                                "state",
+                                "result",
+                                "readableFeedback",
+                                "restart",
+                            )
+                        },
+                        "evidence": ["evidence/hero.png"],
+                    },
+                }
+            )
+            ledger_path.write_text(json.dumps(ledger), encoding="utf-8")
+            self.assertEqual(validate_publication(example, "playable-prototype"), [])
 
     def test_current_public_host_pass_requires_release_fingerprint(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

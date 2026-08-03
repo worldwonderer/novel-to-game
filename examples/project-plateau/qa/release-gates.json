@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCommit": null,
+  "sourceCommit": "4576e2f856a58fc38dd9f16d0a0c0616e5ca13ee",
   "evidenceCommit": null,
   "targetFinish": "playable-prototype",
   "demonstratedTier": "playable-prototype",
@@ -30,17 +30,52 @@
   },
   "visualFrames": [
     {
-      "id": "glade-family-under-aerial-pressure",
+      "id": "title-route",
       "status": "PASS",
-      "operationPath": "cd build/app && npm run capture:visual",
+      "operationPath": "cd build/app && npm run capture:visual; inspect title at both supported viewports",
       "evidence": [
         "build/evidence/visual-upgrade/generated/title-1440x900.png",
-        "build/evidence/visual-upgrade/generated/title-1280x720.png",
+        "build/evidence/visual-upgrade/generated/title-1280x720.png"
+      ],
+      "rubric": {
+        "focus": "PASS",
+        "silhouette": "PASS",
+        "depth": "PASS",
+        "materialLine": "PASS",
+        "lightColor": "PASS",
+        "hud": "PASS",
+        "motionFeedback": "PASS",
+        "artifacts": "PASS",
+        "failureExamples": "PASS"
+      }
+    },
+    {
+      "id": "glade-family",
+      "status": "PASS",
+      "operationPath": "cd build/app && npm run capture:visual; inspect the fixed glade family state at both supported viewports",
+      "evidence": [
         "build/evidence/visual-upgrade/generated/family-1440x900.png",
+        "build/evidence/visual-upgrade/generated/family-1280x720.png"
+      ],
+      "rubric": {
+        "focus": "PASS",
+        "silhouette": "PASS",
+        "depth": "PASS",
+        "materialLine": "PASS",
+        "lightColor": "PASS",
+        "hud": "PASS",
+        "motionFeedback": "PASS",
+        "artifacts": "PASS",
+        "failureExamples": "PASS"
+      }
+    },
+    {
+      "id": "aerial-pressure",
+      "status": "PASS",
+      "operationPath": "cd build/app && npm run capture:visual; inspect the fixed dive state at both supported viewports",
+      "evidence": [
         "build/evidence/visual-upgrade/generated/dive-1440x900.png",
-        "build/evidence/visual-upgrade/generated/family-1280x720.png",
-        "build/evidence/visual-upgrade/generated/dive-1280x720.png",
-        "build/evidence/visual-upgrade/generated/contact-sheet-supported-viewports.png"
+        "build/evidence/visual-upgrade/generated/dive-1280x720.png"
       ],
       "rubric": {
         "focus": "PASS",
@@ -58,9 +93,11 @@
   "visualReview": {
     "required": true,
     "status": "PASS",
-    "reviewer": "/root/visual_review (vision)",
-    "independence": "Independent vision agent; made no implementation edits and judged only approved targets plus captured evidence.",
-    "evidence": "qa/evidence/independent-visual-review-2026-08-02.md"
+    "reviewer": "/root/visual_review (vision, original 2026-08-02); /root/architecture_review_final (architect, read-only independent re-attestor, 2026-08-03)",
+    "independence": "Original vision reviewer made no implementation edits; read-only architect independently re-attested all three targets and nine dimensions against the updated bound manifest.",
+    "evidence": "qa/evidence/independent-visual-review-2026-08-02.md",
+    "reviewedSourceFingerprint": "8329da6c8289acfa826e6cfb773e983f9fc270e366f5d375f679f21b5596c6c6",
+    "reviewedManifestSha256": "f9d55becf0d69f6f89c1d35aea24520756ee686c74dce7e77dde081c1e4ef896"
   },
   "focalReleaseAssets": [
     "world.connected_route",
@@ -146,12 +183,16 @@
   "visualEvidenceManifests": [
     {
       "path": "build/evidence/visual-upgrade/generated/manifest.json",
-      "sha256": "c6f83ebfbd606b03e187f485403e8096a4b9d074bc19fa52170d4e3b161936f5"
+      "sha256": "f9d55becf0d69f6f89c1d35aea24520756ee686c74dce7e77dde081c1e4ef896"
     }
   ],
   "publicHost": {
     "status": "HISTORICAL",
     "evidence": "qa/evidence/public-host/report.json",
     "sourceFingerprint": "e99883ce0a14f31782ac0dc6a91bd38f7e9869d86279d11ca04b5171a59af69d"
+  },
+  "sourceInputManifest": {
+    "path": "build/source-inputs.json",
+    "sha256": "94e4bd694f30dda9c0b70cd14a6597ed75e2442fe1c5959a4b5b467846c698e1"
   }
 }

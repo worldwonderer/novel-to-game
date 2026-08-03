@@ -27,8 +27,9 @@ description: "Verify a game with evidence on its selected target runtime. Launch
    `targetFinish`；任一缺失或不一致即 `FAIL`，不由 QA 猜一个等级。
 3. 审计 `qa/verification.json`：环境、verify、suites、completeRun、checkpoints 必须属于同一
    source commit。复跑一条 `clean start → 核心动作 → 设计结果 → restart`，逐步核对 checkpoint；
-   缺字段、路径不存在或只有临时目录路径时不得通过。等价结构只有在 BUILD_BRIEF 与 QA_REPORT
-   给出稳定映射时接受。
+   同时核对 registry 的 discovered / registered / excluded / problems：发现项必须恰好由已执行通过
+   suite 覆盖或附非空排除理由；有测试目录时还要与真实测试文件重发现结果一致。缺字段、路径不存在
+   或只有临时目录路径时不得通过。等价结构只有在 BUILD_BRIEF 与 QA_REPORT 给出稳定映射时接受。
 4. 在 `testedRuntime` 启动真实构建，记录构建/导出失败、运行日志错误、崩溃和关键资源失败。
    若 `testedRuntime` 不等于 `targetRuntime`，把目标平台独有的输入、性能、打包和发布项列为
    `NOT_RUN`，不得借替代版本判过。
@@ -59,7 +60,8 @@ description: "Verify a game with evidence on its selected target runtime. Launch
     材质 / 线条、光色、HUD、动作 / 反馈、伪影、与失败例冲突，不用总分抵消失败。reviewer 不读
     实现辩解，只读批准目标包、真实 contact sheet 和可操作路径；记录身份、未参与实现的独立性
     说明、逐帧问题、严重度、处置与复验证据。必需评审为 `NOT_RUN` 时可以完成记录，但只有
-    graybox 可以携带；playable 及以上不得 `PASS`。
+    graybox 可以携带；playable 及以上必须由独立评审 `PASS`，并把评审时的 source fingerprint
+    与已校验视觉证据 manifest 哈希写入 release manifest。
 12. 每条 `blocker`/`major` 按 qa-contract 的归属定义标注 `build`/`design`/`product` 并写入
    发现与回流表；标 `design` 的本轮不得 `PASS`；回流路由由总入口执行。
 
@@ -81,16 +83,18 @@ BUILD_BRIEF 含语音资产台账时，**强制启用**语音与 TTS 检查：�
 
 生成 `qa/QA_REPORT.md`（**阻断交付物：无它不得报完成**）与机器可读
 `qa/release-gates.json`。后者显式逐字继承 `targetFinish`，并记录 source/evidence commit、
-当前候选 `sourceFingerprint`、`demonstratedTier`、全部 pipeline gate、逐帧视觉裁决、独立 reviewer 身份 / 独立性 / 证据路径、
-`visualEvidenceManifests` 的路径 / 字节哈希 / 内嵌 fingerprint、严格枚举的未决缺陷、release ledger、publication tier，以及所有结论的工作区
-证据路径。manifest 同时列互斥的 `focalReleaseAssets` 与 `degradableReleaseAssets`，并集必须覆盖
+当前候选 `sourceFingerprint`、可递归复算的 `sourceInputManifest`、`demonstratedTier`、全部 pipeline gate、逐帧视觉裁决、独立 reviewer 身份 / 独立性 / 证据路径、
+`visualEvidenceManifests` 的路径 / 字节哈希 / 内嵌 fingerprint，以及 manifest 内 captures / contact sheet /
+targets 的结构化路径与字节哈希、严格枚举的未决缺陷、release ledger、publication tier，以及所有结论的工作区
+证据路径。每个 visual frame ID 必须一一对应已验证 target ID，其 evidence 只能引用已哈希验证的
+capture / contact sheet，不能用 target 图冒充运行帧。manifest 同时列互斥的 `focalReleaseAssets` 与 `degradableReleaseAssets`，并集必须覆盖
 ledger 全部 release-gate 键；playable 的 focal 全部通过，degradable 逐项有有效 fallback。报告记录环境、命令、通过/失败项、
 证据路径、未测试范围，必填「独立验证」与「发现与回流表」、附「模型试玩手记」，以及三项
 主观-但-可观察裁决：**首次上手 / 核心幻想演出 / 招牌帧符合**（各节最小内容见 qa-contract.md）。
 只有 `graybox` 可以携带视觉 `NOT_RUN`、visual major 或灰盒资产。playable 及以上只有零
 `blocker`、零 `major`，加载、核心动作、主要结果和重开都有证据，且目标等级所需的
-独立视觉评审和发布门禁均为 `PASS` 时才标记 `PASS`；任一必需项 `NOT_RUN` 或任一 release-gate
-资产为 false 都必须 fail closed，并满足
+独立视觉评审和发布门禁均为 `PASS` 时才标记 `PASS`。playable 中 focal 资产 false 或 degradable
+资产缺有效 fallback 必须 fail closed；polished / showcase 则要求每个 release-gate 资产均为 true，并满足
 `publicationTier <= demonstratedTier <= targetFinish`。
 把 `PASS`/`FAIL` 裁决与一句原因文本交回总入口，`gate:qa` 行由总入口核对后写入
 `_progress.md`，本阶段不自记过门。趣味、长期平衡、留存

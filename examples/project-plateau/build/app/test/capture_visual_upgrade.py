@@ -6,12 +6,10 @@ from __future__ import annotations
 import hashlib
 import base64
 import json
-import os
 from pathlib import Path
 import socket
 import subprocess
 import time
-from urllib.parse import urlparse
 
 from playwright.sync_api import sync_playwright
 
@@ -19,7 +17,6 @@ APP = Path(__file__).resolve().parent.parent
 PROJECT = APP.parents[1]
 OUTPUT = PROJECT / "build" / "evidence" / "visual-upgrade" / "generated"
 TARGETS = PROJECT / "design" / "visual-targets"
-BASE_URL = os.environ.get("BASE_URL", "http://127.0.0.1:4173")
 CHROME = Path("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
 VIEWPORTS = ((1440, 900), (1280, 720))
 FROZEN_TIME = 4.25
@@ -43,16 +40,23 @@ def source_fingerprint() -> str:
     return digest.hexdigest()
 
 
-def start_server() -> subprocess.Popen[str] | None:
-    parsed = urlparse(BASE_URL)
-    with socket.socket() as probe:
-        try:
-            probe.connect((parsed.hostname or "127.0.0.1", parsed.port or 4173))
-            return None
-        except OSError:
-            pass
+def start_server() -> tuple[subprocess.Popen[str], str]:
+    """Start an owned Vite process without touching the interactive port 4173."""
+    with socket.socket() as reservation:
+        reservation.bind(("127.0.0.1", 0))
+        port = reservation.getsockname()[1]
     process = subprocess.Popen(
-        ["npm", "run", "start", "--", "--host", "127.0.0.1", "--port", "4173"],
+        [
+            "npm",
+            "run",
+            "start",
+            "--",
+            "--host",
+            "127.0.0.1",
+            "--port",
+            str(port),
+            "--strictPort",
+        ],
         cwd=APP,
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
@@ -61,8 +65,8 @@ def start_server() -> subprocess.Popen[str] | None:
     for _ in range(80):
         with socket.socket() as probe:
             try:
-                probe.connect(("127.0.0.1", 4173))
-                return process
+                probe.connect(("127.0.0.1", port))
+                return process, f"http://127.0.0.1:{port}"
             except OSError:
                 if process.poll() is not None:
                     raise RuntimeError("Vite exited before visual capture")
@@ -71,7 +75,7 @@ def start_server() -> subprocess.Popen[str] | None:
     raise RuntimeError("Vite did not become ready for visual capture")
 
 
-def run() -> dict[str, object]:
+def run(base_url: str) -> dict[str, object]:
     OUTPUT.mkdir(parents=True, exist_ok=True)
     for stale in OUTPUT.glob("*.png"):
         stale.unlink()
@@ -86,7 +90,7 @@ def run() -> dict[str, object]:
             page = browser.new_page(viewport={"width": width, "height": height})
             page.on("console", lambda message: errors.append(message.text) if message.type == "error" else None)
             page.on("pageerror", lambda error: errors.append(f"PAGEERROR: {error}"))
-            page.goto(f"{BASE_URL}/?qa=visual-capture", wait_until="networkidle")
+            page.goto(f"{base_url}/?qa=visual-capture", wait_until="networkidle")
             page.wait_for_function("window.__projectPlateau?.ready === true")
             title_frozen = page.evaluate(f"window.__projectPlateau.freezeVisualForTest({FROZEN_TIME})")
             page.wait_for_timeout(50)
@@ -146,12 +150,18 @@ def run() -> dict[str, object]:
         browser.close()
 
     assert not errors, errors
-    target_hashes = {
-        path.name: sha256(path) for path in sorted(TARGETS.glob("*.svg"))
-    }
+    targets = [
+        {
+            "id": path.stem.split("-", 1)[1],
+            "path": path.relative_to(PROJECT).as_posix(),
+            "sha256": sha256(path),
+            "bytes": path.stat().st_size,
+        }
+        for path in sorted(TARGETS.glob("*.svg"))
+    ]
     assert len(captures) == 6, captures
     assert len({item["sha256"] for item in captures}) == 6, captures
-    assert len(target_hashes) == 3, target_hashes
+    assert len(targets) == 3, targets
     result = {
         "schemaVersion": 1,
         "command": "npm run capture:visual",
@@ -165,7 +175,7 @@ def run() -> dict[str, object]:
             "sha256": sha256(sheet_path),
             "bytes": sheet_path.stat().st_size,
         },
-        "targetHashes": target_hashes,
+        "targets": targets,
         "consoleErrors": errors,
     }
     (OUTPUT / "manifest.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
@@ -173,13 +183,12 @@ def run() -> dict[str, object]:
 
 
 def main() -> None:
-    server = start_server()
+    server, base_url = start_server()
     try:
-        result = run()
+        result = run(base_url)
     finally:
-        if server:
-            server.terminate()
-            server.wait(timeout=5)
+        server.terminate()
+        server.wait(timeout=5)
     print(json.dumps(result, indent=2))
 
 

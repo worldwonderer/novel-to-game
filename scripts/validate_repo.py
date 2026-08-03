@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import json
 import hashlib
+import math
 import re
 import subprocess
 import sys
@@ -142,6 +143,7 @@ EXAMPLE_PLANNING_FILES = {
 OPTIONAL_PLANNING_FILES = {
     "analysis/_coverage.md",
     "build/asset-ledger.json",
+    "build/source-inputs.json",
     "design/VISUAL_TARGETS.md",
     "design/VOICE_AUDITION.json",
 }
@@ -614,6 +616,379 @@ def _git_commit_app_fingerprint(example_dir: Path, commit: str) -> str | None:
     return digest.hexdigest()
 
 
+def _workspace_app_fingerprint(example_dir: Path) -> str | None:
+    """Reproduce a web app's publishable-input fingerprint from workspace bytes."""
+    app = example_dir / "build/app"
+    if not app.is_dir():
+        return None
+    paths = [app / "index.html", app / "package.json", app / "package-lock.json"]
+    paths += sorted((app / "public").rglob("*")) + sorted((app / "src").rglob("*"))
+    digest = hashlib.sha256()
+    found = False
+    for path in paths:
+        if not path.is_file():
+            continue
+        found = True
+        digest.update(path.relative_to(app).as_posix().encode())
+        digest.update(b"\0")
+        digest.update(path.read_bytes())
+        digest.update(b"\0")
+    return digest.hexdigest() if found else None
+
+
+def _validate_verification(
+    example_dir: Path,
+    verification: dict[str, object],
+    source_fingerprint: object,
+) -> list[str]:
+    """Fail closed on incomplete or stale non-graybox authoritative verification."""
+    label = f"{example_dir.name}/qa/verification.json"
+    issues: list[str] = []
+    verify = verification.get("verify")
+    if not isinstance(verify, dict):
+        return [f"{label}: verify must be an object"]
+    if not isinstance(verify.get("command"), str) or not verify["command"].strip():
+        issues.append(f"{label}: verify.command must be a non-empty string")
+    log_issue = _workspace_evidence_issue(example_dir, verify.get("log"), "verify.log")
+    if log_issue:
+        issues.append(log_issue.replace("qa/release-gates.json", "qa/verification.json"))
+    if verify.get("exitCode") != 0:
+        issues.append(f"{label}: verify.exitCode must be 0")
+    duration = verify.get("durationMs")
+    if (
+        not isinstance(duration, (int, float))
+        or isinstance(duration, bool)
+        or not math.isfinite(duration)
+        or duration < 0
+    ):
+        issues.append(f"{label}: verify.durationMs must be a non-negative number")
+
+    suites = verify.get("suites")
+    if not isinstance(suites, list) or not suites:
+        issues.append(f"{label}: verify.suites must be a non-empty array")
+        suites = []
+    suite_ids: set[str] = set()
+    covered_locations: set[str] = set()
+    for index, suite in enumerate(suites):
+        field = f"verify.suites[{index}]"
+        if not isinstance(suite, dict):
+            issues.append(f"{label}: {field} must be an object")
+            continue
+        suite_id = suite.get("id")
+        if not isinstance(suite_id, str) or not suite_id.strip():
+            issues.append(f"{label}: {field}.id must be a non-empty string")
+        elif suite_id in suite_ids:
+            issues.append(f"{label}: {field}.id duplicates {suite_id}")
+        else:
+            suite_ids.add(suite_id)
+        if suite.get("executed") is not True:
+            issues.append(f"{label}: {field}.executed must be true")
+        if suite.get("passed") is not True:
+            issues.append(f"{label}: {field}.passed must be true")
+        locations = suite.get("locations")
+        if not isinstance(locations, list) or any(
+            not isinstance(location, str) or not location.strip()
+            for location in locations
+        ):
+            issues.append(f"{label}: {field}.locations must be an array of paths")
+        elif suite.get("executed") is True and suite.get("passed") is True:
+            covered_locations.update(locations)
+        commands = suite.get("commands")
+        if not isinstance(commands, list) or not commands:
+            issues.append(f"{label}: {field}.commands must be a non-empty array")
+            continue
+        for command_index, command in enumerate(commands):
+            command_field = f"{field}.commands[{command_index}]"
+            if not isinstance(command, dict):
+                issues.append(f"{label}: {command_field} must be an object")
+                continue
+            if not isinstance(command.get("command"), str) or not command["command"].strip():
+                issues.append(f"{label}: {command_field}.command must be a non-empty string")
+            if command.get("exitCode") != 0:
+                issues.append(f"{label}: {command_field}.exitCode must be 0")
+            command_duration = command.get("durationMs")
+            if (
+                not isinstance(command_duration, (int, float))
+                or isinstance(command_duration, bool)
+                or not math.isfinite(command_duration)
+                or command_duration < 0
+            ):
+                issues.append(
+                    f"{label}: {command_field}.durationMs must be a non-negative number"
+                )
+
+    registry = verify.get("registry")
+    if not isinstance(registry, dict):
+        issues.append(f"{label}: verify.registry must be an object")
+    else:
+        registry_sets: dict[str, set[str]] = {}
+        for field in ("discovered", "registered"):
+            value = registry.get(field)
+            if not isinstance(value, list) or not value or any(
+                not isinstance(item, str) or not item.strip() for item in value
+            ):
+                issues.append(
+                    f"{label}: verify.registry.{field} must be a non-empty array of paths"
+                )
+                registry_sets[field] = set()
+            elif len(value) != len(set(value)):
+                issues.append(f"{label}: verify.registry.{field} must not contain duplicates")
+                registry_sets[field] = set(value)
+            else:
+                registry_sets[field] = set(value)
+        excluded = registry.get("excluded")
+        if not isinstance(excluded, dict):
+            issues.append(f"{label}: verify.registry.excluded must be an object")
+            excluded_paths: set[str] = set()
+        else:
+            excluded_paths = set()
+            for path, reason in excluded.items():
+                if not isinstance(path, str) or not path.strip():
+                    issues.append(f"{label}: verify.registry.excluded keys must be paths")
+                else:
+                    excluded_paths.add(path)
+                if not isinstance(reason, str) or not reason.strip():
+                    issues.append(
+                        f"{label}: verify.registry.excluded[{path!r}] must have a non-empty reason"
+                    )
+        problems = registry.get("problems")
+        if not isinstance(problems, list):
+            issues.append(f"{label}: verify.registry.problems must be an array")
+        elif problems:
+            issues.append(f"{label}: verify.registry.problems must be empty")
+        discovered = registry_sets.get("discovered", set())
+        registered = registry_sets.get("registered", set())
+        if discovered != registered | excluded_paths:
+            issues.append(
+                f"{label}: verify.registry.discovered must equal registered plus excluded"
+            )
+        uncovered = registered - covered_locations
+        if uncovered:
+            issues.append(
+                f"{label}: verify.registry.registered paths lack executed/passed suite coverage: "
+                f"{sorted(uncovered)}"
+            )
+        test_dir = example_dir / "build/app/test"
+        if test_dir.is_dir():
+            actual = {
+                path.relative_to(example_dir / "build/app").as_posix()
+                for path in test_dir.iterdir()
+                if path.is_file() and path.suffix in {".py", ".js"}
+            }
+            if discovered != actual:
+                issues.append(
+                    f"{label}: verify.registry.discovered does not match build/app/test files"
+                )
+
+    checkpoints = verification.get("checkpoints")
+    if not isinstance(checkpoints, list) or not checkpoints:
+        issues.append(f"{label}: checkpoints must be a non-empty array")
+        checkpoints = []
+    checkpoint_ids: set[str] = set()
+    for index, checkpoint in enumerate(checkpoints):
+        field = f"checkpoints[{index}]"
+        if not isinstance(checkpoint, dict):
+            issues.append(f"{label}: {field} must be an object")
+            continue
+        checkpoint_id = checkpoint.get("id")
+        if not isinstance(checkpoint_id, str) or not checkpoint_id.strip():
+            issues.append(f"{label}: {field}.id must be a non-empty string")
+        elif checkpoint_id in checkpoint_ids:
+            issues.append(f"{label}: {field}.id duplicates {checkpoint_id}")
+        else:
+            checkpoint_ids.add(checkpoint_id)
+        channels = [key for key in ("state", "runtime", "browser", "visual") if key in checkpoint]
+        if not channels:
+            issues.append(f"{label}: {field} must contain an evidence path")
+        for channel in channels:
+            path_issue = _workspace_evidence_issue(
+                example_dir, checkpoint.get(channel), f"{field}.{channel}"
+            )
+            if path_issue:
+                issues.append(path_issue.replace("qa/release-gates.json", "qa/verification.json"))
+
+    complete_run = verification.get("completeRun")
+    if not isinstance(complete_run, dict):
+        issues.append(f"{label}: completeRun must be an object")
+    else:
+        if not isinstance(complete_run.get("id"), str) or not complete_run["id"].strip():
+            issues.append(f"{label}: completeRun.id must be a non-empty string")
+        if complete_run.get("cleanContext") is not True:
+            issues.append(f"{label}: completeRun.cleanContext must be true")
+        for field in ("terminal", "restart"):
+            if not isinstance(complete_run.get(field), str) or not complete_run[field].strip():
+                issues.append(f"{label}: completeRun.{field} must be a non-empty string")
+        steps = complete_run.get("steps")
+        if not isinstance(steps, list) or not steps:
+            issues.append(f"{label}: completeRun.steps must be a non-empty array")
+        else:
+            step_ids: set[str] = set()
+            for index, step in enumerate(steps):
+                field = f"completeRun.steps[{index}]"
+                if not isinstance(step, dict):
+                    issues.append(f"{label}: {field} must be an object")
+                    continue
+                step_id = step.get("id")
+                if not isinstance(step_id, str) or not step_id.strip():
+                    issues.append(f"{label}: {field}.id must be a non-empty string")
+                elif step_id in step_ids:
+                    issues.append(f"{label}: {field}.id duplicates {step_id}")
+                else:
+                    step_ids.add(step_id)
+                for text_field in ("input", "expected", "checkpoint"):
+                    if not isinstance(step.get(text_field), str) or not step[text_field].strip():
+                        issues.append(f"{label}: {field}.{text_field} must be a non-empty string")
+                if isinstance(step.get("checkpoint"), str) and step["checkpoint"] not in checkpoint_ids:
+                    issues.append(f"{label}: {field}.checkpoint is not present in checkpoints")
+
+    verification_commit = verification.get("sourceCommit")
+    if verification_commit is not None:
+        if not isinstance(verification_commit, str) or not re.fullmatch(
+            r"[0-9a-f]{40}", verification_commit
+        ):
+            issues.append(f"{label}: sourceCommit must be a full lowercase commit ID or null")
+        else:
+            committed = _git_commit_app_fingerprint(example_dir, verification_commit)
+            if committed is None:
+                issues.append(f"{label}: sourceCommit app fingerprint could not be verified")
+            elif committed != source_fingerprint:
+                issues.append(f"{label}: sourceCommit fingerprint does not match sourceFingerprint")
+    return issues
+
+
+def _validate_manifest_resource(
+    example_dir: Path, resource: object, field: str
+) -> tuple[list[str], bool]:
+    """Validate one example-root-relative path/hash/optional-byte binding."""
+    prefix = f"{example_dir.name}/qa/release-gates.json"
+    if not isinstance(resource, dict):
+        return [f"{prefix}: {field} must be an object"], False
+    path_issue = _workspace_evidence_issue(example_dir, resource.get("path"), f"{field}.path")
+    if path_issue:
+        return [path_issue], False
+    raw_path = str(resource["path"])
+    expected_hash = resource.get("sha256")
+    if not isinstance(expected_hash, str) or not re.fullmatch(r"[0-9a-f]{64}", expected_hash):
+        return [f"{prefix}: {field}.sha256 must be a lowercase sha256"], False
+    path = example_dir / raw_path
+    issues: list[str] = []
+    if hashlib.sha256(path.read_bytes()).hexdigest() != expected_hash:
+        issues.append(f"{prefix}: {field}.sha256 does not match referenced file {raw_path}")
+    if "bytes" in resource:
+        byte_count = resource.get("bytes")
+        if not isinstance(byte_count, int) or isinstance(byte_count, bool) or byte_count < 0:
+            issues.append(f"{prefix}: {field}.bytes must be a non-negative integer")
+        elif byte_count != path.stat().st_size:
+            issues.append(f"{prefix}: {field}.bytes does not match referenced file {raw_path}")
+    return issues, not issues
+
+
+def _source_input_order(path: str) -> tuple[int, str]:
+    priority = {"index.html": 0, "package.json": 1, "package-lock.json": 2}
+    return priority.get(path, 3), path
+
+
+def _validate_source_input_manifest(
+    example_dir: Path, binding: object, source_fingerprint: object
+) -> list[str]:
+    """Validate and recompute a runtime-neutral canonical candidate identity."""
+    prefix = f"{example_dir.name}/qa/release-gates.json"
+    field = "sourceInputManifest"
+    resource_issues, binding_valid = _validate_manifest_resource(
+        example_dir, binding, field
+    )
+    issues = list(resource_issues)
+    if not binding_valid or not isinstance(binding, dict):
+        return issues
+    manifest_path = example_dir / str(binding["path"])
+    manifest, manifest_issues = _read_json_object(manifest_path, f"{prefix}: {field}.path")
+    issues.extend(manifest_issues)
+    if manifest is None:
+        return issues
+    if manifest.get("schemaVersion") != 1:
+        issues.append(f"{prefix}: {field}.schemaVersion must be 1")
+    base_raw = manifest.get("basePath")
+    if not isinstance(base_raw, str) or not base_raw.strip():
+        issues.append(f"{prefix}: {field}.basePath must be a non-empty path")
+        return issues
+    base_candidate = Path(base_raw)
+    base = (example_dir / base_candidate).resolve()
+    try:
+        base.relative_to(example_dir.resolve())
+    except ValueError:
+        issues.append(f"{prefix}: {field}.basePath leaves the example workspace")
+        return issues
+    if base_candidate.is_absolute() or "://" in base_raw:
+        issues.append(f"{prefix}: {field}.basePath must be workspace-local")
+        return issues
+    if not base.is_dir():
+        issues.append(f"{prefix}: {field}.basePath does not exist: {base_raw}")
+        return issues
+    inputs = manifest.get("inputs")
+    if not isinstance(inputs, list) or not inputs:
+        issues.append(f"{prefix}: {field}.inputs must be a non-empty array")
+        return issues
+    paths: list[str] = []
+    input_files: list[Path | None] = []
+    for index, item in enumerate(inputs):
+        item_field = f"{field}.inputs[{index}]"
+        if not isinstance(item, dict):
+            issues.append(f"{prefix}: {item_field} must be an object")
+            input_files.append(None)
+            continue
+        raw_path = item.get("path")
+        if not isinstance(raw_path, str) or not raw_path.strip():
+            issues.append(f"{prefix}: {item_field}.path must be a non-empty path")
+            input_files.append(None)
+            continue
+        candidate = Path(raw_path)
+        resolved = (base / candidate).resolve()
+        try:
+            resolved.relative_to(base)
+        except ValueError:
+            issues.append(f"{prefix}: {item_field}.path leaves sourceInputManifest.basePath")
+            input_files.append(None)
+            continue
+        if candidate.is_absolute() or "://" in raw_path:
+            issues.append(f"{prefix}: {item_field}.path must be workspace-local")
+            input_files.append(None)
+            continue
+        paths.append(candidate.as_posix())
+        if not resolved.is_file():
+            issues.append(f"{prefix}: {item_field}.path does not exist: {raw_path}")
+            input_files.append(None)
+            continue
+        expected_hash = item.get("sha256")
+        if not isinstance(expected_hash, str) or not re.fullmatch(r"[0-9a-f]{64}", expected_hash):
+            issues.append(f"{prefix}: {item_field}.sha256 must be a lowercase sha256")
+        elif hashlib.sha256(resolved.read_bytes()).hexdigest() != expected_hash:
+            issues.append(f"{prefix}: {item_field}.sha256 does not match {raw_path}")
+        byte_count = item.get("bytes")
+        if not isinstance(byte_count, int) or isinstance(byte_count, bool) or byte_count < 0:
+            issues.append(f"{prefix}: {item_field}.bytes must be a non-negative integer")
+        elif byte_count != resolved.stat().st_size:
+            issues.append(f"{prefix}: {item_field}.bytes does not match {raw_path}")
+        input_files.append(resolved)
+    if len(paths) != len(set(paths)):
+        issues.append(f"{prefix}: {field}.inputs paths must be unique")
+    if paths != sorted(paths, key=_source_input_order):
+        issues.append(f"{prefix}: {field}.inputs must use canonical path order")
+    if len(input_files) == len(inputs) and all(path is not None for path in input_files):
+        digest = hashlib.sha256()
+        for relative, path in zip(paths, input_files):
+            assert path is not None
+            digest.update(relative.encode())
+            digest.update(b"\0")
+            digest.update(path.read_bytes())
+            digest.update(b"\0")
+        recomputed = digest.hexdigest()
+        if manifest.get("sourceFingerprint") != recomputed:
+            issues.append(f"{prefix}: {field}.sourceFingerprint does not match canonical inputs")
+        if source_fingerprint != recomputed:
+            issues.append(f"{prefix}: {field}.sourceFingerprint must match release sourceFingerprint")
+    return issues
+
+
 def _validate_asset_ledger(
     example_dir: Path,
 ) -> tuple[dict[str, dict[str, object]], list[str]]:
@@ -861,6 +1236,12 @@ def validate_publication(example_dir: Path, publication_tier: str) -> list[str]:
             issues.append(
                 f"{prefix}: visualReview.evidence is required for completed review"
             )
+        for field in ("reviewedSourceFingerprint", "reviewedManifestSha256"):
+            value = review.get(field)
+            if value is not None and not (
+                isinstance(value, str) and re.fullmatch(r"[0-9a-f]{64}", value)
+            ):
+                issues.append(f"{prefix}: visualReview.{field} must be a lowercase sha256")
 
     defects = release.get("unresolvedDefects")
     if not isinstance(defects, list):
@@ -977,13 +1358,24 @@ def validate_publication(example_dir: Path, publication_tier: str) -> list[str]:
                 f"{prefix}: sourceFingerprint must match qa/verification.json"
             )
 
+    evidence_tier = (
+        demonstrated_tier
+        if demonstrated_tier in PUBLICATION_TIERS
+        else publication_tier
+    )
     visual_manifests = release.get("visualEvidenceManifests")
     if not isinstance(visual_manifests, list):
         issues.append(f"{prefix}: visualEvidenceManifests must be an array")
         visual_manifests = []
     unbound_visual_manifests: list[str] = []
+    verified_visual_manifest_hashes: set[str] = set()
+    verified_visual_runtime_paths: set[str] = set()
+    verified_target_ids: set[str] = set()
     for index, binding in enumerate(visual_manifests):
         field = f"visualEvidenceManifests[{index}]"
+        binding_valid = True
+        manifest_runtime_paths: set[str] = set()
+        manifest_target_ids: set[str] = set()
         if not isinstance(binding, dict):
             issues.append(f"{prefix}: {field} must be an object")
             continue
@@ -1003,14 +1395,18 @@ def validate_publication(example_dir: Path, publication_tier: str) -> list[str]:
         actual_hash = hashlib.sha256((example_dir / str(raw_path)).read_bytes()).hexdigest()
         if expected_hash != actual_hash:
             issues.append(f"{prefix}: {field}.sha256 does not match the manifest file")
+            binding_valid = False
         manifest, manifest_issues = _read_json_object(
             example_dir / str(raw_path), f"{prefix}: {field}.path"
         )
         issues.extend(manifest_issues)
+        if manifest_issues:
+            binding_valid = False
         if manifest is not None:
             manifest_fingerprint = manifest.get("sourceFingerprint")
             if manifest_fingerprint is None:
                 unbound_visual_manifests.append(field)
+                binding_valid = False
             elif not (
                 isinstance(manifest_fingerprint, str)
                 and re.fullmatch(r"[0-9a-f]{64}", manifest_fingerprint)
@@ -1018,10 +1414,77 @@ def validate_publication(example_dir: Path, publication_tier: str) -> list[str]:
                 issues.append(
                     f"{prefix}: {field}.sourceFingerprint must be a lowercase sha256"
                 )
+                binding_valid = False
             elif manifest_fingerprint != source_fingerprint:
                 issues.append(
                     f"{prefix}: {field}.sourceFingerprint must match release sourceFingerprint"
                 )
+                binding_valid = False
+            captures = manifest.get("captures")
+            if not isinstance(captures, list) or not captures:
+                issues.append(f"{prefix}: {field}.captures must not be empty")
+                binding_valid = False
+            else:
+                for resource_index, resource in enumerate(captures):
+                    resource_issues, resource_valid = _validate_manifest_resource(
+                        example_dir, resource, f"{field}.captures[{resource_index}]"
+                    )
+                    issues.extend(resource_issues)
+                    binding_valid = binding_valid and resource_valid
+                    if resource_valid and isinstance(resource, dict):
+                        manifest_runtime_paths.add(str(resource["path"]))
+            if "contactSheet" not in manifest and evidence_tier != "graybox":
+                issues.append(f"{prefix}: {field}.contactSheet is required above graybox")
+                binding_valid = False
+            elif "contactSheet" in manifest:
+                resource_issues, resource_valid = _validate_manifest_resource(
+                    example_dir, manifest.get("contactSheet"), f"{field}.contactSheet"
+                )
+                issues.extend(resource_issues)
+                binding_valid = binding_valid and resource_valid
+                if resource_valid and isinstance(manifest.get("contactSheet"), dict):
+                    manifest_runtime_paths.add(str(manifest["contactSheet"]["path"]))
+            targets = manifest.get("targets")
+            if targets is not None:
+                if not isinstance(targets, list) or not targets:
+                    issues.append(f"{prefix}: {field}.targets must not be empty")
+                    binding_valid = False
+                else:
+                    for resource_index, resource in enumerate(targets):
+                        target_field = f"{field}.targets[{resource_index}]"
+                        target_id = resource.get("id") if isinstance(resource, dict) else None
+                        if not isinstance(target_id, str) or not target_id.strip():
+                            issues.append(f"{prefix}: {target_field}.id must be a non-empty string")
+                            binding_valid = False
+                        elif target_id in manifest_target_ids:
+                            issues.append(f"{prefix}: {target_field}.id duplicates {target_id}")
+                            binding_valid = False
+                        else:
+                            manifest_target_ids.add(target_id)
+                        resource_issues, resource_valid = _validate_manifest_resource(
+                            example_dir, resource, target_field
+                        )
+                        issues.extend(resource_issues)
+                        binding_valid = binding_valid and resource_valid
+            elif evidence_tier != "graybox":
+                issues.append(f"{prefix}: {field}.targets are required above graybox")
+                binding_valid = False
+            if "targetHashes" in manifest:
+                issues.append(
+                    f"{prefix}: {field}.targetHashes is unverified legacy metadata; "
+                    "use structured targets path/sha256 records"
+                )
+                binding_valid = False
+        if binding_valid:
+            overlap = verified_target_ids & manifest_target_ids
+            if overlap:
+                issues.append(
+                    f"{prefix}: verified visual target ids must be unique: {sorted(overlap)}"
+                )
+                continue
+            verified_visual_manifest_hashes.add(expected_hash)
+            verified_visual_runtime_paths.update(manifest_runtime_paths)
+            verified_target_ids.update(manifest_target_ids)
 
     public_host = release.get("publicHost")
     if public_host is not None:
@@ -1058,15 +1521,30 @@ def validate_publication(example_dir: Path, publication_tier: str) -> list[str]:
                             f"{prefix}: publicHost PASS fingerprint must match release sourceFingerprint"
                         )
 
-    evidence_tier = (
-        demonstrated_tier
-        if demonstrated_tier in PUBLICATION_TIERS
-        else publication_tier
-    )
     if evidence_tier != "graybox":
+        if "sourceInputManifest" not in release:
+            issues.append(f"{prefix}: sourceInputManifest is required above graybox")
+        else:
+            issues.extend(
+                _validate_source_input_manifest(
+                    example_dir, release.get("sourceInputManifest"), source_fingerprint
+                )
+            )
         for field in unbound_visual_manifests:
             issues.append(
                 f"{prefix}: {field}.sourceFingerprint is required above graybox"
+            )
+        if verification is not None:
+            issues.extend(
+                _validate_verification(example_dir, verification, source_fingerprint)
+            )
+        workspace_fingerprint = _workspace_app_fingerprint(example_dir)
+        if (
+            workspace_fingerprint is not None
+            and workspace_fingerprint != source_fingerprint
+        ):
+            issues.append(
+                f"{prefix}: current workspace app fingerprint does not match sourceFingerprint"
             )
     ledger_entries: dict[str, dict[str, object]] = {}
     ledger_path = example_dir / "build/asset-ledger.json"
@@ -1120,6 +1598,17 @@ def validate_publication(example_dir: Path, publication_tier: str) -> list[str]:
                     issues.append(
                         f"{prefix}: visualFrames[{index}].rubric.{dimension} must be PASS"
                     )
+        if isinstance(frame, dict) and isinstance(frame.get("evidence"), list):
+            for evidence_index, raw in enumerate(frame["evidence"]):
+                if raw not in verified_visual_runtime_paths:
+                    issues.append(
+                        f"{prefix}: visualFrames[{index}].evidence[{evidence_index}] "
+                        "must reference a verified capture or contactSheet"
+                    )
+    if frame_ids != verified_target_ids:
+        issues.append(
+            f"{prefix}: visualFrames ids must exactly match verified visual target ids"
+        )
     if review.get("required") is not True:
         issues.append(f"{prefix}: visualReview.required must be true")
     if review.get("status") != "PASS":
@@ -1129,6 +1618,16 @@ def validate_publication(example_dir: Path, publication_tier: str) -> list[str]:
             issues.append(f"{prefix}: visualReview.{field} is required")
     if review.get("evidence") is None:
         issues.append(f"{prefix}: visualReview.evidence is required")
+    if review.get("reviewedSourceFingerprint") != source_fingerprint:
+        issues.append(
+            f"{prefix}: visualReview.reviewedSourceFingerprint must match release sourceFingerprint"
+        )
+    reviewed_manifest_hash = review.get("reviewedManifestSha256")
+    if reviewed_manifest_hash not in verified_visual_manifest_hashes:
+        issues.append(
+            f"{prefix}: visualReview.reviewedManifestSha256 must identify a verified "
+            "visualEvidenceManifests sha256"
+        )
     for index, defect in enumerate(defects):
         if isinstance(defect, dict) and defect.get("status") == "OPEN" and defect.get("severity") in {"blocker", "major"}:
             issues.append(

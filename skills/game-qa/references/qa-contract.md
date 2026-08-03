@@ -41,6 +41,14 @@ required suite 已发现、却没有出现在同一次权威 verify 的实际 lo
 
 最小工件为 `qa/verification.json`，必须记录实际工具链、权威命令、exit code、duration、log、
 suite 执行状态，以及一条 `clean start → 核心动作 → 设计结果 → restart` 的 complete run。
+对 graybox 以上，`verify` 必须包含非空 command、工作区内真实 log、`exitCode: 0`、非负 duration
+与非空 suites；suite ID 不得重复，每项均须 `executed: true`、`passed: true`，且至少一条实际
+command 的 exit code 为 0。`completeRun.steps[*].checkpoint` 必须命中非空、ID 唯一的 checkpoints，
+每个 checkpoint 至少保留一个真实 state / runtime（网页可用 browser）/ visual 工作区路径。
+`verify.registry` 必含非空路径数组 `discovered` / `registered`、路径到非空理由的 `excluded` 对象与空的
+`problems`，并满足 `discovered = registered ∪ excluded.keys`。每个 registered 路径必须出现在
+某个 executed / passed suite 的 locations；存在真实测试目录时，还要重新发现测试文件并与
+discovered 精确相等。
 所有项属于同一个 source commit；checkpoint 必须属于同一个 complete-run step，并分别登记：
 
 - `state`：证明规则、数值或状态转移，不证明玩家看见了什么；
@@ -89,6 +97,7 @@ suite 执行状态，以及一条 `clean start → 核心动作 → 设计结果
   "sourceCommit": "...",
   "evidenceCommit": "...",
   "sourceFingerprint": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+  "sourceInputManifest": {"path": "build/source-inputs.json", "sha256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"},
   "targetFinish": "graybox|playable-prototype|polished-vertical-slice|showcase",
   "demonstratedTier": "graybox|playable-prototype|polished-vertical-slice|showcase",
   "publicationTier": "graybox|playable-prototype|polished-vertical-slice|showcase",
@@ -96,9 +105,9 @@ suite 执行状态，以及一条 `clean start → 核心动作 → 设计结果
   "grayboxReady": {"status": "PASS", "evidence": ["qa/evidence/complete-run.json"]},
   "visualPromotion": {"status": "PASS", "evidence": ["qa/evidence/promotion.md"]},
   "visualEvidenceManifests": [{"path": "build/evidence/visual-upgrade/manifest.json", "sha256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"}],
-  "publicHost": {"status": "PASS", "sourceFingerprint": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef", "evidence": ["qa/evidence/public-host.json"]},
+  "publicHost": {"status": "PASS", "sourceFingerprint": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef", "evidence": "qa/evidence/public-host.json"},
   "visualFrames": [{"id": "...", "status": "PASS", "operationPath": "...", "evidence": ["qa/evidence/..."], "rubric": {"focus": "PASS", "silhouette": "PASS", "depth": "PASS", "materialLine": "PASS", "lightColor": "PASS", "hud": "PASS", "motionFeedback": "PASS", "artifacts": "PASS", "failureExamples": "PASS"}}],
-  "visualReview": {"required": true, "status": "PASS", "reviewer": "...", "independence": "未参与实现", "evidence": "qa/evidence/..."},
+  "visualReview": {"required": true, "status": "PASS", "reviewer": "...", "independence": "未参与实现", "evidence": "qa/evidence/...", "reviewedSourceFingerprint": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef", "reviewedManifestSha256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"},
   "focalReleaseAssets": ["hero"],
   "degradableReleaseAssets": ["ambient-variation"],
   "unresolvedDefects": [{"id": "...", "severity": "minor", "status": "CLOSED", "summary": "...", "owner": "build", "evidence": ["qa/evidence/..."]}]
@@ -108,9 +117,12 @@ suite 执行状态，以及一条 `clean start → 核心动作 → 设计结果
 字段纪律：所有 gate、帧量表项以及 `grayboxReady.status`、`visualPromotion.status` 只取
 `NOT_RUN` / `FAIL` / `PASS`；两种状态都必须是含 `status` 与 evidence 数组的对象，不接受布尔值、
 裸字符串或自由文本。七个 pipeline gate 全部必填。每个 visual frame 必须有 ID、可操作路径、
-九项量表和非空 evidence 数组；每个 evidence、
+九项量表和非空 evidence 数组；frame ID 集合必须与已验证 target ID 集合完全相同，frame evidence
+只能引用已哈希验证的 capture / contact sheet，不能拿 target 图冒充运行帧。每个 evidence、
 reviewer evidence、缺陷复验证据和 ledger evidence 都必须是工作区内真实存在的相对路径。
-`visualReview.required` 是布尔值，playable 及以上必须为 true 且 status 为 PASS。
+`visualReview.required` 是布尔值，playable 及以上必须为 true 且 status 为 PASS；其
+`reviewedSourceFingerprint` 必须等于 release `sourceFingerprint`，`reviewedManifestSha256` 必须
+命中本次已完成文件与递归资源校验的 `visualEvidenceManifests[*].sha256`，不能复用旧候选评审。
 
 `unresolvedDefects` 每项必含非空 ID、非空 summary、`severity`（只取 `blocker` / `major` /
 `minor`）与 `status`（只取 `OPEN` / `CLOSED`）；归属阶段存在时只取 `build` / `design` /
@@ -138,9 +150,22 @@ playable 及以上任一未关闭 blocker/major、必需独立评审 `NOT_RUN`�
 
 `sourceFingerprint` 是 release 的权威当前候选身份：对实际发布输入的稳定、落盘清单计算为
 64 位小写 SHA-256 十六进制串，并在 build 完成记录、验证结果和 release manifest 中保持一致。
+仓库示例存在 `build/app` 时，QA/仓库 validator 必须按该 runtime 的 publishable inputs 清单重算
+当前工作区 fingerprint 并核对 release；`sourceCommit: null` 不能跳过当前候选校验。verification
+自身记录非空 source commit 时，也必须从该 commit 的 app bytes 重算并与 verification fingerprint
+一致；不匹配只能标历史证据。
+所有 graybox 以上项目还必须提供 runtime-neutral `sourceInputManifest` 外壳路径与字节哈希；内层
+包含工作区内 `basePath`、非空 canonical-order `inputs[{path,sha256,bytes}]` 和复算得到的
+`sourceFingerprint`。逐个文件校验后，以 canonical 相对路径 + NUL + 文件 bytes + NUL 顺序重算；
+缺失、空清单、重复 / 逃逸路径、哈希或字节数漂移均失败。`build/app` 检查只是额外的 web-specific
+交叉验证，不能替代该通用根。
 `visualEvidenceManifests` 每项包含工作区内真实存在的 `path` 与 64 位小写 `sha256`；哈希必须等于
 该文件实际字节，且该 manifest 内嵌的 `sourceFingerprint` 必须等于 release fingerprint，否则视觉
-证据属于别的候选、不得通过。commit ID 只作历史
+证据属于别的候选、不得通过。manifest 中 `captures`、`contactSheet`、`targets` 统一使用
+`{"path": "example-root-relative", "sha256": "...", "bytes": 123}` 结构（`bytes` 可省略）；递归
+检查每个路径、文件哈希与可选字节数。graybox 以上 captures、contactSheet、targets 均必需且
+非空；每个 target 必须有唯一 ID。旧式 `targetHashes` 只算未验证说明，不能冒充 target 资源
+证据。commit ID 只作历史
 定位；工作区或构建输入已偏离 commit 时，禁止沿用该 commit 的 PASS，旧证据标为
 `historical/not-current`。公开托管裁决以结构化记录保存 `status`、`sourceFingerprint` 与工作区内
 evidence；只有 deployed fingerprint 与 release fingerprint 完全相同才可 `PASS`，否则即使 URL
