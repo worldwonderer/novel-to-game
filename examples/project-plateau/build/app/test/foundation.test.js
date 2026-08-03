@@ -1,6 +1,9 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { globSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import test from 'node:test';
 import * as THREE from 'three';
 import { PRODUCT_BUDGET, SCENE_BUDGET, percentile, seededRandom } from '../src/config.js';
@@ -70,4 +73,40 @@ test('runtime sources contain no remote asset or CDN request', () => {
     assert.doesNotMatch(source, /(?:src|href)\s*=\s*['"]\/\//i, relative);
     assert.doesNotMatch(source, /url\(\s*['"]?https?:/i, relative);
   }
+});
+
+test('evidence retention never removes a release-bound resource', () => {
+  const project = mkdtempSync(join(tmpdir(), 'plateau-retention-'));
+  mkdirSync(join(project, 'qa'), { recursive: true });
+  mkdirSync(join(project, 'build/evidence/candidate'), { recursive: true });
+  writeFileSync(join(project, 'build/evidence/candidate/manifest.json'), JSON.stringify({
+    capture: { path: 'build/evidence/candidate/frame.jpg' },
+  }));
+  writeFileSync(join(project, 'build/evidence/candidate/frame.jpg'), 'bound');
+  writeFileSync(join(project, 'build/evidence/orphan.jpg'), 'orphan');
+  writeFileSync(join(project, 'qa/release-gates.json'), JSON.stringify({
+    evidence: ['build/evidence/candidate/manifest.json'],
+  }));
+
+  const tool = new URL('./evidence_retention', import.meta.url);
+  const result = spawnSync('python3', [tool.pathname, '--project', project, '--apply', '--json'], {
+    encoding: 'utf8',
+  });
+  assert.equal(result.status, 0, result.stderr);
+  const report = JSON.parse(result.stdout);
+  assert.equal(readFileSync(join(project, 'build/evidence/candidate/frame.jpg'), 'utf8'), 'bound');
+  assert.deepEqual(report.candidates.map(({ path }) => path), ['build/evidence/orphan.jpg']);
+});
+
+test('evidence retention defaults to a non-destructive dry run', () => {
+  const project = mkdtempSync(join(tmpdir(), 'plateau-retention-dry-'));
+  mkdirSync(join(project, 'build/evidence'), { recursive: true });
+  writeFileSync(join(project, 'build/evidence/orphan.jpg'), 'orphan');
+  const tool = new URL('./evidence_retention', import.meta.url);
+  const result = spawnSync('python3', [tool.pathname, '--project', project, '--json'], {
+    encoding: 'utf8',
+  });
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(JSON.parse(result.stdout).mode, 'dry-run');
+  assert.equal(readFileSync(join(project, 'build/evidence/orphan.jpg'), 'utf8'), 'orphan');
 });

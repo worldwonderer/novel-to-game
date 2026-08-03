@@ -1,0 +1,132 @@
+#!/usr/bin/env python3
+"""Safely inventory or remove unreferenced Project Plateau build evidence.
+
+Dry-run is the default.  A file can only be removed when it is below
+``build/evidence`` and no authoritative root or transitively referenced JSON
+document binds it.  This intentionally favours a false keep over evidence loss.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+from pathlib import Path
+import re
+from typing import Iterable
+
+
+PATH_PATTERN = re.compile(r"(?:build/)?evidence/[A-Za-z0-9_./-]+")
+ROOT_DOCUMENTS = (
+    "qa/release-gates.json",
+    "qa/verification.json",
+    "qa/QA_REPORT.md",
+    "build/asset-ledger.json",
+)
+
+
+def evidence_path(project: Path, value: str) -> Path | None:
+    clean = value.split("#", 1)[0].rstrip(".,:;)'\"]}")
+    if clean.startswith("build/evidence/"):
+        candidate = project / clean
+    elif clean.startswith("evidence/"):
+        candidate = project / "build" / clean
+    else:
+        return None
+    try:
+        candidate.resolve().relative_to((project / "build" / "evidence").resolve())
+    except ValueError:
+        return None
+    return candidate
+
+
+def strings(value: object) -> Iterable[str]:
+    if isinstance(value, str):
+        yield value
+    elif isinstance(value, dict):
+        for item in value.values():
+            yield from strings(item)
+    elif isinstance(value, list):
+        for item in value:
+            yield from strings(item)
+
+
+def references(document: Path, project: Path) -> set[Path]:
+    try:
+        if document.suffix == ".json":
+            values = strings(json.loads(document.read_text(encoding="utf-8")))
+        else:
+            values = PATH_PATTERN.findall(document.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return set()
+    return {
+        path.resolve()
+        for value in values
+        if (path := evidence_path(project, value)) is not None
+    }
+
+
+def inventory(project: Path) -> dict[str, object]:
+    evidence = project / "build" / "evidence"
+    all_files = {path.resolve() for path in evidence.rglob("*") if path.is_file()}
+    protected: set[Path] = set()
+    queue = [project / relative for relative in ROOT_DOCUMENTS]
+    # Stage reports are the authoritative indexes for historical browser runs.
+    queue += sorted(evidence.glob("s*/report.json"))
+    seen_documents: set[Path] = set()
+    while queue:
+        document = queue.pop()
+        resolved = document.resolve()
+        if resolved in seen_documents or not document.is_file():
+            continue
+        seen_documents.add(resolved)
+        if resolved in all_files:
+            protected.add(resolved)
+        for target in references(document, project):
+            protected.add(target)
+            if target.suffix == ".json" and target.is_file():
+                queue.append(target)
+
+    candidates = sorted(all_files - protected)
+
+    def relative(path: Path) -> str:
+        return path.relative_to(project.resolve()).as_posix()
+
+    return {
+        "schemaVersion": 1,
+        "mode": "dry-run",
+        "evidenceRoot": "build/evidence",
+        "total": {"files": len(all_files), "bytes": sum(p.stat().st_size for p in all_files)},
+        "protected": {"files": len(protected & all_files), "bytes": sum(p.stat().st_size for p in protected & all_files)},
+        "candidates": [
+            {"path": relative(path), "bytes": path.stat().st_size}
+            for path in candidates
+        ],
+        "candidateBytes": sum(path.stat().st_size for path in candidates),
+        "authoritativeRoots": list(ROOT_DOCUMENTS) + ["build/evidence/s*/report.json"],
+    }
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--project", type=Path, default=Path(__file__).resolve().parents[3])
+    parser.add_argument("--apply", action="store_true")
+    parser.add_argument("--json", action="store_true")
+    args = parser.parse_args()
+    project = args.project.resolve()
+    result = inventory(project)
+    if args.apply:
+        for item in result["candidates"]:
+            (project / item["path"]).unlink()
+        result["mode"] = "apply"
+        result["removedFiles"] = len(result["candidates"])
+    if args.json:
+        print(json.dumps(result, indent=2))
+    else:
+        print(f"{result['mode']}: {len(result['candidates'])} candidates, {result['candidateBytes']} bytes")
+        for item in result["candidates"]:
+            print(f"  {item['bytes']:>9}  {item['path']}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

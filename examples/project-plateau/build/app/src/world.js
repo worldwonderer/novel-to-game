@@ -232,6 +232,70 @@ function makeCoverArches(scene) {
   return group;
 }
 
+function makeDefensiveCoverMouth(scene) {
+  const group = new THREE.Group();
+  const bark = new THREE.MeshStandardMaterial({ color: 0x203128, roughness: 1, flatShading: true });
+  const leaf = new THREE.MeshStandardMaterial({ color: 0x123824, roughness: 0.98, flatShading: true });
+  const fern = new THREE.MeshStandardMaterial({ color: 0x365f3e, roughness: 0.94, side: THREE.DoubleSide });
+  const threshold = new THREE.MeshStandardMaterial({ color: 0x6f603d, roughness: 1, flatShading: true });
+  const ground = terrainHeight(-11.3, -20.5);
+
+  const leftPost = primitive(
+    bark,
+    new THREE.CylinderGeometry(0.28, 0.48, 5.8, 7),
+    [-14.3, ground + 2.35, -20.5],
+    [1, 1, 1],
+    [0, 0, -0.28],
+  );
+  const rightPost = primitive(
+    bark,
+    new THREE.CylinderGeometry(0.26, 0.45, 5.5, 7),
+    [-8.3, ground + 2.3, -20.8],
+    [1, 1, 1],
+    [0, 0, 0.3],
+  );
+  const lintel = primitive(
+    bark,
+    new THREE.CylinderGeometry(0.24, 0.38, 6.7, 7),
+    [-11.3, ground + 4.35, -20.65],
+    [1, 1, 1],
+    [0, 0, Math.PI / 2],
+  );
+  const pathMouth = primitive(
+    threshold,
+    new THREE.BoxGeometry(5.1, 0.08, 4.4),
+    [-11.3, ground + 0.04, -20.1],
+    [1, 1, 1],
+    [0, 0.08, 0],
+  );
+  group.add(leftPost, rightPost, lintel, pathMouth);
+
+  for (const [x, y, z, sx, sy] of [
+    [-13.6, 4.45, -20.7, 1.08, 0.54],
+    [-11.3, 4.65, -20.85, 1.18, 0.5],
+    [-9, 4.42, -20.8, 1.06, 0.54],
+  ]) {
+    group.add(primitive(
+      leaf,
+      new THREE.IcosahedronGeometry(1.35, 1),
+      [x, ground + y, z],
+      [sx, sy, 0.9],
+    ));
+  }
+  for (const [x, yaw] of [[-13.85, -0.34], [-8.75, 0.36]]) {
+    group.add(primitive(
+      fern,
+      new THREE.PlaneGeometry(2.4, 3.8),
+      [x, ground + 1.18, -19.7],
+      [1, 1, 1],
+      [0, yaw, x < -10 ? -0.3 : 0.3],
+    ));
+  }
+  group.name = 'world.connected_route.defensive_cover_mouth';
+  scene.add(group);
+  return group;
+}
+
 function placeVegetation(scene) {
   const random = seededRandom(139);
   const trunkMesh = new THREE.InstancedMesh(
@@ -427,7 +491,13 @@ function makeIguanodon(scene, x, z, scale, heading, young, behaviorRole) {
     roughness: 0.88,
   });
   const claw = new THREE.MeshStandardMaterial({ color: 0x2a302d, roughness: 0.72 });
-  const eye = new THREE.MeshPhysicalMaterial({ color: 0x101513, roughness: 0.2, clearcoat: 0.85 });
+  const eye = new THREE.MeshPhysicalMaterial({ color: 0x141b18, roughness: 0.34, clearcoat: 0.46 });
+  const eyeRidge = new THREE.MeshStandardMaterial({
+    color: young ? 0x42594d : 0x2b443d,
+    roughness: 0.94,
+    flatShading: true,
+  });
+  const beakMaterial = new THREE.MeshStandardMaterial({ color: 0x5f594c, roughness: 0.92 });
   const bodyGeometry = new THREE.CapsuleGeometry(0.92, 2.8, 5, 9);
   const body = primitive(skin, bodyGeometry, [-0.25, 2.05, 0], [1.08, 1.18, 1.03], [0, 0, Math.PI / 2]);
   const belly = primitive(underside, new THREE.CapsuleGeometry(0.7, 2.3, 4, 8), [0.02, 1.72, 0], [1, 0.68, 0.98], [0, 0, Math.PI / 2]);
@@ -438,10 +508,13 @@ function makeIguanodon(scene, x, z, scale, heading, young, behaviorRole) {
   headPivot.position.set(1.35, 2.06, 0);
   const neck = segmentBetween(skin, [0, 0, 0], [1.03, 0.72, 0], 0.48, 0.67, 8);
   const head = primitive(skin, new THREE.SphereGeometry(0.72, 9, 7), [1.28, 0.84, 0], [1.02, 0.76, 0.68]);
-  const muzzle = primitive(underside, new THREE.CapsuleGeometry(0.34, 0.58, 3, 7), [1.87, 0.68, 0], [1, 0.72, 0.8], [0, 0, Math.PI / 2]);
-  const leftEye = primitive(eye, new THREE.SphereGeometry(0.09, 8, 6), [1.5, 1.04, -0.51], [1, 1, 1]);
-  const rightEye = primitive(eye, new THREE.SphereGeometry(0.09, 8, 6), [1.5, 1.04, 0.51], [1, 1, 1]);
-  headPivot.add(neck, head, muzzle, leftEye, rightEye);
+  const muzzle = segmentBetween(underside, [1.48, 0.72, 0], [2.28, 0.62, 0], 0.22, 0.38, 8);
+  const beak = segmentBetween(beakMaterial, [2.12, 0.62, 0], [2.4, 0.59, 0], 0.07, 0.18, 7);
+  const leftBrow = primitive(eyeRidge, new THREE.SphereGeometry(0.16, 7, 5), [1.46, 1.08, -0.47], [1.4, 0.42, 0.62], [0.08, 0, -0.12]);
+  const rightBrow = primitive(eyeRidge, new THREE.SphereGeometry(0.16, 7, 5), [1.46, 1.08, 0.47], [1.4, 0.42, 0.62], [-0.08, 0, 0.12]);
+  const leftEye = primitive(eye, new THREE.SphereGeometry(0.068, 8, 6), [1.53, 1.045, -0.535], [1.15, 0.72, 0.55]);
+  const rightEye = primitive(eye, new THREE.SphereGeometry(0.068, 8, 6), [1.53, 1.045, 0.535], [1.15, 0.72, 0.55]);
+  headPivot.add(neck, head, muzzle, beak, leftBrow, rightBrow, leftEye, rightEye);
 
   const tail = new THREE.Group();
   const tailPoints = [[-1.85, 2.08, 0], [-3.55, 2.0, 0], [-5.1, 2.2, 0], [-6.55, 2.52, 0]];
@@ -457,9 +530,18 @@ function makeIguanodon(scene, x, z, scale, heading, young, behaviorRole) {
     const hindFoot = primitive(claw, new THREE.CapsuleGeometry(0.14, 0.58, 3, 7), [-0.46, 0.08, side], [1, 0.55, 1], [0, 0, Math.PI / 2]);
     const upperArm = segmentBetween(skin, [1.35, 1.63, side], [1.48, 0.75, side], 0.22, 0.3, 7);
     const forearm = segmentBetween(underside, [1.48, 0.75, side], [1.7, 0.2, side], 0.14, 0.21, 7);
-    const hand = primitive(claw, new THREE.CapsuleGeometry(0.1, 0.38, 3, 6), [1.92, 0.11, side], [1, 0.52, 1], [0, 0, Math.PI / 2]);
-    const thumb = primitive(claw, new THREE.ConeGeometry(0.11, 0.62, 6), [1.67, 0.42, side + Math.sign(side) * 0.2], [1, 1, 1], [0, 0, Math.sign(side) * 0.72]);
-    group.add(thigh, shin, hindFoot, upperArm, forearm, hand, thumb);
+    const palm = primitive(underside, new THREE.SphereGeometry(0.21, 7, 5), [1.83, 0.17, side], [1.25, 0.52, 0.92], [0, 0, -0.08]);
+    const thumb = primitive(claw, new THREE.ConeGeometry(0.13, 0.52, 7), [1.68, 0.39, side + Math.sign(side) * 0.2], [1, 1, 1], [0, 0, Math.sign(side) * 0.68]);
+    group.add(thigh, shin, hindFoot, upperArm, forearm, palm, thumb);
+    for (let finger = -1; finger <= 1; finger += 1) {
+      group.add(primitive(
+        claw,
+        new THREE.CapsuleGeometry(0.052, 0.3 - Math.abs(finger) * 0.04, 2, 5),
+        [2.02, 0.09, side + finger * 0.11],
+        [1, 0.55, 1],
+        [0, 0, Math.PI / 2 - finger * 0.08],
+      ));
+    }
     for (let toe = -1; toe <= 1; toe += 1) {
       group.add(primitive(claw, new THREE.CapsuleGeometry(0.055, 0.32, 2, 5), [-0.12, 0.06, side + toe * 0.14], [1, 0.5, 1], [0, 0, Math.PI / 2]));
     }
@@ -723,6 +805,7 @@ export function createWorld(scene) {
   makeDistantPlateau(scene);
   makeRouteAndBrook(scene);
   const coverArches = makeCoverArches(scene);
+  makeDefensiveCoverMouth(scene);
   placeVegetation(scene);
   makeGladeGroundDetail(scene);
   makeBasalt(scene);
@@ -837,9 +920,9 @@ export function createWorld(scene) {
         primary.scale.setScalar(primary.userData.baseScale * 0.86);
       } else if (runtime.captureThreatPose === 'dive') {
         const primary = pterodactyls[0];
-        primary.position.set(4.8, 9.1, -25.5);
+        primary.position.set(4.8, 6.15, -25.5);
         primary.rotation.set(0.62, Math.PI + 0.46, -0.62);
-        primary.scale.setScalar(primary.userData.baseScale * 1.08);
+        primary.scale.setScalar(primary.userData.baseScale * 0.92);
         primary.userData.leftWing.rotation.z = 0.46;
         primary.userData.rightWing.rotation.z = -0.46;
         primary.userData.leftWing.scale.x = 0.5;
@@ -858,6 +941,12 @@ export function createWorld(scene) {
         animal.rotation.y = baseHeading;
         animal.rotation.z = Math.sin(elapsed * 0.45 + index) * 0.008 * motion;
         headPivot.rotation.z = behaviorRole === 'graze' ? -0.28 : 0;
+        headPivot.rotation.y = 0;
+
+        if (behaviorRole === 'graze' && renderedThreatState === 'attack') {
+          headPivot.rotation.y = 0.52;
+          headPivot.rotation.z = 0.08;
+        }
 
         if (youngPlay) {
           const playPhase = elapsed * 1.25 + phase;

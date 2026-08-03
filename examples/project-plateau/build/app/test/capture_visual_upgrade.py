@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Capture the fixed glade visual target at both supported viewports."""
+"""Capture compact still and continuous-motion evidence for the glade."""
 
 from __future__ import annotations
 
@@ -16,10 +16,12 @@ from playwright.sync_api import sync_playwright
 APP = Path(__file__).resolve().parent.parent
 PROJECT = APP.parents[1]
 OUTPUT = PROJECT / "build" / "evidence" / "visual-upgrade" / "generated"
+MOTION = OUTPUT / "motion"
 TARGETS = PROJECT / "design" / "visual-targets"
 CHROME = Path("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
 VIEWPORTS = ((1440, 900), (1280, 720))
 FROZEN_TIME = 4.25
+JPEG_QUALITY = 84
 
 
 def sha256(path: Path) -> str:
@@ -77,7 +79,7 @@ def start_server() -> tuple[subprocess.Popen[str], str]:
 
 def run(base_url: str) -> dict[str, object]:
     OUTPUT.mkdir(parents=True, exist_ok=True)
-    for stale in OUTPUT.glob("*.png"):
+    for stale in (*OUTPUT.glob("*.png"), *OUTPUT.glob("*.jpg")):
         stale.unlink()
     errors: list[str] = []
     captures: list[dict[str, object]] = []
@@ -94,8 +96,8 @@ def run(base_url: str) -> dict[str, object]:
             page.wait_for_function("window.__projectPlateau?.ready === true")
             title_frozen = page.evaluate(f"window.__projectPlateau.freezeVisualForTest({FROZEN_TIME})")
             page.wait_for_timeout(50)
-            title_path = OUTPUT / f"title-{width}x{height}.png"
-            page.screenshot(path=title_path)
+            title_path = OUTPUT / f"title-{width}x{height}.jpg"
+            page.screenshot(path=title_path, type="jpeg", quality=JPEG_QUALITY)
             captures.append({
                 "id": f"title-{width}x{height}",
                 "path": title_path.relative_to(PROJECT).as_posix(),
@@ -112,8 +114,8 @@ def run(base_url: str) -> dict[str, object]:
             for state_name, awareness in (("family", 2), ("dive", 3)):
                 page.evaluate(f"window.__projectPlateau.setThreatVisualForTest({awareness}, '{state_name}')")
                 page.wait_for_timeout(50)
-                path = OUTPUT / f"{state_name}-{width}x{height}.png"
-                page.screenshot(path=path)
+                path = OUTPUT / f"{state_name}-{width}x{height}.jpg"
+                page.screenshot(path=path, type="jpeg", quality=JPEG_QUALITY)
                 state = page.evaluate("window.__projectPlateau.snapshot()")
                 captures.append({
                     "id": f"{state_name}-{width}x{height}",
@@ -129,7 +131,7 @@ def run(base_url: str) -> dict[str, object]:
 
         sheet = browser.new_page(viewport={"width": 1440, "height": 900})
         images = [
-            "data:image/png;base64," + base64.b64encode((PROJECT / item["path"]).read_bytes()).decode("ascii")
+            "data:image/jpeg;base64," + base64.b64encode((PROJECT / item["path"]).read_bytes()).decode("ascii")
             for item in captures
         ]
         sheet.set_content(f"""
@@ -144,9 +146,11 @@ def run(base_url: str) -> dict[str, object]:
           <figure><figcaption>DIVE · 1280 × 720 · {FROZEN_TIME:.2f}s</figcaption><img src="{images[5]}"></figure>
           </main>
         """, wait_until="load")
-        sheet_path = OUTPUT / "contact-sheet-supported-viewports.png"
-        sheet.screenshot(path=sheet_path)
+        sheet_path = OUTPUT / "contact-sheet-supported-viewports.jpg"
+        sheet.screenshot(path=sheet_path, type="jpeg", quality=JPEG_QUALITY)
         sheet.close()
+
+        motion = capture_motion_cadence(browser, base_url)
         browser.close()
 
     assert not errors, errors
@@ -176,9 +180,121 @@ def run(base_url: str) -> dict[str, object]:
             "bytes": sheet_path.stat().st_size,
         },
         "targets": targets,
+        "motionCadence": motion,
         "consoleErrors": errors,
     }
     (OUTPUT / "manifest.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+    return result
+
+
+def capture_motion_cadence(browser, base_url: str) -> dict[str, object]:
+    """Bind a continuous browser take and deterministic phase samples.
+
+    The WebM is real-time and uncut. JPEGs use the renderer's QA clock so the
+    named phases remain reproducible; they are not presented as gameplay time.
+    """
+    MOTION.mkdir(parents=True, exist_ok=True)
+    for stale in MOTION.iterdir():
+        if stale.is_file():
+            stale.unlink()
+
+    errors: list[str] = []
+    context = browser.new_context(
+        viewport={"width": 1280, "height": 720},
+        record_video_dir=str(MOTION),
+        record_video_size={"width": 1280, "height": 720},
+    )
+    page = context.new_page()
+    page.on("console", lambda message: errors.append(message.text) if message.type == "error" else None)
+    page.on("pageerror", lambda error: errors.append(f"PAGEERROR: {error}"))
+    transitions: list[dict[str, object]] = []
+
+    page.goto(f"{base_url}/?qa=motion-cadence", wait_until="networkidle")
+    page.wait_for_function("window.__projectPlateau?.ready === true")
+    page.evaluate("window.__projectPlateau.teleportForTest({x: 1, z: -30})")
+    page.evaluate("window.__projectPlateau.setView('glade')")
+    page.evaluate("window.__projectPlateau.setThreatVisualForTest(1, null)")
+    started = time.monotonic()
+    transitions.append({"phase": "watch", "atMs": 0, "threatState": "watch", "rendererResponse": "orbit"})
+    page.wait_for_timeout(900)
+    page.evaluate("window.__projectPlateau.setThreatVisualForTest(3, null)")
+    transitions.append({
+        "phase": "bank-dive-pull-up-cycle",
+        "atMs": round((time.monotonic() - started) * 1000),
+        "threatState": "attack",
+        "rendererResponse": "orbit",
+    })
+    # 4.1 seconds exceeds the authored 3.2 second attack cycle, so the uncut
+    # recording contains approach, deepest dive and recovery regardless of the
+    # animation phase at the state transition.
+    page.wait_for_timeout(4100)
+    transitions.append({
+        "phase": "cycle-complete",
+        "atMs": round((time.monotonic() - started) * 1000),
+        "threatState": page.evaluate("window.__projectPlateau.snapshot().threatVisual.state"),
+        "rendererResponse": page.evaluate("window.__projectPlateau.snapshot().threatVisual.response"),
+    })
+    video = page.video
+    page.close()
+    context.close()
+    recorded = Path(video.path())
+    video_path = MOTION / "watch-bank-dive-pull-up.webm"
+    recorded.replace(video_path)
+
+    samples: list[dict[str, object]] = []
+    sample_page = browser.new_page(viewport={"width": 1280, "height": 720})
+    sample_page.goto(f"{base_url}/?qa=motion-cadence-samples", wait_until="networkidle")
+    sample_page.wait_for_function("window.__projectPlateau?.ready === true")
+    sample_page.evaluate("window.__projectPlateau.teleportForTest({x: 1, z: -30})")
+    sample_page.evaluate("window.__projectPlateau.setView('glade')")
+    # The attack path has a 3.2s period: approach occupies [0, 2.304), then
+    # recovery occupies [2.304, 3.2). These samples document that authored arc.
+    for phase, awareness, seconds in (
+        ("watch", 1, 0.0),
+        ("bank", 3, 0.25),
+        ("dive", 3, 2.0),
+        ("pull-up", 3, 2.85),
+    ):
+        sample_page.evaluate(f"window.__projectPlateau.freezeVisualForTest({seconds})")
+        sample_page.evaluate(f"window.__projectPlateau.setThreatVisualForTest({awareness}, null)")
+        sample_page.wait_for_timeout(50)
+        path = MOTION / f"{phase}.jpg"
+        sample_page.screenshot(path=path, type="jpeg", quality=JPEG_QUALITY)
+        state = sample_page.evaluate("window.__projectPlateau.snapshot().threatVisual")
+        samples.append({
+            "phase": phase,
+            "rendererSeconds": seconds,
+            "threatState": state["state"],
+            "rendererResponse": state["response"],
+            "path": path.relative_to(PROJECT).as_posix(),
+            "sha256": sha256(path),
+            "bytes": path.stat().st_size,
+        })
+    sample_page.close()
+    assert not errors, errors
+    result = {
+        "claim": "continuous real-browser watch to attack cycle plus deterministic phase samples",
+        "captureMode": "one uncut real-time Playwright WebM; QA-clock JPEG samples are phase labels, not gameplay timing",
+        "authoredCycleSeconds": 3.2,
+        "transitions": transitions,
+        "video": {
+            "path": video_path.relative_to(PROJECT).as_posix(),
+            "sha256": sha256(video_path),
+            "bytes": video_path.stat().st_size,
+        },
+        "samples": samples,
+        "consoleErrors": errors,
+    }
+    assert [item["phase"] for item in result["samples"]] == ["watch", "bank", "dive", "pull-up"]
+    assert [item["rendererSeconds"] for item in result["samples"]] == sorted(
+        item["rendererSeconds"] for item in result["samples"]
+    )
+    assert result["transitions"][0]["atMs"] == 0
+    assert result["transitions"][-1]["atMs"] >= result["authoredCycleSeconds"] * 1000
+    for resource in [result["video"], *result["samples"]]:
+        path = PROJECT / resource["path"]
+        assert resource["bytes"] == path.stat().st_size > 0
+        assert resource["sha256"] == sha256(path)
     return result
 
 

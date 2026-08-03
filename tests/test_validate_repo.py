@@ -486,6 +486,89 @@ class RepositoryValidationTests(unittest.TestCase):
                     issues,
                 )
 
+    def test_visual_manifest_binds_ordered_motion_cadence(self) -> None:
+        mutations = {
+            "valid": lambda _example, _manifest: None,
+            "tampered_video": lambda example, manifest: (
+                example / "qa/evidence/cadence.webm"
+            ).write_bytes(b"tampered"),
+            "wrong_phase_order": lambda _example, manifest: manifest["motionCadence"][
+                "samples"
+            ].reverse(),
+            "console_error": lambda _example, manifest: manifest["motionCadence"].update(
+                {"consoleErrors": ["render failed"]}
+            ),
+        }
+        for label, mutate in mutations.items():
+            with self.subTest(case=label), tempfile.TemporaryDirectory() as temporary:
+                example = self.make_publication_fixture(
+                    Path(temporary), tier="playable-prototype"
+                )
+                video = example / "qa/evidence/cadence.webm"
+                video.write_bytes(b"uncut cadence")
+                samples = []
+                for index, phase in enumerate(("watch", "bank", "dive", "pull-up")):
+                    path = example / f"qa/evidence/{phase}.jpg"
+                    path.write_bytes(phase.encode())
+                    samples.append(
+                        {
+                            "phase": phase,
+                            "rendererSeconds": index * 0.8,
+                            "threatState": "watch" if index == 0 else "attack",
+                            "rendererResponse": "orbit",
+                            "path": f"qa/evidence/{phase}.jpg",
+                            "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+                            "bytes": path.stat().st_size,
+                        }
+                    )
+                manifest_path = example / "qa/evidence/visual-manifest.json"
+                manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+                manifest["motionCadence"] = {
+                    "authoredCycleSeconds": 2.0,
+                    "transitions": [
+                        {
+                            "phase": "watch",
+                            "atMs": 0,
+                            "threatState": "watch",
+                            "rendererResponse": "orbit",
+                        },
+                        {
+                            "phase": "bank-dive-pull-up-cycle",
+                            "atMs": 200,
+                            "threatState": "attack",
+                            "rendererResponse": "orbit",
+                        },
+                        {
+                            "phase": "cycle-complete",
+                            "atMs": 2200,
+                            "threatState": "attack",
+                            "rendererResponse": "orbit",
+                        },
+                    ],
+                    "video": {
+                        "path": "qa/evidence/cadence.webm",
+                        "sha256": hashlib.sha256(video.read_bytes()).hexdigest(),
+                        "bytes": video.stat().st_size,
+                    },
+                    "samples": samples,
+                    "consoleErrors": [],
+                }
+                mutate(example, manifest)
+                manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+                manifest_hash = hashlib.sha256(manifest_path.read_bytes()).hexdigest()
+                release_path = example / "qa/release-gates.json"
+                release = json.loads(release_path.read_text(encoding="utf-8"))
+                release["visualEvidenceManifests"][0]["sha256"] = manifest_hash
+                release["visualReview"]["reviewedManifestSha256"] = manifest_hash
+                release_path.write_text(json.dumps(release), encoding="utf-8")
+
+                issues = validate_publication(example, "playable-prototype")
+                motion_issues = [issue for issue in issues if "motionCadence" in issue]
+                if label == "valid":
+                    self.assertEqual(motion_issues, [])
+                else:
+                    self.assertTrue(motion_issues, issues)
+
     def test_non_graybox_visual_manifest_requires_non_empty_resources(self) -> None:
         for field in ("captures", "targets"):
             with self.subTest(field=field), tempfile.TemporaryDirectory() as temporary:
