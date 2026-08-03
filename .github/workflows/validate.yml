@@ -11,7 +11,12 @@ jobs:
   repository:
     runs-on: ubuntu-latest
     steps:
+      # Publication contracts verify that recorded source/evidence commit IDs
+      # exist and reproduce the promoted build fingerprint. A shallow checkout
+      # cannot inspect those earlier commits.
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
