@@ -54,6 +54,22 @@ HY3D_ASSETS_READY = """
 """
 
 
+def webgl_renderer(page) -> dict[str, object]:
+    return page.evaluate(
+        """
+        () => {
+          const canvas = document.querySelector('#game-canvas');
+          const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
+          const debug = gl.getExtension('WEBGL_debug_renderer_info');
+          const vendor = debug ? gl.getParameter(debug.UNMASKED_VENDOR_WEBGL) : gl.getParameter(gl.VENDOR);
+          const renderer = debug ? gl.getParameter(debug.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER);
+          const software = /swiftshader|llvmpipe|software rasterizer/i.test(`${vendor} ${renderer}`);
+          return {vendor, renderer, software};
+        }
+        """
+    )
+
+
 def start_server() -> subprocess.Popen[str] | None:
     parsed = urlparse(BASE_URL)
     with socket.socket() as probe:
@@ -190,7 +206,12 @@ def run() -> dict[str, object]:
                     "document.dispatchEvent(new MouseEvent('mousemove', {movementX: 2, movementY: 0}))"
                 )
                 page.wait_for_timeout(90)
-            frame_pacing = page.evaluate("window.__projectPlateau.sampleFrames(120)")
+            renderer = webgl_renderer(page)
+            frame_sample_count = 8 if renderer["software"] else 120
+            frame_pacing = page.evaluate(
+                "count => window.__projectPlateau.sampleFrames(count)",
+                frame_sample_count,
+            )
             page.keyboard.up("KeyW")
 
             displacements = [
@@ -206,8 +227,15 @@ def run() -> dict[str, object]:
                 for displacement in displacements
             ), displacements
             assert min(speeds) > 3.8 and max(speeds) <= 4.21, speeds
-            assert frame_pacing["medianFps"] >= 45, frame_pacing
-            assert frame_pacing["onePercentLowFps"] >= 30, frame_pacing
+            if renderer["software"]:
+                performance_gate = {
+                    "status": "NOT_RUN",
+                    "reason": "Software WebGL is not a supported performance target.",
+                }
+            else:
+                assert frame_pacing["medianFps"] >= 45, frame_pacing
+                assert frame_pacing["onePercentLowFps"] >= 30, frame_pacing
+                performance_gate = {"status": "PASS"}
 
             motion_diffs = [
                 mean_difference(motion_paths[index], motion_paths[index + 1])
@@ -229,7 +257,9 @@ def run() -> dict[str, object]:
             "pointerLockMode": "deterministic-browser-shim",
             "staticNormalizedDiffs": [round(value, 6) for value in static_diffs],
             "motionNormalizedDiffs": [round(value, 6) for value in motion_diffs],
+            "webglRenderer": renderer,
             "framePacing": frame_pacing,
+            "performanceGate": performance_gate,
             "finalHeading": final["player"]["heading"],
             "finalPosition": final["player"]["position"],
             "evidence": ["build/evidence/motion/motion-contact-sheet.jpg"],
