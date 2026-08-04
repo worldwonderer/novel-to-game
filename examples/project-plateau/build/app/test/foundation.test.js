@@ -6,6 +6,7 @@ import { spawnSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
+import { fileURLToPath } from 'node:url';
 import * as THREE from 'three';
 import { createAtmosphere } from '../src/atmosphere.js';
 import {
@@ -25,6 +26,7 @@ import {
 import { NAVIGATION } from '../src/simulation.js';
 
 const root = new URL('../', import.meta.url);
+const rootPath = fileURLToPath(root);
 
 function writeRetentionRoots(project, release = {}) {
   mkdirSync(join(project, 'qa'), { recursive: true });
@@ -636,7 +638,7 @@ test('one percent low FPS averages the slowest one percent of frame times', () =
 });
 
 test('runtime sources contain no remote asset or CDN request while navigation links may leave the app', () => {
-  const files = ['index.html', ...globSync('src/*.{js,css}', { cwd: root })];
+  const files = ['index.html', ...globSync('src/*.{js,css}', { cwd: rootPath })];
   for (const relative of files) {
     const source = readFileSync(new URL(relative, root), 'utf8');
     const loadableSource = relative === 'index.html'
