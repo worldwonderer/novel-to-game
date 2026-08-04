@@ -88,6 +88,26 @@ def mean_difference(first: Path, second: Path) -> float:
         return sum(ImageStat.Stat(difference).mean) / (3 * 255)
 
 
+def capture_canvas(page, destination: Path) -> None:
+    """Capture the canvas without waiting for a continuously rendered locator to settle."""
+    clip = page.evaluate(
+        """
+        () => {
+          const bounds = document.querySelector('#game-canvas').getBoundingClientRect();
+          return {x: bounds.x, y: bounds.y, width: bounds.width, height: bounds.height};
+        }
+        """
+    )
+    assert clip["width"] > 0 and clip["height"] > 0, clip
+    page.screenshot(
+        path=destination,
+        type="jpeg",
+        quality=90,
+        clip=clip,
+        timeout=120_000,
+    )
+
+
 def make_contact_sheet(paths: list[Path], destination: Path) -> None:
     images = [Image.open(path).convert("RGB") for path in paths]
     width = 480
@@ -124,13 +144,11 @@ def run() -> dict[str, object]:
             page.get_by_role("button", name="Enter the basin").click()
             page.get_by_role("button", name="Begin field work").click()
             page.wait_for_timeout(500)
-            canvas = page.locator("#game-canvas")
-
             page.evaluate("window.__projectPlateau.freezeVisualForTest(4.25, true)")
             static_paths = []
             for index in range(3):
                 path = FRAMES / f"static-{index:02d}.jpg"
-                canvas.screenshot(path=path, type="jpeg", quality=90)
+                capture_canvas(page, path)
                 static_paths.append(path)
                 page.wait_for_timeout(90)
             static_diffs = [
@@ -149,7 +167,6 @@ def run() -> dict[str, object]:
             page.get_by_role("button", name="Enter the basin").click()
             page.get_by_role("button", name="Begin field work").click()
             page.wait_for_timeout(500)
-            canvas = page.locator("#game-canvas")
             page.evaluate(
                 "document.dispatchEvent(new MouseEvent('mousemove', {movementX: 150, movementY: 0}))"
             )
@@ -164,7 +181,7 @@ def run() -> dict[str, object]:
             speeds: list[float] = []
             for index in range(8):
                 path = FRAMES / f"walk-pan-{index:02d}.jpg"
-                canvas.screenshot(path=path, type="jpeg", quality=90)
+                capture_canvas(page, path)
                 motion_paths.append(path)
                 state = page.evaluate("window.__projectPlateau.snapshot().player")
                 positions.append(state["position"])
