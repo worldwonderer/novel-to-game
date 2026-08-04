@@ -173,11 +173,19 @@ def run() -> dict[str, object]:
             camera_raised_threat = page.evaluate(
                 "window.__projectPlateau.snapshot().threatVisual"
             )
-            assert camera_raised_threat["position"] == camera_lowered_threat["position"], {
+            camera_raise_drift = math.sqrt(sum(
+                (camera_raised_threat["position"][axis] - camera_lowered_threat["position"][axis]) ** 2
+                for axis in ("x", "y", "z")
+            ))
+            # The animal keeps flying while the tool input is handled. Bound
+            # that normal one-frame motion instead of requiring an impossible
+            # byte-identical pose from a continuous world-space orbit.
+            assert camera_raise_drift < 0.25, {
                 "lowered": camera_lowered_threat,
                 "raised": camera_raised_threat,
+                "drift": camera_raise_drift,
             }
-            assert camera_raised_threat["scale"] == camera_lowered_threat["scale"], {
+            assert abs(camera_raised_threat["scale"] - camera_lowered_threat["scale"]) < 0.002, {
                 "lowered": camera_lowered_threat,
                 "raised": camera_raised_threat,
             }
@@ -201,22 +209,24 @@ def run() -> dict[str, object]:
             page.mouse.up(button="right")
             page.set_viewport_size({"width": 1440, "height": 900})
 
-            # Freeze authored animation time, then move only the player. The
-            # pterodactyl and planted family must stay in world space instead
-            # of inheriting the camera/player translation.
-            world_locked_before = page.evaluate("window.__projectPlateau.snapshot()")
-            locked_player = world_locked_before["player"]["position"]
-            page.keyboard.down("KeyW")
-            page.wait_for_function(
-                "({ x, z }) => {"
-                "  const position = window.__projectPlateau.snapshot().player.position;"
-                "  return Math.hypot(position.x - x, position.z - z) > 0.05;"
-                "}",
-                arg=locked_player,
-                timeout=3000,
+            # Freeze authored animation time, then translate only the player.
+            # A deterministic translation isolates the spatial contract from
+            # ordinary orbit motion and controller frame scheduling.
+            world_locked = page.evaluate(
+                "() => {"
+                "  window.__projectPlateau.freezeVisualForTest(4.25, false);"
+                "  const before = window.__projectPlateau.snapshot();"
+                "  const { x, z } = before.player.position;"
+                "  const { heading, pitch } = before.player;"
+                "  window.__projectPlateau.teleportForTest({ x: x + 4, z: z - 3, heading, pitch });"
+                "  window.__projectPlateau.freezeVisualForTest(4.25, false);"
+                "  const after = window.__projectPlateau.snapshot();"
+                "  window.__projectPlateau.teleportForTest({ x, z, heading, pitch });"
+                "  return { before, after };"
+                "}"
             )
-            page.keyboard.up("KeyW")
-            world_locked_after = page.evaluate("window.__projectPlateau.snapshot()")
+            world_locked_before = world_locked["before"]
+            world_locked_after = world_locked["after"]
             assert world_locked_after["threatVisual"]["position"] == world_locked_before["threatVisual"]["position"], {
                 "before": world_locked_before["threatVisual"],
                 "after": world_locked_after["threatVisual"],
