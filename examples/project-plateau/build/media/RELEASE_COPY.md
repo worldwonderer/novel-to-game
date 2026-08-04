@@ -32,7 +32,7 @@ planning artifacts and browser evidence: <REPOSITORY_URL>
 ## Video caption
 
 The gameplay comes from one continuous input-only Strong-result run: cross the
-plateau, commit evidence, read the dive, fire one limited defensive shot, take
+plateau, commit evidence, read two dives, spend both limited defensive shots, take
 the exposed return and deliver the record. The 30-second delivery uses disclosed
 same-take cuts and speed changes to keep those decisions readable. The
 premise/CTA cards, captions, original procedural sound bed and Fish Audio

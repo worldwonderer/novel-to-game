@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Record one input-only core-loop run and derive legible 30s/15s demos.
 
-The source take is one continuous Strong-result browser run with a defensive
-shot. Delivery clips disclose same-take editorial cuts so traversal can be
+The source take is one continuous Strong-result browser run with two defensive
+shots. Delivery clips disclose same-take editorial cuts so traversal can be
 compressed while camera commitment, the pterodactyl dive, rifle response and
 result remain readable. The route never teleports or advances time through a
 QA hook, and the edited demos never replace the S8 traversal report. Raw and
@@ -25,7 +25,7 @@ from urllib.parse import urlparse
 
 from playwright.sync_api import Page, sync_playwright
 
-from verify import app_fingerprint
+from verify import git_head
 
 APP = Path(__file__).resolve().parent.parent
 BUILD = APP.parent
@@ -37,6 +37,10 @@ BASE_URL = os.environ.get("BASE_URL", "http://127.0.0.1:4173")
 CHROME = Path("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
 VIEW = {"width": 1280, "height": 800}
 PUBLIC_MEDIA = APP / "public" / "media"
+RUNTIME_FINGERPRINT_SCOPE = (
+    "interactive inputs: index/package manifests, src and public assets; "
+    "generated conversion-preview outputs excluded"
+)
 EDIT_STORIES = {
     15: [
         ("field-order", "field_order:start", "field_order:end", 1.2, "accept the field order"),
@@ -86,6 +90,55 @@ def need(tool: str) -> str:
     return path
 
 
+def runtime_source_fingerprint(commit: str | None = None) -> str:
+    """Hash interactive inputs without creating a preview-output cycle."""
+    excluded_prefix = "public/media/project-plateau-preview"
+    if commit is None:
+        paths = [APP / "index.html", APP / "package.json", APP / "package-lock.json"]
+        paths += sorted((APP / "public").rglob("*")) + sorted((APP / "src").rglob("*"))
+        entries = [
+            (path.relative_to(APP).as_posix(), path.read_bytes())
+            for path in paths
+            if path.is_file() and not path.relative_to(APP).as_posix().startswith(excluded_prefix)
+        ]
+    else:
+        app_relative = APP.relative_to(REPO).as_posix()
+        listed = subprocess.run(
+            ["git", "ls-tree", "-r", "--name-only", commit, "--", app_relative],
+            cwd=REPO,
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        selected = []
+        for repository_path in listed.stdout.splitlines():
+            relative = Path(repository_path).relative_to(app_relative).as_posix()
+            if relative.startswith(excluded_prefix):
+                continue
+            if relative in {"index.html", "package.json", "package-lock.json"} or relative.startswith(
+                ("public/", "src/")
+            ):
+                selected.append((relative, repository_path))
+        order = {"index.html": 0, "package.json": 1, "package-lock.json": 2}
+        selected.sort(key=lambda item: (order.get(item[0], 3), item[0]))
+        entries = []
+        for relative, repository_path in selected:
+            blob = subprocess.run(
+                ["git", "show", f"{commit}:{repository_path}"],
+                cwd=REPO,
+                capture_output=True,
+                check=True,
+            )
+            entries.append((relative, blob.stdout))
+    digest = hashlib.sha256()
+    for relative, payload in entries:
+        digest.update(relative.encode())
+        digest.update(b"\0")
+        digest.update(payload)
+        digest.update(b"\0")
+    return digest.hexdigest()
+
+
 def start_server() -> subprocess.Popen[str] | None:
     parsed = urlparse(BASE_URL)
     with socket.socket() as probe:
@@ -123,6 +176,7 @@ class Take:
         self.page = page
         self.started = started
         self.marks: list[dict[str, object]] = []
+        self.pointer = [VIEW["width"] / 2, VIEW["height"] / 2]
 
     def mark(self, label: str, **details: object) -> float:
         elapsed = round(time.monotonic() - self.started, 3)
@@ -132,6 +186,20 @@ class Take:
 
     def at(self, label: str) -> float:
         return next(float(mark["t"]) for mark in self.marks if mark["label"] == label)
+
+
+def aim_with_mouse(take: Take, heading: float, pitch: float) -> None:
+    """Aim with pointer input while keeping the route heading reproducible."""
+    current = snapshot(take.page)["player"]
+    movement_x = (float(current["heading"]) - heading) / 0.002
+    movement_y = (float(current["pitch"]) - pitch) / 0.0016
+    target_x = max(0, min(VIEW["width"], take.pointer[0] + movement_x))
+    target_y = max(0, min(VIEW["height"], take.pointer[1] + movement_y))
+    take.page.mouse.move(target_x, target_y)
+    take.pointer = [target_x, target_y]
+    aimed = snapshot(take.page)["player"]
+    if abs(float(aimed["heading"]) - heading) > 0.015 or abs(float(aimed["pitch"]) - pitch) > 0.015:
+        raise RuntimeError(f"Pointer aim missed target: {aimed}")
 
 
 def move_until(take: Take, key: str, predicate: str, label: str, timeout: int = 30000) -> None:
@@ -174,13 +242,16 @@ def wait_for_cover(take: Take, label: str) -> None:
     take.mark(f"{label}:end", awareness=snapshot(take.page)["player"]["threatAwareness"])
 
 
-def interrupt_dive(take: Take) -> None:
+def interrupt_dive(take: Take, label_prefix: str = "") -> None:
     """Make the limited defensive verb readable without manufacturing state."""
     page = take.page
     before = snapshot(page)["player"]
     assert before["threatState"] == "attack", before
+    route_heading = float(before["heading"])
+    route_pitch = float(before["pitch"])
+    aim_with_mouse(take, 0.14, 0.2)
     take.mark(
-        "attack_ready",
+        f"{label_prefix}attack_ready",
         state=before["threatState"],
         cartridges=before["cartridges"],
         threat=snapshot(page)["threatVisual"],
@@ -189,17 +260,17 @@ def interrupt_dive(take: Take) -> None:
         "window.__projectPlateau.snapshot().threatVisual.attackStage === 'fold-dive'",
         timeout=1500,
     )
-    take.mark("dive_commit", threat=snapshot(page)["threatVisual"])
+    take.mark(f"{label_prefix}dive_commit", threat=snapshot(page)["threatVisual"])
     page.keyboard.down("KeyF")
-    take.mark("rifle_raise", input="hold F")
+    take.mark(f"{label_prefix}rifle_raise", input="hold F")
     page.wait_for_timeout(340)
     # Pointer lock turns an absolute mouse move into look input. Fire at the
     # current cursor position so the demo does not silently rotate the player
     # before the exposed return.
-    heading_before_shot = before["heading"]
+    heading_before_shot = snapshot(page)["player"]["heading"]
     page.mouse.down(button="left")
     page.mouse.up(button="left")
-    take.mark("rifle_fire", input="Left Mouse")
+    take.mark(f"{label_prefix}rifle_fire", input="Left Mouse")
     page.wait_for_function(
         f"window.__projectPlateau.snapshot().player.shotCount === {before['shotCount'] + 1}",
         timeout=1500,
@@ -211,11 +282,12 @@ def interrupt_dive(take: Take) -> None:
     assert after["cartridges"] == before["cartridges"] - 1, after
     assert abs(after["heading"] - heading_before_shot) < 1e-6, after
     take.mark(
-        "rifle_response",
+        f"{label_prefix}rifle_response",
         shotCount=after["shotCount"],
         cartridges=after["cartridges"],
         brookResponse=after["brookResponse"],
     )
+    aim_with_mouse(take, route_heading, route_pitch)
 
 
 def record_take(out_dir: Path) -> tuple[Path, Take, list[str], set[str]]:
@@ -252,6 +324,8 @@ def record_take(out_dir: Path) -> tuple[Path, Take, list[str], set[str]]:
         take.mark("field_order:end", state="field-order")
         page.get_by_role("button", name="Begin field work").click()
         page.wait_for_timeout(100)
+        page.mouse.move(*take.pointer)
+        aim_with_mouse(take, 0, 0)
 
         move_until(take, "KeyW", "window.__projectPlateau.snapshot().player.position.z <= 45", "fort_to_brook")
         page.keyboard.press("KeyE")
@@ -270,6 +344,11 @@ def record_take(out_dir: Path) -> tuple[Path, Take, list[str], set[str]]:
         )
         interrupt_dive(take)
         expose_plate(take, 3, "branch_pull_plate")
+        page.wait_for_function(
+            "window.__projectPlateau.snapshot().player.threatState === 'attack'",
+            timeout=2500,
+        )
+        interrupt_dive(take, "branch_")
         move_until(take, "KeyD", "window.__projectPlateau.snapshot().player.position.x > 3.4", "line_up_exposed_creek")
         move_until(take, "KeyS", "window.__projectPlateau.snapshot().player.position.z > 3.2", "commit_exposed_return")
         move_until(
@@ -281,8 +360,8 @@ def record_take(out_dir: Path) -> tuple[Path, Take, list[str], set[str]]:
         result = snapshot(page)
         assert result["player"]["result"]["band"] == "strong-field-record", result
         assert result["player"]["result"]["evidence"] == 7, result
-        assert result["player"]["shotCount"] == 1, result
-        assert result["player"]["cartridges"] == 1, result
+        assert result["player"]["shotCount"] == 2, result
+        assert result["player"]["cartridges"] == 0, result
         assert result["player"]["returnRoute"] == "exposed", result
         assert result["player"]["returnCostSeconds"] == 18, result
         assert result["player"]["result"]["gunshotCallback"], result
@@ -291,7 +370,7 @@ def record_take(out_dir: Path) -> tuple[Path, Take, list[str], set[str]]:
             state="strong-field-record",
             route="exposed",
             evidence=7,
-            shotCount=1,
+            shotCount=2,
         )
         page.wait_for_timeout(3800)
         take.mark("demo_end", state="strong-field-record")
@@ -373,11 +452,12 @@ def encode_story(source: Path, output: Path, segments: list[dict[str, object]]) 
             f"setpts=(PTS-STARTPTS)*{factor:.10f}[v{index}]"
         )
         inputs.append(f"[v{index}]")
+    target = sum(float(segment["outputDurationSeconds"]) for segment in segments)
     filters.append(
         f"{''.join(inputs)}concat=n={len(segments)}:v=1:a=0,"
+        f"tpad=stop_mode=clone:stop_duration=0.2,trim=duration={target:.3f},"
         "fps=30,scale=1280:800:flags=lanczos,setsar=1:1[vout]"
     )
-    target = sum(float(segment["outputDurationSeconds"]) for segment in segments)
     subprocess.run(
         [
             need("ffmpeg"), "-y", "-i", str(source),
@@ -422,9 +502,11 @@ def publish_preview(source: Path, segments: list[dict[str, object]], marks: dict
     preview = {
         "schemaVersion": 2,
         "purpose": "mobile, social in-app browser and WebGL2-unavailable conversion preview",
-        "capture": "one continuous input-only Strong-result browser run with one defensive shot",
+        "capture": marks["capture"],
         "edit": "disclosed same-take editorial cuts and per-segment speed changes; no teleport, state fabrication or substitute render",
+        "interactiveSourceCommit": marks["sourceCommit"],
         "interactiveSourceFingerprint": marks["sourceFingerprint"],
+        "interactiveSourceFingerprintScope": marks["sourceFingerprintScope"],
         "source": {
             "path": "../media/clip/project-plateau-15s.mp4",
             "sha256": sha256(source),
@@ -476,7 +558,9 @@ def validate_raw_provenance(raw_take: Path, marks: dict[str, object]) -> float:
         "path": raw.get("path") == expected_path,
         "bytes": raw.get("bytes") == raw_take.stat().st_size,
         "sha256": raw.get("sha256") == sha256(raw_take),
-        "sourceFingerprint": marks.get("sourceFingerprint") == app_fingerprint(),
+        "sourceCommit": isinstance(marks.get("sourceCommit"), str)
+        and runtime_source_fingerprint(marks["sourceCommit"]) == marks.get("sourceFingerprint"),
+        "sourceFingerprintScope": marks.get("sourceFingerprintScope") == RUNTIME_FINGERPRINT_SCOPE,
     }
     failed = [name for name, passed in checks.items() if not passed]
     if failed:
@@ -538,7 +622,8 @@ def main() -> int:
         raw_duration = validate_raw_provenance(raw_take, marks)
         print(f"Reusing raw take: {raw_take}")
     else:
-        capture_source_fingerprint = app_fingerprint()
+        capture_source_commit = git_head()
+        capture_source_fingerprint = runtime_source_fingerprint(capture_source_commit)
         server = start_server()
         try:
             raw_take, take, errors, hosts = record_take(out_dir)
@@ -555,12 +640,14 @@ def main() -> int:
         raw_duration = float(raw_probe["format"]["duration"])
         offset = round(raw_duration - take.at("demo_end"), 3)
         marks = {
-            "capture": "one continuous input-only Strong-result browser run with one defensive shot",
+            "capture": "one continuous input-only Strong-result browser run with two defensive shots",
             "edit": "disclosed same-take editorial cuts and per-segment speed changes; no teleport, state fabrication or substitute render",
             "viewport": VIEW,
             "url": f"{BASE_URL}/?media=core-loop",
             "pointerLockMode": "deterministic-browser-shim",
+            "sourceCommit": capture_source_commit,
             "sourceFingerprint": capture_source_fingerprint,
+            "sourceFingerprintScope": RUNTIME_FINGERPRINT_SCOPE,
             "consoleErrors": errors,
             "requestHosts": sorted(hosts),
             "externalHosts": external,
@@ -652,7 +739,9 @@ def main() -> int:
     assert card.returncode == 0, card.stdout + card.stderr
 
     manifest = {
+        "sourceCommit": marks["sourceCommit"],
         "sourceFingerprint": marks["sourceFingerprint"],
+        "sourceFingerprintScope": marks["sourceFingerprintScope"],
         "capture": marks["capture"],
         "edit": marks["edit"],
         "rawSha256": marks["raw"]["sha256"],

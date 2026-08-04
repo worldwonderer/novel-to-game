@@ -9,7 +9,8 @@ substitute render.
 | Artifact | Purpose | Evidence boundary |
 |---|---|---|
 | `project-plateau-github.jpg` | 1280×640 repository/share card | Crop and resize of the real S10 browser frame only |
-| `clip/contact-sheet.jpg` | Ten-frame review of the 30-second delivery encode | One frame every three seconds |
+| `clip/contact-sheet.jpg` | Ten-frame review of the promoted 15-second encode | One frame every 1.5 seconds |
+| `clip/contact-sheet-30s.jpg` | Ten-frame review of the extended 30-second encode | One frame every three seconds |
 | `clip/marks.json` | Every input/state beat in the continuous source take | Includes raw hash, edit marks and console/request audit |
 | `clip/manifest.json` | Measured MP4 properties and hashes | Includes all 14 delivery checks for both encodes |
 | `RELEASE_COPY.md` | English copy and alt text tied to the captured build | Does not claim public hosting or independent approval |
@@ -35,15 +36,17 @@ python3 test/capture_demo_clip.py --reuse-raw
 ```
 
 The capture performs one continuous input-only Strong-result run at `1280×800`:
-field order, traversal, two observation sites, four committed plates, one
-defensive shot, exposed extraction and the final result all happen through real
+field order, traversal, two observation sites, four committed plates, two
+limited defensive shots, exposed extraction and the final result all happen through real
 browser input. The delivery versions use disclosed cuts between segments from
 that same take and measured per-segment speed changes so the camera commitment,
-winged dive, rifle response and result remain legible. They use no teleport,
+winged dive, first rifle response, branch proof and result remain legible. They use no teleport,
 direct time advance, fabricated state, substitute render or synthetic frame. The
 30-second and 15-second encodes are H.264 High Profile, `yuv420p`, progressive,
-30 FPS, square-pixel, fast-start MP4s with a non-black first frame and no audio
-track.
+30 FPS, square-pixel, fast-start MP4s with exact 30/15-second durations, a
+non-black first frame and no audio track. Reuse fails closed unless raw hash,
+byte size, probe duration, edit bounds and the immutable interactive-source
+commit all match the recorded marks.
 
 To render the captioned 1920×1080 launch version:
 

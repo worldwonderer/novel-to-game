@@ -1,5 +1,5 @@
 {
-  "capture": "one continuous input-only Strong-result browser run with one defensive shot",
+  "capture": "one continuous input-only Strong-result browser run with two defensive shots",
   "edit": "disclosed same-take editorial cuts and per-segment speed changes; no teleport, state fabrication or substitute render",
   "viewport": {
     "width": 1280,
@@ -7,7 +7,10 @@
   },
   "url": "http://127.0.0.1:4173/?media=core-loop",
   "pointerLockMode": "deterministic-browser-shim",
-  "sourceFingerprint": "5d1aee3fb50d93fac31d3ececa8520a995a8bbc3a2e8b0f9187948968bda94ed",
+  "sourceCommit": "e82c916f02614535ef1f8c3af9b09d7b57f5b223",
+  "sourceFingerprint": "3ae12c22cd5926f3985773f41aae525e86f96a5135aa910053cc29dd420afcc1",
+  "sourceFingerprintScope": "interactive inputs: index/package manifests, src and public assets; generated conversion-preview outputs excluded",
+  "capturedAppFingerprint": "f9928704e4a424c774b3bab485ac2d0cb6a48ddab33149504a4abf4ea95e2510",
   "consoleErrors": [],
   "requestHosts": [
     "",
@@ -16,34 +19,34 @@
   "externalHosts": [],
   "raw": {
     "path": "media/clip/raw_take.webm",
-    "bytes": 6282049,
-    "sha256": "25d06784115167326b602fe937e158e633532987de4fa257e14f2b9037aafa94",
-    "durationSeconds": 56.52,
-    "marksToSourceOffset": 0.906
+    "bytes": 6681530,
+    "sha256": "874ac49ab2ec85ae9f142a0d216ed5e995a8db149df1cbfe07b6db34e38e871a",
+    "durationSeconds": 59.6,
+    "marksToSourceOffset": 0.935
   },
   "demoWindow": {
-    "sourceStartSeconds": 2.675,
-    "sourceDurationSeconds": 53.845
+    "sourceStartSeconds": 3.54,
+    "sourceDurationSeconds": 56.06
   },
   "marks": [
     {
       "label": "demo_start",
-      "t": 1.769,
+      "t": 2.605,
       "state": "field-order"
     },
     {
       "label": "field_order:start",
-      "t": 1.769,
+      "t": 2.605,
       "state": "field-order"
     },
     {
       "label": "field_order:end",
-      "t": 3.373,
+      "t": 4.215,
       "state": "field-order"
     },
     {
       "label": "fort_to_brook:start",
-      "t": 3.862,
+      "t": 4.914,
       "input": "KeyW",
       "position": {
         "x": 3,
@@ -52,247 +55,350 @@
     },
     {
       "label": "fort_to_brook:end",
-      "t": 10.012,
+      "t": 11.078,
       "position": {
         "x": 3,
-        "z": 44.752
+        "z": 44.683
       }
     },
     {
       "label": "brook_plate:start",
-      "t": 10.018,
+      "t": 11.083,
       "input": "Right Mouse + Left Mouse",
       "plate": 1
     },
     {
       "label": "brook_plate:end",
-      "t": 12.178,
+      "t": 13.236,
       "frame": "brook-partial",
       "points": 1
     },
     {
       "label": "clear_brook_boulder:start",
-      "t": 12.184,
+      "t": 13.239,
       "input": "KeyD",
       "position": {
         "x": 3,
-        "z": 44.576
+        "z": 44.504
       }
     },
     {
       "label": "clear_brook_boulder:end",
-      "t": 12.272,
+      "t": 13.325,
       "position": {
-        "x": 3,
-        "z": 44.576
+        "x": 3.005,
+        "z": 44.504
       }
     },
     {
       "label": "brook_to_basalt:start",
-      "t": 12.277,
+      "t": 13.329,
       "input": "KeyW",
       "position": {
-        "x": 3,
-        "z": 44.576
+        "x": 3.005,
+        "z": 44.504
       }
     },
     {
       "label": "brook_to_basalt:end",
-      "t": 18.804,
+      "t": 19.837,
       "position": {
-        "x": 3,
-        "z": 17.675
+        "x": 3.005,
+        "z": 17.673
       }
     },
     {
       "label": "basalt_plate:start",
-      "t": 18.804,
+      "t": 19.837,
       "input": "Right Mouse + Left Mouse",
       "plate": 2
     },
     {
       "label": "basalt_plate:end",
-      "t": 20.973,
+      "t": 22.001,
       "frame": "basalt-scale",
       "points": 2
     },
     {
       "label": "enter_canopy:start",
-      "t": 20.978,
+      "t": 22.009,
       "input": "KeyA",
       "position": {
-        "x": 3,
-        "z": 17.543
+        "x": 3.005,
+        "z": 17.539
       }
     },
     {
       "label": "enter_canopy:end",
-      "t": 21.234,
+      "t": 22.259,
       "position": {
-        "x": 2.505,
-        "z": 17.543
+        "x": 2.512,
+        "z": 17.539
       }
     },
     {
       "label": "first_cover_read:start",
-      "t": 21.234,
+      "t": 22.259,
       "input": "hold position under cover"
     },
     {
       "label": "first_cover_read:end",
-      "t": 26.99,
+      "t": 28.025,
       "awareness": 2
     },
     {
       "label": "canopy_to_glade:start",
-      "t": 26.995,
+      "t": 28.031,
       "input": "KeyW",
       "position": {
-        "x": 2.396,
-        "z": 17.543
+        "x": 2.401,
+        "z": 17.539
       }
     },
     {
       "label": "canopy_to_glade:end",
-      "t": 30.886,
+      "t": 31.91,
       "position": {
-        "x": 2.396,
-        "z": 1.745
+        "x": 2.401,
+        "z": 1.743
       }
     },
     {
       "label": "young_play_plate:start",
-      "t": 30.894,
+      "t": 31.913,
       "input": "Right Mouse + Left Mouse",
       "plate": 3
     },
     {
       "label": "young_play_plate:end",
-      "t": 33.045,
+      "t": 34.043,
       "frame": "glade-young-play",
       "points": 2
     },
     {
-      "label": "branch_pull_plate:start",
-      "t": 33.045,
-      "input": "Right Mouse + Left Mouse",
-      "plate": 4
-    },
-    {
-      "label": "branch_pull_plate:end",
-      "t": 35.213,
-      "frame": "glade-branch-pull",
-      "points": 2
-    },
-    {
       "label": "attack_ready",
-      "t": 35.232,
+      "t": 34.081,
       "state": "attack",
       "cartridges": 2,
       "threat": {
         "state": "attack",
         "response": "orbit",
-        "attackStage": "pull-up",
-        "attackProgress": 0.997,
+        "attackStage": "search",
+        "attackProgress": 0,
         "flightPose": {
-          "wingBeat": -0.142,
-          "wingFold": 0.8175,
-          "mode": "fold-dive",
-          "bank": -0.0895,
+          "wingBeat": 0.0789,
+          "wingFold": 0.1,
+          "mode": "upstroke",
+          "bank": -0.04,
           "direction": [
-            0.2783,
-            0.026,
-            0.9602
+            0.1594,
+            0.1691,
+            -0.9726
           ]
         },
         "position": {
-          "x": -0.2,
-          "y": 6.5,
-          "z": -8.23
+          "x": -5.05,
+          "y": 7.38,
+          "z": -5.01
         },
-        "scale": 0.8798,
+        "scale": 0.7293,
+        "anchorModel": "fixed-world-orbit-latched-attack-origin"
+      }
+    },
+    {
+      "label": "dive_commit",
+      "t": 34.452,
+      "threat": {
+        "state": "attack",
+        "response": "orbit",
+        "attackStage": "fold-dive",
+        "attackProgress": 0.4,
+        "flightPose": {
+          "wingBeat": -0.2579,
+          "wingFold": 0.3799,
+          "mode": "downstroke",
+          "bank": -0.06,
+          "direction": [
+            0.6404,
+            0.0705,
+            -0.7648
+          ]
+        },
+        "position": {
+          "x": -2.01,
+          "y": 9.89,
+          "z": -19.35
+        },
+        "scale": 0.8331,
         "anchorModel": "fixed-world-orbit-latched-attack-origin"
       }
     },
     {
       "label": "rifle_raise",
-      "t": 35.418,
+      "t": 34.453,
       "input": "hold F"
     },
     {
       "label": "rifle_fire",
-      "t": 35.687,
+      "t": 34.805,
       "input": "Left Mouse"
     },
     {
       "label": "rifle_response",
-      "t": 36.705,
+      "t": 35.819,
       "shotCount": 1,
       "cartridges": 1,
       "brookResponse": "answering-call"
     },
     {
+      "label": "branch_pull_plate:start",
+      "t": 35.84,
+      "input": "Right Mouse + Left Mouse",
+      "plate": 4
+    },
+    {
+      "label": "branch_pull_plate:end",
+      "t": 38.0,
+      "frame": "glade-branch-pull",
+      "points": 2
+    },
+    {
+      "label": "branch_attack_ready",
+      "t": 38.047,
+      "state": "attack",
+      "cartridges": 1,
+      "threat": {
+        "state": "attack",
+        "response": "orbit",
+        "attackStage": "search",
+        "attackProgress": 0,
+        "flightPose": {
+          "wingBeat": -0.3198,
+          "wingFold": 0.1,
+          "mode": "downstroke",
+          "bank": -0.04,
+          "direction": [
+            0.8503,
+            0.049,
+            -0.5241
+          ]
+        },
+        "position": {
+          "x": -22.64,
+          "y": 9.22,
+          "z": -9.77
+        },
+        "scale": 0.7318,
+        "anchorModel": "fixed-world-orbit-latched-attack-origin"
+      }
+    },
+    {
+      "label": "branch_dive_commit",
+      "t": 38.402,
+      "threat": {
+        "state": "attack",
+        "response": "orbit",
+        "attackStage": "fold-dive",
+        "attackProgress": 0.399,
+        "flightPose": {
+          "wingBeat": 0.2207,
+          "wingFold": 0.3796,
+          "mode": "upstroke",
+          "bank": -0.06,
+          "direction": [
+            0.9972,
+            -0.0568,
+            -0.0479
+          ]
+        },
+        "position": {
+          "x": -2.82,
+          "y": 9.97,
+          "z": -19.54
+        },
+        "scale": 0.833,
+        "anchorModel": "fixed-world-orbit-latched-attack-origin"
+      }
+    },
+    {
+      "label": "branch_rifle_raise",
+      "t": 38.404,
+      "input": "hold F"
+    },
+    {
+      "label": "branch_rifle_fire",
+      "t": 38.756,
+      "input": "Left Mouse"
+    },
+    {
+      "label": "branch_rifle_response",
+      "t": 39.769,
+      "shotCount": 2,
+      "cartridges": 0,
+      "brookResponse": "answering-call"
+    },
+    {
       "label": "line_up_exposed_creek:start",
-      "t": 36.724,
+      "t": 39.788,
       "input": "KeyD",
       "position": {
-        "x": 2.396,
-        "z": 1.565
+        "x": 2.401,
+        "z": 1.59
       }
     },
     {
       "label": "line_up_exposed_creek:end",
-      "t": 37.145,
+      "t": 40.219,
       "position": {
-        "x": 3.634,
-        "z": 1.565
+        "x": 3.641,
+        "z": 1.59
       }
     },
     {
       "label": "commit_exposed_return:start",
-      "t": 37.149,
+      "t": 40.232,
       "input": "KeyS",
       "position": {
-        "x": 3.634,
-        "z": 1.565
+        "x": 3.686,
+        "z": 1.59
       }
     },
     {
       "label": "commit_exposed_return:end",
-      "t": 37.764,
+      "t": 40.83,
       "position": {
-        "x": 4.04,
-        "z": 3.482
+        "x": 4.035,
+        "z": 3.454
       }
     },
     {
       "label": "exposed_return:start",
-      "t": 37.771,
+      "t": 40.836,
       "input": "KeyS",
       "position": {
-        "x": 4.04,
-        "z": 3.528
+        "x": 4.035,
+        "z": 3.498
       }
     },
     {
       "label": "exposed_return:end",
-      "t": 51.805,
+      "t": 54.857,
       "position": {
-        "x": 4.04,
-        "z": 62.062
+        "x": 4.035,
+        "z": 62.001
       }
     },
     {
       "label": "result:start",
-      "t": 51.81,
+      "t": 54.862,
       "state": "strong-field-record",
       "route": "exposed",
       "evidence": 7,
-      "shotCount": 1
+      "shotCount": 2
     },
     {
       "label": "demo_end",
-      "t": 55.614,
+      "t": 58.665,
       "state": "strong-field-record"
     }
   ]
