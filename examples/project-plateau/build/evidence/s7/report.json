@@ -2,7 +2,7 @@
   "stage": "s7-lifecycle",
   "source": {
     "scope": "index.html, package manifests, public assets and src",
-    "sha256": "8396d9b9879a3a934cac03cf83e02d1ccd305b77945185afce436094a46833e1"
+    "sha256": "a33f6d0439f7efb26e2437beff4ed334851cd0cd94b321e7918387061adfd454"
   },
   "environment": {
     "browser": "Google Chrome 150.0.7871.187",
@@ -42,15 +42,15 @@
   },
   "loading": {
     "firstNoCacheNavigation": {
-      "timeToFirstFrameMs": 2997.6,
-      "domInteractiveMs": 153.4,
-      "loadEventMs": 3221.6,
+      "timeToFirstFrameMs": 2992.2,
+      "domInteractiveMs": 171.8,
+      "loadEventMs": 3232.3,
       "resourceCount": 30
     },
     "finalNavigation": {
-      "timeToFirstFrameMs": 3050.2,
-      "domInteractiveMs": 184.4,
-      "loadEventMs": 3239.7,
+      "timeToFirstFrameMs": 3073.1,
+      "domInteractiveMs": 189,
+      "loadEventMs": 3256.5,
       "resourceCount": 31
     },
     "budgetMs": 8000
@@ -58,7 +58,7 @@
   "payload": {
     "files": [
       {
-        "path": "assets/GLTFLoader-ClxzNzfR.js",
+        "path": "assets/GLTFLoader-CFGUBV1d.js",
         "rawBytes": 43236,
         "gzipBytes": 12760
       },
@@ -73,8 +73,8 @@
         "gzipBytes": 5111
       },
       {
-        "path": "assets/index-toMW4SOB.js",
-        "rawBytes": 777240,
+        "path": "assets/index-DBMr8ptc.js",
+        "rawBytes": 777241,
         "gzipBytes": 204694
       },
       {
@@ -90,11 +90,11 @@
       {
         "path": "index.html",
         "rawBytes": 6789,
-        "gzipBytes": 2120
+        "gzipBytes": 2119
       }
     ],
-    "rawBytes": 3260635,
-    "gzipBytes": 2017917,
+    "rawBytes": 3260636,
+    "gzipBytes": 2017916,
     "initialCompressedBudgetBytes": 20971520,
     "totalBudgetBytes": 52428800
   },
@@ -103,15 +103,15 @@
       "samples": 120,
       "medianFrameMs": 16.7,
       "medianFps": 59.9,
-      "onePercentLowFps": 38.9,
-      "worstFrameMs": 26
+      "onePercentLowFps": 39.2,
+      "worstFrameMs": 33.6
     },
     "targetViewport": {
       "samples": 120,
       "medianFrameMs": 16.7,
       "medianFps": 59.9,
-      "onePercentLowFps": 38.6,
-      "worstFrameMs": 26
+      "onePercentLowFps": 39.7,
+      "worstFrameMs": 25.4
     }
   },
   "checkpoints": [

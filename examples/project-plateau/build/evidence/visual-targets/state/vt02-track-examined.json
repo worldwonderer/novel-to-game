@@ -17,7 +17,7 @@
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 2.784,
+    "elapsedSeconds": 2.762,
     "distanceTravelled": 0,
     "paused": false,
     "pauseReason": null,
@@ -90,7 +90,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 177.216,
+    "remainingLight": 177.238,
     "returnRoute": null,
     "returnCostSeconds": 0,
     "returnStrike": false,
@@ -103,14 +103,14 @@
     "attackStage": "orbit",
     "attackProgress": 0,
     "flightPose": {
-      "wingBeat": -0.0128,
+      "wingBeat": -0.0014,
       "wingFold": 0,
       "mode": "downstroke"
     },
     "position": {
-      "x": 22.46,
-      "y": 24.18,
-      "z": 25.42
+      "x": 22.51,
+      "y": 24.17,
+      "z": 25.4
     }
   },
   "familyVisual": {
@@ -217,7 +217,7 @@
       {
         "cue": "examine",
         "caption": "[fern brushes aside; pencil marks the field card]",
-        "at": 0.149
+        "at": 0.139
       }
     ]
   },
@@ -263,8 +263,8 @@
   "renderBudget": {
     "pixelRatio": 1,
     "maxPixelRatio": 1.25,
-    "renderedFrames": 197,
-    "skippedFrames": 212,
+    "renderedFrames": 196,
+    "skippedFrames": 234,
     "activeFpsPolicy": "60fps-cap-across-refresh-rates",
     "idleFpsCap": 30,
     "pausedFpsCap": 15,
@@ -274,6 +274,6 @@
     "gtaoSamples": 4,
     "antialiasing": "single-pass-fxaa"
   },
-  "firstRenderedAt": 161,
+  "firstRenderedAt": 153.60000002384186,
   "recentMedianFrameMs": 16.7
 }

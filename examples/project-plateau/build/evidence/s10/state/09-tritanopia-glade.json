@@ -17,7 +17,7 @@
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 12.427,
+    "elapsedSeconds": 12.411,
     "distanceTravelled": 0,
     "paused": false,
     "pauseReason": null,
@@ -99,7 +99,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 167.573,
+    "remainingLight": 167.589,
     "returnRoute": null,
     "returnCostSeconds": 0,
     "returnStrike": false,
@@ -112,14 +112,14 @@
     "attackStage": "orbit",
     "attackProgress": 0,
     "flightPose": {
-      "wingBeat": 0.3005,
+      "wingBeat": 0.3344,
       "wingFold": 0,
       "mode": "upstroke"
     },
     "position": {
-      "x": -5.39,
-      "y": 8.52,
-      "z": -31.64
+      "x": -5.64,
+      "y": 8.55,
+      "z": -31.61
     }
   },
   "familyVisual": {
@@ -226,57 +226,57 @@
       {
         "cue": "examine",
         "caption": "[fern brushes aside; pencil marks the field card]",
-        "at": 0.208
+        "at": 0.176
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 0.213
+        "at": 0.187
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 0.304
+        "at": 0.277
       },
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 2.293
+        "at": 2.261
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 2.293
+        "at": 2.261
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 2.464
+        "at": 2.427
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 2.555
+        "at": 2.517
       },
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 4.544
+        "at": 4.491
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 4.544
+        "at": 4.491
       },
       {
         "cue": "search",
         "caption": "[a near call circles overhead]",
-        "at": 10.608
+        "at": 10.592
       },
       {
         "cue": "examine",
         "caption": "[fern brushes aside; pencil marks the field card]",
-        "at": 10.699
+        "at": 10.677
       }
     ]
   },
@@ -322,8 +322,8 @@
   "renderBudget": {
     "pixelRatio": 1,
     "maxPixelRatio": 1.25,
-    "renderedFrames": 774,
-    "skippedFrames": 716,
+    "renderedFrames": 772,
+    "skippedFrames": 767,
     "activeFpsPolicy": "60fps-cap-across-refresh-rates",
     "idleFpsCap": 30,
     "pausedFpsCap": 15,
@@ -333,6 +333,6 @@
     "gtaoSamples": 4,
     "antialiasing": "single-pass-fxaa"
   },
-  "firstRenderedAt": 175.10000002384186,
+  "firstRenderedAt": 163.80000001192093,
   "recentMedianFrameMs": 16.7
 }

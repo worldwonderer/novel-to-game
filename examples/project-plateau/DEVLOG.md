@@ -15,7 +15,7 @@
   persistent drawing buffer is disabled while synchronous plate capture remains
   verified.
 - The authoritative `npm run verify` passed 7/7 suites and 17 commands for app
-  fingerprint `8396d9b9879a3a934cac03cf83e02d1ccd305b77945185afce436094a46833e1`.
+  fingerprint `a33f6d0439f7efb26e2437beff4ed334851cd0cd94b321e7918387061adfd454`.
   The source-bound visual suite measured 59.9 FPS median with 39.4/38.9 FPS
   1%-low at 1440×900 / 1280×720, above the 45/30 budget.
 

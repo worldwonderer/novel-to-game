@@ -17,7 +17,7 @@
     "heading": 0,
     "pitch": 0.14,
     "stance": "walk",
-    "elapsedSeconds": 26.435,
+    "elapsedSeconds": 26.428,
     "distanceTravelled": 0,
     "paused": false,
     "pauseReason": null,
@@ -42,14 +42,14 @@
     "threatAwareness": 3,
     "threatState": "attack",
     "lastThreatEvent": "plate-exposure:+2",
-    "attackSeconds": 1.0667000000476832,
+    "attackSeconds": 1.0666000000238416,
     "examinedTrack": true,
     "observedBehavior": true,
     "lastObservation": "The young keep close while the adults feed.",
     "cameraRaised": false,
     "plateRailRevealed": true,
     "pendingExposure": null,
-    "previewSeconds": 2.9499999999999997,
+    "previewSeconds": 2.9500999999642397,
     "lastProofEvent": {
       "plateIndex": 3,
       "frameKey": "glade-branch-pull",
@@ -101,7 +101,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 125.565,
+    "remainingLight": 125.572,
     "returnRoute": "covered",
     "returnCostSeconds": 28,
     "returnStrike": false,
@@ -114,7 +114,7 @@
     "attackStage": "attack",
     "attackProgress": 1,
     "flightPose": {
-      "wingBeat": 0.0696,
+      "wingBeat": 0.0693,
       "wingFold": 0.98,
       "mode": "fold-dive"
     },
@@ -223,82 +223,82 @@
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 7.216
+        "at": 7.179
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 7.216
+        "at": 7.179
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 7.227
+        "at": 7.189
       },
       {
         "cue": "search",
         "caption": "[a near call circles overhead]",
-        "at": 13.301
+        "at": 13.264
       },
       {
         "cue": "examine",
         "caption": "[fern brushes aside; pencil marks the field card]",
-        "at": 13.408
+        "at": 13.371
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 14.971
+        "at": 14.933
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 15.067
+        "at": 15.029
       },
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 17.067
+        "at": 17.029
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 17.067
+        "at": 17.029
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 17.072
+        "at": 17.035
       },
       {
         "cue": "cover",
         "caption": "[branches scrape the camera; wingbeats widen]",
-        "at": 17.141
+        "at": 17.104
       },
       {
         "cue": "search",
         "caption": "[a near call circles overhead]",
-        "at": 23.125
+        "at": 23.093
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 23.237
+        "at": 23.205
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 23.333
+        "at": 23.301
       },
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 25.301
+        "at": 25.296
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 25.301
+        "at": 25.296
       }
     ]
   },
@@ -345,7 +345,7 @@
     "pixelRatio": 1,
     "maxPixelRatio": 1.25,
     "renderedFrames": 1616,
-    "skippedFrames": 1473,
+    "skippedFrames": 1597,
     "activeFpsPolicy": "60fps-cap-across-refresh-rates",
     "idleFpsCap": 30,
     "pausedFpsCap": 15,
@@ -355,6 +355,6 @@
     "gtaoSamples": 4,
     "antialiasing": "single-pass-fxaa"
   },
-  "firstRenderedAt": 161,
+  "firstRenderedAt": 153.60000002384186,
   "recentMedianFrameMs": 16.7
 }

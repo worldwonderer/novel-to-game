@@ -5,8 +5,8 @@
 - 模式：vision、只读独立审查
 - 判定：**PASS / GO**
 - 目标完成度：`playable-prototype`
-- source fingerprint：`8396d9b9879a3a934cac03cf83e02d1ccd305b77945185afce436094a46833e1`
-- release visual manifest sha256：`25d8a2a3a3a801ed83da27d51ab3b1613169c0968c3d6cde8b3da745a5f1ca3e`
+- source fingerprint：`a33f6d0439f7efb26e2437beff4ed334851cd0cd94b321e7918387061adfd454`
+- release visual manifest sha256：`7431410c921e0aa8c2f4916287d121c60a7b4a674ad673af070a92ccb193754e`
 - supplemental visual-target manifest sha256：`7882f046b1294a698e48dcd9b3f58c90277802f3f52eb486b8520205f0933355`
 
 ## 独立性
@@ -55,3 +55,8 @@
 ## 最终结论
 
 **PASS / GO。** VT01–VT06 全部通过；焦点、轮廓、空间层次、材质、光色、HUD、动作和双视口一致性达到发布门槛。此前溪水纯白发光、林冠黑位压死、矩形枝条及翼龙左右翼相位疑虑均已解除；未发现 blocker 或 major。
+
+## 发布维护说明（2026-08-04）
+
+- 本次源码变化仅修正 `simulation.js` 的视角相对移动基向量，并新增控制器回归测试；渲染器、场景、模型、材质、光照、动画与相机构图代码均未变化。
+- `build/evidence/visual-upgrade/generated/` 中经独立审查的图像、视频与接触表保持逐字节不变；仅在 `manifest.json` 中把 `sourceFingerprint` 重新绑定到当前控制器候选，因此沿用原独立视觉结论。

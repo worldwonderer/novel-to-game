@@ -554,8 +554,8 @@ export function stepPlayer(state, input = {}, rawDeltaSeconds = 0) {
   const toolMultiplier = state.pendingExposure ? 0 : state.cameraRaised ? 0.35 : 1;
   const distance = SPEED[stance] * toolMultiplier * deltaSeconds;
   const delta = {
-    x: (Math.sin(heading) * normalizedForward + Math.cos(heading) * normalizedRight) * distance,
-    z: (-Math.cos(heading) * normalizedForward + Math.sin(heading) * normalizedRight) * distance,
+    x: (-Math.sin(heading) * normalizedForward + Math.cos(heading) * normalizedRight) * distance,
+    z: (-Math.cos(heading) * normalizedForward - Math.sin(heading) * normalizedRight) * distance,
   };
   const full = { x: state.position.x + delta.x, z: state.position.z + delta.z };
 

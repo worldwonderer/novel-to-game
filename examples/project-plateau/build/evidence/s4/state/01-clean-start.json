@@ -17,7 +17,7 @@
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 0.222,
+    "elapsedSeconds": 0.227,
     "distanceTravelled": 0,
     "paused": false,
     "pauseReason": null,
@@ -89,7 +89,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 179.778,
+    "remainingLight": 179.773,
     "returnRoute": null,
     "returnCostSeconds": 0,
     "returnStrike": false,
@@ -102,14 +102,14 @@
     "attackStage": "orbit",
     "attackProgress": 0,
     "flightPose": {
-      "wingBeat": -0.1638,
+      "wingBeat": -0.1796,
       "wingFold": 0,
       "mode": "downstroke"
     },
     "position": {
-      "x": 31.6,
-      "y": 23.39,
-      "z": 46.68
+      "x": 31.59,
+      "y": 23.4,
+      "z": 46.71
     }
   },
   "familyVisual": {
@@ -257,8 +257,8 @@
   "renderBudget": {
     "pixelRatio": 1,
     "maxPixelRatio": 1.25,
-    "renderedFrames": 34,
-    "skippedFrames": 60,
+    "renderedFrames": 35,
+    "skippedFrames": 59,
     "activeFpsPolicy": "60fps-cap-across-refresh-rates",
     "idleFpsCap": 30,
     "pausedFpsCap": 15,
@@ -268,6 +268,6 @@
     "gtaoSamples": 4,
     "antialiasing": "single-pass-fxaa"
   },
-  "firstRenderedAt": 148.10000002384186,
-  "recentMedianFrameMs": 33.1
+  "firstRenderedAt": 150.9000000357628,
+  "recentMedianFrameMs": 32.5
 }

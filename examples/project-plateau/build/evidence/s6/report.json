@@ -2,7 +2,7 @@
   "stage": "s6-field-feedback",
   "source": {
     "scope": "index.html, package manifests, public assets and src",
-    "sha256": "8396d9b9879a3a934cac03cf83e02d1ccd305b77945185afce436094a46833e1"
+    "sha256": "a33f6d0439f7efb26e2437beff4ed334851cd0cd94b321e7918387061adfd454"
   },
   "environment": {
     "browser": "Google Chrome 150.0.7871.187",
@@ -34,8 +34,8 @@
     "samples": 240,
     "medianFrameMs": 16.7,
     "medianFps": 59.9,
-    "onePercentLowFps": 39.5,
-    "worstFrameMs": 25.6
+    "onePercentLowFps": 39.4,
+    "worstFrameMs": 26
   },
   "checkpoints": [
     {

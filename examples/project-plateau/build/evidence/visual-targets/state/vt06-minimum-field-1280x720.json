@@ -17,7 +17,7 @@
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 0.101,
+    "elapsedSeconds": 0.133,
     "distanceTravelled": 0,
     "paused": false,
     "pauseReason": null,
@@ -31,7 +31,7 @@
     ],
     "reachedGlade": false,
     "inCover": true,
-    "coverSeconds": 0.10060000002384184,
+    "coverSeconds": 0.11660000002384187,
     "sprintExposureSeconds": 0,
     "sprintEscalationCharged": false,
     "threatAwareness": 1,
@@ -90,7 +90,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 179.899,
+    "remainingLight": 179.867,
     "returnRoute": null,
     "returnCostSeconds": 0,
     "returnStrike": false,
@@ -103,21 +103,21 @@
     "attackStage": "orbit",
     "attackProgress": 0,
     "flightPose": {
-      "wingBeat": -0.1709,
+      "wingBeat": -0.1522,
       "wingFold": 0,
       "mode": "downstroke"
     },
     "position": {
-      "x": -6.77,
-      "y": 8.8,
-      "z": -1.21
+      "x": -6.86,
+      "y": 8.79,
+      "z": -1.22
     }
   },
   "familyVisual": {
     "moment": "glade-branch-pull",
     "adults": 2,
     "young": 3,
-    "branchAngle": 0.77,
+    "branchAngle": 0.777,
     "roles": [
       "graze",
       "branch-pull",
@@ -212,12 +212,12 @@
       {
         "cue": "field-start",
         "caption": "[brook water and insects under the canopy]",
-        "at": 30.667
+        "at": 30.661
       },
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 30.667
+        "at": 30.661
       }
     ]
   },
@@ -263,8 +263,8 @@
   "renderBudget": {
     "pixelRatio": 1,
     "maxPixelRatio": 1.25,
-    "renderedFrames": 1876,
-    "skippedFrames": 1696,
+    "renderedFrames": 1877,
+    "skippedFrames": 1858,
     "activeFpsPolicy": "60fps-cap-across-refresh-rates",
     "idleFpsCap": 30,
     "pausedFpsCap": 15,
@@ -274,6 +274,6 @@
     "gtaoSamples": 4,
     "antialiasing": "single-pass-fxaa"
   },
-  "firstRenderedAt": 161,
+  "firstRenderedAt": 153.60000002384186,
   "recentMedianFrameMs": 16.7
 }

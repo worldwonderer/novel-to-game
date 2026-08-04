@@ -17,7 +17,7 @@
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 8.23,
+    "elapsedSeconds": 8.196,
     "distanceTravelled": 0,
     "paused": false,
     "pauseReason": null,
@@ -45,7 +45,7 @@
     "cameraRaised": false,
     "plateRailRevealed": true,
     "pendingExposure": null,
-    "previewSeconds": 1.0162999999523215,
+    "previewSeconds": 1.016500000000004,
     "lastProofEvent": {
       "plateIndex": 1,
       "frameKey": "basalt-scale",
@@ -97,7 +97,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 1,
-    "remainingLight": 171.77,
+    "remainingLight": 171.804,
     "returnRoute": null,
     "returnCostSeconds": 0,
     "returnStrike": false,
@@ -110,21 +110,21 @@
     "attackStage": "orbit",
     "attackProgress": 0,
     "flightPose": {
-      "wingBeat": 0.151,
+      "wingBeat": 0.2027,
       "wingFold": 0,
       "mode": "upstroke"
     },
     "position": {
-      "x": -9.02,
-      "y": 8.21,
-      "z": -3.12
+      "x": -8.81,
+      "y": 8.22,
+      "z": -3.06
     }
   },
   "familyVisual": {
     "moment": "glade-branch-pull",
     "adults": 2,
     "young": 3,
-    "branchAngle": 0.132,
+    "branchAngle": 0.108,
     "roles": [
       "graze",
       "branch-pull",
@@ -224,37 +224,37 @@
       {
         "cue": "examine",
         "caption": "[fern brushes aside; pencil marks the field card]",
-        "at": 0.331
+        "at": 0.336
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 0.443
+        "at": 0.459
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 0.592
+        "at": 0.597
       },
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 2.491
+        "at": 2.544
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 2.491
+        "at": 2.544
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 3.029
+        "at": 3.008
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 3.115
+        "at": 3.099
       },
       {
         "cue": "attack",
@@ -274,7 +274,7 @@
       {
         "cue": "contact",
         "caption": "[case strike; glass cracks]",
-        "at": 8.075
+        "at": 8.08
       }
     ]
   },
@@ -320,8 +320,8 @@
   "renderBudget": {
     "pixelRatio": 1,
     "maxPixelRatio": 1.25,
-    "renderedFrames": 523,
-    "skippedFrames": 543,
+    "renderedFrames": 522,
+    "skippedFrames": 544,
     "activeFpsPolicy": "60fps-cap-across-refresh-rates",
     "idleFpsCap": 30,
     "pausedFpsCap": 15,
@@ -331,6 +331,6 @@
     "gtaoSamples": 4,
     "antialiasing": "single-pass-fxaa"
   },
-  "firstRenderedAt": 153.30000001192093,
+  "firstRenderedAt": 155.79999995231628,
   "recentMedianFrameMs": 16.7
 }

@@ -17,7 +17,7 @@
     "heading": -0.3,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 23.852,
+    "elapsedSeconds": 23.812,
     "distanceTravelled": 0,
     "paused": false,
     "pauseReason": null,
@@ -54,7 +54,7 @@
       "label": "BEHAVIOR \u2014 an adult pulls the branch down.",
       "exposure": 2,
       "plateIndex": 3,
-      "remainingSeconds": 1.5319000000357634,
+      "remainingSeconds": 1.5500000000000016,
       "zone": "iguanodon-glade"
     },
     "previewSeconds": 0,
@@ -109,7 +109,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 128.149,
+    "remainingLight": 128.188,
     "returnRoute": "covered",
     "returnCostSeconds": 28,
     "returnStrike": false,
@@ -122,21 +122,21 @@
     "attackStage": "orbit",
     "attackProgress": 0,
     "flightPose": {
-      "wingBeat": 0.1806,
+      "wingBeat": 0.2292,
       "wingFold": 0,
       "mode": "upstroke"
     },
     "position": {
-      "x": -15.62,
-      "y": 9.37,
-      "z": -42.77
+      "x": -15.55,
+      "y": 9.39,
+      "z": -42.76
     }
   },
   "familyVisual": {
     "moment": "glade-branch-pull",
     "adults": 2,
     "young": 3,
-    "branchAngle": 0.53,
+    "branchAngle": 0.571,
     "roles": [
       "graze",
       "branch-pull",
@@ -231,82 +231,82 @@
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 5.136
+        "at": 5.099
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 5.237
+        "at": 5.195
       },
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 7.216
+        "at": 7.179
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 7.216
+        "at": 7.179
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 7.227
+        "at": 7.189
       },
       {
         "cue": "search",
         "caption": "[a near call circles overhead]",
-        "at": 13.301
+        "at": 13.264
       },
       {
         "cue": "examine",
         "caption": "[fern brushes aside; pencil marks the field card]",
-        "at": 13.408
+        "at": 13.371
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 14.971
+        "at": 14.933
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 15.067
+        "at": 15.029
       },
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 17.067
+        "at": 17.029
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 17.067
+        "at": 17.029
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 17.072
+        "at": 17.035
       },
       {
         "cue": "cover",
         "caption": "[branches scrape the camera; wingbeats widen]",
-        "at": 17.141
+        "at": 17.104
       },
       {
         "cue": "search",
         "caption": "[a near call circles overhead]",
-        "at": 23.125
+        "at": 23.093
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 23.237
+        "at": 23.205
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 23.333
+        "at": 23.301
       }
     ]
   },
@@ -352,8 +352,8 @@
   "renderBudget": {
     "pixelRatio": 1,
     "maxPixelRatio": 1.25,
-    "renderedFrames": 1461,
-    "skippedFrames": 1329,
+    "renderedFrames": 1459,
+    "skippedFrames": 1442,
     "activeFpsPolicy": "60fps-cap-across-refresh-rates",
     "idleFpsCap": 30,
     "pausedFpsCap": 15,
@@ -363,6 +363,6 @@
     "gtaoSamples": 4,
     "antialiasing": "single-pass-fxaa"
   },
-  "firstRenderedAt": 161,
+  "firstRenderedAt": 153.60000002384186,
   "recentMedianFrameMs": 16.7
 }

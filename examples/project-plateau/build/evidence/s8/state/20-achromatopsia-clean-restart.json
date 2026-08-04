@@ -102,14 +102,14 @@
     "attackStage": "orbit",
     "attackProgress": 0,
     "flightPose": {
-      "wingBeat": 0.2412,
+      "wingBeat": 0.2763,
       "wingFold": 0,
       "mode": "upstroke"
     },
     "position": {
-      "x": 10.05,
-      "y": 23.57,
-      "z": 54.85
+      "x": 9.65,
+      "y": 23.54,
+      "z": 54.88
     }
   },
   "familyVisual": {
@@ -211,82 +211,82 @@
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 139.728
+        "at": 139.659
       },
       {
         "cue": "search",
         "caption": "[a near call circles overhead]",
-        "at": 145.829
+        "at": 145.76
       },
       {
         "cue": "examine",
         "caption": "[fern brushes aside; pencil marks the field card]",
-        "at": 149.707
+        "at": 149.659
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 149.717
+        "at": 149.664
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 149.792
+        "at": 149.744
       },
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 151.765
+        "at": 151.712
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 151.765
+        "at": 151.712
       },
       {
         "cue": "cover",
         "caption": "[branches scrape the camera; wingbeats widen]",
-        "at": 152.08
+        "at": 152.027
       },
       {
         "cue": "search",
         "caption": "[a near call circles overhead]",
-        "at": 158.075
+        "at": 158.032
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 158.469
+        "at": 158.416
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 158.544
+        "at": 158.491
       },
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 160.544
+        "at": 160.464
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 160.544
+        "at": 160.464
       },
       {
         "cue": "search",
         "caption": "[a near call circles overhead]",
-        "at": 166.875
+        "at": 166.827
       },
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 172.88
+        "at": 172.832
       },
       {
         "cue": "result",
         "caption": "[glass plates settle on the light board]",
-        "at": 180.907
+        "at": 180.864
       }
     ]
   },
@@ -332,8 +332,8 @@
   "renderBudget": {
     "pixelRatio": 1,
     "maxPixelRatio": 1.25,
-    "renderedFrames": 10895,
-    "skippedFrames": 9431,
+    "renderedFrames": 10894,
+    "skippedFrames": 10066,
     "activeFpsPolicy": "60fps-cap-across-refresh-rates",
     "idleFpsCap": 30,
     "pausedFpsCap": 15,
@@ -343,6 +343,6 @@
     "gtaoSamples": 4,
     "antialiasing": "single-pass-fxaa"
   },
-  "firstRenderedAt": 159.60000002384186,
+  "firstRenderedAt": 141.0999999642372,
   "recentMedianFrameMs": 16.7
 }

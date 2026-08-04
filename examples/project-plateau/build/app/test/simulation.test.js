@@ -53,6 +53,20 @@ test('walking, sprinting and crouching have ordered deterministic speeds', () =>
   assert.equal(crouch.stance, 'crouch');
 });
 
+test('rotated view keeps WASD aligned with the camera horizontal axes', () => {
+  const heading = 0.73;
+  const duration = 0.25;
+  const distance = 4.2 * duration;
+  const origin = INITIAL_PLAYER.position;
+  const forward = stepPlayer(createPlayerState(), { forward: 1, heading }, duration);
+  const right = stepPlayer(createPlayerState(), { right: 1, heading }, duration);
+
+  assert.ok(Math.abs(forward.position.x - (origin.x - Math.sin(heading) * distance)) < 1e-9);
+  assert.ok(Math.abs(forward.position.z - (origin.z - Math.cos(heading) * distance)) < 1e-9);
+  assert.ok(Math.abs(right.position.x - (origin.x + Math.cos(heading) * distance)) < 1e-9);
+  assert.ok(Math.abs(right.position.z - (origin.z - Math.sin(heading) * distance)) < 1e-9);
+});
+
 test('pause freezes both world time and movement', () => {
   const paused = setPaused(createPlayerState(), true, 'manual');
   const after = stepPlayer(paused, { forward: 1, sprint: true }, 4);

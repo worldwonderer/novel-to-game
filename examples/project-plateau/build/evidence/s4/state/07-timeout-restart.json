@@ -102,21 +102,21 @@
     "attackStage": "orbit",
     "attackProgress": 0,
     "flightPose": {
-      "wingBeat": -0.2059,
+      "wingBeat": -0.1496,
       "wingFold": 0,
       "mode": "downstroke"
     },
     "position": {
-      "x": -14.83,
+      "x": -14.6,
       "y": 24.16,
-      "z": 37
+      "z": 36.93
     }
   },
   "familyVisual": {
     "moment": "glade-branch-pull",
     "adults": 2,
     "young": 3,
-    "branchAngle": 0.761,
+    "branchAngle": 0.786,
     "roles": [
       "graze",
       "branch-pull",
@@ -211,12 +211,12 @@
       {
         "cue": "field-start",
         "caption": "[brook water and insects under the canopy]",
-        "at": 21.376
+        "at": 21.371
       },
       {
         "cue": "failure",
         "caption": "[the field sound narrows to wind and brook]",
-        "at": 21.493
+        "at": 21.499
       }
     ]
   },
@@ -262,8 +262,8 @@
   "renderBudget": {
     "pixelRatio": 1,
     "maxPixelRatio": 1.25,
-    "renderedFrames": 1325,
-    "skippedFrames": 1163,
+    "renderedFrames": 1327,
+    "skippedFrames": 1278,
     "activeFpsPolicy": "60fps-cap-across-refresh-rates",
     "idleFpsCap": 30,
     "pausedFpsCap": 15,
@@ -273,6 +273,6 @@
     "gtaoSamples": 4,
     "antialiasing": "single-pass-fxaa"
   },
-  "firstRenderedAt": 148.10000002384186,
+  "firstRenderedAt": 150.9000000357628,
   "recentMedianFrameMs": 16.7
 }

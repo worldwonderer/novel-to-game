@@ -36,7 +36,7 @@ or showcase quality.
 | Field | Observed |
 |---|---|
 | Source commit | `null` — merge candidate is bound by canonical app fingerprint |
-| App fingerprint | `8396d9b9879a3a934cac03cf83e02d1ccd305b77945185afce436094a46833e1` |
+| App fingerprint | `a33f6d0439f7efb26e2437beff4ed334851cd0cd94b321e7918387061adfd454` |
 | Install | [`npm ci`](evidence/install.log) — 24 packages, 0 vulnerabilities |
 | Verify | `npm run verify` |
 | Result | exit `0`; 7/7 suites; 17/17 commands |

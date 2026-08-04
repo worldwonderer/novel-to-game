@@ -102,14 +102,14 @@
     "attackStage": "orbit",
     "attackProgress": 0,
     "flightPose": {
-      "wingBeat": 0.0905,
+      "wingBeat": 0.0824,
       "wingFold": 0,
       "mode": "upstroke"
     },
     "position": {
       "x": 31.76,
-      "y": 23.3,
-      "z": 46.29
+      "y": 23.31,
+      "z": 46.3
     }
   },
   "familyVisual": {
@@ -252,7 +252,7 @@
     "pixelRatio": 1,
     "maxPixelRatio": 1.25,
     "renderedFrames": 22,
-    "skippedFrames": 55,
+    "skippedFrames": 54,
     "activeFpsPolicy": "60fps-cap-across-refresh-rates",
     "idleFpsCap": 30,
     "pausedFpsCap": 15,
@@ -262,6 +262,6 @@
     "gtaoSamples": 4,
     "antialiasing": "single-pass-fxaa"
   },
-  "firstRenderedAt": 159.5,
-  "recentMedianFrameMs": 33.3
+  "firstRenderedAt": 151.60000002384186,
+  "recentMedianFrameMs": 33.4
 }

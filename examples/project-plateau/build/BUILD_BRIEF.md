@@ -395,9 +395,9 @@ evidence in `../qa/QA_REPORT.md` and `asset-ledger.json`.
 ## Visual enhancement addendum · 2026-08-04
 
 The HY3D focal-creature pass is bound to source fingerprint
-`8396d9b9879a3a934cac03cf83e02d1ccd305b77945185afce436094a46833e1` and
+`a33f6d0439f7efb26e2437beff4ed334851cd0cd94b321e7918387061adfd454` and
 evidence manifest SHA256
-`25d8a2a3a3a801ed83da27d51ab3b1613169c0968c3d6cde8b3da745a5f1ca3e` at
+`7431410c921e0aa8c2f4916287d121c60a7b4a674ad673af070a92ccb193754e` at
 `evidence/visual-upgrade/generated/manifest.json`.
 
 | Visual delivery item | Current result | Evidence |

@@ -17,7 +17,7 @@
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 4.834,
+    "elapsedSeconds": 4.796,
     "distanceTravelled": 0,
     "paused": false,
     "pauseReason": null,
@@ -38,14 +38,14 @@
     "threatAwareness": 3,
     "threatState": "attack",
     "lastThreatEvent": "plate-exposure:+2",
-    "attackSeconds": 0.13299999999999998,
+    "attackSeconds": 0.11669999998807908,
     "examinedTrack": true,
     "observedBehavior": false,
     "lastObservation": "Three toes. Fresh. The brook runs back to camp.",
     "cameraRaised": false,
     "plateRailRevealed": true,
     "pendingExposure": null,
-    "previewSeconds": 3.8833999999761586,
+    "previewSeconds": 3.900100000023842,
     "lastProofEvent": {
       "plateIndex": 1,
       "frameKey": "basalt-scale",
@@ -97,7 +97,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 175.166,
+    "remainingLight": 175.204,
     "returnRoute": null,
     "returnCostSeconds": 0,
     "returnStrike": false,
@@ -110,7 +110,7 @@
     "attackStage": "search",
     "attackProgress": 0,
     "flightPose": {
-      "wingBeat": -0.3561,
+      "wingBeat": -0.3522,
       "wingFold": 0.12,
       "mode": "downstroke"
     },
@@ -224,47 +224,47 @@
       {
         "cue": "examine",
         "caption": "[fern brushes aside; pencil marks the field card]",
-        "at": 0.208
+        "at": 0.192
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 0.309
+        "at": 0.299
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 0.464
+        "at": 0.453
       },
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 2.448
+        "at": 2.432
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 2.448
+        "at": 2.432
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 2.576
+        "at": 2.555
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 2.667
+        "at": 2.64
       },
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 4.635
+        "at": 4.613
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 4.635
+        "at": 4.613
       }
     ]
   },
@@ -310,8 +310,8 @@
   "renderBudget": {
     "pixelRatio": 1,
     "maxPixelRatio": 1.25,
-    "renderedFrames": 314,
-    "skippedFrames": 345,
+    "renderedFrames": 312,
+    "skippedFrames": 339,
     "activeFpsPolicy": "60fps-cap-across-refresh-rates",
     "idleFpsCap": 30,
     "pausedFpsCap": 15,
@@ -321,6 +321,6 @@
     "gtaoSamples": 4,
     "antialiasing": "single-pass-fxaa"
   },
-  "firstRenderedAt": 159.5,
+  "firstRenderedAt": 151.60000002384186,
   "recentMedianFrameMs": 16.7
 }

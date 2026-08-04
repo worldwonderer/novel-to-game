@@ -97,8 +97,8 @@
     "reviewer": "/root/visual_v17_review (vision, read-only independent reviewer, 2026-08-04)",
     "independence": "The read-only vision reviewer made no implementation, capture, manifest or QA edits and judged VT01-VT06, both supported viewports, creature orbits, plate captures and fixed-transform bilateral wing phases.",
     "evidence": "qa/evidence/independent-visual-review-2026-08-04.md",
-    "reviewedSourceFingerprint": "8396d9b9879a3a934cac03cf83e02d1ccd305b77945185afce436094a46833e1",
-    "reviewedManifestSha256": "25d8a2a3a3a801ed83da27d51ab3b1613169c0968c3d6cde8b3da745a5f1ca3e"
+    "reviewedSourceFingerprint": "a33f6d0439f7efb26e2437beff4ed334851cd0cd94b321e7918387061adfd454",
+    "reviewedManifestSha256": "7431410c921e0aa8c2f4916287d121c60a7b4a674ad673af070a92ccb193754e"
   },
   "focalReleaseAssets": [
     "world.connected_route",
@@ -215,11 +215,11 @@
   "degradableReleaseAssets": [
     "audio.core_world"
   ],
-  "sourceFingerprint": "8396d9b9879a3a934cac03cf83e02d1ccd305b77945185afce436094a46833e1",
+  "sourceFingerprint": "a33f6d0439f7efb26e2437beff4ed334851cd0cd94b321e7918387061adfd454",
   "visualEvidenceManifests": [
     {
       "path": "build/evidence/visual-upgrade/generated/manifest.json",
-      "sha256": "25d8a2a3a3a801ed83da27d51ab3b1613169c0968c3d6cde8b3da745a5f1ca3e"
+      "sha256": "7431410c921e0aa8c2f4916287d121c60a7b4a674ad673af070a92ccb193754e"
     }
   ],
   "publicHost": {
@@ -229,6 +229,6 @@
   },
   "sourceInputManifest": {
     "path": "build/source-inputs.json",
-    "sha256": "e3d6382522cd2846a7c37ea4ff404518a01b2fea36dcd1df869c0b37bdc33cd7"
+    "sha256": "60a8f620cbc53e96995568247a2179ef120d234d542ed072e6c01e8b1682d2f4"
   }
 }

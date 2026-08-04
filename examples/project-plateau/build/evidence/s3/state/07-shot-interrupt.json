@@ -8,17 +8,17 @@
   "player": {
     "position": {
       "x": 7,
-      "z": 10.861
+      "z": 11.192
     },
     "lastStablePosition": {
       "x": 7,
-      "z": 10.861
+      "z": 11.192
     },
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 1.5,
-    "distanceTravelled": 7.139,
+    "elapsedSeconds": 1.433,
+    "distanceTravelled": 6.808,
     "paused": false,
     "pauseReason": null,
     "boundaryRecoveries": 0,
@@ -91,7 +91,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 166.5,
+    "remainingLight": 166.567,
     "returnRoute": "exposed",
     "returnCostSeconds": 12,
     "returnStrike": false,
@@ -104,21 +104,21 @@
     "attackStage": "orbit",
     "attackProgress": 0,
     "flightPose": {
-      "wingBeat": -0.0507,
+      "wingBeat": 0.1223,
       "wingFold": 0,
-      "mode": "downstroke"
+      "mode": "upstroke"
     },
     "position": {
-      "x": -16.19,
-      "y": 8.43,
-      "z": -13.02
+      "x": -15.85,
+      "y": 8.39,
+      "z": -12.47
     }
   },
   "familyVisual": {
     "moment": "glade-branch-pull",
     "adults": 2,
     "young": 3,
-    "branchAngle": 0.139,
+    "branchAngle": 0.232,
     "roles": [
       "graze",
       "branch-pull",
@@ -213,27 +213,27 @@
       {
         "cue": "field-start",
         "caption": "[brook water and insects under the canopy]",
-        "at": 8.107
+        "at": 8.112
       },
       {
         "cue": "search",
         "caption": "[a near call circles overhead]",
-        "at": 8.272
+        "at": 8.267
       },
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 9.392
+        "at": 9.376
       },
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 9.509
+        "at": 9.456
       },
       {
         "cue": "rifle",
         "caption": "[rifle report; echo runs toward the brook]",
-        "at": 9.509
+        "at": 9.456
       }
     ]
   },
@@ -279,8 +279,8 @@
   "renderBudget": {
     "pixelRatio": 1,
     "maxPixelRatio": 1.25,
-    "renderedFrames": 614,
-    "skippedFrames": 608,
+    "renderedFrames": 609,
+    "skippedFrames": 612,
     "activeFpsPolicy": "60fps-cap-across-refresh-rates",
     "idleFpsCap": 30,
     "pausedFpsCap": 15,
@@ -290,6 +290,6 @@
     "gtaoSamples": 4,
     "antialiasing": "single-pass-fxaa"
   },
-  "firstRenderedAt": 153.30000001192093,
+  "firstRenderedAt": 155.79999995231628,
   "recentMedianFrameMs": 16.7
 }

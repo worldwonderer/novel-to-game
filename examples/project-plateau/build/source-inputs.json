@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "basePath": "build/app",
-  "sourceFingerprint": "8396d9b9879a3a934cac03cf83e02d1ccd305b77945185afce436094a46833e1",
+  "sourceFingerprint": "a33f6d0439f7efb26e2437beff4ed334851cd0cd94b321e7918387061adfd454",
   "inputs": [
     {
       "path": "index.html",
@@ -85,8 +85,8 @@
     },
     {
       "path": "src/simulation.js",
-      "sha256": "9b4f818a05c510fa5687862dac69b1b0eae4e781f7bf549b71b4d0cfbba61369",
-      "bytes": 21307
+      "sha256": "28acf988eca9ce6e978a3e38b67a5267bdc1da032579b53ef9c7141d7e9b009e",
+      "bytes": 21308
     },
     {
       "path": "src/styles.css",

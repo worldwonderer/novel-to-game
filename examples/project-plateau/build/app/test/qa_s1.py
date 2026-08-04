@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import socket
@@ -142,7 +143,46 @@ def run() -> dict[str, object]:
         page.keyboard.up("KeyC")
         page.wait_for_timeout(80)
 
-        page.evaluate("window.__projectPlateau.teleportForTest({x: -7, z: 80})")
+        heading = 0.73
+        page.evaluate(
+            "window.__projectPlateau.teleportForTest({x: 0, z: 60, heading: 0.73, pitch: 0})"
+        )
+        view_origin = snapshot()["player"]["position"]
+        hold("KeyW", milliseconds=300)
+        view_forward = snapshot()["player"]["position"]
+        forward_delta = {
+            "x": view_forward["x"] - view_origin["x"],
+            "z": view_forward["z"] - view_origin["z"],
+        }
+        forward_projection = (
+            forward_delta["x"] * -math.sin(heading)
+            + forward_delta["z"] * -math.cos(heading)
+        )
+        forward_lateral_drift = abs(
+            forward_delta["x"] * math.cos(heading)
+            + forward_delta["z"] * -math.sin(heading)
+        )
+        assert forward_projection > 1, (view_origin, view_forward)
+        assert forward_lateral_drift < 0.02, forward_lateral_drift
+
+        page.evaluate(
+            "window.__projectPlateau.teleportForTest({x: 0, z: 60, heading: 0.73, pitch: 0})"
+        )
+        hold("KeyD", milliseconds=300)
+        view_right = snapshot()["player"]["position"]
+        right_delta = {"x": view_right["x"], "z": view_right["z"] - 60}
+        right_projection = (
+            right_delta["x"] * math.cos(heading)
+            + right_delta["z"] * -math.sin(heading)
+        )
+        right_forward_drift = abs(
+            right_delta["x"] * -math.sin(heading)
+            + right_delta["z"] * -math.cos(heading)
+        )
+        assert right_projection > 1, view_right
+        assert right_forward_drift < 0.02, right_forward_drift
+
+        page.evaluate("window.__projectPlateau.teleportForTest({x: -7, z: 80, heading: 0})")
         hold("KeyW", "KeyD", milliseconds=520)
         collision = snapshot()
         distance_from_tent = ((collision["player"]["position"]["x"] + 3) ** 2 + (collision["player"]["position"]["z"] - 80) ** 2) ** 0.5
@@ -150,7 +190,7 @@ def run() -> dict[str, object]:
         assert distance_from_tent >= 3.99, collision
         checkpoints.append({"id": "collision-slide", "state": collision, "visual": shot("03-collision-slide.jpg")})
 
-        page.evaluate("window.__projectPlateau.teleportForTest({x: 0, z: -89.2})")
+        page.evaluate("window.__projectPlateau.teleportForTest({x: 0, z: -89.2, heading: 0})")
         hold("KeyW", milliseconds=360)
         boundary = snapshot()
         assert boundary["player"]["boundaryRecoveries"] > 0, boundary
@@ -254,6 +294,7 @@ def run() -> dict[str, object]:
             "walk": True,
             "sprint": True,
             "crouch": True,
+            "viewRelativeMovement": True,
             "collisionSlide": True,
             "boundaryRecovery": True,
             "manualPauseFreeze": True,

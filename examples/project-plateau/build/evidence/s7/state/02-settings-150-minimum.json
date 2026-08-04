@@ -109,7 +109,7 @@
     "position": {
       "x": 31.72,
       "y": 23.33,
-      "z": 46.42
+      "z": 46.41
     }
   },
   "familyVisual": {
@@ -252,7 +252,7 @@
     "pixelRatio": 1,
     "maxPixelRatio": 1.25,
     "renderedFrames": 53,
-    "skippedFrames": 148,
+    "skippedFrames": 150,
     "activeFpsPolicy": "60fps-cap-across-refresh-rates",
     "idleFpsCap": 30,
     "pausedFpsCap": 15,
@@ -262,6 +262,6 @@
     "gtaoSamples": 4,
     "antialiasing": "single-pass-fxaa"
   },
-  "firstRenderedAt": 3030.600000023842,
+  "firstRenderedAt": 3086.899999976158,
   "recentMedianFrameMs": 33.3
 }

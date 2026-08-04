@@ -17,7 +17,7 @@
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 0.167,
+    "elapsedSeconds": 0.162,
     "distanceTravelled": 0,
     "paused": false,
     "pauseReason": null,
@@ -89,7 +89,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 179.833,
+    "remainingLight": 179.838,
     "returnRoute": null,
     "returnCostSeconds": 0,
     "returnStrike": false,
@@ -102,14 +102,14 @@
     "attackStage": "orbit",
     "attackProgress": 0,
     "flightPose": {
-      "wingBeat": -0.2281,
+      "wingBeat": -0.2161,
       "wingFold": 0,
       "mode": "downstroke"
     },
     "position": {
-      "x": 31.54,
-      "y": 23.42,
-      "z": 46.8
+      "x": 31.55,
+      "y": 23.41,
+      "z": 46.78
     }
   },
   "familyVisual": {
@@ -268,6 +268,6 @@
     "gtaoSamples": 4,
     "antialiasing": "single-pass-fxaa"
   },
-  "firstRenderedAt": 159.5,
-  "recentMedianFrameMs": 33.2
+  "firstRenderedAt": 151.60000002384186,
+  "recentMedianFrameMs": 33.3
 }

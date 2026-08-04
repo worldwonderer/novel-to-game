@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "sourceCommit": null,
-  "sourceFingerprint": "8396d9b9879a3a934cac03cf83e02d1ccd305b77945185afce436094a46833e1",
+  "sourceFingerprint": "a33f6d0439f7efb26e2437beff4ed334851cd0cd94b321e7918387061adfd454",
   "environment": {
     "runtime": "Node.js",
     "runtimeVersion": "v25.6.1",
@@ -20,9 +20,9 @@
   "verify": {
     "command": "npm run verify",
     "log": "qa/evidence/verify.log",
-    "logSha256": "6e9bbb0ce3dcf81b273201b4fb4baad366c192ef150422fd731b555bf3667960",
+    "logSha256": "d35bf0e60daf3735fe74c8ff4aa20dd35ff8c60ac8c0d0b0b2260005869b83d8",
     "exitCode": 0,
-    "durationMs": 588739,
+    "durationMs": 589252,
     "suites": [
       {
         "id": "unit:simulation",
@@ -43,7 +43,7 @@
           {
             "command": "npm test",
             "exitCode": 0,
-            "durationMs": 813
+            "durationMs": 791
           }
         ]
       },
@@ -60,7 +60,7 @@
           {
             "command": "npm run build",
             "exitCode": 0,
-            "durationMs": 385
+            "durationMs": 384
           }
         ]
       },
@@ -83,47 +83,47 @@
           {
             "command": "python3 test/qa_s0.py",
             "exitCode": 0,
-            "durationMs": 8057
+            "durationMs": 8237
           },
           {
             "command": "python3 test/qa_s1.py",
             "exitCode": 0,
-            "durationMs": 72251
+            "durationMs": 72990
           },
           {
             "command": "python3 test/qa_s2.py",
             "exitCode": 0,
-            "durationMs": 18575
+            "durationMs": 18488
           },
           {
             "command": "python3 test/qa_s3.py",
             "exitCode": 0,
-            "durationMs": 16185
+            "durationMs": 16103
           },
           {
             "command": "python3 test/qa_s4.py",
             "exitCode": 0,
-            "durationMs": 38332
+            "durationMs": 47145
           },
           {
             "command": "python3 test/qa_s5.py",
             "exitCode": 0,
-            "durationMs": 53783
+            "durationMs": 53614
           },
           {
             "command": "python3 test/qa_s6.py",
             "exitCode": 0,
-            "durationMs": 14046
+            "durationMs": 13911
           },
           {
             "command": "python3 test/qa_s7.py",
             "exitCode": 0,
-            "durationMs": 46997
+            "durationMs": 48034
           },
           {
             "command": "python3 test/qa_s9.py",
             "exitCode": 0,
-            "durationMs": 29764
+            "durationMs": 46399
           }
         ]
       },
@@ -138,7 +138,7 @@
           {
             "command": "python3 test/qa_s8.py",
             "exitCode": 0,
-            "durationMs": 187745
+            "durationMs": 187526
           }
         ]
       },
@@ -155,17 +155,17 @@
           {
             "command": "python3 test/qa_s10.py",
             "exitCode": 0,
-            "durationMs": 47273
+            "durationMs": 29708
           },
           {
             "command": "python3 test/qa_visual_targets.py",
             "exitCode": 0,
-            "durationMs": 47613
+            "durationMs": 39889
           },
           {
             "command": "python3 test/capture_visual_upgrade.py",
             "exitCode": 0,
-            "durationMs": 115
+            "durationMs": 97
           }
         ]
       },
@@ -180,7 +180,7 @@
           {
             "command": "python3 qa/check_design_invariants.py",
             "exitCode": 0,
-            "durationMs": 24
+            "durationMs": 23
           }
         ]
       },
@@ -196,12 +196,12 @@
           {
             "command": "python3 scripts/validate_repo.py --verification-candidate examples/project-plateau/qa/.verification-candidate.json",
             "exitCode": 0,
-            "durationMs": 1363
+            "durationMs": 713
           },
           {
             "command": "python3 -m unittest discover -s tests -v",
             "exitCode": 0,
-            "durationMs": 5068
+            "durationMs": 4869
           }
         ]
       }
