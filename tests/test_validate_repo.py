@@ -1811,9 +1811,33 @@ class RepositoryValidationTests(unittest.TestCase):
         review = json.loads(
             (remotion / "voiceover-review.json").read_text(encoding="utf-8")
         )
-        self.assertEqual(review["releaseStatus"], "BLOCKED")
-        self.assertEqual(review["rights"]["status"], "NOT_RUN")
-        self.assertEqual(review["listening"]["status"], "NOT_RUN")
+        self.assertEqual(review["releaseStatus"], "APPROVED")
+        self.assertEqual(review["rights"]["status"], "APPROVED")
+        self.assertEqual(review["listening"]["status"], "APPROVED")
+        rights_evidence = review["rights"]["evidence"].split("#", maxsplit=1)[0]
+        self.assertTrue(
+            (ROOT / "examples/project-plateau" / rights_evidence).is_file()
+        )
+        self.assertRegex(
+            review["rights"]["approvedReferenceSha256"], r"^[0-9a-f]{64}$"
+        )
+        self.assertTrue(review["listening"]["reviewer"])
+        self.assertTrue(review["listening"]["reviewedAt"])
+        self.assertRegex(
+            review["listening"]["approvedSourceSha256"], r"^[0-9a-f]{64}$"
+        )
+        self.assertRegex(
+            review["listening"]["approvedNormalizedSha256"], r"^[0-9a-f]{64}$"
+        )
+        evidence_text = (
+            ROOT / "examples/project-plateau" / rights_evidence
+        ).read_text(encoding="utf-8")
+        for approved_hash in (
+            review["rights"]["approvedReferenceSha256"],
+            review["listening"]["approvedSourceSha256"],
+            review["listening"]["approvedNormalizedSha256"],
+        ):
+            self.assertIn(approved_hash, evidence_text)
 
         verifier = (remotion / "scripts/verify-voiceover.mjs").read_text(
             encoding="utf-8"
