@@ -17,6 +17,7 @@ import {
   seededRandom,
 } from '../src/config.js';
 import {
+  PTERODACTYL_ATTACK_CYCLE_SECONDS,
   createWorld,
   pterodactylAttackFlightState,
   pterodactylAttackPose,
@@ -141,6 +142,11 @@ test('family actions remain planted while anatomical pivots and branch contact c
     world.familySnapshot().branchContactDistance < 0.65,
     `the branch tip must visibly meet the pulling adult's jaw: ${world.familySnapshot().branchContactDistance}m`,
   );
+  world.update(maximumPullSeconds, true, { familyMoment: 'glade-branch-pull' });
+  assert.ok(
+    world.familySnapshot().branchContactDistance < 0.65,
+    `reduced motion must preserve the authored jaw contact: ${world.familySnapshot().branchContactDistance}m`,
+  );
 });
 
 test('pterodactyl attack reads as search, fold-dive and close attack from simulation time', () => {
@@ -241,6 +247,21 @@ test('pterodactyl attack reads as search, fold-dive and close attack from simula
   assert.equal(world.pterodactyls[1].visible, false);
   assert.equal(world.pterodactyls[2].visible, false);
 
+  const cycleBefore = pterodactylAttackFlightState({
+    attackClock: PTERODACTYL_ATTACK_CYCLE_SECONDS - 1 / 120,
+    attackOrigin: playerPosition,
+    reducedMotion: false,
+  });
+  const cycleAfter = pterodactylAttackFlightState({
+    attackClock: PTERODACTYL_ATTACK_CYCLE_SECONDS + 1 / 120,
+    attackOrigin: playerPosition,
+    reducedMotion: false,
+  });
+  assert.ok(
+    cycleBefore.position.distanceTo(cycleAfter.position) < 0.25,
+    'the authored attack review cycle must close without a world-space teleport',
+  );
+
   const attackPositionWithRifle = primary.position.clone();
   const attackScaleWithRifle = primary.scale.x;
   world.update(20.72, false, {
@@ -294,6 +315,26 @@ test('pterodactyl attack reads as search, fold-dive and close attack from simula
     primary.position.distanceTo(worldLockedOrbit) < 1e-9,
     'walking must not drag or teleport an orbiting pterodactyl through world space',
   );
+
+  const transitionWorld = createWorld(new THREE.Scene());
+  const transitionThreat = transitionWorld.pterodactyls[0];
+  transitionWorld.update(10, false, {
+    threatAwareness: 0,
+    playerPosition: { x: 0, z: 0 },
+    deltaSeconds: 1 / 60,
+  });
+  for (const [index, nextAwareness] of [1, 2].entries()) {
+    const beforeTransition = transitionThreat.position.clone();
+    transitionWorld.update(10 + (index + 1) / 60, false, {
+      threatAwareness: nextAwareness,
+      playerPosition: { x: index * 4, z: index * -3 },
+      deltaSeconds: 1 / 60,
+    });
+    assert.ok(
+      transitionThreat.position.distanceTo(beforeTransition) < 0.75,
+      `orbit awareness ${nextAwareness - 1}->${nextAwareness} must remain frame-continuous`,
+    );
+  }
 
   world.update(24, false, {
     threatAwareness: 3,

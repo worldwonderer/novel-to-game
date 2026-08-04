@@ -307,10 +307,10 @@ def capture_motion_cadence(browser, base_url: str) -> dict[str, object]:
         "threatState": "attack",
         "rendererResponse": "orbit",
     })
-    # 4.1 seconds exceeds the authored 3.2 second attack cycle, so the uncut
+    # 4.9 seconds exceeds the closed 4.4 second attack cycle, so the uncut
     # recording contains approach, deepest dive and recovery regardless of the
     # animation phase at the state transition.
-    page.wait_for_timeout(4100)
+    page.wait_for_timeout(4900)
     transitions.append({
         "phase": "cycle-complete",
         "atMs": round((time.monotonic() - started) * 1000),
@@ -350,16 +350,20 @@ def capture_motion_cadence(browser, base_url: str) -> dict[str, object]:
     sample_page.evaluate("window.__projectPlateau.loadHy3dVisualsForTest()")
     sample_page.evaluate("window.__projectPlateau.teleportForTest({x: 1, z: -30})")
     sample_page.evaluate("window.__projectPlateau.setView('glade')")
-    # The attack path has a 3.2s period: approach occupies [0, 2.304), then
-    # recovery occupies [2.304, 3.2). These samples document that authored arc.
+    # Set each state before advancing its phase. Freezing first used to pin the
+    # bank sample at the pre-attack entry position, leaving the subject outside
+    # the frame even though its label claimed an attack phase.
+    previous_awareness = None
     for phase, awareness, seconds in (
         ("watch", 1, 0.0),
-        ("bank", 3, 0.25),
-        ("dive", 3, 2.0),
+        ("bank", 3, 0.72),
+        ("dive", 3, 1.35),
         ("pull-up", 3, 2.85),
     ):
+        if awareness != previous_awareness:
+            sample_page.evaluate(f"window.__projectPlateau.setThreatVisualForTest({awareness}, null)")
+            previous_awareness = awareness
         sample_page.evaluate(f"window.__projectPlateau.freezeVisualForTest({seconds})")
-        sample_page.evaluate(f"window.__projectPlateau.setThreatVisualForTest({awareness}, null)")
         sample_page.wait_for_timeout(50)
         path = MOTION / f"{phase}.jpg"
         sample_page.screenshot(path=path, type="jpeg", quality=JPEG_QUALITY)
@@ -378,7 +382,7 @@ def capture_motion_cadence(browser, base_url: str) -> dict[str, object]:
     result = {
         "claim": "continuous real-browser watch to attack cycle plus deterministic phase samples",
         "captureMode": "one continuous real-time Playwright gameplay take after browser preroll removal; QA-clock JPEG samples are phase labels, not gameplay timing",
-        "authoredCycleSeconds": 3.2,
+        "authoredCycleSeconds": 4.4,
         "trimmedBrowserPrerollMs": round(preroll_seconds * 1000),
         "transitions": transitions,
         "video": {

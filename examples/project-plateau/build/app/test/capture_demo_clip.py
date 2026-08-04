@@ -42,8 +42,8 @@ EDIT_STORIES = {
         ("field-order", "field_order:start", "field_order:end", 1.2, "accept the field order"),
         ("brook-camera", "brook_plate:start", "brook_plate:end", 1.8, "commit a brook plate"),
         ("young-camera", "young_play_plate:start", "young_play_plate:end", 1.8, "record young behavior"),
-        ("branch-camera", "branch_pull_plate:start", "branch_pull_plate:end", 1.8, "record branch pulling"),
         ("dive-defense", "attack_ready", "rifle_response", 3.0, "interrupt one dive"),
+        ("branch-camera", "branch_pull_plate:start", "branch_pull_plate:end", 1.8, "record branch pulling"),
         ("exposed-return", "exposed_return:start", "exposed_return:end", 2.0, "extract by the exposed creek"),
         ("strong-result", "result:start", "demo_end", 3.4, "deliver a Strong field record"),
     ],
@@ -53,8 +53,8 @@ EDIT_STORIES = {
         ("brook-camera", "brook_plate:start", "brook_plate:end", 3.5, "commit a brook plate"),
         ("basalt-camera", "basalt_plate:start", "basalt_plate:end", 3.0, "record geological scale"),
         ("young-camera", "young_play_plate:start", "young_play_plate:end", 3.5, "record young behavior"),
-        ("branch-camera", "branch_pull_plate:start", "branch_pull_plate:end", 3.5, "record branch pulling"),
         ("dive-defense", "attack_ready", "rifle_response", 4.5, "interrupt one dive"),
+        ("branch-camera", "branch_pull_plate:start", "branch_pull_plate:end", 3.5, "record branch pulling"),
         ("exposed-return", "exposed_return:start", "exposed_return:end", 3.0, "extract by the exposed creek"),
         ("strong-result", "result:start", "demo_end", 3.5, "deliver a Strong field record"),
     ],
@@ -185,10 +185,14 @@ def interrupt_dive(take: Take) -> None:
         cartridges=before["cartridges"],
         threat=snapshot(page)["threatVisual"],
     )
-    page.wait_for_timeout(180)
+    page.wait_for_function(
+        "window.__projectPlateau.snapshot().threatVisual.attackStage === 'fold-dive'",
+        timeout=1500,
+    )
+    take.mark("dive_commit", threat=snapshot(page)["threatVisual"])
     page.keyboard.down("KeyF")
     take.mark("rifle_raise", input="hold F")
-    page.wait_for_timeout(260)
+    page.wait_for_timeout(340)
     # Pointer lock turns an absolute mouse move into look input. Fire at the
     # current cursor position so the demo does not silently rotate the player
     # before the exposed return.
@@ -260,12 +264,12 @@ def record_take(out_dir: Path) -> tuple[Path, Take, list[str], set[str]]:
         move_until(take, "KeyW", "window.__projectPlateau.snapshot().player.position.z <= 2", "canopy_to_glade")
         page.keyboard.press("KeyE")
         expose_plate(take, 2, "young_play_plate")
-        expose_plate(take, 3, "branch_pull_plate")
         page.wait_for_function(
             "window.__projectPlateau.snapshot().player.threatState === 'attack'",
             timeout=2500,
         )
         interrupt_dive(take)
+        expose_plate(take, 3, "branch_pull_plate")
         move_until(take, "KeyD", "window.__projectPlateau.snapshot().player.position.x > 3.4", "line_up_exposed_creek")
         move_until(take, "KeyS", "window.__projectPlateau.snapshot().player.position.z > 3.2", "commit_exposed_return")
         move_until(
@@ -460,6 +464,65 @@ def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def validate_raw_provenance(raw_take: Path, marks: dict[str, object]) -> float:
+    """Fail closed before a reused take can mint new delivery claims."""
+    if not raw_take.is_file():
+        raise RuntimeError(f"Raw take does not exist: {raw_take}")
+    raw = marks.get("raw")
+    if not isinstance(raw, dict):
+        raise RuntimeError("marks.raw must be an object")
+    expected_path = str(raw_take.relative_to(BUILD))
+    checks = {
+        "path": raw.get("path") == expected_path,
+        "bytes": raw.get("bytes") == raw_take.stat().st_size,
+        "sha256": raw.get("sha256") == sha256(raw_take),
+        "sourceFingerprint": marks.get("sourceFingerprint") == app_fingerprint(),
+    }
+    failed = [name for name, passed in checks.items() if not passed]
+    if failed:
+        raise RuntimeError(f"Raw take provenance mismatch: {', '.join(failed)}")
+
+    details = probe(raw_take)
+    actual_duration = float(details["format"]["duration"])
+    recorded_duration = float(raw.get("durationSeconds", -1))
+    if abs(actual_duration - recorded_duration) > 0.05:
+        raise RuntimeError(
+            f"Raw take duration mismatch: recorded={recorded_duration:.3f}, "
+            f"actual={actual_duration:.3f}"
+        )
+    offset = float(raw.get("marksToSourceOffset", 0))
+    raw_marks = marks.get("marks")
+    if not isinstance(raw_marks, list):
+        raise RuntimeError("marks.marks must be an array")
+    for mark in raw_marks:
+        source_second = float(mark["t"]) + offset
+        if source_second < -0.001 or source_second > actual_duration + 0.001:
+            raise RuntimeError(
+                f"Capture mark {mark.get('label')} lies outside the raw take: {source_second:.3f}s"
+            )
+    demo_window = marks.get("demoWindow")
+    if not isinstance(demo_window, dict):
+        raise RuntimeError("marks.demoWindow must be an object")
+    demo_start = float(demo_window.get("sourceStartSeconds", -1))
+    demo_end = demo_start + float(demo_window.get("sourceDurationSeconds", -1))
+    if demo_start < 0 or demo_end > actual_duration + 0.001 or demo_end <= demo_start:
+        raise RuntimeError(
+            f"Demo window lies outside the raw take: {demo_start:.3f}..{demo_end:.3f}s"
+        )
+    return actual_duration
+
+
+def validate_story_segments(segments: list[dict[str, object]], raw_duration: float) -> None:
+    for segment in segments:
+        start = float(segment["sourceStartSeconds"])
+        end = float(segment["sourceEndSeconds"])
+        if start < 0 or end <= start or end > raw_duration + 0.001:
+            raise RuntimeError(
+                f"Story segment {segment['name']} lies outside the raw take: "
+                f"{start:.3f}..{end:.3f}s"
+            )
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--out-dir", type=Path, default=CLIP)
@@ -472,6 +535,7 @@ def main() -> int:
     if args.reuse_raw:
         raw_take = out_dir / "raw_take.webm"
         marks = json.loads(marks_path.read_text())
+        raw_duration = validate_raw_provenance(raw_take, marks)
         print(f"Reusing raw take: {raw_take}")
     else:
         capture_source_fingerprint = app_fingerprint()
@@ -516,6 +580,7 @@ def main() -> int:
         marks_path.write_text(json.dumps(marks, indent=2) + "\n")
         print(f"Raw take: {raw_take} ({raw_duration:.2f}s, {raw_take.stat().st_size / 1e6:.2f}MB)")
         print(f"Marks: {marks_path}")
+        raw_duration = validate_raw_provenance(raw_take, marks)
     if args.no_encode:
         return 0
 
@@ -523,6 +588,7 @@ def main() -> int:
     for seconds in (30, 15):
         output = out_dir / f"project-plateau-{seconds}s.mp4"
         segments = story_segments(marks, seconds)
+        validate_story_segments(segments, raw_duration)
         encode_story(raw_take, output, segments)
         verify = subprocess.run(
             [sys.executable, str(XCLIP), "verify", str(output)],
@@ -550,15 +616,27 @@ def main() -> int:
         marks,
     )
 
-    contact_sheet = out_dir / "contact-sheet.jpg"
-    subprocess.run(
-        [
-            need("ffmpeg"), "-y", "-i", str(out_dir / "project-plateau-30s.mp4"),
-            "-vf", "fps=1/3,scale=480:-2,tile=5x2", "-frames:v", "1", str(contact_sheet),
-        ],
-        check=True,
-        capture_output=True,
-    )
+    contact_sheets: list[dict[str, object]] = []
+    for seconds, filename, sampling in (
+        (15, "contact-sheet.jpg", "one frame every 1.5 seconds from the promoted 15-second encode"),
+        (30, "contact-sheet-30s.jpg", "one frame every three seconds from the 30-second encode"),
+    ):
+        contact_sheet = out_dir / filename
+        subprocess.run(
+            [
+                need("ffmpeg"), "-y", "-i", str(out_dir / f"project-plateau-{seconds}s.mp4"),
+                "-vf", f"fps=1/{seconds / 10:g},scale=480:-2,tile=5x2",
+                "-frames:v", "1", str(contact_sheet),
+            ],
+            check=True,
+            capture_output=True,
+        )
+        contact_sheets.append({
+            "path": str(contact_sheet.relative_to(BUILD)),
+            "bytes": contact_sheet.stat().st_size,
+            "sha256": sha256(contact_sheet),
+            "sampling": sampling,
+        })
     share_card = out_dir.parent / "project-plateau-github.jpg"
     card = subprocess.run(
         [
@@ -579,12 +657,7 @@ def main() -> int:
         "edit": marks["edit"],
         "rawSha256": marks["raw"]["sha256"],
         "encodes": encodes,
-        "contactSheet": {
-            "path": str(contact_sheet.relative_to(BUILD)),
-            "bytes": contact_sheet.stat().st_size,
-            "sha256": sha256(contact_sheet),
-            "sampling": "one frame every three seconds from the 30-second encode",
-        },
+        "contactSheets": contact_sheets,
         "shareCard": {
             "path": str(share_card.relative_to(BUILD)),
             "bytes": share_card.stat().st_size,

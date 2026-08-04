@@ -47,7 +47,7 @@ import {
   stepPlayer,
 } from './simulation.js';
 import { terrainHeight } from './terrain.js';
-import { createWorld } from './world.js';
+import { PTERODACTYL_ATTACK_CYCLE_SECONDS, createWorld } from './world.js';
 import { showPreviewGateway } from './preview-gateway.js';
 import { hideLoading, loadingScreenSnapshot, showLoading } from './loading-screen.js';
 
@@ -798,7 +798,9 @@ function worldRuntime(deltaSeconds = 0) {
   const threatAwareness = visualThreatOverride ?? player.threatAwareness;
   const attackSeconds = visualThreatOverride === null
     ? player.attackSeconds
-    : visualThreatPose === 'dive' ? 1.1 : visualElapsed % 3.2;
+    : visualThreatPose === 'dive'
+      ? 1.1
+      : visualElapsed % PTERODACTYL_ATTACK_CYCLE_SECONDS;
   return {
     threatAwareness,
     attackSeconds,

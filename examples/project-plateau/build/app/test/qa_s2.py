@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import socket
@@ -93,13 +94,29 @@ def run() -> dict[str, object]:
             page.screenshot(path=EVIDENCE / filename, type="jpeg", quality=86)
             checkpoints.append({"id": identifier, "state": state, "visual": f"build/evidence/s2/{filename}"})
 
-        def lock_threat_frame() -> None:
-            # The threat now owns a world-space orbit instead of following the
-            # player. Freeze an authored phase for deterministic topology
-            # screenshots; player-relative proximity would reintroduce the
-            # exact tethering regression this suite must reject.
-            page.evaluate("window.__projectPlateau.freezeVisualForTest(5, false)")
-            assert snap()["threatVisual"]["anchorModel"] == "fixed-world-orbit-latched-attack-origin"
+        visual_phase = 4.3
+
+        def settle_threat_frame() -> dict[str, object]:
+            # Advance the authored clock between state checkpoints so attack
+            # entry/exit blends actually complete. Reusing one frozen time
+            # made the old S2 screenshots hide a stationary transition.
+            nonlocal visual_phase
+            visual_phase += 0.7
+            page.evaluate(
+                "seconds => window.__projectPlateau.freezeVisualForTest(seconds, false)",
+                visual_phase,
+            )
+            state = snap()
+            assert state["threatVisual"]["anchorModel"] == "fixed-world-orbit-latched-attack-origin"
+            return state
+
+        def threat_distance(first: dict[str, object], second: dict[str, object]) -> float:
+            first_position = first["threatVisual"]["position"]
+            second_position = second["threatVisual"]["position"]
+            return math.dist(
+                (first_position["x"], first_position["y"], first_position["z"]),
+                (second_position["x"], second_position["y"], second_position["z"]),
+            )
 
         initial = snap()
         assert initial["player"]["zone"] == "fort"
@@ -109,20 +126,19 @@ def run() -> dict[str, object]:
 
         page.evaluate("window.__projectPlateau.teleportForTest({x: 0, z: 18})")
         page.wait_for_timeout(220)
-        watch = snap()
+        watch = settle_threat_frame()
         assert watch["player"]["zone"] == "canopy-overlook", watch
         assert watch["player"]["threatState"] == "watch", watch
         assert watch["threatVisual"]["state"] == "watch", watch
-        lock_threat_frame()
         capture("canopy-watch", "02-canopy-watch.jpg")
 
         page.evaluate("window.__projectPlateau.teleportForTest({x: 0, z: -10})")
         page.wait_for_timeout(220)
-        search = snap()
+        search = settle_threat_frame()
         assert search["player"]["zone"] == "iguanodon-glade", search
         assert search["player"]["threatState"] == "search", search
         assert search["threatVisual"]["state"] == "search", search
-        lock_threat_frame()
+        assert 0.25 < threat_distance(watch, search) < 20, (watch, search)
         capture("glade-search", "03-glade-search.jpg")
 
         if runtime_stage in {
@@ -156,13 +172,19 @@ def run() -> dict[str, object]:
         expected_attack_event = "plate-exposure:+2" if complete_loop_stage else "exposed-sprint"
         assert attack["player"]["lastThreatEvent"] == expected_attack_event, attack
         assert attack["threatVisual"]["state"] == "attack", attack
-        page.wait_for_timeout(220)
-        assert snap()["threatVisual"]["anchorModel"] == "fixed-world-orbit-latched-attack-origin"
+        page.wait_for_function(
+            "window.__projectPlateau.snapshot().player.attackSeconds >= 0.65",
+            timeout=1500,
+        )
+        attack_entry = snap()
+        attack = settle_threat_frame()
+        assert attack["threatVisual"]["attackStage"] != "orbit", attack
+        assert 0.25 < threat_distance(attack_entry, attack) < 45, (attack_entry, attack)
         capture("creek-attack", "04-creek-attack.jpg")
 
         page.evaluate("window.__projectPlateau.teleportForTest({x: 0, z: 18})")
         page.wait_for_timeout(6250)
-        covered = snap()
+        covered = settle_threat_frame()
         assert covered["player"]["zone"] == "covered-return", covered
         assert covered["player"]["inCover"], covered
         assert covered["player"]["threatState"] == "search", covered

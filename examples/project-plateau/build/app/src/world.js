@@ -674,6 +674,7 @@ const PTERODACTYL_LOCAL_FORWARD = new THREE.Vector3(0, 0, -1);
 const PTERODACTYL_WORLD_UP = new THREE.Vector3(0, 1, 0);
 const PTERODACTYL_ORBIT_CENTER = Object.freeze({ x: 0, z: -9 });
 const THREAT_TRANSITION_SECONDS = 0.55;
+export const PTERODACTYL_ATTACK_CYCLE_SECONDS = 4.4;
 
 function alignPterodactylToTravel(mesh, velocity, roll = 0) {
   if (velocity.lengthSq() <= 1e-10) return;
@@ -718,7 +719,10 @@ export function pterodactylAttackFlightState({
   playerPosition,
   reducedMotion,
 }) {
-  const pose = pterodactylAttackPose(attackClock, reducedMotion);
+  const finiteClock = Number.isFinite(attackClock) ? attackClock : 0;
+  const cycleClock = ((finiteClock % PTERODACTYL_ATTACK_CYCLE_SECONDS)
+    + PTERODACTYL_ATTACK_CYCLE_SECONDS) % PTERODACTYL_ATTACK_CYCLE_SECONDS;
+  const pose = pterodactylAttackPose(cycleClock, reducedMotion);
   const approach = pose.approach;
   const flightProgress = pose.flightProgress;
   const diveStart = new THREE.Vector3(-4.6, 10.4, -24);
@@ -740,7 +744,23 @@ export function pterodactylAttackFlightState({
     new THREE.Vector3(7.5, 12.2, 1.4),
     recoveryProgress,
   );
-  const authoredPosition = divePosition.lerp(recoveryPosition, recoveryProgress);
+  const attackPosition = divePosition.lerp(recoveryPosition, recoveryProgress);
+  // The visual-review cycle continues through a wide, high return arc and
+  // meets the next dive at the same point and tangent. The former 3.2-second
+  // modulo jumped directly from recoveryEnd to diveStart by ~28 world units.
+  const returnProgress = THREE.MathUtils.smoothstep(
+    cycleClock,
+    3.05,
+    PTERODACTYL_ATTACK_CYCLE_SECONDS,
+  );
+  const returnPosition = cubicBezierPoint(
+    new THREE.Vector3(7.5, 12.2, 1.4),
+    new THREE.Vector3(9.85, 13.7, 3.7),
+    new THREE.Vector3(-5.15, 10.75, -28),
+    diveStart,
+    returnProgress,
+  );
+  const authoredPosition = cycleClock > 3.05 ? returnPosition : attackPosition;
   // `playerPosition` remains as a compatibility alias for authored/test
   // callers. The live world passes a position latched once when the attack
   // begins; it must never pass the player's continuously changing position.
@@ -2801,6 +2821,7 @@ export function createWorld(scene) {
   let previousThreatAwareness = null;
   let visualOrbitAwareness = 0;
   let hasRenderedThreatFrame = false;
+  let previousWorldElapsed = null;
   const attackAnchor = new THREE.Vector3();
   let attackEntryPosition = null;
   let attackEntryScale = null;
@@ -2908,6 +2929,11 @@ export function createWorld(scene) {
       renderedThreatResponse = awareness === 3 && runtime.inCover ? 'cover-pull-up' : 'orbit';
       const playerPosition = runtime.playerPosition ?? { x: 0, z: 0 };
       const deltaSeconds = Math.max(0, Number(runtime.deltaSeconds) || 0);
+      const orbitDeltaSeconds = Object.hasOwn(runtime, 'deltaSeconds')
+        ? deltaSeconds
+        : previousWorldElapsed === null
+          ? Math.max(0, Number(elapsed) || 0)
+          : Math.max(0, (Number(elapsed) || 0) - previousWorldElapsed);
       const enteringAttack = awareness === 3 && previousThreatAwareness !== 3;
       const leavingAttack = awareness !== 3 && previousThreatAwareness === 3;
       if (enteringAttack) {
@@ -2926,7 +2952,7 @@ export function createWorld(scene) {
       }
       const orbitAwarenessTarget = Math.min(2, awareness);
       const orbitBlend = deltaSeconds > 0
-        ? 1 - Math.exp(-deltaSeconds * 4.5)
+        ? 1 - Math.exp(-deltaSeconds * 0.9)
         : 1;
       visualOrbitAwareness = THREE.MathUtils.lerp(
         visualOrbitAwareness,
@@ -2987,8 +3013,11 @@ export function createWorld(scene) {
             awarenessFraction,
           )
           : height;
-        const stateSpeed = speed * (1 + awareness * 0.42) * (1 + index * 0.08);
-        const angle = phase + elapsed * stateSpeed;
+        const speedAwareness = isPrimary ? visualOrbitAwareness : 0;
+        const stateSpeed = speed * (1 + speedAwareness * 0.42) * (1 + index * 0.08);
+        mesh.userData.orbitAngle = (mesh.userData.orbitAngle ?? phase)
+          + orbitDeltaSeconds * stateSpeed;
+        const angle = mesh.userData.orbitAngle;
         const flightVelocity = new THREE.Vector3();
         let diveApproach = 0;
         let attackWingFold = 0;
@@ -3194,6 +3223,7 @@ export function createWorld(scene) {
         renderedAttackProgress = 0;
       }
       previousThreatAwareness = awareness;
+      previousWorldElapsed = Number(elapsed) || 0;
       hasRenderedThreatFrame = true;
       family.forEach((animal, index) => {
         const {
@@ -3335,7 +3365,7 @@ export function createWorld(scene) {
       // large disconnected arc. The dinosaur supplies most of the action;
       // the rooted tree only yields a few degrees under load.
       feedingBranch.userData.branchPivot.rotation.z = branchPull
-        ? 0.03 + pullCycle * (reducedMotion ? 0.035 : 0.12)
+        ? 0.03 + pullCycle * (reducedMotion ? 0.05 : 0.12)
         : 0.03;
       feedingBranch.userData.leafClusters.forEach((cluster, index) => {
         const rest = feedingBranch.userData.leafRestRotations[index];
