@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
-"""Record one continuous input-only Strong run and derive 30s/15s previews.
+"""Record one input-only core-loop run and derive legible 30s/15s demos.
 
-The delivery clips use uniform time compression over one uncut browser take.
-They do not teleport, advance time through a QA hook, splice state, or replace
-the S8 traversal report. Raw and encoded video stay out of Git; the capture
-marks, hashes, measured probe data and real share card remain reproducible.
+The source take is one continuous Strong-result browser run with a defensive
+shot. Delivery clips disclose same-take editorial cuts so traversal can be
+compressed while camera commitment, the pterodactyl dive, rifle response and
+result remain readable. The route never teleports or advances time through a
+QA hook, and the edited demos never replace the S8 traversal report. Raw and
+encoded video stay out of Git; marks, hashes and probe data remain reproducible.
 """
 
 from __future__ import annotations
@@ -23,16 +25,40 @@ from urllib.parse import urlparse
 
 from playwright.sync_api import Page, sync_playwright
 
+from verify import app_fingerprint
+
 APP = Path(__file__).resolve().parent.parent
 BUILD = APP.parent
 REPO = BUILD.parents[2]
 MEDIA = BUILD / "media"
 CLIP = MEDIA / "clip"
-EVIDENCE = BUILD / "evidence" / "s8"
 XCLIP = REPO / "scripts" / "xclip.py"
 BASE_URL = os.environ.get("BASE_URL", "http://127.0.0.1:4173")
 CHROME = Path("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
 VIEW = {"width": 1280, "height": 800}
+PUBLIC_MEDIA = APP / "public" / "media"
+EDIT_STORIES = {
+    15: [
+        ("field-order", "field_order:start", "field_order:end", 1.2, "accept the field order"),
+        ("brook-camera", "brook_plate:start", "brook_plate:end", 1.8, "commit a brook plate"),
+        ("young-camera", "young_play_plate:start", "young_play_plate:end", 1.8, "record young behavior"),
+        ("branch-camera", "branch_pull_plate:start", "branch_pull_plate:end", 1.8, "record branch pulling"),
+        ("dive-defense", "attack_ready", "rifle_response", 3.0, "interrupt one dive"),
+        ("exposed-return", "exposed_return:start", "exposed_return:end", 2.0, "extract by the exposed creek"),
+        ("strong-result", "result:start", "demo_end", 3.4, "deliver a Strong field record"),
+    ],
+    30: [
+        ("field-order", "field_order:start", "field_order:end", 2.5, "accept the field order"),
+        ("route-to-brook", "fort_to_brook:start", "fort_to_brook:end", 3.0, "traverse the plateau"),
+        ("brook-camera", "brook_plate:start", "brook_plate:end", 3.5, "commit a brook plate"),
+        ("basalt-camera", "basalt_plate:start", "basalt_plate:end", 3.0, "record geological scale"),
+        ("young-camera", "young_play_plate:start", "young_play_plate:end", 3.5, "record young behavior"),
+        ("branch-camera", "branch_pull_plate:start", "branch_pull_plate:end", 3.5, "record branch pulling"),
+        ("dive-defense", "attack_ready", "rifle_response", 4.5, "interrupt one dive"),
+        ("exposed-return", "exposed_return:start", "exposed_return:end", 3.0, "extract by the exposed creek"),
+        ("strong-result", "result:start", "demo_end", 3.5, "deliver a Strong field record"),
+    ],
+}
 POINTER_LOCK_SHIM = """
 (() => {
   let lockedElement = null;
@@ -148,6 +174,46 @@ def wait_for_cover(take: Take, label: str) -> None:
     take.mark(f"{label}:end", awareness=snapshot(take.page)["player"]["threatAwareness"])
 
 
+def interrupt_dive(take: Take) -> None:
+    """Make the limited defensive verb readable without manufacturing state."""
+    page = take.page
+    before = snapshot(page)["player"]
+    assert before["threatState"] == "attack", before
+    take.mark(
+        "attack_ready",
+        state=before["threatState"],
+        cartridges=before["cartridges"],
+        threat=snapshot(page)["threatVisual"],
+    )
+    page.wait_for_timeout(180)
+    page.keyboard.down("KeyF")
+    take.mark("rifle_raise", input="hold F")
+    page.wait_for_timeout(260)
+    # Pointer lock turns an absolute mouse move into look input. Fire at the
+    # current cursor position so the demo does not silently rotate the player
+    # before the exposed return.
+    heading_before_shot = before["heading"]
+    page.mouse.down(button="left")
+    page.mouse.up(button="left")
+    take.mark("rifle_fire", input="Left Mouse")
+    page.wait_for_function(
+        f"window.__projectPlateau.snapshot().player.shotCount === {before['shotCount'] + 1}",
+        timeout=1500,
+    )
+    page.wait_for_timeout(720)
+    page.keyboard.up("KeyF")
+    page.wait_for_timeout(280)
+    after = snapshot(page)["player"]
+    assert after["cartridges"] == before["cartridges"] - 1, after
+    assert abs(after["heading"] - heading_before_shot) < 1e-6, after
+    take.mark(
+        "rifle_response",
+        shotCount=after["shotCount"],
+        cartridges=after["cartridges"],
+        brookResponse=after["brookResponse"],
+    )
+
+
 def record_take(out_dir: Path) -> tuple[Path, Take, list[str], set[str]]:
     raw_dir = out_dir / "raw"
     raw_dir.mkdir(parents=True, exist_ok=True)
@@ -171,12 +237,15 @@ def record_take(out_dir: Path) -> tuple[Path, Take, list[str], set[str]]:
         page.on("request", lambda request: hosts.add(urlparse(request.url).netloc))
         take = Take(page, time.monotonic())
 
-        page.goto(f"{BASE_URL}/?media=strong", wait_until="networkidle")
+        page.goto(f"{BASE_URL}/?media=core-loop", wait_until="networkidle")
         page.wait_for_function("window.__projectPlateau?.ready === true")
         page.get_by_role("button", name="Enter the basin").click()
         page.wait_for_function("window.__projectPlateau.snapshot().mode === 'order'", timeout=15000)
-        page.wait_for_timeout(1200)
-        take.mark("strong_start", state="field-order")
+        page.wait_for_timeout(450)
+        take.mark("demo_start", state="field-order")
+        take.mark("field_order:start", state="field-order")
+        page.wait_for_timeout(1600)
+        take.mark("field_order:end", state="field-order")
         page.get_by_role("button", name="Begin field work").click()
         page.wait_for_timeout(100)
 
@@ -191,18 +260,37 @@ def record_take(out_dir: Path) -> tuple[Path, Take, list[str], set[str]]:
         move_until(take, "KeyW", "window.__projectPlateau.snapshot().player.position.z <= 2", "canopy_to_glade")
         page.keyboard.press("KeyE")
         expose_plate(take, 2, "young_play_plate")
-        move_until(take, "KeyS", "window.__projectPlateau.snapshot().player.position.z > 3.2", "protect_young_play_plate")
-        wait_for_cover(take, "between_behavior_frames")
-        move_until(take, "KeyW", "window.__projectPlateau.snapshot().player.position.z <= 2", "return_for_branch_pull")
         expose_plate(take, 3, "branch_pull_plate")
-        move_until(take, "KeyS", "window.__projectPlateau.snapshot().player.position.z > 3.2", "retreat_to_cover")
-        wait_for_cover(take, "final_cover_read")
-        move_until(take, "KeyS", "window.__projectPlateau.snapshot().player.runStatus === 'result'", "covered_return")
+        page.wait_for_function(
+            "window.__projectPlateau.snapshot().player.threatState === 'attack'",
+            timeout=2500,
+        )
+        interrupt_dive(take)
+        move_until(take, "KeyD", "window.__projectPlateau.snapshot().player.position.x > 3.4", "line_up_exposed_creek")
+        move_until(take, "KeyS", "window.__projectPlateau.snapshot().player.position.z > 3.2", "commit_exposed_return")
+        move_until(
+            take,
+            "KeyS",
+            "window.__projectPlateau.snapshot().player.runStatus === 'result'",
+            "exposed_return",
+        )
         result = snapshot(page)
         assert result["player"]["result"]["band"] == "strong-field-record", result
         assert result["player"]["result"]["evidence"] == 7, result
-        page.wait_for_timeout(1800)
-        take.mark("strong_end", state="strong-field-record")
+        assert result["player"]["shotCount"] == 1, result
+        assert result["player"]["cartridges"] == 1, result
+        assert result["player"]["returnRoute"] == "exposed", result
+        assert result["player"]["returnCostSeconds"] == 18, result
+        assert result["player"]["result"]["gunshotCallback"], result
+        take.mark(
+            "result:start",
+            state="strong-field-record",
+            route="exposed",
+            evidence=7,
+            shotCount=1,
+        )
+        page.wait_for_timeout(3800)
+        take.mark("demo_end", state="strong-field-record")
 
         video = page.video
         context.close()
@@ -234,13 +322,62 @@ def probe(path: Path) -> dict[str, object]:
     return details
 
 
-def encode_uniform_speed(source: Path, output: Path, start: float, source_duration: float, target: float) -> None:
-    speed = source_duration / target
+def mark_seconds(marks: dict[str, object], label: str) -> float:
+    match = next((mark for mark in marks["marks"] if mark["label"] == label), None)
+    if match is None:
+        raise RuntimeError(f"Missing capture mark required by edit story: {label}")
+    return float(match["t"]) + float(marks["raw"]["marksToSourceOffset"])
+
+
+def story_segments(marks: dict[str, object], target_seconds: int) -> list[dict[str, object]]:
+    output_cursor = 0.0
+    segments: list[dict[str, object]] = []
+    for name, start_label, end_label, target_duration, core_verb in EDIT_STORIES[target_seconds]:
+        source_start = mark_seconds(marks, start_label)
+        source_end = mark_seconds(marks, end_label)
+        source_duration = source_end - source_start
+        if source_duration <= 0:
+            raise RuntimeError(f"Invalid source segment {name}: {source_duration:.3f}s")
+        segments.append({
+            "name": name,
+            "coreVerb": core_verb,
+            "sourceStartLabel": start_label,
+            "sourceEndLabel": end_label,
+            "sourceStartSeconds": round(source_start, 3),
+            "sourceEndSeconds": round(source_end, 3),
+            "sourceDurationSeconds": round(source_duration, 3),
+            "outputStartSeconds": round(output_cursor, 3),
+            "outputEndSeconds": round(output_cursor + target_duration, 3),
+            "outputDurationSeconds": target_duration,
+            "playbackRate": round(source_duration / target_duration, 5),
+        })
+        output_cursor += target_duration
+    if abs(output_cursor - target_seconds) > 1e-6:
+        raise RuntimeError(f"{target_seconds}s story totals {output_cursor:.3f}s")
+    return segments
+
+
+def encode_story(source: Path, output: Path, segments: list[dict[str, object]]) -> None:
+    filters: list[str] = []
+    inputs: list[str] = []
+    for index, segment in enumerate(segments):
+        source_duration = float(segment["sourceDurationSeconds"])
+        output_duration = float(segment["outputDurationSeconds"])
+        factor = output_duration / source_duration
+        filters.append(
+            f"[0:v]trim=start={segment['sourceStartSeconds']}:end={segment['sourceEndSeconds']},"
+            f"setpts=(PTS-STARTPTS)*{factor:.10f}[v{index}]"
+        )
+        inputs.append(f"[v{index}]")
+    filters.append(
+        f"{''.join(inputs)}concat=n={len(segments)}:v=1:a=0,"
+        "fps=30,scale=1280:800:flags=lanczos,setsar=1:1[vout]"
+    )
+    target = sum(float(segment["outputDurationSeconds"]) for segment in segments)
     subprocess.run(
         [
-            need("ffmpeg"), "-y", "-i", str(source), "-ss", f"{start:.3f}",
-            "-t", f"{source_duration:.3f}", "-vf",
-            f"setpts=(PTS-STARTPTS)/{speed:.8f},fps=30,tpad=stop_mode=clone:stop_duration=4,setsar=1:1",
+            need("ffmpeg"), "-y", "-i", str(source),
+            "-filter_complex", ";".join(filters), "-map", "[vout]",
             "-c:v", "libx264", "-profile:v", "high", "-level", "4.0",
             "-pix_fmt", "yuv420p", "-crf", "21", "-preset", "slow",
             "-g", "60", "-keyint_min", "60", "-x264-params", "open-gop=0",
@@ -249,6 +386,74 @@ def encode_uniform_speed(source: Path, output: Path, start: float, source_durati
         check=True,
         capture_output=True,
     )
+
+
+def publish_preview(source: Path, segments: list[dict[str, object]], marks: dict[str, object]) -> dict[str, object]:
+    PUBLIC_MEDIA.mkdir(parents=True, exist_ok=True)
+    video = PUBLIC_MEDIA / "project-plateau-preview-15s.mp4"
+    poster = PUBLIC_MEDIA / "project-plateau-preview-poster.jpg"
+    subprocess.run(
+        [
+            need("ffmpeg"), "-y", "-i", str(source),
+            "-vf", "fps=30,scale=960:600:flags=lanczos,setsar=1:1",
+            "-c:v", "libx264", "-profile:v", "high", "-level", "3.1",
+            "-pix_fmt", "yuv420p", "-crf", "23", "-preset", "slow",
+            "-g", "60", "-keyint_min", "60", "-x264-params", "open-gop=0",
+            "-movflags", "+faststart", "-an", "-t", "15", str(video),
+        ],
+        check=True,
+        capture_output=True,
+    )
+    poster_second = 4.8
+    subprocess.run(
+        [
+            need("ffmpeg"), "-y", "-ss", str(poster_second), "-i", str(video),
+            "-frames:v", "1", "-q:v", "3", str(poster),
+        ],
+        check=True,
+        capture_output=True,
+    )
+    video_probe = probe(video)
+    video_probe["format"]["filename"] = str(video.relative_to(APP))
+    preview = {
+        "schemaVersion": 2,
+        "purpose": "mobile, social in-app browser and WebGL2-unavailable conversion preview",
+        "capture": "one continuous input-only Strong-result browser run with one defensive shot",
+        "edit": "disclosed same-take editorial cuts and per-segment speed changes; no teleport, state fabrication or substitute render",
+        "interactiveSourceFingerprint": marks["sourceFingerprint"],
+        "source": {
+            "path": "../media/clip/project-plateau-15s.mp4",
+            "sha256": sha256(source),
+            "bytes": source.stat().st_size,
+        },
+        "video": {
+            "path": "public/media/project-plateau-preview-15s.mp4",
+            "sha256": sha256(video),
+            "bytes": video.stat().st_size,
+            "probe": video_probe,
+        },
+        "poster": {
+            "path": "public/media/project-plateau-preview-poster.jpg",
+            "sha256": sha256(poster),
+            "bytes": poster.stat().st_size,
+            "sourceSecond": poster_second,
+        },
+        "storyBeats": segments,
+        "delivery": {
+            "preload": "none until preview routing",
+            "autoplay": "muted playsinline; controls remain available",
+            "interactiveRuntimeLoadedInPreviewMode": False,
+        },
+        "limitations": [
+            "The edited preview is not gameplay-timing evidence; S8 remains authoritative.",
+            "The preview is a conversion fallback, not a substitute for desktop WebGL2 QA.",
+        ],
+    }
+    (PUBLIC_MEDIA / "project-plateau-preview.json").write_text(
+        json.dumps(preview, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    return preview
 
 
 def sha256(path: Path) -> str:
@@ -267,10 +472,9 @@ def main() -> int:
     if args.reuse_raw:
         raw_take = out_dir / "raw_take.webm"
         marks = json.loads(marks_path.read_text())
-        source_start = float(marks["strongWindow"]["sourceStartSeconds"])
-        source_duration = float(marks["strongWindow"]["sourceDurationSeconds"])
         print(f"Reusing raw take: {raw_take}")
     else:
+        capture_source_fingerprint = app_fingerprint()
         server = start_server()
         try:
             raw_take, take, errors, hosts = record_take(out_dir)
@@ -285,16 +489,14 @@ def main() -> int:
         assert not external, external
         raw_probe = probe(raw_take)
         raw_duration = float(raw_probe["format"]["duration"])
-        offset = round(raw_duration - take.at("strong_end"), 3)
-        source_start = take.at("strong_start") + offset
-        source_duration = take.at("strong_end") - take.at("strong_start")
+        offset = round(raw_duration - take.at("demo_end"), 3)
         marks = {
-            "capture": "one continuous input-only Strong run",
-            "edit": "uniform time compression only; no state cuts or splices",
+            "capture": "one continuous input-only Strong-result browser run with one defensive shot",
+            "edit": "disclosed same-take editorial cuts and per-segment speed changes; no teleport, state fabrication or substitute render",
             "viewport": VIEW,
-            "url": f"{BASE_URL}/?media=strong",
+            "url": f"{BASE_URL}/?media=core-loop",
             "pointerLockMode": "deterministic-browser-shim",
-            "sourceFingerprint": json.loads((EVIDENCE / "report.json").read_text())["source"]["sha256"],
+            "sourceFingerprint": capture_source_fingerprint,
             "consoleErrors": errors,
             "requestHosts": sorted(hosts),
             "externalHosts": external,
@@ -305,9 +507,9 @@ def main() -> int:
                 "durationSeconds": raw_duration,
                 "marksToSourceOffset": offset,
             },
-            "strongWindow": {
-                "sourceStartSeconds": round(source_start, 3),
-                "sourceDurationSeconds": round(source_duration, 3),
+            "demoWindow": {
+                "sourceStartSeconds": round(take.at("demo_start") + offset, 3),
+                "sourceDurationSeconds": round(take.at("demo_end") - take.at("demo_start"), 3),
             },
             "marks": take.marks,
         }
@@ -320,7 +522,8 @@ def main() -> int:
     encodes: list[dict[str, object]] = []
     for seconds in (30, 15):
         output = out_dir / f"project-plateau-{seconds}s.mp4"
-        encode_uniform_speed(raw_take, output, source_start, source_duration, seconds)
+        segments = story_segments(marks, seconds)
+        encode_story(raw_take, output, segments)
         verify = subprocess.run(
             [sys.executable, str(XCLIP), "verify", str(output)],
             capture_output=True,
@@ -333,13 +536,19 @@ def main() -> int:
             {
                 "path": str(output.relative_to(BUILD)),
                 "targetSeconds": seconds,
-                "speed": round(source_duration / seconds, 5),
+                "segments": segments,
                 "bytes": output.stat().st_size,
                 "sha256": sha256(output),
                 "probe": details,
                 "verification": verify.stdout.strip().splitlines(),
             }
         )
+
+    preview = publish_preview(
+        out_dir / "project-plateau-15s.mp4",
+        next(encode["segments"] for encode in encodes if encode["targetSeconds"] == 15),
+        marks,
+    )
 
     contact_sheet = out_dir / "contact-sheet.jpg"
     subprocess.run(
@@ -383,8 +592,15 @@ def main() -> int:
             "source": "evidence/s10/02-young-play-silver-frame.jpg",
             "transform": "crop and resize only; no added text or generated imagery",
         },
+        "publicPreview": {
+            "path": preview["video"]["path"],
+            "bytes": preview["video"]["bytes"],
+            "sha256": preview["video"]["sha256"],
+            "posterPath": preview["poster"]["path"],
+            "posterSha256": preview["poster"]["sha256"],
+        },
         "limitations": [
-            "The delivery encodes are uniformly time-compressed and therefore are not timing evidence.",
+            "The delivery encodes use disclosed same-take cuts and speed changes and therefore are not timing evidence.",
             "S8 report.json remains the authoritative input-only traversal and timing record.",
             "The local MP4/WebM files are reproducible delivery artifacts and are intentionally excluded from Git history.",
         ],

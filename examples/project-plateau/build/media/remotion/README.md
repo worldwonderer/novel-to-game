@@ -1,11 +1,13 @@
 # Project Plateau launch video
 
-This Remotion project turns the verified 30-second Strong-route capture into a
-36-second English launch video. The full continuous gameplay clip remains
-visible between a three-second premise card and a three-second call to action.
-Only captions, framing, motion graphics, a Fish Audio synthetic English
-narration and an original procedural sound bed are added; the gameplay itself
-is not cut or substituted.
+This Remotion project turns the verified 30-second same-take core-loop demo into
+a 36-second English launch video. The source recording is one continuous
+input-only Strong-result route with a defensive shot; its delivery edit uses
+disclosed cuts and speed changes between real segments so observation, threat,
+response, extraction and result remain readable. Remotion adds captions,
+framing, motion graphics, a Fish Audio synthetic English narration and an
+original procedural sound bed; it does not substitute gameplay or fabricate
+state.
 
 ## Storyboard
 
@@ -161,8 +163,8 @@ assets so a render can be tied back to its inputs.
 
 ## Claim boundary
 
-- The gameplay segment is the existing uniformly compressed input-only Strong
-  run; it is delivery footage, not authoritative traversal timing evidence.
+- The gameplay segment is the disclosed same-take input-only core-loop edit; it
+  is delivery footage, not authoritative traversal timing evidence.
 - Motion graphics describe repository artifacts and observable player actions.
 - The narration was generated with Fish Audio `s2.1-pro-free` and its public
   `Energetic Male` model (`802e3bc2b27e49c2995d23ef70e6ac89`), described by

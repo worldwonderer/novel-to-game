@@ -1,17 +1,18 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "purpose": "mobile, social in-app browser and WebGL2-unavailable conversion preview",
-  "capture": "one continuous input-only Strong run; uniformly time-compressed, then delivery-scaled without cuts",
-  "interactiveSourceFingerprint": "568a32dcd33ef3ddc934d4fe795c882c9b7aaff5e71cd66ce7508095d3c12fdb",
+  "capture": "one continuous input-only Strong-result browser run with one defensive shot",
+  "edit": "disclosed same-take editorial cuts and per-segment speed changes; no teleport, state fabrication or substitute render",
+  "interactiveSourceFingerprint": "5d1aee3fb50d93fac31d3ececa8520a995a8bbc3a2e8b0f9187948968bda94ed",
   "source": {
     "path": "../media/clip/project-plateau-15s.mp4",
-    "sha256": "320b6cc34486614b73e779dbf394796193e66186202ad3c0ade0f938c2140462",
-    "bytes": 5149312
+    "sha256": "6d08cbe3793c29a61c0ad754255b56bd9c805b9884717b47baf73821aca6df00",
+    "bytes": 2991012
   },
   "video": {
     "path": "public/media/project-plateau-preview-15s.mp4",
-    "sha256": "0efb8307b4f3641e86abc6f024925ca3b4819cc590e04e32c387c49611eface2",
-    "bytes": 1143887,
+    "sha256": "9c9bd018a1057140f3ae4b201a1272755ee5ce2134ff99a6c2df926009d126c1",
+    "bytes": 1299100,
     "probe": {
       "streams": [
         {
@@ -46,7 +47,7 @@
           "start_time": "0.000000",
           "duration_ts": 230400,
           "duration": "15.000000",
-          "bit_rate": "606755",
+          "bit_rate": "689548",
           "bits_per_raw_sample": "8",
           "nb_frames": "450",
           "extradata_size": 51,
@@ -74,7 +75,7 @@
           "tags": {
             "language": "und",
             "handler_name": "VideoHandler",
-            "encoder": "Lavc62.28.102 libx264"
+            "encoder": "Lavc62.28.101 libx264"
           }
         }
       ],
@@ -87,31 +88,124 @@
         "format_long_name": "QuickTime / MOV",
         "start_time": "0.000000",
         "duration": "15.000000",
-        "size": "1143887",
-        "bit_rate": "610073",
+        "size": "1299100",
+        "bit_rate": "692853",
         "probe_score": 100,
         "tags": {
           "major_brand": "isom",
           "minor_version": "512",
           "compatible_brands": "isomiso2avc1mp41",
-          "encoder": "Lavf62.12.102"
+          "encoder": "Lavf62.12.101"
         }
       }
     }
   },
   "poster": {
     "path": "public/media/project-plateau-preview-poster.jpg",
-    "sha256": "0c93cc4e3bea155fd87c4f196b20d46da8f112b0f3c7f64831f90a9c3eae410b",
-    "bytes": 46128,
-    "sourceSecond": 1.5
+    "sha256": "550ba9dd6e407a8cea92064a879a4641d5c8f1f09a0a718e5f466c912b32a299",
+    "bytes": 45584,
+    "sourceSecond": 4.8
   },
+  "storyBeats": [
+    {
+      "name": "field-order",
+      "coreVerb": "accept the field order",
+      "sourceStartLabel": "field_order:start",
+      "sourceEndLabel": "field_order:end",
+      "sourceStartSeconds": 2.675,
+      "sourceEndSeconds": 4.279,
+      "sourceDurationSeconds": 1.604,
+      "outputStartSeconds": 0.0,
+      "outputEndSeconds": 1.2,
+      "outputDurationSeconds": 1.2,
+      "playbackRate": 1.33667
+    },
+    {
+      "name": "brook-camera",
+      "coreVerb": "commit a brook plate",
+      "sourceStartLabel": "brook_plate:start",
+      "sourceEndLabel": "brook_plate:end",
+      "sourceStartSeconds": 10.924,
+      "sourceEndSeconds": 13.084,
+      "sourceDurationSeconds": 2.16,
+      "outputStartSeconds": 1.2,
+      "outputEndSeconds": 3.0,
+      "outputDurationSeconds": 1.8,
+      "playbackRate": 1.2
+    },
+    {
+      "name": "young-camera",
+      "coreVerb": "record young behavior",
+      "sourceStartLabel": "young_play_plate:start",
+      "sourceEndLabel": "young_play_plate:end",
+      "sourceStartSeconds": 31.8,
+      "sourceEndSeconds": 33.951,
+      "sourceDurationSeconds": 2.151,
+      "outputStartSeconds": 3.0,
+      "outputEndSeconds": 4.8,
+      "outputDurationSeconds": 1.8,
+      "playbackRate": 1.195
+    },
+    {
+      "name": "branch-camera",
+      "coreVerb": "record branch pulling",
+      "sourceStartLabel": "branch_pull_plate:start",
+      "sourceEndLabel": "branch_pull_plate:end",
+      "sourceStartSeconds": 33.951,
+      "sourceEndSeconds": 36.119,
+      "sourceDurationSeconds": 2.168,
+      "outputStartSeconds": 4.8,
+      "outputEndSeconds": 6.6,
+      "outputDurationSeconds": 1.8,
+      "playbackRate": 1.20444
+    },
+    {
+      "name": "dive-defense",
+      "coreVerb": "interrupt one dive",
+      "sourceStartLabel": "attack_ready",
+      "sourceEndLabel": "rifle_response",
+      "sourceStartSeconds": 36.138,
+      "sourceEndSeconds": 37.611,
+      "sourceDurationSeconds": 1.473,
+      "outputStartSeconds": 6.6,
+      "outputEndSeconds": 9.6,
+      "outputDurationSeconds": 3.0,
+      "playbackRate": 0.491
+    },
+    {
+      "name": "exposed-return",
+      "coreVerb": "extract by the exposed creek",
+      "sourceStartLabel": "exposed_return:start",
+      "sourceEndLabel": "exposed_return:end",
+      "sourceStartSeconds": 38.677,
+      "sourceEndSeconds": 52.711,
+      "sourceDurationSeconds": 14.034,
+      "outputStartSeconds": 9.6,
+      "outputEndSeconds": 11.6,
+      "outputDurationSeconds": 2.0,
+      "playbackRate": 7.017
+    },
+    {
+      "name": "strong-result",
+      "coreVerb": "deliver a Strong field record",
+      "sourceStartLabel": "result:start",
+      "sourceEndLabel": "demo_end",
+      "sourceStartSeconds": 52.716,
+      "sourceEndSeconds": 56.52,
+      "sourceDurationSeconds": 3.804,
+      "outputStartSeconds": 11.6,
+      "outputEndSeconds": 15.0,
+      "outputDurationSeconds": 3.4,
+      "playbackRate": 1.11882
+    }
+  ],
   "delivery": {
     "preload": "none until preview routing",
     "autoplay": "muted playsinline; controls remain available",
     "interactiveRuntimeLoadedInPreviewMode": false
   },
   "limitations": [
-    "The uniformly time-compressed preview is not gameplay-timing evidence.",
+    "The edited preview is not gameplay-timing evidence; S8 remains authoritative.",
     "The preview is a conversion fallback, not a substitute for desktop WebGL2 QA."
   ]
 }

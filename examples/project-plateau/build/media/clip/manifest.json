@@ -1,15 +1,133 @@
 {
-  "sourceFingerprint": "568a32dcd33ef3ddc934d4fe795c882c9b7aaff5e71cd66ce7508095d3c12fdb",
-  "capture": "one continuous input-only Strong run",
-  "edit": "uniform time compression only; no state cuts or splices",
-  "rawSha256": "335262a4eb0ec464b43c3d3a388835af67251902a9e4d611c7d0c9e03cd1adaf",
+  "sourceFingerprint": "5d1aee3fb50d93fac31d3ececa8520a995a8bbc3a2e8b0f9187948968bda94ed",
+  "capture": "one continuous input-only Strong-result browser run with one defensive shot",
+  "edit": "disclosed same-take editorial cuts and per-segment speed changes; no teleport, state fabrication or substitute render",
+  "rawSha256": "25d06784115167326b602fe937e158e633532987de4fa257e14f2b9037aafa94",
   "encodes": [
     {
       "path": "media/clip/project-plateau-30s.mp4",
       "targetSeconds": 30,
-      "speed": 2.0288,
-      "bytes": 9330388,
-      "sha256": "15ed02f10ece218f5587b49171d92373b30eaac9b2325910797a582606e6c948",
+      "segments": [
+        {
+          "name": "field-order",
+          "coreVerb": "accept the field order",
+          "sourceStartLabel": "field_order:start",
+          "sourceEndLabel": "field_order:end",
+          "sourceStartSeconds": 2.675,
+          "sourceEndSeconds": 4.279,
+          "sourceDurationSeconds": 1.604,
+          "outputStartSeconds": 0.0,
+          "outputEndSeconds": 2.5,
+          "outputDurationSeconds": 2.5,
+          "playbackRate": 0.6416
+        },
+        {
+          "name": "route-to-brook",
+          "coreVerb": "traverse the plateau",
+          "sourceStartLabel": "fort_to_brook:start",
+          "sourceEndLabel": "fort_to_brook:end",
+          "sourceStartSeconds": 4.768,
+          "sourceEndSeconds": 10.918,
+          "sourceDurationSeconds": 6.15,
+          "outputStartSeconds": 2.5,
+          "outputEndSeconds": 5.5,
+          "outputDurationSeconds": 3.0,
+          "playbackRate": 2.05
+        },
+        {
+          "name": "brook-camera",
+          "coreVerb": "commit a brook plate",
+          "sourceStartLabel": "brook_plate:start",
+          "sourceEndLabel": "brook_plate:end",
+          "sourceStartSeconds": 10.924,
+          "sourceEndSeconds": 13.084,
+          "sourceDurationSeconds": 2.16,
+          "outputStartSeconds": 5.5,
+          "outputEndSeconds": 9.0,
+          "outputDurationSeconds": 3.5,
+          "playbackRate": 0.61714
+        },
+        {
+          "name": "basalt-camera",
+          "coreVerb": "record geological scale",
+          "sourceStartLabel": "basalt_plate:start",
+          "sourceEndLabel": "basalt_plate:end",
+          "sourceStartSeconds": 19.71,
+          "sourceEndSeconds": 21.879,
+          "sourceDurationSeconds": 2.169,
+          "outputStartSeconds": 9.0,
+          "outputEndSeconds": 12.0,
+          "outputDurationSeconds": 3.0,
+          "playbackRate": 0.723
+        },
+        {
+          "name": "young-camera",
+          "coreVerb": "record young behavior",
+          "sourceStartLabel": "young_play_plate:start",
+          "sourceEndLabel": "young_play_plate:end",
+          "sourceStartSeconds": 31.8,
+          "sourceEndSeconds": 33.951,
+          "sourceDurationSeconds": 2.151,
+          "outputStartSeconds": 12.0,
+          "outputEndSeconds": 15.5,
+          "outputDurationSeconds": 3.5,
+          "playbackRate": 0.61457
+        },
+        {
+          "name": "branch-camera",
+          "coreVerb": "record branch pulling",
+          "sourceStartLabel": "branch_pull_plate:start",
+          "sourceEndLabel": "branch_pull_plate:end",
+          "sourceStartSeconds": 33.951,
+          "sourceEndSeconds": 36.119,
+          "sourceDurationSeconds": 2.168,
+          "outputStartSeconds": 15.5,
+          "outputEndSeconds": 19.0,
+          "outputDurationSeconds": 3.5,
+          "playbackRate": 0.61943
+        },
+        {
+          "name": "dive-defense",
+          "coreVerb": "interrupt one dive",
+          "sourceStartLabel": "attack_ready",
+          "sourceEndLabel": "rifle_response",
+          "sourceStartSeconds": 36.138,
+          "sourceEndSeconds": 37.611,
+          "sourceDurationSeconds": 1.473,
+          "outputStartSeconds": 19.0,
+          "outputEndSeconds": 23.5,
+          "outputDurationSeconds": 4.5,
+          "playbackRate": 0.32733
+        },
+        {
+          "name": "exposed-return",
+          "coreVerb": "extract by the exposed creek",
+          "sourceStartLabel": "exposed_return:start",
+          "sourceEndLabel": "exposed_return:end",
+          "sourceStartSeconds": 38.677,
+          "sourceEndSeconds": 52.711,
+          "sourceDurationSeconds": 14.034,
+          "outputStartSeconds": 23.5,
+          "outputEndSeconds": 26.5,
+          "outputDurationSeconds": 3.0,
+          "playbackRate": 4.678
+        },
+        {
+          "name": "strong-result",
+          "coreVerb": "deliver a Strong field record",
+          "sourceStartLabel": "result:start",
+          "sourceEndLabel": "demo_end",
+          "sourceStartSeconds": 52.716,
+          "sourceEndSeconds": 56.52,
+          "sourceDurationSeconds": 3.804,
+          "outputStartSeconds": 26.5,
+          "outputEndSeconds": 30.0,
+          "outputDurationSeconds": 3.5,
+          "playbackRate": 1.08686
+        }
+      ],
+      "bytes": 5597414,
+      "sha256": "3408bc689e0fc06fdc440e2b98606bffd1292448bae7769c42f9294042180bd7",
       "probe": {
         "streams": [
           {
@@ -32,7 +150,7 @@
             "level": 40,
             "color_range": "tv",
             "color_space": "bt470bg",
-            "chroma_location": "center",
+            "chroma_location": "left",
             "field_order": "progressive",
             "is_avc": "true",
             "nal_length_size": "4",
@@ -44,10 +162,10 @@
             "start_time": "0.000000",
             "duration_ts": 460800,
             "duration": "30.000000",
-            "bit_rate": "2485036",
+            "bit_rate": "1489539",
             "bits_per_raw_sample": "8",
             "nb_frames": "900",
-            "extradata_size": 51,
+            "extradata_size": 49,
             "disposition": {
               "default": 1,
               "dub": 0,
@@ -72,7 +190,7 @@
             "tags": {
               "language": "und",
               "handler_name": "VideoHandler",
-              "encoder": "Lavc62.28.102 libx264"
+              "encoder": "Lavc62.28.101 libx264"
             }
           }
         ],
@@ -85,14 +203,14 @@
           "format_long_name": "QuickTime / MOV",
           "start_time": "0.000000",
           "duration": "30.000000",
-          "size": "9330388",
-          "bit_rate": "2488103",
+          "size": "5597414",
+          "bit_rate": "1492643",
           "probe_score": 100,
           "tags": {
             "major_brand": "isom",
             "minor_version": "512",
             "compatible_brands": "isomiso2avc1mp41",
-            "encoder": "Lavf62.12.102"
+            "encoder": "Lavf62.12.101"
           }
         }
       },
@@ -107,9 +225,9 @@
         "  PASS  \u753b\u5e45\u6bd4: 1.600:1",
         "  PASS  \u5e27\u7387: 30.000",
         "  PASS  \u65f6\u957f: 30.000s",
-        "  PASS  \u6587\u4ef6\u5927\u5c0f: 9.33MB",
+        "  PASS  \u6587\u4ef6\u5927\u5c0f: 5.60MB",
         "  PASS  \u97f3\u8f68: \u65e0(\u9759\u97f3\u7247)",
-        "  PASS  \u9996\u5e27\u975e\u9ed1: YAVG=88.8",
+        "  PASS  \u9996\u5e27\u975e\u9ed1: YAVG=78.9",
         "  PASS  faststart: moov \u5728\u524d",
         "",
         "14/14 \u901a\u8fc7"
@@ -118,9 +236,101 @@
     {
       "path": "media/clip/project-plateau-15s.mp4",
       "targetSeconds": 15,
-      "speed": 4.0576,
-      "bytes": 5149312,
-      "sha256": "320b6cc34486614b73e779dbf394796193e66186202ad3c0ade0f938c2140462",
+      "segments": [
+        {
+          "name": "field-order",
+          "coreVerb": "accept the field order",
+          "sourceStartLabel": "field_order:start",
+          "sourceEndLabel": "field_order:end",
+          "sourceStartSeconds": 2.675,
+          "sourceEndSeconds": 4.279,
+          "sourceDurationSeconds": 1.604,
+          "outputStartSeconds": 0.0,
+          "outputEndSeconds": 1.2,
+          "outputDurationSeconds": 1.2,
+          "playbackRate": 1.33667
+        },
+        {
+          "name": "brook-camera",
+          "coreVerb": "commit a brook plate",
+          "sourceStartLabel": "brook_plate:start",
+          "sourceEndLabel": "brook_plate:end",
+          "sourceStartSeconds": 10.924,
+          "sourceEndSeconds": 13.084,
+          "sourceDurationSeconds": 2.16,
+          "outputStartSeconds": 1.2,
+          "outputEndSeconds": 3.0,
+          "outputDurationSeconds": 1.8,
+          "playbackRate": 1.2
+        },
+        {
+          "name": "young-camera",
+          "coreVerb": "record young behavior",
+          "sourceStartLabel": "young_play_plate:start",
+          "sourceEndLabel": "young_play_plate:end",
+          "sourceStartSeconds": 31.8,
+          "sourceEndSeconds": 33.951,
+          "sourceDurationSeconds": 2.151,
+          "outputStartSeconds": 3.0,
+          "outputEndSeconds": 4.8,
+          "outputDurationSeconds": 1.8,
+          "playbackRate": 1.195
+        },
+        {
+          "name": "branch-camera",
+          "coreVerb": "record branch pulling",
+          "sourceStartLabel": "branch_pull_plate:start",
+          "sourceEndLabel": "branch_pull_plate:end",
+          "sourceStartSeconds": 33.951,
+          "sourceEndSeconds": 36.119,
+          "sourceDurationSeconds": 2.168,
+          "outputStartSeconds": 4.8,
+          "outputEndSeconds": 6.6,
+          "outputDurationSeconds": 1.8,
+          "playbackRate": 1.20444
+        },
+        {
+          "name": "dive-defense",
+          "coreVerb": "interrupt one dive",
+          "sourceStartLabel": "attack_ready",
+          "sourceEndLabel": "rifle_response",
+          "sourceStartSeconds": 36.138,
+          "sourceEndSeconds": 37.611,
+          "sourceDurationSeconds": 1.473,
+          "outputStartSeconds": 6.6,
+          "outputEndSeconds": 9.6,
+          "outputDurationSeconds": 3.0,
+          "playbackRate": 0.491
+        },
+        {
+          "name": "exposed-return",
+          "coreVerb": "extract by the exposed creek",
+          "sourceStartLabel": "exposed_return:start",
+          "sourceEndLabel": "exposed_return:end",
+          "sourceStartSeconds": 38.677,
+          "sourceEndSeconds": 52.711,
+          "sourceDurationSeconds": 14.034,
+          "outputStartSeconds": 9.6,
+          "outputEndSeconds": 11.6,
+          "outputDurationSeconds": 2.0,
+          "playbackRate": 7.017
+        },
+        {
+          "name": "strong-result",
+          "coreVerb": "deliver a Strong field record",
+          "sourceStartLabel": "result:start",
+          "sourceEndLabel": "demo_end",
+          "sourceStartSeconds": 52.716,
+          "sourceEndSeconds": 56.52,
+          "sourceDurationSeconds": 3.804,
+          "outputStartSeconds": 11.6,
+          "outputEndSeconds": 15.0,
+          "outputDurationSeconds": 3.4,
+          "playbackRate": 1.11882
+        }
+      ],
+      "bytes": 2991012,
+      "sha256": "6d08cbe3793c29a61c0ad754255b56bd9c805b9884717b47baf73821aca6df00",
       "probe": {
         "streams": [
           {
@@ -143,7 +353,7 @@
             "level": 40,
             "color_range": "tv",
             "color_space": "bt470bg",
-            "chroma_location": "center",
+            "chroma_location": "left",
             "field_order": "progressive",
             "is_avc": "true",
             "nal_length_size": "4",
@@ -155,10 +365,10 @@
             "start_time": "0.000000",
             "duration_ts": 230400,
             "duration": "15.000000",
-            "bit_rate": "2742952",
+            "bit_rate": "1591915",
             "bits_per_raw_sample": "8",
             "nb_frames": "450",
-            "extradata_size": 51,
+            "extradata_size": 49,
             "disposition": {
               "default": 1,
               "dub": 0,
@@ -183,7 +393,7 @@
             "tags": {
               "language": "und",
               "handler_name": "VideoHandler",
-              "encoder": "Lavc62.28.102 libx264"
+              "encoder": "Lavc62.28.101 libx264"
             }
           }
         ],
@@ -196,14 +406,14 @@
           "format_long_name": "QuickTime / MOV",
           "start_time": "0.000000",
           "duration": "15.000000",
-          "size": "5149312",
-          "bit_rate": "2746299",
+          "size": "2991012",
+          "bit_rate": "1595206",
           "probe_score": 100,
           "tags": {
             "major_brand": "isom",
             "minor_version": "512",
             "compatible_brands": "isomiso2avc1mp41",
-            "encoder": "Lavf62.12.102"
+            "encoder": "Lavf62.12.101"
           }
         }
       },
@@ -218,9 +428,9 @@
         "  PASS  \u753b\u5e45\u6bd4: 1.600:1",
         "  PASS  \u5e27\u7387: 30.000",
         "  PASS  \u65f6\u957f: 15.000s",
-        "  PASS  \u6587\u4ef6\u5927\u5c0f: 5.15MB",
+        "  PASS  \u6587\u4ef6\u5927\u5c0f: 2.99MB",
         "  PASS  \u97f3\u8f68: \u65e0(\u9759\u97f3\u7247)",
-        "  PASS  \u9996\u5e27\u975e\u9ed1: YAVG=86.8",
+        "  PASS  \u9996\u5e27\u975e\u9ed1: YAVG=78.9",
         "  PASS  faststart: moov \u5728\u524d",
         "",
         "14/14 \u901a\u8fc7"
@@ -229,19 +439,26 @@
   ],
   "contactSheet": {
     "path": "media/clip/contact-sheet.jpg",
-    "bytes": 101820,
-    "sha256": "d25168ae6ca78fe0e4dc0305a9f2dd56b80ffa44821200a9e412ab1031d42de9",
+    "bytes": 91302,
+    "sha256": "cac97500ba485201c107ca03719641902979faeb2b5f63908a1fb0d5866ba347",
     "sampling": "one frame every three seconds from the 30-second encode"
   },
   "shareCard": {
     "path": "media/project-plateau-github.jpg",
-    "bytes": 73378,
-    "sha256": "dec18a9d208f98b193c19dc76f7dc30edd4fd53fce871fb38275c53fd22e1f0f",
+    "bytes": 61560,
+    "sha256": "60491526003efe4f7e543e5d95d4041515c4532258503e3dd9913c32d8302cde",
     "source": "evidence/s10/02-young-play-silver-frame.jpg",
     "transform": "crop and resize only; no added text or generated imagery"
   },
+  "publicPreview": {
+    "path": "public/media/project-plateau-preview-15s.mp4",
+    "bytes": 1299100,
+    "sha256": "9c9bd018a1057140f3ae4b201a1272755ee5ce2134ff99a6c2df926009d126c1",
+    "posterPath": "public/media/project-plateau-preview-poster.jpg",
+    "posterSha256": "550ba9dd6e407a8cea92064a879a4641d5c8f1f09a0a718e5f466c912b32a299"
+  },
   "limitations": [
-    "The delivery encodes are uniformly time-compressed and therefore are not timing evidence.",
+    "The delivery encodes use disclosed same-take cuts and speed changes and therefore are not timing evidence.",
     "S8 report.json remains the authoritative input-only traversal and timing record.",
     "The local MP4/WebM files are reproducible delivery artifacts and are intentionally excluded from Git history."
   ]

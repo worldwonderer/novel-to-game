@@ -1,13 +1,13 @@
 {
-  "capture": "one continuous input-only Strong run",
-  "edit": "uniform time compression only; no state cuts or splices",
+  "capture": "one continuous input-only Strong-result browser run with one defensive shot",
+  "edit": "disclosed same-take editorial cuts and per-segment speed changes; no teleport, state fabrication or substitute render",
   "viewport": {
     "width": 1280,
     "height": 800
   },
-  "url": "http://127.0.0.1:4173/?media=strong",
+  "url": "http://127.0.0.1:4173/?media=core-loop",
   "pointerLockMode": "deterministic-browser-shim",
-  "sourceFingerprint": "568a32dcd33ef3ddc934d4fe795c882c9b7aaff5e71cd66ce7508095d3c12fdb",
+  "sourceFingerprint": "5d1aee3fb50d93fac31d3ececa8520a995a8bbc3a2e8b0f9187948968bda94ed",
   "consoleErrors": [],
   "requestHosts": [
     "",
@@ -16,24 +16,34 @@
   "externalHosts": [],
   "raw": {
     "path": "media/clip/raw_take.webm",
-    "bytes": 6732914,
-    "sha256": "335262a4eb0ec464b43c3d3a388835af67251902a9e4d611c7d0c9e03cd1adaf",
-    "durationSeconds": 63.68,
-    "marksToSourceOffset": 0.873
+    "bytes": 6282049,
+    "sha256": "25d06784115167326b602fe937e158e633532987de4fa257e14f2b9037aafa94",
+    "durationSeconds": 56.52,
+    "marksToSourceOffset": 0.906
   },
-  "strongWindow": {
-    "sourceStartSeconds": 2.816,
-    "sourceDurationSeconds": 60.864
+  "demoWindow": {
+    "sourceStartSeconds": 2.675,
+    "sourceDurationSeconds": 53.845
   },
   "marks": [
     {
-      "label": "strong_start",
-      "t": 1.943,
+      "label": "demo_start",
+      "t": 1.769,
+      "state": "field-order"
+    },
+    {
+      "label": "field_order:start",
+      "t": 1.769,
+      "state": "field-order"
+    },
+    {
+      "label": "field_order:end",
+      "t": 3.373,
       "state": "field-order"
     },
     {
       "label": "fort_to_brook:start",
-      "t": 2.189,
+      "t": 3.862,
       "input": "KeyW",
       "position": {
         "x": 3,
@@ -42,229 +52,247 @@
     },
     {
       "label": "fort_to_brook:end",
-      "t": 8.332,
+      "t": 10.012,
       "position": {
         "x": 3,
-        "z": 44.751
+        "z": 44.752
       }
     },
     {
       "label": "brook_plate:start",
-      "t": 8.334,
+      "t": 10.018,
       "input": "Right Mouse + Left Mouse",
       "plate": 1
     },
     {
       "label": "brook_plate:end",
-      "t": 10.472,
+      "t": 12.178,
       "frame": "brook-partial",
       "points": 1
     },
     {
       "label": "clear_brook_boulder:start",
-      "t": 10.476,
+      "t": 12.184,
       "input": "KeyD",
       "position": {
         "x": 3,
-        "z": 44.598
+        "z": 44.576
       }
     },
     {
       "label": "clear_brook_boulder:end",
-      "t": 10.553,
+      "t": 12.272,
       "position": {
         "x": 3,
-        "z": 44.598
+        "z": 44.576
       }
     },
     {
       "label": "brook_to_basalt:start",
-      "t": 10.558,
+      "t": 12.277,
       "input": "KeyW",
       "position": {
         "x": 3,
-        "z": 44.598
+        "z": 44.576
       }
     },
     {
       "label": "brook_to_basalt:end",
-      "t": 17.082,
+      "t": 18.804,
       "position": {
         "x": 3,
-        "z": 17.739
+        "z": 17.675
       }
     },
     {
       "label": "basalt_plate:start",
-      "t": 17.082,
+      "t": 18.804,
       "input": "Right Mouse + Left Mouse",
       "plate": 2
     },
     {
       "label": "basalt_plate:end",
-      "t": 19.236,
+      "t": 20.973,
       "frame": "basalt-scale",
       "points": 2
     },
     {
       "label": "enter_canopy:start",
-      "t": 19.239,
+      "t": 20.978,
       "input": "KeyA",
       "position": {
         "x": 3,
-        "z": 17.586
+        "z": 17.543
       }
     },
     {
       "label": "enter_canopy:end",
-      "t": 19.508,
+      "t": 21.234,
       "position": {
-        "x": 2.484,
-        "z": 17.586
+        "x": 2.505,
+        "z": 17.543
       }
     },
     {
       "label": "first_cover_read:start",
-      "t": 19.508,
+      "t": 21.234,
       "input": "hold position under cover"
     },
     {
       "label": "first_cover_read:end",
-      "t": 25.264,
+      "t": 26.99,
       "awareness": 2
     },
     {
       "label": "canopy_to_glade:start",
-      "t": 25.267,
+      "t": 26.995,
       "input": "KeyW",
       "position": {
-        "x": 2.341,
-        "z": 17.586
+        "x": 2.396,
+        "z": 17.543
       }
     },
     {
       "label": "canopy_to_glade:end",
-      "t": 29.167,
+      "t": 30.886,
       "position": {
-        "x": 2.341,
-        "z": 1.695
+        "x": 2.396,
+        "z": 1.745
       }
     },
     {
       "label": "young_play_plate:start",
-      "t": 29.168,
+      "t": 30.894,
       "input": "Right Mouse + Left Mouse",
       "plate": 3
     },
     {
       "label": "young_play_plate:end",
-      "t": 31.298,
+      "t": 33.045,
       "frame": "glade-young-play",
       "points": 2
     },
     {
-      "label": "protect_young_play_plate:start",
-      "t": 31.301,
-      "input": "KeyS",
-      "position": {
-        "x": 2.341,
-        "z": 1.566
-      }
-    },
-    {
-      "label": "protect_young_play_plate:end",
-      "t": 31.894,
-      "position": {
-        "x": 2.341,
-        "z": 3.562
-      }
-    },
-    {
-      "label": "between_behavior_frames:start",
-      "t": 31.894,
-      "input": "hold position under cover"
-    },
-    {
-      "label": "between_behavior_frames:end",
-      "t": 37.727,
-      "awareness": 2
-    },
-    {
-      "label": "return_for_branch_pull:start",
-      "t": 37.731,
-      "input": "KeyW",
-      "position": {
-        "x": 2.341,
-        "z": 3.771
-      }
-    },
-    {
-      "label": "return_for_branch_pull:end",
-      "t": 38.332,
-      "position": {
-        "x": 2.341,
-        "z": 1.763
-      }
-    },
-    {
       "label": "branch_pull_plate:start",
-      "t": 38.332,
+      "t": 33.045,
       "input": "Right Mouse + Left Mouse",
       "plate": 4
     },
     {
       "label": "branch_pull_plate:end",
-      "t": 40.482,
+      "t": 35.213,
       "frame": "glade-branch-pull",
       "points": 2
     },
     {
-      "label": "retreat_to_cover:start",
-      "t": 40.485,
+      "label": "attack_ready",
+      "t": 35.232,
+      "state": "attack",
+      "cartridges": 2,
+      "threat": {
+        "state": "attack",
+        "response": "orbit",
+        "attackStage": "pull-up",
+        "attackProgress": 0.997,
+        "flightPose": {
+          "wingBeat": -0.142,
+          "wingFold": 0.8175,
+          "mode": "fold-dive",
+          "bank": -0.0895,
+          "direction": [
+            0.2783,
+            0.026,
+            0.9602
+          ]
+        },
+        "position": {
+          "x": -0.2,
+          "y": 6.5,
+          "z": -8.23
+        },
+        "scale": 0.8798,
+        "anchorModel": "fixed-world-orbit-latched-attack-origin"
+      }
+    },
+    {
+      "label": "rifle_raise",
+      "t": 35.418,
+      "input": "hold F"
+    },
+    {
+      "label": "rifle_fire",
+      "t": 35.687,
+      "input": "Left Mouse"
+    },
+    {
+      "label": "rifle_response",
+      "t": 36.705,
+      "shotCount": 1,
+      "cartridges": 1,
+      "brookResponse": "answering-call"
+    },
+    {
+      "label": "line_up_exposed_creek:start",
+      "t": 36.724,
+      "input": "KeyD",
+      "position": {
+        "x": 2.396,
+        "z": 1.565
+      }
+    },
+    {
+      "label": "line_up_exposed_creek:end",
+      "t": 37.145,
+      "position": {
+        "x": 3.634,
+        "z": 1.565
+      }
+    },
+    {
+      "label": "commit_exposed_return:start",
+      "t": 37.149,
       "input": "KeyS",
       "position": {
-        "x": 2.341,
-        "z": 1.609
+        "x": 3.634,
+        "z": 1.565
       }
     },
     {
-      "label": "retreat_to_cover:end",
-      "t": 41.052,
+      "label": "commit_exposed_return:end",
+      "t": 37.764,
       "position": {
-        "x": 2.341,
-        "z": 3.476
+        "x": 4.04,
+        "z": 3.482
       }
     },
     {
-      "label": "final_cover_read:start",
-      "t": 41.052,
-      "input": "hold position under cover"
-    },
-    {
-      "label": "final_cover_read:end",
-      "t": 46.919,
-      "awareness": 2
-    },
-    {
-      "label": "covered_return:start",
-      "t": 46.923,
+      "label": "exposed_return:start",
+      "t": 37.771,
       "input": "KeyS",
       "position": {
-        "x": 2.341,
-        "z": 3.709
+        "x": 4.04,
+        "z": 3.528
       }
     },
     {
-      "label": "covered_return:end",
-      "t": 61.003,
+      "label": "exposed_return:end",
+      "t": 51.805,
       "position": {
-        "x": 2.341,
-        "z": 62.043
+        "x": 4.04,
+        "z": 62.062
       }
     },
     {
-      "label": "strong_end",
-      "t": 62.807,
+      "label": "result:start",
+      "t": 51.81,
+      "state": "strong-field-record",
+      "route": "exposed",
+      "evidence": 7,
+      "shotCount": 1
+    },
+    {
+      "label": "demo_end",
+      "t": 55.614,
       "state": "strong-field-record"
     }
   ]

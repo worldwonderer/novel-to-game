@@ -10,7 +10,7 @@ substitute render.
 |---|---|---|
 | `project-plateau-github.jpg` | 1280×640 repository/share card | Crop and resize of the real S10 browser frame only |
 | `clip/contact-sheet.jpg` | Ten-frame review of the 30-second delivery encode | One frame every three seconds |
-| `clip/marks.json` | Every input/state beat in the continuous source take | Includes raw hash, source window and console/request audit |
+| `clip/marks.json` | Every input/state beat in the continuous source take | Includes raw hash, edit marks and console/request audit |
 | `clip/manifest.json` | Measured MP4 properties and hashes | Includes all 14 delivery checks for both encodes |
 | `RELEASE_COPY.md` | English copy and alt text tied to the captured build | Does not claim public hosting or independent approval |
 | `remotion/` | Reproducible 36-second English launch-video project | Wraps the full 30-second capture with captions, CTA, Fish Audio narration and original procedural sound |
@@ -34,9 +34,13 @@ To re-encode the existing local raw take without replaying the route:
 python3 test/capture_demo_clip.py --reuse-raw
 ```
 
-The capture performs one continuous input-only Strong run at `1280×800`. Both
-delivery versions apply only uniform time compression over that uncut window:
-no teleport, direct time advance, state splice or synthetic frame. The
+The capture performs one continuous input-only Strong-result run at `1280×800`:
+field order, traversal, two observation sites, four committed plates, one
+defensive shot, exposed extraction and the final result all happen through real
+browser input. The delivery versions use disclosed cuts between segments from
+that same take and measured per-segment speed changes so the camera commitment,
+winged dive, rifle response and result remain legible. They use no teleport,
+direct time advance, fabricated state, substitute render or synthetic frame. The
 30-second and 15-second encodes are H.264 High Profile, `yuv420p`, progressive,
 30 FPS, square-pixel, fast-start MP4s with a non-black first frame and no audio
 track.
@@ -63,8 +67,8 @@ The Remotion project also produces a two-pass 1080p H.264 GitHub delivery under
 
 ## Claim boundary
 
-- `build/evidence/s8/report.json` remains the timing and traversal authority;
-  the time-compressed clips are not timing evidence.
+- `build/evidence/s8/report.json` remains the uncut timing and traversal
+  authority; the edited delivery clips are not timing evidence.
 - S10 proves browser states, image provenance and gross composition floors; it
   does not prove subjective visual quality.
 - Public-host loading is recorded separately; independent visual review and
