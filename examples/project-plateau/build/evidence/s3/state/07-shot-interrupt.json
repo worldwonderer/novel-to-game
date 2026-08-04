@@ -18,11 +18,11 @@
   "player": {
     "position": {
       "x": 7,
-      "z": 11.528
+      "z": 11.536
     },
     "lastStablePosition": {
       "x": 7,
-      "z": 11.528
+      "z": 11.536
     },
     "groundY": -2,
     "verticalOffset": 0,
@@ -30,13 +30,13 @@
     "grounded": true,
     "velocity": {
       "x": 0,
-      "z": -4.114
+      "z": -4.1
     },
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
     "elapsedSeconds": 1.45,
-    "distanceTravelled": 6.472,
+    "distanceTravelled": 6.464,
     "paused": false,
     "pauseReason": null,
     "boundaryRecoveries": 0,
@@ -122,39 +122,39 @@
     "attackStage": "orbit",
     "attackProgress": 0,
     "flightPose": {
-      "wingBeat": -0.183,
+      "wingBeat": -0.0905,
       "wingFold": 0,
       "mode": "downstroke",
-      "bank": 0.0023,
+      "bank": -0.0022,
       "direction": [
-        -0.8472,
-        0.112,
-        -0.5194
+        -0.8526,
+        0.1071,
+        -0.5114
       ]
     },
     "position": {
-      "x": -14.6,
-      "y": 7.05,
-      "z": -5.81
+      "x": -14.18,
+      "y": 7.11,
+      "z": -5.83
     },
-    "scale": 0.725,
+    "scale": 0.7266,
     "anchorModel": "fixed-world-orbit-latched-attack-origin"
   },
   "familyVisual": {
     "moment": "glade-branch-pull",
     "adults": 2,
     "young": 3,
-    "branchAngle": 0.032,
-    "branchContactDistance": 0.897,
+    "branchAngle": 0.037,
+    "branchContactDistance": 0.862,
     "positions": [
       {
         "x": -8,
-        "y": -0.605,
+        "y": -0.604,
         "z": -31
       },
       {
         "x": 10.5,
-        "y": -0.28,
+        "y": -0.279,
         "z": -39
       },
       {
@@ -164,12 +164,12 @@
       },
       {
         "x": 3.4,
-        "y": -0.769,
+        "y": -0.768,
         "z": -27.2
       },
       {
         "x": 2.5,
-        "y": -0.311,
+        "y": -0.312,
         "z": -35
       }
     ],
@@ -349,27 +349,27 @@
       {
         "cue": "field-start",
         "caption": "[brook water and insects under the canopy]",
-        "at": 8.149
+        "at": 8.171
       },
       {
         "cue": "search",
         "caption": "[a near call circles overhead]",
-        "at": 8.309
+        "at": 8.331
       },
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 9.44
+        "at": 9.445
       },
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 9.52
+        "at": 9.531
       },
       {
         "cue": "rifle",
         "caption": "[rifle report; echo runs toward the brook]",
-        "at": 9.52
+        "at": 9.531
       }
     ]
   },
@@ -425,7 +425,7 @@
     "quality": "balanced",
     "activeFpsCap": 60,
     "renderedFrames": 616,
-    "skippedFrames": 699,
+    "skippedFrames": 693,
     "activeFpsPolicy": "60fps-cap-across-refresh-rates",
     "idleFpsCap": 30,
     "pausedFpsCap": 15,
@@ -435,6 +435,6 @@
     "gtaoSamples": 4,
     "antialiasing": "single-pass-fxaa"
   },
-  "firstRenderedAt": 392.60000014305115,
+  "firstRenderedAt": 291.89999985694885,
   "recentMedianFrameMs": 16.7
 }

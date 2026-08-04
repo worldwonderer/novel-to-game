@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "basePath": "build/app",
-  "sourceFingerprint": "35a92c7843835e8c67d34713849bc08f35f32a38c5c4bcb3ebd9372ed46606c8",
+  "sourceFingerprint": "a22e12e210d86d1c8e256eac70bf303825deb603824a0acef997d1ca06d25d22",
   "inputs": [
     {
       "path": "index.html",
@@ -130,8 +130,8 @@
     },
     {
       "path": "src/main.js",
-      "sha256": "e9cb0a0bbd8bcf979a01718e210effcd32a30a77e1f3a4a1a3f5053d9f3bcadd",
-      "bytes": 52322
+      "sha256": "41a581ed687517663c0c40df4df99ac0dd15576a32457d3c971bd8bd773ba366",
+      "bytes": 52345
     },
     {
       "path": "src/preview-gateway.js",

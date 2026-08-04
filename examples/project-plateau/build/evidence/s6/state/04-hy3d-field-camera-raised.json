@@ -35,7 +35,7 @@
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 0.548,
+    "elapsedSeconds": 0.53,
     "distanceTravelled": 0,
     "paused": false,
     "pauseReason": null,
@@ -108,7 +108,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 179.452,
+    "remainingLight": 179.47,
     "returnRoute": null,
     "returnCostSeconds": 0,
     "returnStrike": false,
@@ -121,20 +121,20 @@
     "attackStage": "orbit",
     "attackProgress": 0,
     "flightPose": {
-      "wingBeat": -0.095,
+      "wingBeat": -0.1338,
       "wingFold": 0,
       "mode": "downstroke",
-      "bank": 0.0915,
+      "bank": 0.0895,
       "direction": [
-        -0.5869,
-        0.169,
-        0.7918
+        -0.5766,
+        0.1714,
+        0.7988
       ]
     },
     "position": {
-      "x": 28.07,
-      "y": 23.58,
-      "z": -6.45
+      "x": 28.12,
+      "y": 23.57,
+      "z": -6.51
     },
     "scale": 0.88,
     "anchorModel": "fixed-world-orbit-latched-attack-origin"
@@ -148,7 +148,7 @@
     "positions": [
       {
         "x": -8,
-        "y": -0.592,
+        "y": -0.591,
         "z": -31
       },
       {
@@ -158,12 +158,12 @@
       },
       {
         "x": -2.2,
-        "y": -1.047,
+        "y": -1.044,
         "z": -24.8
       },
       {
         "x": 3.4,
-        "y": -0.782,
+        "y": -0.784,
         "z": -27.2
       },
       {
@@ -353,12 +353,12 @@
       {
         "cue": "examine",
         "caption": "[fern brushes aside; pencil marks the field card]",
-        "at": 0.224
+        "at": 0.219
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 0.331
+        "at": 0.325
       }
     ]
   },
@@ -414,7 +414,7 @@
     "quality": "balanced",
     "activeFpsCap": 60,
     "renderedFrames": 57,
-    "skippedFrames": 91,
+    "skippedFrames": 87,
     "activeFpsPolicy": "60fps-cap-across-refresh-rates",
     "idleFpsCap": 30,
     "pausedFpsCap": 15,
@@ -424,6 +424,6 @@
     "gtaoSamples": 4,
     "antialiasing": "single-pass-fxaa"
   },
-  "firstRenderedAt": 304,
-  "recentMedianFrameMs": 18.1
+  "firstRenderedAt": 298.10000014305115,
+  "recentMedianFrameMs": 24.3
 }

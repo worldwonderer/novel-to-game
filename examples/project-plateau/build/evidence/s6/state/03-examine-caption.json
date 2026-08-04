@@ -35,7 +35,7 @@
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 0.414,
+    "elapsedSeconds": 0.397,
     "distanceTravelled": 0,
     "paused": false,
     "pauseReason": null,
@@ -108,7 +108,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 179.585,
+    "remainingLight": 179.603,
     "returnRoute": null,
     "returnCostSeconds": 0,
     "returnStrike": false,
@@ -121,20 +121,20 @@
     "attackStage": "orbit",
     "attackProgress": 0,
     "flightPose": {
-      "wingBeat": -0.2298,
+      "wingBeat": -0.2552,
       "wingFold": 0,
       "mode": "downstroke",
-      "bank": 0.0838,
+      "bank": 0.0818,
       "direction": [
-        -0.5468,
-        0.1781,
-        0.8181
+        -0.5356,
+        0.1804,
+        0.825
       ]
     },
     "position": {
-      "x": 28.24,
-      "y": 23.53,
-      "z": -6.69
+      "x": 28.28,
+      "y": 23.52,
+      "z": -6.75
     },
     "scale": 0.88,
     "anchorModel": "fixed-world-orbit-latched-attack-origin"
@@ -144,7 +144,7 @@
     "adults": 2,
     "young": 3,
     "branchAngle": 0.03,
-    "branchContactDistance": 0.914,
+    "branchContactDistance": 0.915,
     "positions": [
       {
         "x": -8,
@@ -158,12 +158,12 @@
       },
       {
         "x": -2.2,
-        "y": -1.035,
+        "y": -1.032,
         "z": -24.8
       },
       {
         "x": 3.4,
-        "y": -0.789,
+        "y": -0.791,
         "z": -27.2
       },
       {
@@ -353,7 +353,7 @@
       {
         "cue": "examine",
         "caption": "[fern brushes aside; pencil marks the field card]",
-        "at": 0.224
+        "at": 0.219
       }
     ]
   },
@@ -409,7 +409,7 @@
     "quality": "balanced",
     "activeFpsCap": 60,
     "renderedFrames": 49,
-    "skippedFrames": 82,
+    "skippedFrames": 78,
     "activeFpsPolicy": "60fps-cap-across-refresh-rates",
     "idleFpsCap": 30,
     "pausedFpsCap": 15,
@@ -419,6 +419,6 @@
     "gtaoSamples": 4,
     "antialiasing": "single-pass-fxaa"
   },
-  "firstRenderedAt": 304,
-  "recentMedianFrameMs": 23.8
+  "firstRenderedAt": 298.10000014305115,
+  "recentMedianFrameMs": 25.1
 }

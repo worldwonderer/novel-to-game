@@ -35,7 +35,7 @@
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 180.1,
+    "elapsedSeconds": 180.092,
     "distanceTravelled": 0,
     "paused": false,
     "pauseReason": null,
@@ -127,30 +127,30 @@
     "attackStage": "orbit",
     "attackProgress": 0,
     "flightPose": {
-      "wingBeat": 0.0177,
+      "wingBeat": -0.0001,
       "wingFold": 0,
-      "mode": "upstroke",
-      "bank": -0.2014,
+      "mode": "downstroke",
+      "bank": -0.2258,
       "direction": [
-        -0.9711,
-        -0.0477,
-        -0.2338
+        -0.9818,
+        -0.0715,
+        -0.1758
       ]
     },
     "position": {
-      "x": -10.98,
-      "y": 7.44,
-      "z": -3.77
+      "x": -9.45,
+      "y": 7.64,
+      "z": -2.45
     },
-    "scale": 0.7239,
+    "scale": 0.722,
     "anchorModel": "fixed-world-orbit-latched-attack-origin"
   },
   "familyVisual": {
     "moment": "glade-branch-pull",
     "adults": 2,
     "young": 3,
-    "branchAngle": 0.044,
-    "branchContactDistance": 0.832,
+    "branchAngle": 0.031,
+    "branchContactDistance": 0.91,
     "positions": [
       {
         "x": -8,
@@ -174,7 +174,7 @@
       },
       {
         "x": 2.5,
-        "y": -0.318,
+        "y": -0.319,
         "z": -35
       }
     ],
@@ -354,12 +354,12 @@
       {
         "cue": "field-start",
         "caption": "[brook water and insects under the canopy]",
-        "at": 8.08
+        "at": 7.653
       },
       {
         "cue": "failure",
         "caption": "[the field sound narrows to wind and brook]",
-        "at": 8.293
+        "at": 7.867
       }
     ]
   },
@@ -420,8 +420,8 @@
     "maxPixelRatio": 1.25,
     "quality": "balanced",
     "activeFpsCap": 60,
-    "renderedFrames": 521,
-    "skippedFrames": 559,
+    "renderedFrames": 496,
+    "skippedFrames": 531,
     "activeFpsPolicy": "60fps-cap-across-refresh-rates",
     "idleFpsCap": 30,
     "pausedFpsCap": 15,
@@ -431,6 +431,6 @@
     "gtaoSamples": 4,
     "antialiasing": "single-pass-fxaa"
   },
-  "firstRenderedAt": 304,
+  "firstRenderedAt": 298.10000014305115,
   "recentMedianFrameMs": 16.7
 }

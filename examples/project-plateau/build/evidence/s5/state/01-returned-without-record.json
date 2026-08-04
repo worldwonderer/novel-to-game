@@ -35,8 +35,8 @@
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 0.743,
-    "distanceTravelled": 1.072,
+    "elapsedSeconds": 0.731,
+    "distanceTravelled": 1.134,
     "paused": false,
     "pauseReason": null,
     "boundaryRecoveries": 0,
@@ -110,7 +110,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 151.257,
+    "remainingLight": 151.269,
     "returnRoute": "covered",
     "returnCostSeconds": 28,
     "returnStrike": false,
@@ -134,22 +134,22 @@
     "attackStage": "orbit",
     "attackProgress": 0,
     "flightPose": {
-      "wingBeat": 0.0409,
+      "wingBeat": 0.0398,
       "wingFold": 0,
       "mode": "upstroke",
-      "bank": 0.1372,
+      "bank": 0.1303,
       "direction": [
-        -0.6059,
-        0.1686,
-        0.7775
+        -0.5818,
+        0.1741,
+        0.7945
       ]
     },
     "position": {
-      "x": 27.25,
-      "y": 20.17,
-      "z": -6.4
+      "x": 27.44,
+      "y": 20.5,
+      "z": -6.54
     },
-    "scale": 0.84,
+    "scale": 0.8442,
     "anchorModel": "fixed-world-orbit-latched-attack-origin"
   },
   "familyVisual": {
@@ -157,7 +157,7 @@
     "adults": 2,
     "young": 3,
     "branchAngle": 0.03,
-    "branchContactDistance": 0.949,
+    "branchContactDistance": 0.95,
     "positions": [
       {
         "x": -8,
@@ -171,12 +171,12 @@
       },
       {
         "x": -2.2,
-        "y": -1.022,
+        "y": -1.021,
         "z": -24.8
       },
       {
         "x": 3.4,
-        "y": -0.774,
+        "y": -0.775,
         "z": -27.2
       },
       {
@@ -366,12 +366,12 @@
       {
         "cue": "search",
         "caption": "[a near call circles overhead]",
-        "at": 0.491
+        "at": 0.507
       },
       {
         "cue": "cover",
         "caption": "[branches scrape the camera; wingbeats widen]",
-        "at": 0.539
+        "at": 0.555
       },
       {
         "cue": "result",
@@ -437,8 +437,8 @@
     "maxPixelRatio": 1.25,
     "quality": "balanced",
     "activeFpsCap": 60,
-    "renderedFrames": 67,
-    "skippedFrames": 84,
+    "renderedFrames": 64,
+    "skippedFrames": 85,
     "activeFpsPolicy": "60fps-cap-across-refresh-rates",
     "idleFpsCap": 30,
     "pausedFpsCap": 15,
@@ -448,6 +448,6 @@
     "gtaoSamples": 4,
     "antialiasing": "single-pass-fxaa"
   },
-  "firstRenderedAt": 306.7999999523163,
-  "recentMedianFrameMs": 16.8
+  "firstRenderedAt": 291.60000014305115,
+  "recentMedianFrameMs": 17.3
 }

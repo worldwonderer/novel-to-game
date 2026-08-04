@@ -35,7 +35,7 @@
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 180.134,
+    "elapsedSeconds": 180.133,
     "distanceTravelled": 0,
     "paused": false,
     "pauseReason": null,
@@ -127,30 +127,30 @@
     "attackStage": "orbit",
     "attackProgress": 0,
     "flightPose": {
-      "wingBeat": -0.0186,
+      "wingBeat": -0.0165,
       "wingFold": 0,
       "mode": "downstroke",
-      "bank": -0.0426,
+      "bank": -0.0347,
       "direction": [
-        -0.7364,
-        0.1637,
-        0.6564
+        -0.7142,
+        0.1711,
+        0.6787
       ]
     },
     "position": {
-      "x": 17.96,
+      "x": 18.18,
       "y": 8.91,
-      "z": -6.88
+      "z": -7
     },
-    "scale": 0.7227,
+    "scale": 0.7231,
     "anchorModel": "fixed-world-orbit-latched-attack-origin"
   },
   "familyVisual": {
     "moment": "glade-branch-pull",
     "adults": 2,
     "young": 3,
-    "branchAngle": 0.079,
-    "branchContactDistance": 0.641,
+    "branchAngle": 0.076,
+    "branchContactDistance": 0.655,
     "positions": [
       {
         "x": -8,
@@ -354,12 +354,12 @@
       {
         "cue": "field-start",
         "caption": "[brook water and insects under the canopy]",
-        "at": 21.509
+        "at": 21.419
       },
       {
         "cue": "failure",
         "caption": "[the field sound narrows to wind and brook]",
-        "at": 21.781
+        "at": 21.691
       }
     ]
   },
@@ -420,8 +420,8 @@
     "maxPixelRatio": 1.25,
     "quality": "balanced",
     "activeFpsCap": 60,
-    "renderedFrames": 1332,
-    "skippedFrames": 1361,
+    "renderedFrames": 1327,
+    "skippedFrames": 1351,
     "activeFpsPolicy": "60fps-cap-across-refresh-rates",
     "idleFpsCap": 30,
     "pausedFpsCap": 15,
@@ -431,6 +431,6 @@
     "gtaoSamples": 4,
     "antialiasing": "single-pass-fxaa"
   },
-  "firstRenderedAt": 311.30000019073486,
+  "firstRenderedAt": 291.60000014305115,
   "recentMedianFrameMs": 16.7
 }

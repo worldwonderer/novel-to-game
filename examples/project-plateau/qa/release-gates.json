@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCommit": "44928cfadc6e041b3f43171ee31cfd91dd645397",
+  "sourceCommit": "b933827751f18adb2bbf9a83d6e8604a4eca8266",
   "evidenceCommit": null,
   "targetFinish": "playable-prototype",
   "demonstratedTier": "playable-prototype",
@@ -27,6 +27,7 @@
       "build/evidence/visual-targets/manifest.json",
       "build/evidence/visual-upgrade/generated/manifest.json",
       "qa/evidence/independent-visual-review-2026-08-04-world-space.md",
+      "qa/evidence/independent-visual-review-2026-08-04-freeze-fix.md",
       "qa/evidence/final-code-review-2026-08-04.md"
     ]
   },
@@ -98,9 +99,9 @@
     "status": "PASS",
     "reviewer": "/root/final_arch_review (read-only independent Architect, 2026-08-04)",
     "independence": "The reviewer made no implementation, capture, manifest, or QA edits and judged only the source-bound browser and media evidence.",
-    "evidence": "qa/evidence/independent-visual-review-2026-08-04-world-space.md",
-    "reviewedSourceFingerprint": "35a92c7843835e8c67d34713849bc08f35f32a38c5c4bcb3ebd9372ed46606c8",
-    "reviewedManifestSha256": "1fb5a267bee49a9a8c3afb945dea79b8a89c0b7f55dde9388711213f7d67ac80"
+    "evidence": "qa/evidence/independent-visual-review-2026-08-04-freeze-fix.md",
+    "reviewedSourceFingerprint": "a22e12e210d86d1c8e256eac70bf303825deb603824a0acef997d1ca06d25d22",
+    "reviewedManifestSha256": "6d4f1a16bcb6eecc8e3a5607ddb00e016eb73327186047a9d60d4f6a05a0882e"
   },
   "focalReleaseAssets": [
     "world.connected_route",
@@ -251,11 +252,11 @@
   "degradableReleaseAssets": [
     "audio.core_world"
   ],
-  "sourceFingerprint": "35a92c7843835e8c67d34713849bc08f35f32a38c5c4bcb3ebd9372ed46606c8",
+  "sourceFingerprint": "a22e12e210d86d1c8e256eac70bf303825deb603824a0acef997d1ca06d25d22",
   "visualEvidenceManifests": [
     {
       "path": "build/evidence/visual-upgrade/generated/manifest.json",
-      "sha256": "1fb5a267bee49a9a8c3afb945dea79b8a89c0b7f55dde9388711213f7d67ac80"
+      "sha256": "6d4f1a16bcb6eecc8e3a5607ddb00e016eb73327186047a9d60d4f6a05a0882e"
     }
   ],
   "publicHost": {
@@ -265,6 +266,6 @@
   },
   "sourceInputManifest": {
     "path": "build/source-inputs.json",
-    "sha256": "da0bf088ab167556b2e330f728cefce9dc4db51c90a3fab3c967f83092cd17a5"
+    "sha256": "9b48ec2db396a5e56a076b2f117aad465c9475acf4886f2419ef17b15a34ea41"
   }
 }
