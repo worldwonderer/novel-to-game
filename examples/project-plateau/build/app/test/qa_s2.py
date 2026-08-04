@@ -93,16 +93,13 @@ def run() -> dict[str, object]:
             page.screenshot(path=EVIDENCE / filename, type="jpeg", quality=86)
             checkpoints.append({"id": identifier, "state": state, "visual": f"build/evidence/s2/{filename}"})
 
-        def wait_for_threat(max_x: float = 10, min_forward: float = 10) -> None:
-            page.wait_for_function(
-                """([maxX, minForward]) => {
-                    const state = window.__projectPlateau.snapshot();
-                    return Math.abs(state.threatVisual.position.x - state.player.position.x) <= maxX
-                      && state.threatVisual.position.z <= state.player.position.z - minForward;
-                }""",
-                arg=[max_x, min_forward],
-                timeout=16000,
-            )
+        def lock_threat_frame() -> None:
+            # The threat now owns a world-space orbit instead of following the
+            # player. Freeze an authored phase for deterministic topology
+            # screenshots; player-relative proximity would reintroduce the
+            # exact tethering regression this suite must reject.
+            page.evaluate("window.__projectPlateau.freezeVisualForTest(5, false)")
+            assert snap()["threatVisual"]["anchorModel"] == "fixed-world-orbit-latched-attack-origin"
 
         initial = snap()
         assert initial["player"]["zone"] == "fort"
@@ -116,7 +113,7 @@ def run() -> dict[str, object]:
         assert watch["player"]["zone"] == "canopy-overlook", watch
         assert watch["player"]["threatState"] == "watch", watch
         assert watch["threatVisual"]["state"] == "watch", watch
-        wait_for_threat()
+        lock_threat_frame()
         capture("canopy-watch", "02-canopy-watch.jpg")
 
         page.evaluate("window.__projectPlateau.teleportForTest({x: 0, z: -10})")
@@ -125,7 +122,7 @@ def run() -> dict[str, object]:
         assert search["player"]["zone"] == "iguanodon-glade", search
         assert search["player"]["threatState"] == "search", search
         assert search["threatVisual"]["state"] == "search", search
-        wait_for_threat()
+        lock_threat_frame()
         capture("glade-search", "03-glade-search.jpg")
 
         if runtime_stage in {
@@ -159,11 +156,8 @@ def run() -> dict[str, object]:
         expected_attack_event = "plate-exposure:+2" if complete_loop_stage else "exposed-sprint"
         assert attack["player"]["lastThreatEvent"] == expected_attack_event, attack
         assert attack["threatVisual"]["state"] == "attack", attack
-        # At attack the authored dive is already within ten metres laterally and
-        # seven metres forward.  Waiting for a narrower cosmetic orbit phase can
-        # outlive the gameplay contact window and turn this topology check into a
-        # timing race.
-        wait_for_threat(max_x=10, min_forward=7)
+        page.wait_for_timeout(220)
+        assert snap()["threatVisual"]["anchorModel"] == "fixed-world-orbit-latched-attack-origin"
         capture("creek-attack", "04-creek-attack.jpg")
 
         page.evaluate("window.__projectPlateau.teleportForTest({x: 0, z: 18})")
