@@ -1,0 +1,24 @@
+{
+  "targetViewport": {
+    "viewport": [
+      1440,
+      900
+    ],
+    "samples": 240,
+    "medianFrameMs": 8.3,
+    "medianFps": 120.5,
+    "onePercentLowFps": 98,
+    "worstFrameMs": 10.3
+  },
+  "minimumViewport": {
+    "viewport": [
+      1280,
+      720
+    ],
+    "samples": 240,
+    "medianFrameMs": 8.3,
+    "medianFps": 120.5,
+    "onePercentLowFps": 98,
+    "worstFrameMs": 10.3
+  }
+}

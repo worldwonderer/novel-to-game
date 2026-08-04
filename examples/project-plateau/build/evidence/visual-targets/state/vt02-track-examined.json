@@ -1,0 +1,260 @@
+{
+  "stage": "s10-glade-clarity",
+  "mode": "field",
+  "cameraMode": "field",
+  "visualReviewOrbit": null,
+  "runActive": true,
+  "renderer": "WebGL2",
+  "player": {
+    "position": {
+      "x": 0,
+      "z": 44
+    },
+    "lastStablePosition": {
+      "x": 0,
+      "z": 44
+    },
+    "heading": 0,
+    "pitch": 0,
+    "stance": "walk",
+    "elapsedSeconds": 2.77,
+    "distanceTravelled": 0,
+    "paused": false,
+    "pauseReason": null,
+    "boundaryRecoveries": 0,
+    "collisions": 0,
+    "lastEvent": "examined:track",
+    "zone": "brook-blind",
+    "zoneHistory": [
+      "fort",
+      "brook-blind"
+    ],
+    "reachedGlade": false,
+    "inCover": false,
+    "coverSeconds": 0,
+    "sprintExposureSeconds": 0,
+    "sprintEscalationCharged": false,
+    "threatAwareness": 0,
+    "threatState": "distant",
+    "lastThreatEvent": "distant",
+    "attackSeconds": 0,
+    "examinedTrack": true,
+    "observedBehavior": false,
+    "lastObservation": "Three toes. Fresh. The brook runs back to camp.",
+    "cameraRaised": false,
+    "plateRailRevealed": false,
+    "pendingExposure": null,
+    "previewSeconds": 0,
+    "lastProofEvent": null,
+    "plates": [
+      {
+        "index": 0,
+        "status": "unexposed",
+        "points": 0,
+        "lostPoints": 0,
+        "label": null,
+        "frameKey": null
+      },
+      {
+        "index": 1,
+        "status": "unexposed",
+        "points": 0,
+        "lostPoints": 0,
+        "label": null,
+        "frameKey": null
+      },
+      {
+        "index": 2,
+        "status": "unexposed",
+        "points": 0,
+        "lostPoints": 0,
+        "label": null,
+        "frameKey": null
+      },
+      {
+        "index": 3,
+        "status": "unexposed",
+        "points": 0,
+        "lostPoints": 0,
+        "label": null,
+        "frameKey": null
+      }
+    ],
+    "cartridges": 2,
+    "rifleRaised": false,
+    "rifleRevealed": false,
+    "gunshotFired": false,
+    "brookResponse": null,
+    "shotCount": 0,
+    "bodyMargin": 1,
+    "failed": false,
+    "failureCause": null,
+    "contactCount": 0,
+    "remainingLight": 177.23,
+    "returnRoute": null,
+    "returnCostSeconds": 0,
+    "returnStrike": false,
+    "runStatus": "active",
+    "result": null
+  },
+  "threatVisual": {
+    "state": "distant",
+    "response": "orbit",
+    "attackStage": "orbit",
+    "attackProgress": 0,
+    "position": {
+      "x": 22.45,
+      "y": 24.18,
+      "z": 25.42
+    }
+  },
+  "familyVisual": {
+    "moment": "glade-young-play",
+    "adults": 2,
+    "young": 3,
+    "branchAngle": 0.08,
+    "roles": [
+      "graze",
+      "branch-pull",
+      "young-play",
+      "young-play",
+      "stay-close"
+    ]
+  },
+  "brookResponseVisual": {
+    "state": null,
+    "position": {
+      "x": -10.5,
+      "y": -0.77,
+      "z": 47
+    }
+  },
+  "assets": {
+    "fieldCamera": {
+      "version": "bellows-camera",
+      "visibleParts": 13
+    },
+    "pterodactyl": {
+      "silhouette": "continuous-skinned-membrane-wing",
+      "projectedShadow": "moving-winged-ground-shadow",
+      "visibleParts": 13,
+      "visualStatus": "hy3d-flock-ready",
+      "visualError": null,
+      "hy3d": {
+        "version": "hy3d-v3.5-stylized-30k-1k",
+        "bytes": 1327456,
+        "loaded": 3,
+        "sharedResource": true,
+        "runtimeMorphPose": true,
+        "poseTargets": [
+          "wingUp",
+          "wingDown",
+          "diveFold"
+        ]
+      }
+    },
+    "cover": {
+      "archCount": 5,
+      "visibleParts": 25
+    },
+    "family": {
+      "adults": 2,
+      "young": 3,
+      "behaviors": [
+        "graze",
+        "branch-pull",
+        "young-play"
+      ],
+      "branchPresent": true,
+      "visualStatus": "hy3d-family-ready",
+      "visualError": null,
+      "hy3d": {
+        "version": "hy3d-v3.5-stylized-25k-1k",
+        "bytes": 1089008,
+        "loadedAdults": 2,
+        "loadedYoung": 3,
+        "sharedResource": true,
+        "staticSourceMesh": true,
+        "runtimeMorphPose": true,
+        "poseTargets": [
+          "graze",
+          "reach",
+          "play",
+          "tailLeft",
+          "tailRight",
+          "juvenile"
+        ]
+      },
+      "visibleParts": 52
+    },
+    "gladeComposition": {
+      "sightlineHalfWidth": 22,
+      "sunLanePresent": true,
+      "shadowCastingSubjects": 5,
+      "familyWidth": 18.5
+    }
+  },
+  "audio": {
+    "status": "running",
+    "volumes": {
+      "ambience": 0.34,
+      "effects": 0.72,
+      "music": 0.2
+    },
+    "captionsEnabled": true,
+    "threatState": "distant",
+    "recentCues": [
+      {
+        "cue": "field-start",
+        "caption": "[brook water and insects under the canopy]",
+        "at": 0
+      },
+      {
+        "cue": "examine",
+        "caption": "[fern brushes aside; pencil marks the field card]",
+        "at": 0.144
+      }
+    ]
+  },
+  "presentationSettings": {
+    "reducedMotion": false,
+    "captionsEnabled": true,
+    "textScale": "1",
+    "volumes": {
+      "ambience": 0.34,
+      "effects": 0.72,
+      "music": 0.2
+    },
+    "storageKey": "project-plateau:presentation:v1"
+  },
+  "ui": {
+    "prompt": "Raise camera [Right Mouse]",
+    "cameraOverlay": false,
+    "rifleOverlay": false,
+    "plateRail": false,
+    "platePreview": null,
+    "capturedPlateImages": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "fieldNote": null,
+    "contactNote": null,
+    "cartridgesVisible": false,
+    "caption": null,
+    "lightWatch": null,
+    "terminal": null
+  },
+  "sceneChildren": 59,
+  "calls": 1,
+  "triangles": 1,
+  "textures": 29,
+  "geometries": 508,
+  "viewport": [
+    1440,
+    900
+  ],
+  "firstRenderedAt": 205.5,
+  "recentMedianFrameMs": 8.3
+}

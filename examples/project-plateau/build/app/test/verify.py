@@ -35,12 +35,16 @@ class Suite:
 JS_TESTS = (
     "test/audio.test.js",
     "test/foundation.test.js",
+    "test/hy3d-iguanodon.test.js",
+    "test/hy3d-pterodactyl.test.js",
+    "test/iguanodon.test.js",
+    "test/pterodactyl.test.js",
     "test/settings.test.js",
     "test/simulation.test.js",
 )
 HISTORY_QA = tuple(f"test/qa_s{stage}.py" for stage in range(8)) + ("test/qa_s9.py",)
 COMPLETE_RUN_QA = ("test/qa_s8.py",)
-CURRENT_VISUAL_QA = ("test/qa_s10.py",)
+CURRENT_VISUAL_QA = ("test/qa_s10.py", "test/qa_visual_targets.py")
 EXCLUDED_TEST_TOOLS = {
     "test/capture_demo_clip.py": "reproducible delivery-media recorder, not a pass/fail test suite",
     "test/verify.py": "authoritative suite orchestrator; registering it would recurse",
@@ -69,7 +73,7 @@ SUITES = (
     Suite(
         "browser:current-visual",
         CURRENT_VISUAL_QA,
-        ((sys.executable, CURRENT_VISUAL_QA[0]),),
+        tuple((sys.executable, location) for location in CURRENT_VISUAL_QA),
         APP,
     ),
     Suite(

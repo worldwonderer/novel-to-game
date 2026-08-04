@@ -1,15 +1,15 @@
 {
   "schemaVersion": 1,
-  "updated": "2026-08-01 PT · example promotion and launch media V2",
+  "updated": "2026-08-03 PT \u00b7 HY3D v22 strict visual review pass",
   "policy": "Every shipped non-code asset must be original, public domain, or redistribution-compatible. Modern adaptation assets are prohibited.",
   "entries": [
     {
       "key": "world.connected_route",
       "tier": "release-gate",
-      "status": "functional-graybox",
+      "status": "authored-stylized-runtime",
       "releaseGatePassed": false,
-      "source": "app/src/world.js",
-      "provenance": "Original deterministic procedural geometry",
+      "source": "app/src/world.js; app/src/atmosphere.js",
+      "provenance": "Original deterministic authored procedural geometry and layered atmosphere",
       "rights": "Original project code and geometry",
       "evidence": [
         "evidence/s0/01-title.jpg",
@@ -33,9 +33,12 @@
         "evidence/s9/01-young-play-commitment.jpg",
         "evidence/s9/03-branch-pull-commitment.jpg",
         "evidence/s10/01-clear-family-sightline.jpg",
-        "evidence/s10/02-young-play-silver-frame.jpg"
+        "evidence/s10/02-young-play-silver-frame.jpg",
+        "evidence/visual-sota/tree-grounding-v1/README.md",
+        "evidence/visual-sota/hy3d-creatures-v23/contact-sheet-targets.jpg",
+        "../qa/evidence/perception/hy3d-v23-independent-review.md"
       ],
-      "remaining": "The route passes input-only Strong/Mixed/Panic traversal; its glade now protects a broad lit subject corridor with edge-framed vegetation. Remaining gates are landmark polish and first-time human navigation evidence."
+      "remaining": "The route passes input-only Strong/Mixed/Panic traversal; authored brook, canopy, glade, basalt, Fort and humid distance layers preserve the focal corridor, tree root planes are regression-locked, and the strict v22 independent environment/lighting review passes. First-time human navigation remains."
     },
     {
       "key": "tool.field_camera",
@@ -77,9 +80,11 @@
         "evidence/s9/02-young-play-plate.jpg",
         "evidence/s9/04-branch-pull-plate.jpg",
         "evidence/s9/05-distinct-recovered-plates.jpg",
-        "evidence/s9/06-clean-order-no-plates.jpg"
+        "evidence/s9/06-clean-order-no-plates.jpg",
+        "evidence/visual-sota/hy3d-creatures-v23/contact-sheet-targets.jpg",
+        "../qa/evidence/perception/hy3d-v23-independent-review.md"
       ],
-      "remaining": "Every shutter now preserves its exact local renderer view as a monochrome plate through preview, result and restart; hand placement, insertion/fracture motion and independent composition review remain."
+      "remaining": "Every shutter preserves its exact local renderer view as a monochrome plate through preview, result and restart, and the strict v22 composition review passes; hand placement and insertion/fracture motion remain."
     },
     {
       "key": "tool.period_rifle",
@@ -104,11 +109,11 @@
     {
       "key": "subject.iguanodon_family",
       "tier": "release-gate",
-      "status": "procedural-prototype",
+      "status": "generated-stylized-runtime-with-procedural-fallback",
       "releaseGatePassed": false,
-      "source": "app/src/world.js",
-      "provenance": "Original low-poly procedural family blockout",
-      "rights": "Original project geometry; museum pages inform facts only",
+      "source": "app/public/assets/iguanodon-hy3d-v35-stylized.glb; app/src/hy3d-iguanodon.js; app/src/world.js",
+      "provenance": "Original style-controlled reference generated for this project, reconstructed with Tencent Hunyuan 3D image2ModelV3.5, compressed to a local 25K/1K GLB; original procedural family remains as the loading/error fallback",
+      "rights": "Original project reference and generated mesh; release use remains gated on retaining the applicable Hunyuan output-rights record",
       "evidence": [
         "evidence/s0/03-glade-heavy.jpg",
         "evidence/s8/03-strong-glade-frames.jpg",
@@ -117,18 +122,23 @@
         "evidence/s9/05-distinct-recovered-plates.jpg",
         "evidence/s10/01-clear-family-sightline.jpg",
         "evidence/s10/02-young-play-silver-frame.jpg",
-        "evidence/s10/03-branch-pull-silver-frame.jpg"
+        "evidence/s10/03-branch-pull-silver-frame.jpg",
+        "evidence/visual-sota/hy3d-stylized-v1/README.md",
+        "evidence/visual-sota/hy3d-creatures-v23/contact-sheet-orbits.jpg",
+        "evidence/visual-sota/hy3d-creatures-v23/contact-sheet-motion.jpg",
+        "evidence/visual-sota/hy3d-creatures-v23/manifest.json",
+        "../qa/evidence/perception/hy3d-v23-independent-review.md"
       ],
-      "remaining": "Two adults and three young now have expanded faceted anatomy, eye/underside separation, graze/play/branch-pull roles, a feeding branch and distinct lit commitments; independent anatomy, motion and first-time readability review remain."
+      "remaining": "One shared 1.09 MB delivery asset supplies two adults and three young with six independent runtime morph targets, including juvenile proportions. Asset, loading, behavior, package, live-orbit and strict independent anatomy/material/motion gates pass; the Hunyuan output-rights record remains."
     },
     {
       "key": "threat.pterodactyl",
       "tier": "release-gate",
-      "status": "procedural-prototype",
+      "status": "generated-stylized-runtime-with-procedural-fallback",
       "releaseGatePassed": false,
-      "source": "app/src/world.js",
-      "provenance": "Original membrane-wing silhouette and deterministic orbit",
-      "rights": "Original project geometry; museum pages inform facts only",
+      "source": "app/public/assets/pterodactyl-hy3d-v35-stylized.glb; app/src/hy3d-pterodactyl.js; app/src/world.js",
+      "provenance": "Original style-controlled reference generated for this project, reconstructed with Tencent Hunyuan 3D image2ModelV3.5, compressed to a local 30K/1K GLB; original procedural threat remains as the loading/error fallback",
+      "rights": "Original project reference and generated mesh; release use remains gated on retaining the applicable Hunyuan output-rights record",
       "evidence": [
         "evidence/s0/02-field-order.jpg",
         "evidence/s0/03-glade-heavy.jpg",
@@ -155,9 +165,14 @@
         "evidence/s10/04-achromatopsia-attack.jpg",
         "evidence/s10/10-protanopia-attack-defense.jpg",
         "evidence/s10/11-deuteranopia-attack-defense.jpg",
-        "evidence/s10/12-tritanopia-attack-defense.jpg"
+        "evidence/s10/12-tritanopia-attack-defense.jpg",
+        "evidence/visual-sota/hy3d-pterodactyl-v1/README.md",
+        "evidence/visual-sota/hy3d-creatures-v23/contact-sheet-orbits.jpg",
+        "evidence/visual-sota/hy3d-creatures-v23/contact-sheet-motion.jpg",
+        "evidence/visual-sota/hy3d-creatures-v23/manifest.json",
+        "../qa/evidence/perception/hy3d-v23-independent-review.md"
       ],
-      "remaining": "Four states, timed contact, shot response and cover pull-up pass full-colour and achromatopsia input routes; protanopia, deuteranopia and tritanopia attack/defence checkpoints retain the encoded state. Anatomy, material and independent colour-cue readability review remain."
+      "remaining": "One shared 1.33 MB delivery asset supplies all three threats with continuous membranes and independent wing-up, wing-down and dive-fold morphs. Asset, lazy-loading, attack, package, live-orbit and strict independent anatomy/material/motion gates pass; the Hunyuan output-rights record and full live colour-vision route review remain."
     },
     {
       "key": "ui.field_system",
@@ -208,9 +223,11 @@
         "evidence/s10/04-achromatopsia-attack.jpg",
         "evidence/s10/05-strong-plate-board.jpg",
         "evidence/s10/06-clean-restart.jpg",
-        "evidence/s10/report.json"
+        "evidence/s10/report.json",
+        "evidence/visual-sota/hy3d-creatures-v23/contact-sheet-targets.jpg",
+        "../qa/evidence/perception/hy3d-v23-independent-review.md"
       ],
-      "remaining": "Field prompts, physical resources, renderer-derived previews, result/failure bands and restart are implemented. Complete full-colour and achromatopsia routes plus the three-mode checkpoint matrix pass technical checks; independent composition and colour-cue readability review remain."
+      "remaining": "Field prompts, physical resources, renderer-derived previews, result/failure bands and restart are implemented; the strict v22 composition and runtime/accessibility visual review passes. Independent full live colour-vision route readability remains."
     },
     {
       "key": "light.functional_arc",
@@ -230,9 +247,11 @@
         "evidence/s8/09-mixed-input-result.jpg",
         "evidence/s8/12-panic-input-failure.jpg",
         "evidence/s10/01-clear-family-sightline.jpg",
-        "evidence/s10/02-young-play-silver-frame.jpg"
+        "evidence/s10/02-young-play-silver-frame.jpg",
+        "evidence/visual-sota/hy3d-creatures-v23/contact-sheet-targets.jpg",
+        "../qa/evidence/perception/hy3d-v23-independent-review.md"
       ],
-      "remaining": "The 180-second budget is grounded by measured paths, and the glade now separates subjects with one warm lane, cool rim and shadows; full sky/light interpolation and low-light legibility remain."
+      "remaining": "The 180-second budget is grounded by measured paths, while cloud bands, air perspective, cool reflected shadow light and the glade warm lane pass the strict v22 independent visual review. Full timeline interpolation and low-light legibility remain."
     },
     {
       "key": "audio.core_world",
@@ -278,9 +297,12 @@
         "evidence/s8/report.json",
         "evidence/s9/05-distinct-recovered-plates.jpg",
         "evidence/s10/04-achromatopsia-attack.jpg",
-        "evidence/s10/report.json"
+        "evidence/s10/report.json",
+        "evidence/visual-sota/hy3d-creatures-v23/contact-sheet-targets.jpg",
+        "evidence/visual-sota/hy3d-creatures-v23/manifest.json",
+        "../qa/evidence/perception/hy3d-v23-independent-review.md"
       ],
-      "remaining": "Persisted controls, monochrome plate/result treatment, complete full-colour and achromatopsia input routes, and the protanopia/deuteranopia/tritanopia checkpoint matrix are verified technically; independent colour-cue readability review remains."
+      "remaining": "Persisted controls, monochrome treatment, 150% text, reduced motion and minimum-viewport composition pass technical and strict v22 visual checks; independent full live colour-vision route readability remains."
     },
     {
       "key": "media.launch_voiceover",

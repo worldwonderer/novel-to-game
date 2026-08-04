@@ -16,7 +16,13 @@ from playwright.sync_api import Page, sync_playwright
 
 APP = Path(__file__).resolve().parent.parent
 BUILD = APP.parent
-EVIDENCE = BUILD / "evidence" / "s10"
+EVIDENCE = Path(
+    os.environ.get("PROJECT_PLATEAU_S10_EVIDENCE", BUILD / "evidence" / "s10")
+).resolve()
+try:
+    EVIDENCE_RELATIVE = EVIDENCE.relative_to(BUILD.parent).as_posix()
+except ValueError as error:
+    raise RuntimeError("S10 evidence must stay inside the Project Plateau workspace") from error
 STATE_DIR = EVIDENCE / "state"
 BROWSER_DIR = EVIDENCE / "browser"
 BASE_URL = os.environ.get("BASE_URL", "http://127.0.0.1:4173")
@@ -130,6 +136,14 @@ def run() -> dict[str, object]:
         page.on("request", lambda request: hosts.add(urlparse(request.url).netloc))
         page.goto(f"{BASE_URL}/?qa=s10", wait_until="networkidle")
         page.wait_for_function("window.__projectPlateau?.ready === true")
+        page.wait_for_function(
+            "window.__projectPlateau.snapshot().assets.family.visualStatus === 'hy3d-family-ready'",
+            timeout=15000,
+        )
+        page.wait_for_function(
+            "window.__projectPlateau.snapshot().assets.pterodactyl.visualStatus === 'hy3d-flock-ready'",
+            timeout=15000,
+        )
         assert page.evaluate("window.__projectPlateau.stage") == "s10-glade-clarity"
 
         vision_mode = "full-colour"
@@ -144,9 +158,9 @@ def run() -> dict[str, object]:
 
         def capture(identifier: str, inputs: list[str]) -> dict[str, object]:
             state = snapshot(page)
-            state_relative = f"build/evidence/s10/state/{identifier}.json"
-            browser_relative = f"build/evidence/s10/browser/{identifier}.json"
-            visual_relative = f"build/evidence/s10/{identifier}.jpg"
+            state_relative = f"{EVIDENCE_RELATIVE}/state/{identifier}.json"
+            browser_relative = f"{EVIDENCE_RELATIVE}/browser/{identifier}.json"
+            visual_relative = f"{EVIDENCE_RELATIVE}/{identifier}.jpg"
             (STATE_DIR / f"{identifier}.json").write_text(
                 json.dumps(state, indent=2) + "\n", encoding="utf-8"
             )
@@ -214,6 +228,7 @@ def run() -> dict[str, object]:
             )
             state = snapshot(page)
             assert state["ui"]["capturedPlateImages"][index], state
+            assert not page.locator("#context-prompt").is_visible(), state
             return state
 
         page.get_by_role("button", name="Enter the basin").click()
@@ -292,7 +307,7 @@ def run() -> dict[str, object]:
         assert non_colour["threatVisual"]["state"] == "attack", non_colour
         assert non_colour["ui"]["rifleOverlay"], non_colour
         assert non_colour["ui"]["cartridgesVisible"], non_colour
-        assert non_colour["assets"]["pterodactyl"]["silhouette"] == "membrane-wing", non_colour
+        assert non_colour["assets"]["pterodactyl"]["silhouette"] == "continuous-skinned-membrane-wing", non_colour
         for index, mode in enumerate(colour_vision_modes, start=10):
             set_vision(mode)
             identifier = f"{index:02d}-{mode}-attack-defense"
@@ -302,6 +317,11 @@ def run() -> dict[str, object]:
             assert attack_mode["ui"]["rifleOverlay"], attack_mode
             assert attack_mode["ui"]["cartridgesVisible"], attack_mode
             colour_vision_matrix[mode]["attackDefense"] = identifier
+        page.mouse.click(720, 450, button="left")
+        page.wait_for_function(
+            "window.__projectPlateau.snapshot().player.shotCount === 1",
+            timeout=1200,
+        )
         page.keyboard.up("KeyF")
         set_vision("full-colour")
 
@@ -336,7 +356,7 @@ def run() -> dict[str, object]:
         browser.close()
 
     allowed = {urlparse(BASE_URL).netloc}
-    external = sorted(hosts - allowed)
+    external = sorted(host for host in hosts if host and host not in allowed)
     assert not errors, errors
     assert not external, external
     assert len({visual["sha256"] for visual in visuals}) == len(visuals), visuals
@@ -353,6 +373,7 @@ def run() -> dict[str, object]:
             "familyAndBasaltShareSunLane": True,
             "allFiveSubjectsCastShadows": True,
             "observationNoteClearsBeforeHeroFrame": True,
+            "cameraPromptClearsProtectedFrame": True,
             "focusRegionPixelFloor": True,
             "youngPlayAndBranchPullRemainDistinct": True,
             "achromatopsiaAttackRetainsShapeAndToolState": True,

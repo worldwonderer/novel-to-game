@@ -48,6 +48,12 @@ description: "Build the game for its approved target runtime. Compress GAME_DESI
 品类保真门、手感打磨(juice) 清单（按类型取用、动效可关）、批量资产受管子流程（视觉键
 清单 + 一致性审查），以及行为保护式文案重构与存档迁移。
 
+批准方向含实时生成式 3D 生物资产时，再读取
+[generated-3d-creature-pipeline.md](references/generated-3d-creature-pipeline.md)。它规定先做一个
+代表资产的方向停损试验，再处理母版压缩、共享延迟加载、无骨骼动作恢复、空间原点与证据门；
+不把某个供应商或一组固定面数写成跨项目默认。焦点资产抬高完成度后，先补环境材质、接地、
+光照和重量感，并用局部视觉技术修复签名帧；不能把创意案例使用的框架误当作质感来源而直接迁移。
+
 BUILD_BRIEF 含动态媒体（视频过场 / 环境循环 / 关键帧驱动演出）时，默认生产链为
 **Codex `imagegen`（`gpt-image-2`）产角色 / 场景 / 关键帧图 → Seedance 2.0 图生视频 /
 多模态参考生视频**，已有可用图片不得退回纯文生视频。完整生产线（最小生产包、参考图

@@ -1,0 +1,22 @@
+{
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/150.0.0.0 Safari/537.36",
+  "devicePixelRatio": 1,
+  "bodyMode": "field",
+  "textScale": "1",
+  "reducedMotionClass": false,
+  "inputs": [
+    "KeyF held",
+    "attack corridor"
+  ],
+  "viewport": [
+    1440,
+    900
+  ],
+  "url": "http://127.0.0.1:4173/?qa=visual-targets",
+  "consoleErrorsAtCheckpoint": [],
+  "requestHostsAtCheckpoint": [
+    "",
+    "127.0.0.1:4173"
+  ],
+  "capturedAtUnixMs": 1785754953810
+}

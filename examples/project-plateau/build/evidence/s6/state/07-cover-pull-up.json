@@ -2,6 +2,7 @@
   "stage": "s10-glade-clarity",
   "mode": "field",
   "cameraMode": "field",
+  "visualReviewOrbit": null,
   "runActive": true,
   "renderer": "WebGL2",
   "player": {
@@ -16,7 +17,7 @@
     "heading": 0,
     "pitch": 0.32,
     "stance": "walk",
-    "elapsedSeconds": 5.099,
+    "elapsedSeconds": 5.08,
     "distanceTravelled": 0,
     "paused": false,
     "pauseReason": null,
@@ -33,7 +34,7 @@
     ],
     "reachedGlade": true,
     "inCover": true,
-    "coverSeconds": 0.12439999985694884,
+    "coverSeconds": 0.125,
     "sprintExposureSeconds": 0,
     "sprintEscalationCharged": false,
     "threatAwareness": 3,
@@ -46,7 +47,7 @@
     "cameraRaised": false,
     "plateRailRevealed": true,
     "pendingExposure": null,
-    "previewSeconds": 3.667200000047686,
+    "previewSeconds": 3.650099999964238,
     "lastProofEvent": {
       "plateIndex": 1,
       "frameKey": "basalt-scale",
@@ -98,7 +99,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 146.9,
+    "remainingLight": 146.92,
     "returnRoute": "covered",
     "returnCostSeconds": 28,
     "returnStrike": false,
@@ -108,10 +109,12 @@
   "threatVisual": {
     "state": "attack",
     "response": "cover-pull-up",
+    "attackStage": "search",
+    "attackProgress": 0,
     "position": {
-      "x": -2.26,
+      "x": -2.25,
       "y": 18.23,
-      "z": 2.97
+      "z": 2.98
     }
   },
   "familyVisual": {
@@ -141,8 +144,23 @@
       "visibleParts": 13
     },
     "pterodactyl": {
-      "silhouette": "membrane-wing",
-      "visibleParts": 5
+      "silhouette": "continuous-skinned-membrane-wing",
+      "projectedShadow": "moving-winged-ground-shadow",
+      "visibleParts": 13,
+      "visualStatus": "hy3d-flock-ready",
+      "visualError": null,
+      "hy3d": {
+        "version": "hy3d-v3.5-stylized-30k-1k",
+        "bytes": 1327456,
+        "loaded": 3,
+        "sharedResource": true,
+        "runtimeMorphPose": true,
+        "poseTargets": [
+          "wingUp",
+          "wingDown",
+          "diveFold"
+        ]
+      }
     },
     "cover": {
       "archCount": 5,
@@ -157,13 +175,32 @@
         "young-play"
       ],
       "branchPresent": true,
-      "visibleParts": 57
+      "visualStatus": "hy3d-family-ready",
+      "visualError": null,
+      "hy3d": {
+        "version": "hy3d-v3.5-stylized-25k-1k",
+        "bytes": 1089008,
+        "loadedAdults": 2,
+        "loadedYoung": 3,
+        "sharedResource": true,
+        "staticSourceMesh": true,
+        "runtimeMorphPose": true,
+        "poseTargets": [
+          "graze",
+          "reach",
+          "play",
+          "tailLeft",
+          "tailRight",
+          "juvenile"
+        ]
+      },
+      "visibleParts": 52
     },
     "gladeComposition": {
       "sightlineHalfWidth": 22,
       "sunLanePresent": true,
       "shadowCastingSubjects": 5,
-      "familyWidth": 15
+      "familyWidth": 18.5
     }
   },
   "audio": {
@@ -189,7 +226,7 @@
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 0.32
+        "at": 0.315
       },
       {
         "cue": "shutter",
@@ -199,12 +236,12 @@
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 2.448
+        "at": 2.453
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 2.448
+        "at": 2.453
       },
       {
         "cue": "camera-raise",
@@ -214,22 +251,22 @@
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 2.672
+        "at": 2.677
       },
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 4.667
+        "at": 4.661
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 4.667
+        "at": 4.661
       },
       {
         "cue": "cover",
         "caption": "[branches scrape the camera; wingbeats widen]",
-        "at": 4.885
+        "at": 4.896
       }
     ]
   },
@@ -263,15 +300,15 @@
     "lightWatch": 147,
     "terminal": null
   },
-  "sceneChildren": 30,
-  "calls": 266,
-  "triangles": 50144,
-  "textures": 3,
-  "geometries": 95,
+  "sceneChildren": 59,
+  "calls": 1,
+  "triangles": 1,
+  "textures": 29,
+  "geometries": 509,
   "viewport": [
     1440,
     900
   ],
-  "firstRenderedAt": 208.89999985694885,
+  "firstRenderedAt": 214.69999998807907,
   "recentMedianFrameMs": 8.3
 }

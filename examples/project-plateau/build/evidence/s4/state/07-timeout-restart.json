@@ -2,6 +2,7 @@
   "stage": "s10-glade-clarity",
   "mode": "order",
   "cameraMode": "order",
+  "visualReviewOrbit": null,
   "runActive": false,
   "renderer": "WebGL2",
   "player": {
@@ -98,10 +99,12 @@
   "threatVisual": {
     "state": "distant",
     "response": "orbit",
+    "attackStage": "orbit",
+    "attackProgress": 0,
     "position": {
-      "x": -25.5,
-      "y": 22.56,
-      "z": 46.88
+      "x": -25.38,
+      "y": 22.52,
+      "z": 47.09
     }
   },
   "familyVisual": {
@@ -131,8 +134,23 @@
       "visibleParts": 13
     },
     "pterodactyl": {
-      "silhouette": "membrane-wing",
-      "visibleParts": 5
+      "silhouette": "continuous-skinned-membrane-wing",
+      "projectedShadow": "moving-winged-ground-shadow",
+      "visibleParts": 13,
+      "visualStatus": "hy3d-flock-ready",
+      "visualError": null,
+      "hy3d": {
+        "version": "hy3d-v3.5-stylized-30k-1k",
+        "bytes": 1327456,
+        "loaded": 3,
+        "sharedResource": true,
+        "runtimeMorphPose": true,
+        "poseTargets": [
+          "wingUp",
+          "wingDown",
+          "diveFold"
+        ]
+      }
     },
     "cover": {
       "archCount": 5,
@@ -147,13 +165,32 @@
         "young-play"
       ],
       "branchPresent": true,
-      "visibleParts": 57
+      "visualStatus": "hy3d-family-ready",
+      "visualError": null,
+      "hy3d": {
+        "version": "hy3d-v3.5-stylized-25k-1k",
+        "bytes": 1089008,
+        "loadedAdults": 2,
+        "loadedYoung": 3,
+        "sharedResource": true,
+        "staticSourceMesh": true,
+        "runtimeMorphPose": true,
+        "poseTargets": [
+          "graze",
+          "reach",
+          "play",
+          "tailLeft",
+          "tailRight",
+          "juvenile"
+        ]
+      },
+      "visibleParts": 52
     },
     "gladeComposition": {
       "sightlineHalfWidth": 22,
       "sunLanePresent": true,
       "shadowCastingSubjects": 5,
-      "familyWidth": 15
+      "familyWidth": 18.5
     }
   },
   "audio": {
@@ -169,12 +206,12 @@
       {
         "cue": "field-start",
         "caption": "[brook water and insects under the canopy]",
-        "at": 15.291
+        "at": 15.2
       },
       {
         "cue": "failure",
         "caption": "[the field sound narrows to wind and brook]",
-        "at": 15.419
+        "at": 15.323
       }
     ]
   },
@@ -208,15 +245,15 @@
     "lightWatch": null,
     "terminal": null
   },
-  "sceneChildren": 30,
-  "calls": 249,
-  "triangles": 49362,
-  "textures": 3,
-  "geometries": 95,
+  "sceneChildren": 59,
+  "calls": 1,
+  "triangles": 1,
+  "textures": 29,
+  "geometries": 509,
   "viewport": [
     1440,
     900
   ],
-  "firstRenderedAt": 188.79999995231628,
+  "firstRenderedAt": 210.19999998807907,
   "recentMedianFrameMs": 8.3
 }

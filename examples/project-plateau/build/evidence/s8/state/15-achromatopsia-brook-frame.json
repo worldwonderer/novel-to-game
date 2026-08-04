@@ -2,22 +2,23 @@
   "stage": "s10-glade-clarity",
   "mode": "field",
   "cameraMode": "field",
+  "visualReviewOrbit": null,
   "runActive": true,
   "renderer": "WebGL2",
   "player": {
     "position": {
       "x": 3,
-      "z": 44.973
+      "z": 44.97
     },
     "lastStablePosition": {
       "x": 3,
-      "z": 44.973
+      "z": 44.97
     },
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 8.342,
-    "distanceTravelled": 25.027,
+    "elapsedSeconds": 8.293,
+    "distanceTravelled": 25.03,
     "paused": false,
     "pauseReason": null,
     "boundaryRecoveries": 0,
@@ -43,7 +44,7 @@
     "cameraRaised": false,
     "plateRailRevealed": true,
     "pendingExposure": null,
-    "previewSeconds": 3.9172999999523164,
+    "previewSeconds": 3.924900000035763,
     "lastProofEvent": {
       "plateIndex": 0,
       "frameKey": "brook-partial",
@@ -95,7 +96,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 171.658,
+    "remainingLight": 171.707,
     "returnRoute": null,
     "returnCostSeconds": 0,
     "returnStrike": false,
@@ -105,17 +106,19 @@
   "threatVisual": {
     "state": "watch",
     "response": "orbit",
+    "attackStage": "orbit",
+    "attackProgress": 0,
     "position": {
-      "x": 21.28,
-      "y": 13.2,
-      "z": 26.44
+      "x": 23,
+      "y": 10.58,
+      "z": 22.78
     }
   },
   "familyVisual": {
-    "moment": "glade-branch-pull",
+    "moment": "glade-young-play",
     "adults": 2,
     "young": 3,
-    "branchAngle": 0.522,
+    "branchAngle": 0.08,
     "roles": [
       "graze",
       "branch-pull",
@@ -138,8 +141,23 @@
       "visibleParts": 13
     },
     "pterodactyl": {
-      "silhouette": "membrane-wing",
-      "visibleParts": 5
+      "silhouette": "continuous-skinned-membrane-wing",
+      "projectedShadow": "moving-winged-ground-shadow",
+      "visibleParts": 13,
+      "visualStatus": "hy3d-flock-ready",
+      "visualError": null,
+      "hy3d": {
+        "version": "hy3d-v3.5-stylized-30k-1k",
+        "bytes": 1327456,
+        "loaded": 3,
+        "sharedResource": true,
+        "runtimeMorphPose": true,
+        "poseTargets": [
+          "wingUp",
+          "wingDown",
+          "diveFold"
+        ]
+      }
     },
     "cover": {
       "archCount": 5,
@@ -154,13 +172,32 @@
         "young-play"
       ],
       "branchPresent": true,
-      "visibleParts": 57
+      "visualStatus": "hy3d-family-ready",
+      "visualError": null,
+      "hy3d": {
+        "version": "hy3d-v3.5-stylized-25k-1k",
+        "bytes": 1089008,
+        "loadedAdults": 2,
+        "loadedYoung": 3,
+        "sharedResource": true,
+        "staticSourceMesh": true,
+        "runtimeMorphPose": true,
+        "poseTargets": [
+          "graze",
+          "reach",
+          "play",
+          "tailLeft",
+          "tailRight",
+          "juvenile"
+        ]
+      },
+      "visibleParts": 52
     },
     "gladeComposition": {
       "sightlineHalfWidth": 22,
       "sunLanePresent": true,
       "shadowCastingSubjects": 5,
-      "familyWidth": 15
+      "familyWidth": 18.5
     }
   },
   "audio": {
@@ -176,32 +213,32 @@
       {
         "cue": "field-start",
         "caption": "[brook water and insects under the canopy]",
-        "at": 116.784
+        "at": 116.427
       },
       {
         "cue": "examine",
         "caption": "[fern brushes aside; pencil marks the field card]",
-        "at": 122.928
+        "at": 122.555
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 122.955
+        "at": 122.56
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 123.035
+        "at": 122.645
       },
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 125.024
+        "at": 124.624
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 125.024
+        "at": 124.624
       }
     ]
   },
@@ -235,15 +272,15 @@
     "lightWatch": 172,
     "terminal": null
   },
-  "sceneChildren": 30,
-  "calls": 273,
-  "triangles": 50496,
-  "textures": 3,
-  "geometries": 98,
+  "sceneChildren": 59,
+  "calls": 1,
+  "triangles": 1,
+  "textures": 29,
+  "geometries": 512,
   "viewport": [
     1440,
     900
   ],
-  "firstRenderedAt": 192,
+  "firstRenderedAt": 199,
   "recentMedianFrameMs": 8.3
 }

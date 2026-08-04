@@ -1,0 +1,360 @@
+{
+  "stage": "s10-glade-clarity",
+  "mode": "terminal",
+  "cameraMode": "terminal",
+  "visualReviewOrbit": null,
+  "runActive": false,
+  "renderer": "WebGL2",
+  "player": {
+    "position": {
+      "x": 0,
+      "z": 70
+    },
+    "lastStablePosition": {
+      "x": 0,
+      "z": 70
+    },
+    "heading": 0,
+    "pitch": 0,
+    "stance": "walk",
+    "elapsedSeconds": 28.672,
+    "distanceTravelled": 0,
+    "paused": false,
+    "pauseReason": null,
+    "boundaryRecoveries": 0,
+    "collisions": 0,
+    "lastEvent": "result:strong-field-record",
+    "zone": "fort",
+    "zoneHistory": [
+      "fort",
+      "brook-blind",
+      "basalt-shelf",
+      "canopy-overlook",
+      "iguanodon-glade",
+      "covered-return",
+      "iguanodon-glade",
+      "covered-return",
+      "fort"
+    ],
+    "reachedGlade": true,
+    "inCover": false,
+    "coverSeconds": 0,
+    "sprintExposureSeconds": 0,
+    "sprintEscalationCharged": false,
+    "threatAwareness": 1,
+    "threatState": "watch",
+    "lastThreatEvent": "defensive-shot-interrupt",
+    "attackSeconds": 0,
+    "examinedTrack": true,
+    "observedBehavior": true,
+    "lastObservation": "The young keep close while the adults feed.",
+    "cameraRaised": false,
+    "plateRailRevealed": true,
+    "pendingExposure": null,
+    "previewSeconds": 0.7484000000357713,
+    "lastProofEvent": {
+      "plateIndex": 3,
+      "frameKey": "glade-branch-pull",
+      "points": 2,
+      "label": "BEHAVIOR \u2014 an adult pulls the branch down.",
+      "zone": "iguanodon-glade"
+    },
+    "plates": [
+      {
+        "index": 0,
+        "status": "exposed",
+        "points": 1,
+        "lostPoints": 0,
+        "label": "PARTIAL \u2014 foliage hides the flank.",
+        "frameKey": "brook-partial"
+      },
+      {
+        "index": 1,
+        "status": "exposed",
+        "points": 2,
+        "lostPoints": 0,
+        "label": "CONTEXT \u2014 basalt gives scale.",
+        "frameKey": "basalt-scale"
+      },
+      {
+        "index": 2,
+        "status": "exposed",
+        "points": 2,
+        "lostPoints": 0,
+        "label": "BEHAVIOR \u2014 young play beside the adults.",
+        "frameKey": "glade-young-play"
+      },
+      {
+        "index": 3,
+        "status": "exposed",
+        "points": 2,
+        "lostPoints": 0,
+        "label": "BEHAVIOR \u2014 an adult pulls the branch down.",
+        "frameKey": "glade-branch-pull"
+      }
+    ],
+    "cartridges": 1,
+    "rifleRaised": false,
+    "rifleRevealed": true,
+    "gunshotFired": true,
+    "brookResponse": "answering-call",
+    "shotCount": 1,
+    "bodyMargin": 1,
+    "failed": false,
+    "failureCause": null,
+    "contactCount": 0,
+    "remainingLight": 123.328,
+    "returnRoute": "covered",
+    "returnCostSeconds": 28,
+    "returnStrike": false,
+    "runStatus": "result",
+    "result": {
+      "kind": "alive",
+      "band": "strong-field-record",
+      "title": "Strong field record",
+      "copy": "Scale. Living form. Behavior. The field record holds.",
+      "evidence": 7,
+      "survivingPlates": 4,
+      "route": "covered",
+      "brookResponse": "answering-call",
+      "remainingLight": 123.3,
+      "gunshotCallback": "The report carried. Something answered by the brook."
+    }
+  },
+  "threatVisual": {
+    "state": "watch",
+    "response": "orbit",
+    "attackStage": "orbit",
+    "attackProgress": 0,
+    "position": {
+      "x": -25.3,
+      "y": 9.94,
+      "z": 39.9
+    }
+  },
+  "familyVisual": {
+    "moment": "glade-young-play",
+    "adults": 2,
+    "young": 3,
+    "branchAngle": 0.08,
+    "roles": [
+      "graze",
+      "branch-pull",
+      "young-play",
+      "young-play",
+      "stay-close"
+    ]
+  },
+  "brookResponseVisual": {
+    "state": "answering-call",
+    "position": {
+      "x": -10.5,
+      "y": -0.77,
+      "z": 47
+    }
+  },
+  "assets": {
+    "fieldCamera": {
+      "version": "bellows-camera",
+      "visibleParts": 13
+    },
+    "pterodactyl": {
+      "silhouette": "continuous-skinned-membrane-wing",
+      "projectedShadow": "moving-winged-ground-shadow",
+      "visibleParts": 13,
+      "visualStatus": "hy3d-flock-ready",
+      "visualError": null,
+      "hy3d": {
+        "version": "hy3d-v3.5-stylized-30k-1k",
+        "bytes": 1327456,
+        "loaded": 3,
+        "sharedResource": true,
+        "runtimeMorphPose": true,
+        "poseTargets": [
+          "wingUp",
+          "wingDown",
+          "diveFold"
+        ]
+      }
+    },
+    "cover": {
+      "archCount": 5,
+      "visibleParts": 25
+    },
+    "family": {
+      "adults": 2,
+      "young": 3,
+      "behaviors": [
+        "graze",
+        "branch-pull",
+        "young-play"
+      ],
+      "branchPresent": true,
+      "visualStatus": "hy3d-family-ready",
+      "visualError": null,
+      "hy3d": {
+        "version": "hy3d-v3.5-stylized-25k-1k",
+        "bytes": 1089008,
+        "loadedAdults": 2,
+        "loadedYoung": 3,
+        "sharedResource": true,
+        "staticSourceMesh": true,
+        "runtimeMorphPose": true,
+        "poseTargets": [
+          "graze",
+          "reach",
+          "play",
+          "tailLeft",
+          "tailRight",
+          "juvenile"
+        ]
+      },
+      "visibleParts": 52
+    },
+    "gladeComposition": {
+      "sightlineHalfWidth": 22,
+      "sunLanePresent": true,
+      "shadowCastingSubjects": 5,
+      "familyWidth": 18.5
+    }
+  },
+  "audio": {
+    "status": "running",
+    "volumes": {
+      "ambience": 0.34,
+      "effects": 0.72,
+      "music": 0.2
+    },
+    "captionsEnabled": true,
+    "threatState": "watch",
+    "recentCues": [
+      {
+        "cue": "search",
+        "caption": "[a near call circles overhead]",
+        "at": 13.333
+      },
+      {
+        "cue": "examine",
+        "caption": "[fern brushes aside; pencil marks the field card]",
+        "at": 13.44
+      },
+      {
+        "cue": "camera-raise",
+        "caption": "[wood frame lifts; bellows opens]",
+        "at": 15.003
+      },
+      {
+        "cue": "shutter",
+        "caption": "[shutter releases]",
+        "at": 15.104
+      },
+      {
+        "cue": "attack",
+        "caption": "[wingbeats tighten into a dive]",
+        "at": 17.083
+      },
+      {
+        "cue": "plate-slide",
+        "caption": "[glass plate seats in its case]",
+        "at": 17.083
+      },
+      {
+        "cue": "camera-raise",
+        "caption": "[wood frame lifts; bellows opens]",
+        "at": 17.088
+      },
+      {
+        "cue": "cover",
+        "caption": "[branches scrape the camera; wingbeats widen]",
+        "at": 17.152
+      },
+      {
+        "cue": "search",
+        "caption": "[a near call circles overhead]",
+        "at": 23.141
+      },
+      {
+        "cue": "camera-raise",
+        "caption": "[wood frame lifts; bellows opens]",
+        "at": 23.259
+      },
+      {
+        "cue": "shutter",
+        "caption": "[shutter releases]",
+        "at": 23.36
+      },
+      {
+        "cue": "attack",
+        "caption": "[wingbeats tighten into a dive]",
+        "at": 25.349
+      },
+      {
+        "cue": "plate-slide",
+        "caption": "[glass plate seats in its case]",
+        "at": 25.349
+      },
+      {
+        "cue": "watch",
+        "caption": "[one wing call answers at a distance]",
+        "at": 26.485
+      },
+      {
+        "cue": "rifle",
+        "caption": "[rifle report; echo runs toward the brook]",
+        "at": 26.485
+      },
+      {
+        "cue": "result",
+        "caption": "[glass plates settle on the light board]",
+        "at": 28.597
+      }
+    ]
+  },
+  "presentationSettings": {
+    "reducedMotion": false,
+    "captionsEnabled": true,
+    "textScale": "1",
+    "volumes": {
+      "ambience": 0.34,
+      "effects": 0.72,
+      "music": 0.2
+    },
+    "storageKey": "project-plateau:presentation:v1"
+  },
+  "ui": {
+    "prompt": "Follow the Fort smoke through the gate.",
+    "cameraOverlay": false,
+    "rifleOverlay": false,
+    "plateRail": true,
+    "platePreview": "BEHAVIOR \u2014 an adult pulls the branch down.",
+    "capturedPlateImages": [
+      true,
+      true,
+      true,
+      true
+    ],
+    "fieldNote": null,
+    "contactNote": "RIFLE REPORT \u2014 THE DIVE SHEARS AWAY.",
+    "cartridgesVisible": true,
+    "caption": "[glass plates settle on the light board]",
+    "lightWatch": 124,
+    "terminal": {
+      "kind": "alive",
+      "title": "Strong field record",
+      "copy": "Scale. Living form. Behavior. The field record holds.",
+      "detail": "7 evidence cues \u00b7 4 recorded plates \u00b7 covered return \u00b7 124s light",
+      "callback": "The report carried. Something answered by the brook."
+    }
+  },
+  "sceneChildren": 59,
+  "calls": 1,
+  "triangles": 1,
+  "textures": 29,
+  "geometries": 512,
+  "viewport": [
+    1440,
+    900
+  ],
+  "firstRenderedAt": 205.5,
+  "recentMedianFrameMs": 8.3
+}

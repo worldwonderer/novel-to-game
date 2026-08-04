@@ -232,7 +232,7 @@ def run() -> dict[str, object]:
         browser.close()
 
     allowed = {urlparse(BASE_URL).netloc}
-    external_hosts = sorted(request_hosts - allowed)
+    external_hosts = sorted(host for host in request_hosts if host and host not in allowed)
     assert not console_errors, console_errors
     assert not external_hosts, external_hosts
     return {

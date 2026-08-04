@@ -2,6 +2,7 @@
   "stage": "s10-glade-clarity",
   "mode": "terminal",
   "cameraMode": "terminal",
+  "visualReviewOrbit": null,
   "runActive": false,
   "renderer": "WebGL2",
   "player": {
@@ -16,8 +17,8 @@
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 0.779,
-    "distanceTravelled": 1.541,
+    "elapsedSeconds": 0.689,
+    "distanceTravelled": 1.534,
     "paused": false,
     "pauseReason": null,
     "boundaryRecoveries": 0,
@@ -91,7 +92,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 151.221,
+    "remainingLight": 151.311,
     "returnRoute": "covered",
     "returnCostSeconds": 28,
     "returnStrike": false,
@@ -105,17 +106,19 @@
       "survivingPlates": 0,
       "route": "covered",
       "brookResponse": null,
-      "remainingLight": 151.2,
+      "remainingLight": 151.3,
       "gunshotCallback": null
     }
   },
   "threatVisual": {
     "state": "search",
     "response": "orbit",
+    "attackStage": "orbit",
+    "attackProgress": 0,
     "position": {
-      "x": 16.55,
-      "y": 10.53,
-      "z": 46.36
+      "x": 16.64,
+      "y": 8.28,
+      "z": 43.21
     }
   },
   "familyVisual": {
@@ -145,8 +148,23 @@
       "visibleParts": 13
     },
     "pterodactyl": {
-      "silhouette": "membrane-wing",
-      "visibleParts": 5
+      "silhouette": "continuous-skinned-membrane-wing",
+      "projectedShadow": "moving-winged-ground-shadow",
+      "visibleParts": 13,
+      "visualStatus": "hy3d-flock-ready",
+      "visualError": null,
+      "hy3d": {
+        "version": "hy3d-v3.5-stylized-30k-1k",
+        "bytes": 1327456,
+        "loaded": 3,
+        "sharedResource": true,
+        "runtimeMorphPose": true,
+        "poseTargets": [
+          "wingUp",
+          "wingDown",
+          "diveFold"
+        ]
+      }
     },
     "cover": {
       "archCount": 5,
@@ -161,13 +179,32 @@
         "young-play"
       ],
       "branchPresent": true,
-      "visibleParts": 57
+      "visualStatus": "hy3d-family-ready",
+      "visualError": null,
+      "hy3d": {
+        "version": "hy3d-v3.5-stylized-25k-1k",
+        "bytes": 1089008,
+        "loadedAdults": 2,
+        "loadedYoung": 3,
+        "sharedResource": true,
+        "staticSourceMesh": true,
+        "runtimeMorphPose": true,
+        "poseTargets": [
+          "graze",
+          "reach",
+          "play",
+          "tailLeft",
+          "tailRight",
+          "juvenile"
+        ]
+      },
+      "visibleParts": 52
     },
     "gladeComposition": {
       "sightlineHalfWidth": 22,
       "sunLanePresent": true,
       "shadowCastingSubjects": 5,
-      "familyWidth": 15
+      "familyWidth": 18.5
     }
   },
   "audio": {
@@ -188,17 +225,17 @@
       {
         "cue": "search",
         "caption": "[a near call circles overhead]",
-        "at": 0.533
+        "at": 0.491
       },
       {
         "cue": "cover",
         "caption": "[branches scrape the camera; wingbeats widen]",
-        "at": 0.592
+        "at": 0.539
       },
       {
         "cue": "result",
         "caption": "[glass plates settle on the light board]",
-        "at": 0.667
+        "at": 0.613
       }
     ]
   },
@@ -238,15 +275,15 @@
       "callback": null
     }
   },
-  "sceneChildren": 30,
-  "calls": 275,
-  "triangles": 50500,
-  "textures": 3,
-  "geometries": 93,
+  "sceneChildren": 59,
+  "calls": 1,
+  "triangles": 1,
+  "textures": 29,
+  "geometries": 508,
   "viewport": [
     1440,
     900
   ],
-  "firstRenderedAt": 231.40000009536743,
+  "firstRenderedAt": 215.5,
   "recentMedianFrameMs": 8.3
 }

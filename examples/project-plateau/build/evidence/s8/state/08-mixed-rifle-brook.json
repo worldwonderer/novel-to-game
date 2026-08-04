@@ -2,22 +2,23 @@
   "stage": "s10-glade-clarity",
   "mode": "field",
   "cameraMode": "field",
+  "visualReviewOrbit": null,
   "runActive": true,
   "renderer": "WebGL2",
   "player": {
     "position": {
-      "x": 3.413,
-      "z": 3.214
+      "x": 3.425,
+      "z": 3.223
     },
     "lastStablePosition": {
-      "x": 3.413,
-      "z": 3.214
+      "x": 3.425,
+      "z": 3.223
     },
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 23.941,
-    "distanceTravelled": 70.289,
+    "elapsedSeconds": 23.956,
+    "distanceTravelled": 70.286,
     "paused": false,
     "pauseReason": null,
     "boundaryRecoveries": 0,
@@ -46,7 +47,7 @@
     "cameraRaised": false,
     "plateRailRevealed": true,
     "pendingExposure": null,
-    "previewSeconds": 3.108000000000006,
+    "previewSeconds": 3.1007000000476856,
     "lastProofEvent": {
       "plateIndex": 2,
       "frameKey": "glade-young-play",
@@ -98,7 +99,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 138.059,
+    "remainingLight": 138.044,
     "returnRoute": "exposed",
     "returnCostSeconds": 18,
     "returnStrike": false,
@@ -108,10 +109,12 @@
   "threatVisual": {
     "state": "watch",
     "response": "orbit",
+    "attackStage": "orbit",
+    "attackProgress": 0,
     "position": {
-      "x": 21.71,
-      "y": 13.2,
-      "z": -15.32
+      "x": 23.29,
+      "y": 10.58,
+      "z": -18.91
     }
   },
   "familyVisual": {
@@ -141,8 +144,23 @@
       "visibleParts": 13
     },
     "pterodactyl": {
-      "silhouette": "membrane-wing",
-      "visibleParts": 5
+      "silhouette": "continuous-skinned-membrane-wing",
+      "projectedShadow": "moving-winged-ground-shadow",
+      "visibleParts": 13,
+      "visualStatus": "hy3d-flock-ready",
+      "visualError": null,
+      "hy3d": {
+        "version": "hy3d-v3.5-stylized-30k-1k",
+        "bytes": 1327456,
+        "loaded": 3,
+        "sharedResource": true,
+        "runtimeMorphPose": true,
+        "poseTargets": [
+          "wingUp",
+          "wingDown",
+          "diveFold"
+        ]
+      }
     },
     "cover": {
       "archCount": 5,
@@ -157,13 +175,32 @@
         "young-play"
       ],
       "branchPresent": true,
-      "visibleParts": 57
+      "visualStatus": "hy3d-family-ready",
+      "visualError": null,
+      "hy3d": {
+        "version": "hy3d-v3.5-stylized-25k-1k",
+        "bytes": 1089008,
+        "loadedAdults": 2,
+        "loadedYoung": 3,
+        "sharedResource": true,
+        "staticSourceMesh": true,
+        "runtimeMorphPose": true,
+        "poseTargets": [
+          "graze",
+          "reach",
+          "play",
+          "tailLeft",
+          "tailRight",
+          "juvenile"
+        ]
+      },
+      "visibleParts": 52
     },
     "gladeComposition": {
       "sightlineHalfWidth": 22,
       "sunLanePresent": true,
       "shadowCastingSubjects": 5,
-      "familyWidth": 15
+      "familyWidth": 18.5
     }
   },
   "audio": {
@@ -179,82 +216,82 @@
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 60.224
+        "at": 59.861
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 60.224
+        "at": 59.861
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 66.965
+        "at": 66.603
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 67.045
+        "at": 66.683
       },
       {
         "cue": "search",
         "caption": "[a near call circles overhead]",
-        "at": 69.029
+        "at": 68.667
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 69.029
+        "at": 68.667
       },
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 69.067
+        "at": 68.704
       },
       {
         "cue": "search",
         "caption": "[a near call circles overhead]",
-        "at": 72.683
+        "at": 72.315
       },
       {
         "cue": "examine",
         "caption": "[fern brushes aside; pencil marks the field card]",
-        "at": 72.992
+        "at": 72.629
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 72.997
+        "at": 72.635
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 73.072
+        "at": 72.715
       },
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 75.067
+        "at": 74.699
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 75.067
+        "at": 74.699
       },
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 75.243
+        "at": 74.885
       },
       {
         "cue": "rifle",
         "caption": "[rifle report; echo runs toward the brook]",
-        "at": 75.243
+        "at": 74.885
       },
       {
         "cue": "brook-response",
         "caption": "[brush thrashes beside the brook]",
-        "at": 75.84
+        "at": 75.472
       }
     ]
   },
@@ -288,15 +325,15 @@
     "lightWatch": 139,
     "terminal": null
   },
-  "sceneChildren": 30,
-  "calls": 251,
-  "triangles": 49412,
-  "textures": 3,
-  "geometries": 98,
+  "sceneChildren": 59,
+  "calls": 1,
+  "triangles": 1,
+  "textures": 29,
+  "geometries": 512,
   "viewport": [
     1440,
     900
   ],
-  "firstRenderedAt": 192,
+  "firstRenderedAt": 199,
   "recentMedianFrameMs": 8.3
 }

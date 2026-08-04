@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "kind": "visual-baseline",
+  "sourceCommit": "9d7f8736e5de17024569934df3da299358713adc",
+  "capturedBy": "existing Project Plateau S0-S10 evidence",
+  "purpose": "Source-bound comparison baseline before the visual SOTA upgrade",
+  "captures": [
+    {
+      "targetId": "VT-01",
+      "path": "../../../s0/01-title.jpg",
+      "sha256": "3cd9a0b02d102cde28892ca4b8c378160e1ab9e83e327657098b3d9ab279ffc9"
+    },
+    {
+      "targetId": "VT-03-clear",
+      "path": "../../../s10/01-clear-family-sightline.jpg",
+      "sha256": "89156a66ae5b1e09068e79ea8b3279c9f025f36267604cfb57f0b907420fdd77"
+    },
+    {
+      "targetId": "VT-03-camera",
+      "path": "../../../s10/02-young-play-silver-frame.jpg",
+      "sha256": "463906ed89d00f84755a284a9eb706068d97c1196f7530a8df54eb35f1e79d65"
+    },
+    {
+      "targetId": "VT-04",
+      "path": "../../../s6/06-membrane-wing-attack.jpg",
+      "sha256": "5e9e7b6fa3f5ed26acd10ae3eb6965e6e9455c62f7051cdb3f24326311244c52"
+    },
+    {
+      "targetId": "VT-05",
+      "path": "../../../s10/05-strong-plate-board.jpg",
+      "sha256": "b5041bed119e8ce1564092efdd7fe37566b70707c75cd256de16256021dba2da"
+    },
+    {
+      "targetId": "VT-06",
+      "path": "../../../s7/04-field-minimum.jpg",
+      "sha256": "205c1a11cf8af54a6d9169d5acf52aaad5f56b30fd02a891c42a29dc8fca2094"
+    }
+  ],
+  "knownBaselineDefects": [
+    "Iguanodon heads and bodies read as stacked primitive solids rather than credible animals.",
+    "Limbs are straight cylinders and feet lack convincing planted articulation.",
+    "The pterodactyl is a paper-thin triangle silhouette with a cone body.",
+    "Environment depth relies on repeated trunk/canopy and cone-scatter primitives.",
+    "Uniform amber sky and broad flat surfaces suppress material separation.",
+    "Signature frames satisfy functional coverage but do not meet the target visual ceiling."
+  ]
+}

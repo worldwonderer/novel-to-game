@@ -2,6 +2,7 @@
   "stage": "s10-glade-clarity",
   "mode": "field",
   "cameraMode": "field",
+  "visualReviewOrbit": null,
   "runActive": true,
   "renderer": "WebGL2",
   "player": {
@@ -16,7 +17,7 @@
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 10.931,
+    "elapsedSeconds": 10.879,
     "distanceTravelled": 0,
     "paused": false,
     "pauseReason": null,
@@ -51,7 +52,7 @@
       "label": "BEHAVIOR \u2014 young play beside the adults.",
       "exposure": 2,
       "plateIndex": 2,
-      "remainingSeconds": 1.9827999999523163,
+      "remainingSeconds": 1.9741000000238418,
       "zone": "iguanodon-glade"
     },
     "previewSeconds": 0,
@@ -106,7 +107,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 169.069,
+    "remainingLight": 169.121,
     "returnRoute": null,
     "returnCostSeconds": 0,
     "returnStrike": false,
@@ -116,10 +117,12 @@
   "threatVisual": {
     "state": "search",
     "response": "orbit",
+    "attackStage": "orbit",
+    "attackProgress": 0,
     "position": {
-      "x": -12.9,
-      "y": 11.19,
-      "z": -26.88
+      "x": 8.62,
+      "y": 11.38,
+      "z": -38.54
     }
   },
   "familyVisual": {
@@ -149,8 +152,23 @@
       "visibleParts": 13
     },
     "pterodactyl": {
-      "silhouette": "membrane-wing",
-      "visibleParts": 5
+      "silhouette": "continuous-skinned-membrane-wing",
+      "projectedShadow": "moving-winged-ground-shadow",
+      "visibleParts": 13,
+      "visualStatus": "hy3d-flock-ready",
+      "visualError": null,
+      "hy3d": {
+        "version": "hy3d-v3.5-stylized-30k-1k",
+        "bytes": 1327456,
+        "loaded": 3,
+        "sharedResource": true,
+        "runtimeMorphPose": true,
+        "poseTargets": [
+          "wingUp",
+          "wingDown",
+          "diveFold"
+        ]
+      }
     },
     "cover": {
       "archCount": 5,
@@ -165,13 +183,32 @@
         "young-play"
       ],
       "branchPresent": true,
-      "visibleParts": 57
+      "visualStatus": "hy3d-family-ready",
+      "visualError": null,
+      "hy3d": {
+        "version": "hy3d-v3.5-stylized-25k-1k",
+        "bytes": 1089008,
+        "loadedAdults": 2,
+        "loadedYoung": 3,
+        "sharedResource": true,
+        "staticSourceMesh": true,
+        "runtimeMorphPose": true,
+        "poseTargets": [
+          "graze",
+          "reach",
+          "play",
+          "tailLeft",
+          "tailRight",
+          "juvenile"
+        ]
+      },
+      "visibleParts": 52
     },
     "gladeComposition": {
       "sightlineHalfWidth": 22,
       "sunLanePresent": true,
       "shadowCastingSubjects": 5,
-      "familyWidth": 15
+      "familyWidth": 18.5
     }
   },
   "audio": {
@@ -192,67 +229,67 @@
       {
         "cue": "examine",
         "caption": "[fern brushes aside; pencil marks the field card]",
-        "at": 0.203
+        "at": 0.181
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 0.213
+        "at": 0.192
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 0.304
+        "at": 0.283
       },
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 2.288
+        "at": 2.272
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 2.288
+        "at": 2.272
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 2.464
+        "at": 2.453
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 2.555
+        "at": 2.544
       },
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 4.539
+        "at": 4.528
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 4.539
+        "at": 4.528
       },
       {
         "cue": "search",
         "caption": "[a near call circles overhead]",
-        "at": 10.64
+        "at": 10.613
       },
       {
         "cue": "examine",
         "caption": "[fern brushes aside; pencil marks the field card]",
-        "at": 10.725
+        "at": 10.704
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 10.731
+        "at": 10.709
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 10.816
+        "at": 10.805
       }
     ]
   },
@@ -286,15 +323,15 @@
     "lightWatch": 170,
     "terminal": null
   },
-  "sceneChildren": 30,
-  "calls": 248,
-  "triangles": 49480,
-  "textures": 3,
-  "geometries": 95,
+  "sceneChildren": 59,
+  "calls": 1,
+  "triangles": 1,
+  "textures": 29,
+  "geometries": 509,
   "viewport": [
     1440,
     900
   ],
-  "firstRenderedAt": 182.19999980926514,
+  "firstRenderedAt": 205.5,
   "recentMedianFrameMs": 8.3
 }

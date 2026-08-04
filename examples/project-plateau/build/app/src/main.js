@@ -1,5 +1,11 @@
 import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { GTAOPass } from 'three/addons/postprocessing/GTAOPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import './styles.css';
+import { createAtmosphere } from './atmosphere.js';
 import { FieldAudio, captionForCue } from './audio.js';
 import { PALETTE, PRODUCT_BUDGET, SCENE_BUDGET, percentile } from './config.js';
 import {
@@ -31,6 +37,7 @@ const pauseLabel = document.querySelector('#pause-label');
 const boundaryNote = document.querySelector('#boundary-note');
 const fieldHud = document.querySelector('#field-hud');
 const contextPrompt = document.querySelector('#context-prompt');
+const controlHint = document.querySelector('#control-hint');
 const fieldNote = document.querySelector('#field-note');
 const cameraOverlay = document.querySelector('#camera-overlay');
 const frameCondition = document.querySelector('#frame-condition');
@@ -80,24 +87,26 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
 renderer.setSize(window.innerWidth, window.innerHeight, false);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.16;
+renderer.toneMappingExposure = 1.02;
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(PALETTE.amber);
-scene.fog = new THREE.FogExp2(PALETTE.dusk, 0.0094);
+scene.background = new THREE.Color(0x142d35);
+scene.fog = new THREE.FogExp2(0x35575a, 0.0096);
+createAtmosphere(scene);
 
 const camera = new THREE.PerspectiveCamera(58, window.innerWidth / window.innerHeight, 0.1, 320);
-const titleCameraPosition = new THREE.Vector3(18, 8.2, 77);
-const titleCameraTarget = new THREE.Vector3(-2, 5.5, -38);
+const titleCameraPosition = new THREE.Vector3(18, 7.6, 55);
+const titleCameraTarget = new THREE.Vector3(-1, 3.2, -34);
 
-const hemisphere = new THREE.HemisphereLight(PALETTE.amber, PALETTE.canopy, 2.3);
-const sun = new THREE.DirectionalLight(0xffdba1, 3.4);
-sun.position.set(-38, 62, 45);
+const ambient = new THREE.AmbientLight(0x819a93, 0.22);
+const hemisphere = new THREE.HemisphereLight(0x8fb8c3, 0x263a32, 0.72);
+const sun = new THREE.DirectionalLight(0xffc982, 4.5);
+sun.position.set(-46, 58, 38);
 sun.target.position.set(1, 0, -28);
 sun.castShadow = true;
-sun.shadow.mapSize.set(1024, 1024);
+sun.shadow.mapSize.set(2048, 2048);
 sun.shadow.camera.left = -58;
 sun.shadow.camera.right = 58;
 sun.shadow.camera.top = 74;
@@ -105,13 +114,100 @@ sun.shadow.camera.bottom = -74;
 sun.shadow.camera.near = 8;
 sun.shadow.camera.far = 150;
 sun.shadow.bias = -0.00045;
-const gladeFill = new THREE.PointLight(0xffd8a1, 34, 58, 1.75);
+const gladeFill = new THREE.PointLight(0xf3b975, 4.2, 58, 1.9);
 gladeFill.position.set(-4, 13, -18);
-const canopyRim = new THREE.DirectionalLight(0xb9d5bb, 1.15);
+const canopyRim = new THREE.DirectionalLight(0x88c5cf, 1.35);
 canopyRim.position.set(32, 24, -36);
-scene.add(hemisphere, sun, sun.target, gladeFill, canopyRim);
+const subjectFill = new THREE.DirectionalLight(0xbed6d5, 0.52);
+subjectFill.position.set(-12, 15, 36);
+subjectFill.target.position.set(1, 2.2, -33);
+const basaltBounce = new THREE.PointLight(0x799d9b, 2.6, 64, 2.05);
+basaltBounce.position.set(23, 11, -21);
+scene.add(
+  ambient,
+  hemisphere,
+  sun,
+  sun.target,
+  gladeFill,
+  canopyRim,
+  subjectFill,
+  subjectFill.target,
+  basaltBounce,
+);
 
 const world = createWorld(scene);
+let hy3dVisualPromise = null;
+function ensureHy3dVisuals() {
+  if (!hy3dVisualPromise) hy3dVisualPromise = world.enableHy3dVisuals();
+  return hy3dVisualPromise;
+}
+const composer = new EffectComposer(renderer);
+composer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+composer.setSize(window.innerWidth, window.innerHeight);
+composer.addPass(new RenderPass(scene, camera));
+const gtaoPass = new GTAOPass(
+  scene,
+  camera,
+  window.innerWidth,
+  window.innerHeight,
+  undefined,
+  {
+    radius: 0.18,
+    distanceExponent: 1.25,
+    thickness: 1.15,
+    distanceFallOff: 0.9,
+    scale: 0.82,
+    samples: 8,
+    screenSpaceRadius: false,
+  },
+  {
+    lumaPhi: 8,
+    depthPhi: 2,
+    normalPhi: 3,
+    radius: 6,
+    radiusExponent: 2,
+    rings: 2,
+    samples: 8,
+  },
+);
+gtaoPass.blendIntensity = 0.48;
+composer.addPass(gtaoPass);
+const fieldGradePass = new ShaderPass({
+  name: 'ProjectPlateauFieldGrade',
+  uniforms: {
+    tDiffuse: { value: null },
+  },
+  vertexShader: `
+    varying vec2 vUv;
+    void main() {
+      vUv = uv;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+  `,
+  fragmentShader: `
+    varying vec2 vUv;
+    uniform sampler2D tDiffuse;
+
+    float fieldHash(vec2 p) {
+      return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
+    }
+
+    void main() {
+      vec4 source = texture2D(tDiffuse, vUv);
+      float luma = dot(source.rgb, vec3(0.2126, 0.7152, 0.0722));
+      vec3 color = mix(vec3(luma), source.rgb, 1.045);
+      vec2 centred = (vUv - 0.5) * vec2(1.0, 0.82);
+      float vignette = smoothstep(0.34, 0.76, dot(centred, centred));
+      color *= 1.0 - vignette * 0.085;
+      float grain = fieldHash(gl_FragCoord.xy) - 0.5;
+      color += grain * 0.0045;
+      gl_FragColor = vec4(max(color, 0.0), source.a);
+    }
+  `,
+});
+fieldGradePass.material.name = 'Project Plateau restrained field grade';
+composer.addPass(fieldGradePass);
+composer.addPass(new OutputPass());
 scene.add(camera);
 camera.add(world.fieldCamera);
 camera.add(world.rifle);
@@ -127,6 +223,7 @@ const pressed = new Set();
 let player = createPlayerState();
 let runActive = false;
 let cameraMode = 'title';
+let visualReviewOrbit = null;
 const systemReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 let presentationSettings = loadSettings(window.localStorage, systemReducedMotion);
 let reducedMotion = presentationSettings.reducedMotion;
@@ -168,6 +265,7 @@ function applyPresentationSettings(settings, persist = true) {
   reducedMotion = presentationSettings.reducedMotion;
   document.body.classList.toggle('reduced-motion', reducedMotion);
   document.documentElement.style.setProperty('--text-scale', presentationSettings.textScale);
+  document.documentElement.dataset.textScale = presentationSettings.textScale;
   fieldAudio.setCaptionsEnabled(presentationSettings.captionsEnabled);
   for (const channel of ['ambience', 'effects', 'music']) {
     fieldAudio.setVolume(channel, presentationSettings.volumes[channel]);
@@ -225,6 +323,10 @@ function updateFieldHud(now) {
   const prompt = contextualCopy();
   contextPrompt.textContent = prompt;
   contextPrompt.hidden = !prompt || player.failed;
+  // At the opening track, preserve a single visual callout so the footprint
+  // wins the first read instead of competing with two stacked instruction
+  // plaques. The persistent movement legend returns outside this authored beat.
+  controlHint.hidden = player.zone === 'brook-blind';
 
   cameraOverlay.hidden = !player.cameraRaised;
   frameCondition.textContent = frameConditionCopy(currentFrame);
@@ -275,7 +377,8 @@ function updateFieldHud(now) {
   fieldNote.hidden = !player.lastObservation || now >= observationNoticeUntil;
   if (!fieldNote.hidden) fieldNote.textContent = player.lastObservation;
   contactNote.hidden = now >= contactNoticeUntil;
-  captionLine.hidden = !fieldAudio.captionsEnabled || now >= captionNoticeUntil;
+  captionLine.hidden = !fieldAudio.captionsEnabled
+    || now >= captionNoticeUntil;
   document.body.dataset.contact = contactNote.hidden ? 'false' : 'true';
 
   world.fieldCamera.visible = runActive && !player.failed && !player.rifleRaised;
@@ -303,6 +406,11 @@ function setCameraToPlayer(now = performance.now()) {
     player.position.z,
   );
   camera.rotation.set(player.pitch, player.heading, 0, 'YXZ');
+  const desiredFov = player.cameraRaised ? 58 : player.rifleRaised ? 66 : 70;
+  if (camera.fov !== desiredFov) {
+    camera.fov = desiredFov;
+    camera.updateProjectionMatrix();
+  }
   if (player.boundaryRecoveries > observedBoundaryRecoveries) {
     observedBoundaryRecoveries = player.boundaryRecoveries;
     boundaryNoticeUntil = now + 1500;
@@ -312,20 +420,23 @@ function setCameraToPlayer(now = performance.now()) {
 }
 
 function setView(view) {
+  visualReviewOrbit = null;
+  world.family.forEach((animal) => { animal.visible = true; });
+  world.pterodactyls.forEach((animal) => { animal.visible = true; });
   cameraMode = view;
   world.fieldCamera.visible = view === 'field' || view === 'glade';
   world.rifle.visible = false;
   if (view === 'field' || view === 'order') {
     document.body.dataset.mode = view;
     fieldHud.hidden = view !== 'field';
-    camera.fov = 72;
+    camera.fov = 70;
     setCameraToPlayer();
   } else if (view === 'glade') {
     document.body.dataset.mode = 'field';
     fieldHud.hidden = false;
     camera.position.set(12, 5.2, -9);
     camera.lookAt(new THREE.Vector3(1, 3.4, -49));
-    camera.fov = 72;
+    camera.fov = 66;
   } else {
     document.body.dataset.mode = 'title';
     fieldHud.hidden = true;
@@ -334,6 +445,26 @@ function setView(view) {
     camera.lookAt(titleCameraTarget);
     camera.fov = 58;
   }
+  camera.updateProjectionMatrix();
+}
+
+function setVisualReviewOrbitCamera() {
+  if (!visualReviewOrbit) return;
+  const isIguanodon = visualReviewOrbit.subject === 'iguanodon';
+  const subject = isIguanodon ? world.family[0] : world.pterodactyls[0];
+  const target = subject.getWorldPosition(new THREE.Vector3());
+  target.y += isIguanodon ? 2.15 * subject.scale.y : 0.1;
+  const angle = THREE.MathUtils.degToRad(visualReviewOrbit.angleDegrees);
+  const pterodactylWingView = Math.abs(Math.sin(angle)) > 0.7;
+  const radius = isIguanodon ? 13.2 : pterodactylWingView ? 11.8 : 10.4;
+  const lift = isIguanodon ? 2.15 : pterodactylWingView ? 1.2 : 1.05;
+  camera.position.set(
+    target.x + Math.sin(angle) * radius,
+    target.y + lift,
+    target.z + Math.cos(angle) * radius,
+  );
+  camera.lookAt(target);
+  camera.fov = isIguanodon ? 44 : 50;
   camera.updateProjectionMatrix();
 }
 
@@ -452,10 +583,13 @@ function resumeRun() {
 function worldRuntime(deltaSeconds = 0) {
   return {
     threatAwareness: player.threatAwareness,
+    attackSeconds: player.attackSeconds,
     playerPosition: player.position,
     shotCount: player.shotCount,
     brookResponse: player.brookResponse,
     inCover: player.inCover,
+    cameraRaised: player.cameraRaised,
+    rifleRaised: player.rifleRaised,
     familyMoment: player.pendingExposure?.key ?? null,
     deltaSeconds,
   };
@@ -500,6 +634,8 @@ function update(deltaSeconds, now) {
     worldRuntime(deltaSeconds),
   );
 
+  if (cameraMode === 'visual-review-orbit') setVisualReviewOrbitCamera();
+
   if (cameraMode === 'field' || cameraMode === 'order') {
     setCameraToPlayer(now);
   } else if (cameraMode === 'title' && !reducedMotion) {
@@ -512,7 +648,7 @@ function animate() {
   const deltaSeconds = Math.min(clock.getDelta(), 0.05);
   const now = performance.now();
   update(deltaSeconds, now);
-  renderer.render(scene, camera);
+  composer.render();
   frameSamples.push(now - lastFrame);
   if (frameSamples.length > 360) frameSamples.shift();
   lastFrame = now;
@@ -525,6 +661,8 @@ function resize() {
   const height = window.innerHeight;
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
   renderer.setSize(width, height, false);
+  composer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+  composer.setSize(width, height);
   camera.aspect = width / height;
   camera.updateProjectionMatrix();
 }
@@ -537,6 +675,7 @@ function closePanels() {
 
 document.querySelector('#enter-button').addEventListener('click', () => {
   closePanels();
+  void ensureHy3dVisuals();
   player = createPlayerState();
   setView('order');
   document.querySelector('#field-order').hidden = false;
@@ -635,8 +774,13 @@ document.addEventListener('mousedown', (event) => {
       const rifleWasVisible = world.rifle.visible;
       world.fieldCamera.visible = false;
       world.rifle.visible = false;
-      renderer.render(scene, camera);
-      plateImages[player.pendingExposure.plateIndex] = canvas.toDataURL('image/jpeg', 0.76);
+      // Warm and flush the post-processing chain before reading the physical
+      // plate. The first shutter otherwise reads an uninitialised composer
+      // buffer and leaves Plate I blank on the result board.
+      composer.render();
+      composer.render();
+      renderer.getContext().finish();
+      plateImages[player.pendingExposure.plateIndex] = canvas.toDataURL('image/jpeg', 0.8);
       world.fieldCamera.visible = cameraWasVisible;
       world.rifle.visible = rifleWasVisible;
       emitCue('shutter');
@@ -717,6 +861,10 @@ window.__projectPlateau = {
   sceneBudget: SCENE_BUDGET,
   setView,
   sampleFrames,
+  loadHy3dVisualsForTest() {
+    if (!query.has('qa')) throw new Error('loadHy3dVisualsForTest requires a qa query');
+    return ensureHy3dVisuals();
+  },
   loadingSnapshot() {
     const navigation = performance.getEntriesByType('navigation')[0];
     return {
@@ -729,6 +877,28 @@ window.__projectPlateau = {
   pause: pauseRun,
   resume: resumeRun,
   restart: beginRun,
+  plateImageForTest(index) {
+    if (!query.has('qa')) throw new Error('plateImageForTest requires a qa query');
+    return plateImages[index] ?? null;
+  },
+  setVisualReviewOrbitForTest({ subject, angleDegrees = 0 }) {
+    if (!query.has('qa')) throw new Error('setVisualReviewOrbitForTest requires a qa query');
+    if (subject !== 'iguanodon' && subject !== 'pterodactyl') {
+      throw new Error(`Unsupported visual-review subject: ${subject}`);
+    }
+    visualReviewOrbit = { subject, angleDegrees: Number(angleDegrees) || 0 };
+    cameraMode = 'visual-review-orbit';
+    document.body.dataset.mode = 'review';
+    document.body.dataset.camera = 'folded';
+    document.body.dataset.rifle = 'lowered';
+    fieldHud.hidden = true;
+    world.fieldCamera.visible = false;
+    world.rifle.visible = false;
+    world.family.forEach((animal, index) => { animal.visible = subject === 'iguanodon' && index === 0; });
+    world.pterodactyls.forEach((animal, index) => { animal.visible = subject === 'pterodactyl' && index === 0; });
+    setVisualReviewOrbitCamera();
+    return { ...visualReviewOrbit };
+  },
   teleportForTest(position) {
     if (!query.has('qa')) throw new Error('teleportForTest requires a qa query');
     player.position = { x: position.x, z: position.z };
@@ -753,6 +923,7 @@ window.__projectPlateau = {
       stage: this.stage,
       mode: document.body.dataset.mode,
       cameraMode,
+      visualReviewOrbit,
       runActive,
       renderer: this.renderer,
       player: playerSnapshot(),
@@ -801,4 +972,5 @@ window.__projectPlateau = {
 };
 
 setView(query.get('view') === 'glade' || query.get('qa') === 's0' ? 'glade' : 'title');
+if (query.has('qa')) void ensureHy3dVisuals();
 requestAnimationFrame(animate);

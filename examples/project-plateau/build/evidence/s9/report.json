@@ -2,7 +2,7 @@
   "stage": "s9-living-plates",
   "source": {
     "scope": "index.html, package manifests, public assets and src",
-    "sha256": "e99883ce0a14f31782ac0dc6a91bd38f7e9869d86279d11ca04b5171a59af69d"
+    "sha256": "1d883375e0f5a07919df4948f569334b7d42ee191f21fbbbd306203ad66f2b1c"
   },
   "environment": {
     "browser": "Google Chrome 150.0.7871.187",
@@ -22,6 +22,7 @@
     "restartClearsCapturedViews": true,
     "consoleErrors": [],
     "requestHosts": [
+      "",
       "127.0.0.1:4173"
     ],
     "externalHosts": []
@@ -29,26 +30,26 @@
   "plateImages": [
     {
       "plate": 1,
-      "bytesInCssValue": 75858,
-      "sha256": "da1dede28d4d38e25c9b7536a354c438faad3151ccc1974cff077750d84078d0",
+      "bytesInCssValue": 142146,
+      "sha256": "9e83cee24edb96b6f09545238c13151618b6375834dfb3c0aaee0a54ed2aff5f",
       "filter": "grayscale(1) contrast(1.14) brightness(0.86)"
     },
     {
       "plate": 2,
-      "bytesInCssValue": 76566,
-      "sha256": "6bab45577bf37277078b3ca495d6c6caec7eda013236ca1ae393c1611290e9f9",
+      "bytesInCssValue": 133682,
+      "sha256": "c52eae3f75f7dc386dc29f1395dd186a673cca716a9cde356275a866a1457ef1",
       "filter": "grayscale(1) contrast(1.14) brightness(0.86)"
     },
     {
       "plate": 3,
-      "bytesInCssValue": 75454,
-      "sha256": "1af332940e68dcf43646b1bcc4856a67c36d7cf722fd750b0350111997ace859",
+      "bytesInCssValue": 135306,
+      "sha256": "f2983df3350b8897b654b42b865b023dc078494d155b35b7be51ed65efdc194e",
       "filter": "grayscale(1) contrast(1.14) brightness(0.86)"
     },
     {
       "plate": 4,
-      "bytesInCssValue": 79514,
-      "sha256": "4daa4e01a7034255265d3ab80c64f00ed6e33b68e2e9ea0742d933d6c6624cc1",
+      "bytesInCssValue": 136574,
+      "sha256": "e306ec709722d8076e25048efc2f5660954fb143cb0fd31d189e5ddd67fa4cca",
       "filter": "grayscale(1) contrast(1.14) brightness(0.86)"
     }
   ],
@@ -56,8 +57,8 @@
     "samples": 240,
     "medianFrameMs": 8.3,
     "medianFps": 120.5,
-    "onePercentLowFps": 106.4,
-    "worstFrameMs": 9.4
+    "onePercentLowFps": 98,
+    "worstFrameMs": 10.3
   },
   "checkpoints": [
     {

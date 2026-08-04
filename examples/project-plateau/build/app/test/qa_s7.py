@@ -325,7 +325,7 @@ def run() -> dict[str, object]:
     assert payload["gzipBytes"] <= 20 * 1024 * 1024, payload
     assert payload["rawBytes"] <= 50 * 1024 * 1024, payload
     allowed = {urlparse(BASE_URL).netloc}
-    external = sorted(hosts - allowed)
+    external = sorted(host for host in hosts if host and host not in allowed)
     assert not errors, errors
     assert not external, external
     return {

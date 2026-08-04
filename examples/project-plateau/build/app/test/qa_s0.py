@@ -130,7 +130,7 @@ def run() -> dict[str, object]:
 
     raw_bytes, compressed_bytes = compressed_dist_bytes()
     allowed = {urlparse(BASE_URL).netloc}
-    external_hosts = sorted(request_hosts - allowed)
+    external_hosts = sorted(host for host in request_hosts if host and host not in allowed)
     assert not console_errors, console_errors
     assert not external_hosts, external_hosts
     assert compressed_bytes <= 20 * 1024 * 1024, compressed_bytes

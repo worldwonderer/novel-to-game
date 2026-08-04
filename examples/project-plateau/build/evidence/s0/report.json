@@ -2,14 +2,14 @@
   "stage": "s0-renderer",
   "source": {
     "scope": "index.html, package manifests, public assets and src",
-    "sha256": "e99883ce0a14f31782ac0dc6a91bd38f7e9869d86279d11ca04b5171a59af69d"
+    "sha256": "1d883375e0f5a07919df4948f569334b7d42ee191f21fbbbd306203ad66f2b1c"
   },
   "environment": {
-    "node": "v25.9.0",
-    "npm": "11.12.1",
+    "node": "v25.6.1",
+    "npm": "11.9.0",
     "vite": "8.2.0",
     "three": "0.185.1",
-    "python": "3.14.5",
+    "python": "3.14.3",
     "browser": "Google Chrome 150.0.7871.187",
     "baseUrl": "http://127.0.0.1:4173"
   },
@@ -21,6 +21,7 @@
     "minimumViewport": true,
     "consoleErrors": [],
     "requestHosts": [
+      "",
       "127.0.0.1:4173"
     ],
     "externalHosts": []
@@ -29,20 +30,21 @@
     "samples": 240,
     "medianFrameMs": 8.3,
     "medianFps": 120.5,
-    "onePercentLowFps": 106.4,
-    "worstFrameMs": 9.4
+    "onePercentLowFps": 98,
+    "worstFrameMs": 10.4
   },
   "loading": {
-    "observedTtiMs": 840.3,
+    "observedTtiMs": 1027.3,
     "budgetTtiMs": 8000,
-    "distRawBytes": 602904,
-    "distGzipBytes": 154906,
+    "distRawBytes": 3243756,
+    "distGzipBytes": 2012771,
     "initialCompressedBudgetBytes": 20971520
   },
   "render": {
     "stage": "s10-glade-clarity",
     "mode": "field",
     "cameraMode": "glade",
+    "visualReviewOrbit": null,
     "runActive": true,
     "renderer": "WebGL2",
     "player": {
@@ -57,7 +59,7 @@
       "heading": 0,
       "pitch": 0,
       "stance": "walk",
-      "elapsedSeconds": 1.006,
+      "elapsedSeconds": 0.968,
       "distanceTravelled": 0,
       "paused": false,
       "pauseReason": null,
@@ -129,7 +131,7 @@
       "failed": false,
       "failureCause": null,
       "contactCount": 0,
-      "remainingLight": 178.994,
+      "remainingLight": 179.032,
       "returnRoute": null,
       "returnCostSeconds": 0,
       "returnStrike": false,
@@ -139,10 +141,12 @@
     "threatVisual": {
       "state": "distant",
       "response": "orbit",
+      "attackStage": "orbit",
+      "attackProgress": 0,
       "position": {
-        "x": 30.54,
-        "y": 23.71,
-        "z": 48.18
+        "x": 30.42,
+        "y": 23.74,
+        "z": 48.31
       }
     },
     "familyVisual": {
@@ -172,8 +176,23 @@
         "visibleParts": 13
       },
       "pterodactyl": {
-        "silhouette": "membrane-wing",
-        "visibleParts": 5
+        "silhouette": "continuous-skinned-membrane-wing",
+        "projectedShadow": "moving-winged-ground-shadow",
+        "visibleParts": 13,
+        "visualStatus": "hy3d-flock-ready",
+        "visualError": null,
+        "hy3d": {
+          "version": "hy3d-v3.5-stylized-30k-1k",
+          "bytes": 1327456,
+          "loaded": 3,
+          "sharedResource": true,
+          "runtimeMorphPose": true,
+          "poseTargets": [
+            "wingUp",
+            "wingDown",
+            "diveFold"
+          ]
+        }
       },
       "cover": {
         "archCount": 5,
@@ -188,13 +207,32 @@
           "young-play"
         ],
         "branchPresent": true,
-        "visibleParts": 57
+        "visualStatus": "hy3d-family-ready",
+        "visualError": null,
+        "hy3d": {
+          "version": "hy3d-v3.5-stylized-25k-1k",
+          "bytes": 1089008,
+          "loadedAdults": 2,
+          "loadedYoung": 3,
+          "sharedResource": true,
+          "staticSourceMesh": true,
+          "runtimeMorphPose": true,
+          "poseTargets": [
+            "graze",
+            "reach",
+            "play",
+            "tailLeft",
+            "tailRight",
+            "juvenile"
+          ]
+        },
+        "visibleParts": 52
       },
       "gladeComposition": {
         "sightlineHalfWidth": 22,
         "sunLanePresent": true,
         "shadowCastingSubjects": 5,
-        "familyWidth": 15
+        "familyWidth": 18.5
       }
     },
     "audio": {
@@ -244,22 +282,23 @@
       "lightWatch": null,
       "terminal": null
     },
-    "sceneChildren": 30,
-    "calls": 268,
-    "triangles": 50438,
-    "textures": 3,
-    "geometries": 93,
+    "sceneChildren": 59,
+    "calls": 1,
+    "triangles": 1,
+    "textures": 31,
+    "geometries": 510,
     "viewport": [
       1440,
       900
     ],
-    "firstRenderedAt": 184.70000004768372,
+    "firstRenderedAt": 211.4000000357628,
     "recentMedianFrameMs": 8.3
   },
   "minimumRender": {
     "stage": "s10-glade-clarity",
     "mode": "field",
     "cameraMode": "glade",
+    "visualReviewOrbit": null,
     "runActive": true,
     "renderer": "WebGL2",
     "player": {
@@ -274,7 +313,7 @@
       "heading": 0,
       "pitch": 0,
       "stance": "walk",
-      "elapsedSeconds": 3.805,
+      "elapsedSeconds": 3.768,
       "distanceTravelled": 0,
       "paused": false,
       "pauseReason": null,
@@ -346,7 +385,7 @@
       "failed": false,
       "failureCause": null,
       "contactCount": 0,
-      "remainingLight": 176.194,
+      "remainingLight": 176.232,
       "returnRoute": null,
       "returnCostSeconds": 0,
       "returnStrike": false,
@@ -356,10 +395,12 @@
     "threatVisual": {
       "state": "distant",
       "response": "orbit",
+      "attackStage": "orbit",
+      "attackProgress": 0,
       "position": {
-        "x": 22.72,
-        "y": 24.2,
-        "z": 52.44
+        "x": 22.45,
+        "y": 24.19,
+        "z": 52.53
       }
     },
     "familyVisual": {
@@ -389,8 +430,23 @@
         "visibleParts": 13
       },
       "pterodactyl": {
-        "silhouette": "membrane-wing",
-        "visibleParts": 5
+        "silhouette": "continuous-skinned-membrane-wing",
+        "projectedShadow": "moving-winged-ground-shadow",
+        "visibleParts": 13,
+        "visualStatus": "hy3d-flock-ready",
+        "visualError": null,
+        "hy3d": {
+          "version": "hy3d-v3.5-stylized-30k-1k",
+          "bytes": 1327456,
+          "loaded": 3,
+          "sharedResource": true,
+          "runtimeMorphPose": true,
+          "poseTargets": [
+            "wingUp",
+            "wingDown",
+            "diveFold"
+          ]
+        }
       },
       "cover": {
         "archCount": 5,
@@ -405,13 +461,32 @@
           "young-play"
         ],
         "branchPresent": true,
-        "visibleParts": 57
+        "visualStatus": "hy3d-family-ready",
+        "visualError": null,
+        "hy3d": {
+          "version": "hy3d-v3.5-stylized-25k-1k",
+          "bytes": 1089008,
+          "loadedAdults": 2,
+          "loadedYoung": 3,
+          "sharedResource": true,
+          "staticSourceMesh": true,
+          "runtimeMorphPose": true,
+          "poseTargets": [
+            "graze",
+            "reach",
+            "play",
+            "tailLeft",
+            "tailRight",
+            "juvenile"
+          ]
+        },
+        "visibleParts": 52
       },
       "gladeComposition": {
         "sightlineHalfWidth": 22,
         "sunLanePresent": true,
         "shadowCastingSubjects": 5,
-        "familyWidth": 15
+        "familyWidth": 18.5
       }
     },
     "audio": {
@@ -461,16 +536,16 @@
       "lightWatch": null,
       "terminal": null
     },
-    "sceneChildren": 30,
-    "calls": 238,
-    "triangles": 49196,
-    "textures": 3,
-    "geometries": 93,
+    "sceneChildren": 59,
+    "calls": 1,
+    "triangles": 1,
+    "textures": 31,
+    "geometries": 510,
     "viewport": [
       1280,
       720
     ],
-    "firstRenderedAt": 184.70000004768372,
+    "firstRenderedAt": 211.4000000357628,
     "recentMedianFrameMs": 8.3
   },
   "screenshots": [

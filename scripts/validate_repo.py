@@ -116,6 +116,7 @@ EXAMPLE_PLANNING_FILES = {
 OPTIONAL_PLANNING_FILES = {
     "analysis/_coverage.md",
     "build/asset-ledger.json",
+    "design/VISUAL_TARGETS.md",
     "design/VOICE_AUDITION.json",
 }
 FRONTMATTER_RE = re.compile(r"^---\n(.*?)\n---", re.DOTALL)

@@ -2,7 +2,7 @@
 
 ## Verdict
 
-**Local automated build handoff: PASS. Public-host smoke: PASS. Example publication: MAINTAINER-GO.**
+**Local automated build handoff: PASS. Strict visual promotion: 100/100 PASS. Public-host smoke: PASS. Example publication: MAINTAINER-GO.**
 
 The authoritative run completed every registered suite, a same-run input-only
 Strong path from clean field order through result and restart, a second complete
@@ -10,27 +10,32 @@ Strong path under Chromium achromatopsia, and 41 direct state/browser/visual
 checkpoints. No local blocker, uncaught browser error, external runtime host,
 failed deterministic outcome or budget regression was observed.
 
+The v23 source-bound visual bundle also passed all six visual targets and all
+eight non-compensating review categories. The independent record is
+[`evidence/perception/hy3d-v23-independent-review.md`](evidence/perception/hy3d-v23-independent-review.md).
+
 On 2026-08-01 the maintainer reported three successful informal first-time
 sessions and explicitly accepted the project for publication under `examples/`.
 The sessions did not retain the protocol's raw environment, timestamps, paths,
 results or verbatim answers, so the specific first-time criteria remain
-unverified in this repository. Independent anatomy/motion/composition and
-colour-cue review also remains `NOT_RUN`. Publication is a product decision
-with disclosed evidence gaps, not an inferred QA pass.
+unverified in this repository. Independent anatomy/material/environment/light/
+composition/motion/UI/runtime visual review now passes; full live colour-cue
+route review remains `NOT_RUN`. Publication is a product decision with disclosed
+evidence gaps, not an inferred general release pass.
 
 ## Authoritative run
 
 | Field | Observed |
 |---|---|
-| Source commit | `8793fb904ca6ac1aedf62f296febff6c68a9bb3d` |
-| App fingerprint | `e99883ce0a14f31782ac0dc6a91bd38f7e9869d86279d11ca04b5171a59af69d` |
+| Source commit | `9d7f8736e5de17024569934df3da299358713adc` |
+| App fingerprint | `1d883375e0f5a07919df4948f569334b7d42ee191f21fbbbd306203ad66f2b1c` |
 | Install | [`npm ci`](evidence/install.log) — 24 packages, 0 vulnerabilities |
 | Verify | `npm run verify` |
-| Result | exit `0`; 7/7 suites; 16/16 commands |
-| Duration | `509894 ms` |
+| Result | exit `0`; 7/7 suites; 17/17 commands |
+| Duration | `513964 ms` |
 | Log | [`evidence/verify.log`](evidence/verify.log) |
 | Structured handoff | [`verification.json`](verification.json) |
-| Suite discovery | 15 registered pass/fail files; 2 explicit non-suite tools; 0 orphan |
+| Suite discovery | 20 registered pass/fail files; 2 explicit non-suite tools; 0 orphan |
 
 `capture_demo_clip.py` is recorded as a delivery-media tool rather than a test;
 `verify.py` is the orchestrator and would recurse if registered as its own
@@ -42,13 +47,13 @@ major`.
 
 | Surface | Environment | Result |
 |---|---|---|
-| Runtime | Node.js `v25.9.0`; npm `11.12.1`; Python `3.14.5` | PASS |
+| Runtime | Node.js `v25.6.1`; npm `11.9.0`; Python `3.14.3` | PASS |
 | Browser | Google Chrome `150.0.7871.187` | PASS |
 | Viewports | target `1440×900`; minimum `1280×720` | PASS |
-| Target heaviest state | median `120.5 FPS`; 1% low `106.4 FPS` | PASS vs `45/30` |
-| Minimum heaviest state | median `120.5 FPS`; 1% low `107.5 FPS` | PASS vs `45/30` |
-| Built payload | `602904` raw bytes; `154906` gzip bytes | PASS vs `50/20 MiB` |
-| First local no-cache frame | `2198.3 ms` at simulated 25 Mbps | PASS vs `8000 ms` locally |
+| Target heaviest state | median `120.5 FPS`; 1% low `97.1 FPS` | PASS vs `45/30` |
+| Minimum heaviest state | median `120.5 FPS`; 1% low `97.1 FPS` | PASS vs `45/30` |
+| Built payload | `3243756` raw bytes; `2012771` gzip bytes | PASS vs `50/20 MiB` |
+| First local no-cache frame | `2940.9 ms` at simulated 25 Mbps | PASS vs `8000 ms` locally |
 | Runtime requests | only `127.0.0.1:4173`; no external host | PASS |
 | Public preview | `https://plateau.vibecoco.ai`; Google Chrome `150.0.7871.187` | PASS; anonymous HTTPS load, full input routes, result and restart; no console error or third-party runtime host |
 
@@ -61,13 +66,13 @@ clean-context loading and complete play against the deployed assets.
 
 | Suite | Discovered files or surfaces | Same-run result |
 |---|---|---|
-| `unit:simulation` | four `test/*.test.js` files, 35 assertions | PASS |
+| `unit:simulation` | eight `test/*.test.js` files, 62 assertions | PASS |
 | `build:production` | `index.html`, `src/`, `public/` | PASS; Vite production build |
 | `browser:checkpoint-history` | `qa_s0.py`–`qa_s7.py`, `qa_s9.py` | PASS; 9/9 commands |
 | `browser:complete-run` | `qa_s8.py` | PASS; Strong/Mixed/Panic plus achromatopsia Strong by keyboard/mouse |
-| `browser:current-visual` | `qa_s10.py` | PASS; glade/plates plus four-state checkpoints for three additional vision deficiencies |
+| `browser:current-visual` | `qa_s10.py`, `qa_visual_targets.py` | PASS; glade/plates, four-state checkpoints for three additional vision deficiencies, six visual targets, eight creature orbits and three motion sequences |
 | `qa:design-invariants` | `qa/check_design_invariants.py` | PASS; 10/10 design-derived checks |
-| `repo:contract` | validator and repository unit discovery | PASS; 7 skills, 25 tests |
+| `repo:contract` | validator and repository unit discovery | PASS; validator plus 31 repository tests |
 
 ## Complete run
 
@@ -126,14 +131,17 @@ their findings still require the live-run evidence and disposition defined by
 | Three first-time players recognize 3D action/exploration and not a text/VN presentation | INFORMAL_PLAY_REPORTED / CRITERION_NOT_RECORDED | accepted for example publication; evidence-qualified PASS remains open | Three raw sessions using [`PLAYTEST_PROTOCOL.md`](PLAYTEST_PROTOCOL.md); at least two meet the stated threshold |
 | First meaningful interaction within 90 seconds and result within 15 minutes | INFORMAL_PLAY_REPORTED / CRITERION_NOT_RECORDED | accepted for example publication; evidence-qualified PASS remains open | Timestamped, uncoached player records using the same protocol |
 | Players can restate scout/proof/extract rather than “shoot dinosaurs” | INFORMAL_PLAY_REPORTED / CRITERION_NOT_RECORDED | accepted for example publication; evidence-qualified PASS remains open | Verbatim post-run answers linked to each raw session |
-| Independent anatomy, motion and composition review | NOT_RUN | accepted risk for example publication | [`PERCEPTION_REVIEW_PROTOCOL.md`](PERCEPTION_REVIEW_PROTOCOL.md), [reviewer intake](https://github.com/worldwonderer/novel-to-game/discussions/8), reviewer context, frame-level findings and disposition |
+| Independent non-compensating visual review | PASS — 100/100; VT01–VT06 PASS | cleared for the source-bound v23 visual promotion | [`evidence/perception/hy3d-v23-independent-review.md`](evidence/perception/hy3d-v23-independent-review.md), [`PERCEPTION_REVIEW_PROTOCOL.md`](PERCEPTION_REVIEW_PROTOCOL.md) |
 | Input routes and checkpoints under colour-vision modes | AUTOMATED_PASS / HUMAN_REVIEW_NOT_RUN | accepted risk for example publication | Full-colour + achromatopsia routes and the three specified checkpoint sets exist; an independent reviewer must still judge cue readability |
 | Anonymous public HTTPS load, play, result and restart | PASS | cleared | [`evidence/public-host/report.json`](evidence/public-host/report.json): clean Chrome context, source fingerprint, 46 real-input steps, Strong/Mixed/Panic plus achromatopsia Strong, result and restart; zero console errors or third-party runtime hosts |
 | Platform upload/transcode for short media | NOT_RUN | not required for the hosted example; still blocks claiming an uploaded attachment | Uploaded file hash and playback check |
 
-No subjective fun, balance, audio-mix, anatomy, motion, composition or
-colour-cue readability claim is marked PASS. Numeric image floors only catch
-gross occlusion, flat exposure or missing state.
+No subjective fun, balance, audio-mix or full live colour-cue readability claim
+is marked PASS. The strict visual rubric passes anatomy, material, environment,
+light, composition, motion, UI and runtime/accessibility for the bound v23
+candidate; it does not certify scientific reconstruction or commercial art
+quality. Numeric image floors alone still only catch gross occlusion, flat
+exposure or missing state.
 
 ## Reproduce
 

@@ -2,7 +2,7 @@
   "stage": "s7-lifecycle",
   "source": {
     "scope": "index.html, package manifests, public assets and src",
-    "sha256": "e99883ce0a14f31782ac0dc6a91bd38f7e9869d86279d11ca04b5171a59af69d"
+    "sha256": "1d883375e0f5a07919df4948f569334b7d42ee191f21fbbbd306203ad66f2b1c"
   },
   "environment": {
     "browser": "Google Chrome 150.0.7871.187",
@@ -35,36 +35,52 @@
     "noThreatMeter": true,
     "consoleErrors": [],
     "requestHosts": [
+      "",
       "127.0.0.1:4173"
     ],
     "externalHosts": []
   },
   "loading": {
     "firstNoCacheNavigation": {
-      "timeToFirstFrameMs": 2198.3,
-      "domInteractiveMs": 54.3,
-      "loadEventMs": 2281.9,
-      "resourceCount": 11
+      "timeToFirstFrameMs": 2940.9,
+      "domInteractiveMs": 91.2,
+      "loadEventMs": 3183.4,
+      "resourceCount": 28
     },
     "finalNavigation": {
-      "timeToFirstFrameMs": 2196,
-      "domInteractiveMs": 79.3,
-      "loadEventMs": 2262.2,
-      "resourceCount": 12
+      "timeToFirstFrameMs": 3017.2,
+      "domInteractiveMs": 182.6,
+      "loadEventMs": 3206.5,
+      "resourceCount": 29
     },
     "budgetMs": 8000
   },
   "payload": {
     "files": [
       {
-        "path": "assets/index-BtoLHCaQ.css",
-        "rawBytes": 13357,
-        "gzipBytes": 4179
+        "path": "assets/GLTFLoader-BlkaGdrQ.js",
+        "rawBytes": 43236,
+        "gzipBytes": 12761
       },
       {
-        "path": "assets/index-CWtQHXh1.js",
-        "rawBytes": 582588,
-        "gzipBytes": 148450
+        "path": "assets/iguanodon-hy3d-v35-stylized.glb",
+        "rawBytes": 1089008,
+        "gzipBytes": 818165
+      },
+      {
+        "path": "assets/index-CVl3II7r.css",
+        "rawBytes": 16736,
+        "gzipBytes": 5111
+      },
+      {
+        "path": "assets/index-DJhQ7yR3.js",
+        "rawBytes": 760361,
+        "gzipBytes": 199546
+      },
+      {
+        "path": "assets/pterodactyl-hy3d-v35-stylized.glb",
+        "rawBytes": 1327456,
+        "gzipBytes": 974909
       },
       {
         "path": "favicon.svg",
@@ -74,11 +90,11 @@
       {
         "path": "index.html",
         "rawBytes": 6789,
-        "gzipBytes": 2119
+        "gzipBytes": 2121
       }
     ],
-    "rawBytes": 602904,
-    "gzipBytes": 154906,
+    "rawBytes": 3243756,
+    "gzipBytes": 2012771,
     "initialCompressedBudgetBytes": 20971520,
     "totalBudgetBytes": 52428800
   },
@@ -87,15 +103,15 @@
       "samples": 120,
       "medianFrameMs": 8.3,
       "medianFps": 120.5,
-      "onePercentLowFps": 107.5,
-      "worstFrameMs": 9.4
+      "onePercentLowFps": 97.1,
+      "worstFrameMs": 10.3
     },
     "targetViewport": {
       "samples": 240,
       "medianFrameMs": 8.3,
       "medianFps": 120.5,
-      "onePercentLowFps": 106.4,
-      "worstFrameMs": 9.4
+      "onePercentLowFps": 97.1,
+      "worstFrameMs": 10.3
     }
   },
   "checkpoints": [

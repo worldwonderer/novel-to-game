@@ -185,7 +185,13 @@ def run() -> dict[str, object]:
         attack = capture("06-membrane-wing-attack", ["QA route setup: basalt shelf", "second shutter commitment"])
         recent_attack_cues = [event["cue"] for event in attack["audio"]["recentCues"]]
         assert "attack" in recent_attack_cues, attack
-        assert attack["assets"]["pterodactyl"] == {"silhouette": "membrane-wing", "visibleParts": 5}, attack
+        pterodactyl = attack["assets"]["pterodactyl"]
+        assert pterodactyl["silhouette"] == "continuous-skinned-membrane-wing", attack
+        assert pterodactyl["projectedShadow"] == "moving-winged-ground-shadow", attack
+        assert pterodactyl["visibleParts"] >= 9, attack
+        assert pterodactyl["visualStatus"] == "hy3d-flock-ready", attack
+        assert pterodactyl["hy3d"]["loaded"] == 3, attack
+        assert pterodactyl["hy3d"]["runtimeMorphPose"] is True, attack
 
         page.evaluate("window.__projectPlateau.teleportForTest({x: 0, z: -10})")
         page.wait_for_timeout(70)
@@ -250,7 +256,7 @@ def run() -> dict[str, object]:
         browser.close()
 
     allowed = {urlparse(BASE_URL).netloc}
-    external = sorted(hosts - allowed)
+    external = sorted(host for host in hosts if host and host not in allowed)
     assert not errors, errors
     assert not external, external
     return {

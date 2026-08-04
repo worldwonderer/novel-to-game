@@ -286,8 +286,8 @@ run rather than preserving stale expectations.
 ```yaml
 toolchain:
   runtime: Node.js
-  runtimeVersion: v25.9.0
-  packageManager: npm@11.12.1
+  runtimeVersion: v25.6.1
+  packageManager: npm@11.9.0
   browser: Google Chrome 150.0.7871.187
 commands:
   install: npm ci
@@ -341,10 +341,10 @@ are not claimed by automated verification.
 
 ## Final scope reconciliation
 
-Reconciled on 2026-07-31 against source commit
-`8793fb904ca6ac1aedf62f296febff6c68a9bb3d` and authoritative command
-`npm run verify`. The 509.894-second run executed all seven registered suites
-and sixteen underlying commands; its log and 41-checkpoint handoff are
+Reconciled on 2026-08-03 against source commit
+`9d7f8736e5de17024569934df3da299358713adc` and authoritative command
+`npm run verify`. The 513.964-second run executed all seven registered suites
+and seventeen underlying commands; its log and 41-checkpoint handoff are
 `../qa/evidence/verify.log` and `../qa/verification.json`.
 
 | Approved scope | Delivery | Evidence or deliberate boundary |
@@ -353,14 +353,14 @@ and sixteen underlying commands; its log and 41-checkpoint handoff are
 | Continuous first-person connected zone, collision, pause, focus recovery and restart | Delivered | S1/S2/S7 plus the S8 input-only complete run |
 | Five same-play verbs performed by input | Delivered | `../qa/evidence/design-invariants.md#same-play-verbs`; S8 input trace and checkpoints |
 | Four physical plates with view-dependent proof and persistent recovered views | Delivered | S3/S9/S10 state, browser and renderer-derived visual evidence |
-| Four readable threat states, cover, one recoverable contact and limited defensive shot | Delivered technically | S2/S3/S5/S6; complete full-colour and achromatopsia routes in S8; three additional colour-vision attack/defence checkpoints in S10; independent cue review remains open |
+| Four readable threat states, cover, one recoverable contact and limited defensive shot | Delivered; strict visual review passes | S2/S3/S5/S6; complete full-colour and achromatopsia routes in S8; three additional colour-vision attack/defence checkpoints in S10; full independent live colour-cue route review remains open |
 | Covered and exposed returns with different time, plate and callback consequences | Delivered | S5 and input-only Strong/Mixed/Panic paths in S8 |
 | Strong, partial and failure outcomes followed by a clean restart | Delivered | S4/S5 plus per-terminal S8 restart checkpoints |
 | Local audio/captions, HUD, sensitivity, motion reduction and text scaling | Delivered | S6/S7; subjective mix and comfort remain outside automated proof |
 | Non-colour redundancy across the supported colour-vision modes | Delivered technically | S8 complete full-colour and achromatopsia routes plus S10 protanopia/deuteranopia/tritanopia order, glade, attack/defence and result checkpoints; independent cue-readability review remains open |
-| Payload, loading, lifecycle and heaviest-state performance budgets | Delivered locally | 154,906 gzip bytes; 2,198.3 ms local 25 Mbps first frame; 120.5/106.4 target median/1%-low FPS in S7 |
+| Payload, loading, lifecycle and heaviest-state performance budgets | Delivered locally | 2,012,771 gzip bytes; 2,940.9 ms local 25 Mbps first frame; 120.5/97.1 target median/1%-low FPS in S7 |
 | First-time premise, genre and route comprehension | Not delivered as evidence | Three independent raw player records remain NOT_RUN; automation cannot substitute |
-| Independent anatomy, motion and composition approval | Not delivered as evidence | Current numeric/image floors detect gross failures only |
+| Independent non-compensating visual approval | Delivered for v23 | Eight categories at their ceiling, VT01–VT06 PASS; `../qa/evidence/perception/hy3d-v23-independent-review.md` |
 | Public deployment | Not delivered | Public-host cold load, anonymous play and restart smoke remain a release gate |
 
 The earlier paper target of 5–8 minutes and 420 seconds was deliberately revised
@@ -370,6 +370,32 @@ explicit non-goals remain excluded: this is not a full open world, arena
 shooter, crafting/survival progression game, multiplayer service, mobile build,
 chapter retelling or modern licensed adaptation.
 
-Automated verification passes the local build handoff only. Release remains
-NO-GO until the independent player/perception records and public-host checks in
-`../qa/QA_REPORT.md` are complete.
+Automated verification and strict v23 visual promotion pass the local build
+handoff. General release remains gated by the first-time player records, full
+live colour-cue route review, final-source public-host checks and retained rights
+evidence in `../qa/QA_REPORT.md` and `asset-ledger.json`.
+
+## Visual enhancement addendum · 2026-08-03
+
+The HY3D focal-creature pass is bound to source fingerprint
+`1d883375e0f5a07919df4948f569334b7d42ee191f21fbbbd306203ad66f2b1c` and
+evidence manifest SHA256
+`bb46775a878a397b093778cf4272aa8ae7b284e8214ce9d0420a7f415eb34d6a` at
+`evidence/visual-sota/hy3d-creatures-v23/manifest.json`.
+
+| Visual delivery item | Current result | Evidence |
+|---|---|---|
+| Iguanodon family | One 1,089,008-byte, 24,996-triangle, 1K PBR GLB shared by two adults and three young; six runtime morph targets preserve graze/reach/play/tail motion, weight transfer and juvenile proportions | `evidence/visual-sota/hy3d-stylized-v1/README.md`; v23 orbit/motion sheets |
+| Pterodactyl flock | One 1,327,456-byte, 30,496-triangle, 1K PBR GLB shared by three threats; three runtime morph targets preserve wing beat and dive fold; its moving ground shadow remains spatially continuous through attack | `evidence/visual-sota/hy3d-pterodactyl-v1/README.md`; v23 orbit/motion sheets |
+| Loading and fallback | Neither GLB is requested before interaction; each is requested once afterward; procedural creatures remain as loading/error fallback | `evidence/visual-sota/hy3d-creatures-runtime-v1/lazy-loading.json` |
+| Package | Combined creature payload 2,416,464 raw / 1,793,074 gzip-9 bytes; built distribution 3,243,756 raw bytes, below the 50 MB on-demand budget | `evidence/visual-sota/hy3d-creatures-runtime-v1/package.json` |
+| Renderer strategy | Retained the approved Vite + raw Three.js WebGL2 runtime; localized `ShaderMaterial`, soft `Points`, varied `InstancedMesh`, UV water animation and lightweight post-processing supply the useful gallery techniques without an R3F/GSAP, Pixi/Matter or WebGPU migration | v23 target sheets; `app/test/foundation.test.js` |
+| Performance | `1440×900`: 120.5 median / 97.1 1%-low FPS; `1280×720`: 120.5 / 98.0 FPS in the source-bound visual suite | `evidence/visual-sota/hy3d-creatures-v23/performance.json` |
+| Visual-target QA | 18 current checkpoints, all six target frames, eight creature orbits, three motion sequences, visible brook-blind sound captions, zero console/external-host errors | `evidence/visual-sota/hy3d-creatures-v23/manifest.json` |
+| Independent visual review | Eight non-compensating categories all at their ceiling; VT01–VT06 all pass; zero remaining visual blocker | `../qa/evidence/perception/hy3d-v23-independent-review.md` |
+
+The source-bound independent review awards the strict `100/100` visual ceiling.
+This is a visual-promotion result, not a general release waiver: retained Hunyuan
+output-rights evidence, first-time player records, full live colour-vision route
+review and public-host checks remain as recorded in `asset-ledger.json` and the
+QA artifacts.
