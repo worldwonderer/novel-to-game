@@ -38,7 +38,7 @@
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 6.017,
+    "elapsedSeconds": 6.083,
     "distanceTravelled": 0,
     "paused": false,
     "pauseReason": null,
@@ -112,7 +112,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 173.983,
+    "remainingLight": 173.917,
     "returnRoute": null,
     "returnCostSeconds": 0,
     "returnStrike": false,
@@ -125,27 +125,57 @@
     "attackStage": "orbit",
     "attackProgress": 0,
     "flightPose": {
-      "wingBeat": 0.0434,
+      "wingBeat": 0.0375,
       "wingFold": 0,
       "mode": "upstroke",
-      "bank": 0.1465,
+      "bank": -0.2198,
       "direction": [
-        0.9382,
-        0.01,
-        0.3459
+        0.8451,
+        0.123,
+        -0.5202
       ]
     },
     "position": {
-      "x": 12.33,
-      "y": 6.6,
-      "z": -30.1
-    }
+      "x": -14.82,
+      "y": 8.84,
+      "z": -11.95
+    },
+    "scale": 0.7216,
+    "anchorModel": "fixed-world-orbit-latched-attack-origin"
   },
   "familyVisual": {
     "moment": "glade-young-play",
     "adults": 2,
     "young": 3,
-    "branchAngle": 0.08,
+    "branchAngle": 0.03,
+    "branchContactDistance": 0.958,
+    "positions": [
+      {
+        "x": -8,
+        "y": -0.6,
+        "z": -31
+      },
+      {
+        "x": 10.5,
+        "y": -0.29,
+        "z": -39
+      },
+      {
+        "x": -2.2,
+        "y": -1.014,
+        "z": -24.8
+      },
+      {
+        "x": 3.4,
+        "y": -0.764,
+        "z": -27.2
+      },
+      {
+        "x": 2.5,
+        "y": -0.319,
+        "z": -35
+      }
+    ],
     "roles": [
       "graze",
       "branch-pull",
@@ -322,17 +352,17 @@
       {
         "cue": "field-start",
         "caption": "[brook water and insects under the canopy]",
-        "at": 30.661
+        "at": 30.757
       },
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 30.661
+        "at": 30.757
       },
       {
         "cue": "search",
         "caption": "[a near call circles overhead]",
-        "at": 30.944
+        "at": 31.067
       }
     ]
   },
@@ -376,7 +406,7 @@
   "sceneChildren": 62,
   "calls": 1,
   "triangles": 1,
-  "textures": 38,
+  "textures": 39,
   "geometries": 627,
   "viewport": [
     1440,
@@ -387,8 +417,8 @@
     "maxPixelRatio": 1.25,
     "quality": "balanced",
     "activeFpsCap": 60,
-    "renderedFrames": 2225,
-    "skippedFrames": 1898,
+    "renderedFrames": 2248,
+    "skippedFrames": 2307,
     "activeFpsPolicy": "60fps-cap-across-refresh-rates",
     "idleFpsCap": 30,
     "pausedFpsCap": 15,
@@ -398,6 +428,6 @@
     "gtaoSamples": 4,
     "antialiasing": "single-pass-fxaa"
   },
-  "firstRenderedAt": 228.79999995231628,
+  "firstRenderedAt": 591.4000000953674,
   "recentMedianFrameMs": 16.7
 }

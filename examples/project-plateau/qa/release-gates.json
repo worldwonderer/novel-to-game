@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCommit": null,
+  "sourceCommit": "44928cfadc6e041b3f43171ee31cfd91dd645397",
   "evidenceCommit": null,
   "targetFinish": "playable-prototype",
   "demonstratedTier": "playable-prototype",
@@ -26,7 +26,8 @@
       "qa/verification.json",
       "build/evidence/visual-targets/manifest.json",
       "build/evidence/visual-upgrade/generated/manifest.json",
-      "qa/evidence/independent-visual-review-2026-08-04.md"
+      "qa/evidence/independent-visual-review-2026-08-04-world-space.md",
+      "qa/evidence/final-code-review-2026-08-04.md"
     ]
   },
   "visualFrames": [
@@ -95,11 +96,11 @@
   "visualReview": {
     "required": true,
     "status": "PASS",
-    "reviewer": "/root/plateau_visual_release_review (read-only independent reviewer, 2026-08-04)",
-    "independence": "The reviewer made no implementation, capture, manifest, or QA edits and judged only the source-bound browser evidence.",
-    "evidence": "qa/evidence/independent-visual-review-2026-08-04.md",
-    "reviewedSourceFingerprint": "578d03cbfbcbe66ac192ac1bcb808d3e215b14d1d6759d63d2b3012bbc22ee6f",
-    "reviewedManifestSha256": "1c30ba33aec7d5a48cb1aa7a7b3570b2460806eab5d6a282ba66a140ce56475d"
+    "reviewer": "/root/final_arch_review (read-only independent Architect, 2026-08-04)",
+    "independence": "The reviewer made no implementation, capture, manifest, or QA edits and judged only the source-bound browser and media evidence.",
+    "evidence": "qa/evidence/independent-visual-review-2026-08-04-world-space.md",
+    "reviewedSourceFingerprint": "35a92c7843835e8c67d34713849bc08f35f32a38c5c4bcb3ebd9372ed46606c8",
+    "reviewedManifestSha256": "1fb5a267bee49a9a8c3afb945dea79b8a89c0b7f55dde9388711213f7d67ac80"
   },
   "focalReleaseAssets": [
     "world.connected_route",
@@ -221,17 +222,40 @@
         "qa/evidence/independent-visual-review-2026-08-04.md",
         "build/evidence/visual-targets/contact-sheet-targets.jpg"
       ]
+    },
+    {
+      "id": "VIS-WORLD-SPACE-009",
+      "severity": "major",
+      "status": "CLOSED",
+      "summary": "Grounded branch contact and fixed-world pterodactyl motion pass independent review across ordinary, reduced-motion and the 4.4-second cycle boundary.",
+      "owner": "build",
+      "evidence": [
+        "qa/evidence/independent-visual-review-2026-08-04-world-space.md",
+        "build/evidence/visual-upgrade/generated/manifest.json"
+      ]
+    },
+    {
+      "id": "VIS-DEMO-010",
+      "severity": "major",
+      "status": "CLOSED",
+      "summary": "The continuous input-only demo now visibly proves search, dive defense, rifle response, exposed return and the Strong result without timestamp drift.",
+      "owner": "build",
+      "evidence": [
+        "qa/evidence/independent-visual-review-2026-08-04-world-space.md",
+        "qa/evidence/final-code-review-2026-08-04.md",
+        "build/media/clip/manifest.json"
+      ]
     }
   ],
-  "notes": "The source-bound independent review passes with zero blockers and zero majors. The repeated marker-like ground cover is removed, trees remain grounded, the HY3D camera is held rear-first, and the pterodactyl attack remains fully framed with a stable forward/up orientation. Active play is capped near 60 FPS.",
+  "notes": "Independent read-only review passes with zero blockers, majors, or minors. Branch contact stays grounded, pterodactyl motion remains fixed in authored world space and continuous through the closed 4.4-second attack cycle, and the continuous demo shows the complete evidence-and-survival loop. Active play is capped near 60 FPS.",
   "degradableReleaseAssets": [
     "audio.core_world"
   ],
-  "sourceFingerprint": "578d03cbfbcbe66ac192ac1bcb808d3e215b14d1d6759d63d2b3012bbc22ee6f",
+  "sourceFingerprint": "35a92c7843835e8c67d34713849bc08f35f32a38c5c4bcb3ebd9372ed46606c8",
   "visualEvidenceManifests": [
     {
       "path": "build/evidence/visual-upgrade/generated/manifest.json",
-      "sha256": "1c30ba33aec7d5a48cb1aa7a7b3570b2460806eab5d6a282ba66a140ce56475d"
+      "sha256": "1fb5a267bee49a9a8c3afb945dea79b8a89c0b7f55dde9388711213f7d67ac80"
     }
   ],
   "publicHost": {
@@ -241,6 +265,6 @@
   },
   "sourceInputManifest": {
     "path": "build/source-inputs.json",
-    "sha256": "3dfa3195c9ea10d3e8d926a1bdf4fb2e1ef61165a0fe2b1ac941187d2ae2000d"
+    "sha256": "da0bf088ab167556b2e330f728cefce9dc4db51c90a3fab3c967f83092cd17a5"
   }
 }

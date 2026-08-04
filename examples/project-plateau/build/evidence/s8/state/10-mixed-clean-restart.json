@@ -120,27 +120,57 @@
     "attackStage": "orbit",
     "attackProgress": 0,
     "flightPose": {
-      "wingBeat": 0.1624,
+      "wingBeat": -0.2326,
       "wingFold": 0,
-      "mode": "upstroke",
-      "bank": -0.1582,
+      "mode": "downstroke",
+      "bank": 0.1584,
       "direction": [
-        0.9841,
-        -0.0556,
-        0.1687
+        -0.9956,
+        -0.0906,
+        -0.0254
       ]
     },
     "position": {
-      "x": 15.75,
-      "y": 22.05,
-      "z": 35.88
-    }
+      "x": -1.9,
+      "y": 10.02,
+      "z": 0.14
+    },
+    "scale": 0.7308,
+    "anchorModel": "fixed-world-orbit-latched-attack-origin"
   },
   "familyVisual": {
     "moment": "glade-young-play",
     "adults": 2,
     "young": 3,
-    "branchAngle": 0.08,
+    "branchAngle": 0.03,
+    "branchContactDistance": 0.947,
+    "positions": [
+      {
+        "x": -8,
+        "y": -0.59,
+        "z": -31
+      },
+      {
+        "x": 10.5,
+        "y": -0.292,
+        "z": -39
+      },
+      {
+        "x": -2.2,
+        "y": -0.931,
+        "z": -24.8
+      },
+      {
+        "x": 3.4,
+        "y": -0.796,
+        "z": -27.2
+      },
+      {
+        "x": 2.5,
+        "y": -0.329,
+        "z": -35
+      }
+    ],
     "roles": [
       "graze",
       "branch-pull",
@@ -317,82 +347,82 @@
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 67.291
+        "at": 67.477
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 74.181
+        "at": 74.416
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 74.245
+        "at": 74.48
       },
       {
         "cue": "search",
         "caption": "[a near call circles overhead]",
-        "at": 76.24
+        "at": 76.464
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 76.24
+        "at": 76.464
       },
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 76.261
+        "at": 76.496
       },
       {
         "cue": "search",
         "caption": "[a near call circles overhead]",
-        "at": 79.883
+        "at": 80.123
       },
       {
         "cue": "examine",
         "caption": "[fern brushes aside; pencil marks the field card]",
-        "at": 80.203
+        "at": 80.459
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 80.219
+        "at": 80.464
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 80.283
+        "at": 80.528
       },
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 82.288
+        "at": 82.523
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 82.288
+        "at": 82.523
       },
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 82.459
+        "at": 82.704
       },
       {
         "cue": "rifle",
         "caption": "[rifle report; echo runs toward the brook]",
-        "at": 82.459
+        "at": 82.704
       },
       {
         "cue": "brook-response",
         "caption": "[brush thrashes beside the brook]",
-        "at": 83.525
+        "at": 83.765
       },
       {
         "cue": "result",
         "caption": "[glass plates settle on the light board]",
-        "at": 97.632
+        "at": 97.995
       }
     ]
   },
@@ -436,7 +466,7 @@
   "sceneChildren": 62,
   "calls": 1,
   "triangles": 1,
-  "textures": 37,
+  "textures": 38,
   "geometries": 617,
   "viewport": [
     1440,
@@ -447,8 +477,8 @@
     "maxPixelRatio": 1.25,
     "quality": "balanced",
     "activeFpsCap": 60,
-    "renderedFrames": 5879,
-    "skippedFrames": 5086,
+    "renderedFrames": 5946,
+    "skippedFrames": 6010,
     "activeFpsPolicy": "60fps-cap-across-refresh-rates",
     "idleFpsCap": 30,
     "pausedFpsCap": 15,
@@ -458,6 +488,6 @@
     "gtaoSamples": 4,
     "antialiasing": "single-pass-fxaa"
   },
-  "firstRenderedAt": 248.19999998807907,
+  "firstRenderedAt": 687.2000000476837,
   "recentMedianFrameMs": 16.7
 }

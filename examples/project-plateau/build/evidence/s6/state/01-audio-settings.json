@@ -9,7 +9,7 @@
     "status": "idle",
     "error": null,
     "cameraForward": {
-      "x": -0.2089,
+      "x": -0.209,
       "y": -0.0483,
       "z": -0.9767
     }
@@ -120,27 +120,57 @@
     "attackStage": "orbit",
     "attackProgress": 0,
     "flightPose": {
-      "wingBeat": 0.1235,
+      "wingBeat": -0.0022,
       "wingFold": 0,
-      "mode": "upstroke",
-      "bank": 0.0465,
+      "mode": "downstroke",
+      "bank": 0.0517,
       "direction": [
-        -0.3249,
-        0.2129,
-        0.9215
+        -0.3589,
+        0.209,
+        0.9097
       ]
     },
     "position": {
-      "x": 31.78,
-      "y": 23.29,
-      "z": 46.24
-    }
+      "x": 28.73,
+      "y": 23.33,
+      "z": -7.61
+    },
+    "scale": 0.88,
+    "anchorModel": "fixed-world-orbit-latched-attack-origin"
   },
   "familyVisual": {
     "moment": "glade-young-play",
     "adults": 2,
     "young": 3,
-    "branchAngle": 0.08,
+    "branchAngle": 0.03,
+    "branchContactDistance": 0.927,
+    "positions": [
+      {
+        "x": -8,
+        "y": -0.589,
+        "z": -31
+      },
+      {
+        "x": 10.5,
+        "y": -0.285,
+        "z": -39
+      },
+      {
+        "x": -2.2,
+        "y": -0.919,
+        "z": -24.8
+      },
+      {
+        "x": 3.4,
+        "y": -0.789,
+        "z": -27.2
+      },
+      {
+        "x": 2.5,
+        "y": -0.329,
+        "z": -35
+      }
+    ],
     "roles": [
       "graze",
       "branch-pull",
@@ -355,7 +385,7 @@
   "sceneChildren": 62,
   "calls": 1,
   "triangles": 1,
-  "textures": 30,
+  "textures": 32,
   "geometries": 614,
   "viewport": [
     1440,
@@ -366,8 +396,8 @@
     "maxPixelRatio": 1.25,
     "quality": "balanced",
     "activeFpsCap": 60,
-    "renderedFrames": 21,
-    "skippedFrames": 50,
+    "renderedFrames": 23,
+    "skippedFrames": 53,
     "activeFpsPolicy": "60fps-cap-across-refresh-rates",
     "idleFpsCap": 30,
     "pausedFpsCap": 15,
@@ -377,6 +407,6 @@
     "gtaoSamples": 4,
     "antialiasing": "single-pass-fxaa"
   },
-  "firstRenderedAt": 257.30000001192093,
-  "recentMedianFrameMs": 33.4
+  "firstRenderedAt": 304,
+  "recentMedianFrameMs": 33.3
 }

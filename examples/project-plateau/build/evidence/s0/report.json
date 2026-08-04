@@ -2,14 +2,14 @@
   "stage": "s0-renderer",
   "source": {
     "scope": "index.html, package manifests, public assets and src",
-    "sha256": "578d03cbfbcbe66ac192ac1bcb808d3e215b14d1d6759d63d2b3012bbc22ee6f"
+    "sha256": "35a92c7843835e8c67d34713849bc08f35f32a38c5c4bcb3ebd9372ed46606c8"
   },
   "environment": {
-    "node": "v25.6.1",
-    "npm": "11.9.0",
+    "node": "v25.9.0",
+    "npm": "11.12.1",
     "vite": "8.2.0",
     "three": "0.185.1",
-    "python": "3.14.3",
+    "python": "3.14.5",
     "browser": "Google Chrome 150.0.7871.187",
     "baseUrl": "http://127.0.0.1:4173"
   },
@@ -30,14 +30,14 @@
     "samples": 240,
     "medianFrameMs": 16.7,
     "medianFps": 59.9,
-    "onePercentLowFps": 39.3,
-    "worstFrameMs": 25.5
+    "onePercentLowFps": 56.5,
+    "worstFrameMs": 17.7
   },
   "loading": {
-    "observedTtiMs": 1057.5,
+    "observedTtiMs": 1507.1,
     "budgetTtiMs": 8000,
-    "distRawBytes": 6660269,
-    "distGzipBytes": 4792819,
+    "distRawBytes": 6842924,
+    "distGzipBytes": 4973189,
     "initialCompressedBudgetBytes": 20971520
   },
   "render": {
@@ -77,7 +77,7 @@
       "heading": 0,
       "pitch": 0,
       "stance": "walk",
-      "elapsedSeconds": 0.968,
+      "elapsedSeconds": 1.04,
       "distanceTravelled": 0,
       "paused": false,
       "pauseReason": null,
@@ -149,7 +149,7 @@
       "failed": false,
       "failureCause": null,
       "contactCount": 0,
-      "remainingLight": 179.032,
+      "remainingLight": 178.96,
       "returnRoute": null,
       "returnCostSeconds": 0,
       "returnStrike": false,
@@ -162,27 +162,57 @@
       "attackStage": "orbit",
       "attackProgress": 0,
       "flightPose": {
-        "wingBeat": 0.2411,
+        "wingBeat": 0.2883,
         "wingFold": 0,
         "mode": "upstroke",
-        "bank": 0.1086,
+        "bank": 0.1182,
         "direction": [
-          -0.6689,
-          0.1471,
-          0.7286
+          -0.7113,
+          0.1335,
+          0.6901
         ]
       },
       "position": {
-        "x": 30.61,
-        "y": 23.7,
-        "z": 48.11
-      }
+        "x": 27.28,
+        "y": 23.77,
+        "z": -5.56
+      },
+      "scale": 0.88,
+      "anchorModel": "fixed-world-orbit-latched-attack-origin"
     },
     "familyVisual": {
       "moment": "glade-young-play",
       "adults": 2,
       "young": 3,
-      "branchAngle": 0.08,
+      "branchAngle": 0.03,
+      "branchContactDistance": 0.906,
+      "positions": [
+        {
+          "x": -8,
+          "y": -0.596,
+          "z": -31
+        },
+        {
+          "x": 10.5,
+          "y": -0.278,
+          "z": -39
+        },
+        {
+          "x": -2.2,
+          "y": -1.055,
+          "z": -24.8
+        },
+        {
+          "x": 3.4,
+          "y": -0.708,
+          "z": -27.2
+        },
+        {
+          "x": 2.5,
+          "y": -0.32,
+          "z": -35
+        }
+      ],
       "roles": [
         "graze",
         "branch-pull",
@@ -403,7 +433,7 @@
     "sceneChildren": 62,
     "calls": 1,
     "triangles": 1,
-    "textures": 34,
+    "textures": 35,
     "geometries": 615,
     "viewport": [
       1440,
@@ -414,8 +444,8 @@
       "maxPixelRatio": 1.25,
       "quality": "balanced",
       "activeFpsCap": 60,
-      "renderedFrames": 82,
-      "skippedFrames": 98,
+      "renderedFrames": 89,
+      "skippedFrames": 118,
       "activeFpsPolicy": "60fps-cap-across-refresh-rates",
       "idleFpsCap": 30,
       "pausedFpsCap": 15,
@@ -425,8 +455,8 @@
       "gtaoSamples": 4,
       "antialiasing": "single-pass-fxaa"
     },
-    "firstRenderedAt": 239.70000004768372,
-    "recentMedianFrameMs": 17
+    "firstRenderedAt": 370.19999980926514,
+    "recentMedianFrameMs": 16.7
   },
   "minimumRender": {
     "stage": "s10-glade-clarity",
@@ -465,7 +495,7 @@
       "heading": 0,
       "pitch": 0,
       "stance": "walk",
-      "elapsedSeconds": 5.81,
+      "elapsedSeconds": 5.857,
       "distanceTravelled": 0,
       "paused": false,
       "pauseReason": null,
@@ -537,7 +567,7 @@
       "failed": false,
       "failureCause": null,
       "contactCount": 0,
-      "remainingLight": 174.19,
+      "remainingLight": 174.144,
       "returnRoute": null,
       "returnCostSeconds": 0,
       "returnStrike": false,
@@ -550,27 +580,57 @@
       "attackStage": "orbit",
       "attackProgress": 0,
       "flightPose": {
-        "wingBeat": 0.2577,
+        "wingBeat": 0.1216,
         "wingFold": 0,
         "mode": "upstroke",
-        "bank": 0.0479,
+        "bank": 0.0365,
         "direction": [
-          -0.9879,
-          -0.063,
-          0.1415
+          -0.9894,
+          -0.066,
+          0.1294
         ]
       },
       "position": {
-        "x": 13.98,
-        "y": 23.84,
-        "z": 54.39
-      }
+        "x": 10.15,
+        "y": 23.79,
+        "z": 0.51
+      },
+      "scale": 0.88,
+      "anchorModel": "fixed-world-orbit-latched-attack-origin"
     },
     "familyVisual": {
       "moment": "glade-branch-pull",
       "adults": 2,
       "young": 3,
-      "branchAngle": 0.319,
+      "branchAngle": 0.042,
+      "branchContactDistance": 0.845,
+      "positions": [
+        {
+          "x": -8,
+          "y": -0.597,
+          "z": -31
+        },
+        {
+          "x": 10.5,
+          "y": -0.3,
+          "z": -39
+        },
+        {
+          "x": -2.2,
+          "y": -1.029,
+          "z": -24.8
+        },
+        {
+          "x": 3.4,
+          "y": -0.779,
+          "z": -27.2
+        },
+        {
+          "x": 2.5,
+          "y": -0.324,
+          "z": -35
+        }
+      ],
       "roles": [
         "graze",
         "branch-pull",
@@ -791,7 +851,7 @@
     "sceneChildren": 62,
     "calls": 1,
     "triangles": 1,
-    "textures": 34,
+    "textures": 35,
     "geometries": 615,
     "viewport": [
       1280,
@@ -802,8 +862,8 @@
       "maxPixelRatio": 1.25,
       "quality": "balanced",
       "activeFpsCap": 60,
-      "renderedFrames": 372,
-      "skippedFrames": 342,
+      "renderedFrames": 378,
+      "skippedFrames": 406,
       "activeFpsPolicy": "60fps-cap-across-refresh-rates",
       "idleFpsCap": 30,
       "pausedFpsCap": 15,
@@ -813,7 +873,7 @@
       "gtaoSamples": 4,
       "antialiasing": "single-pass-fxaa"
     },
-    "firstRenderedAt": 239.70000004768372,
+    "firstRenderedAt": 370.19999980926514,
     "recentMedianFrameMs": 16.7
   },
   "screenshots": [

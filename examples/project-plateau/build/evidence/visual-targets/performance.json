@@ -7,8 +7,8 @@
     "samples": 240,
     "medianFrameMs": 16.7,
     "medianFps": 59.9,
-    "onePercentLowFps": 37.9,
-    "worstFrameMs": 26.5
+    "onePercentLowFps": 56.9,
+    "worstFrameMs": 17.6
   },
   "minimumViewport": {
     "viewport": [
@@ -18,7 +18,7 @@
     "samples": 240,
     "medianFrameMs": 16.7,
     "medianFps": 59.9,
-    "onePercentLowFps": 38.2,
-    "worstFrameMs": 26.4
+    "onePercentLowFps": 56.9,
+    "worstFrameMs": 17.6
   }
 }

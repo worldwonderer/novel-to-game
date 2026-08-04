@@ -35,8 +35,8 @@
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 0.707,
-    "distanceTravelled": 1.004,
+    "elapsedSeconds": 0.743,
+    "distanceTravelled": 1.072,
     "paused": false,
     "pauseReason": null,
     "boundaryRecoveries": 0,
@@ -110,7 +110,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 151.293,
+    "remainingLight": 151.257,
     "returnRoute": "covered",
     "returnCostSeconds": 28,
     "returnStrike": false,
@@ -134,27 +134,57 @@
     "attackStage": "orbit",
     "attackProgress": 0,
     "flightPose": {
-      "wingBeat": 0.0395,
+      "wingBeat": 0.0409,
       "wingFold": 0,
       "mode": "upstroke",
-      "bank": 0.107,
+      "bank": 0.1372,
       "direction": [
-        -0.4794,
-        0.3108,
-        0.8207
+        -0.6059,
+        0.1686,
+        0.7775
       ]
     },
     "position": {
-      "x": 16.66,
-      "y": 8.27,
-      "z": 43.19
-    }
+      "x": 27.25,
+      "y": 20.17,
+      "z": -6.4
+    },
+    "scale": 0.84,
+    "anchorModel": "fixed-world-orbit-latched-attack-origin"
   },
   "familyVisual": {
     "moment": "glade-young-play",
     "adults": 2,
     "young": 3,
-    "branchAngle": 0.08,
+    "branchAngle": 0.03,
+    "branchContactDistance": 0.949,
+    "positions": [
+      {
+        "x": -8,
+        "y": -0.6,
+        "z": -31
+      },
+      {
+        "x": 10.5,
+        "y": -0.289,
+        "z": -39
+      },
+      {
+        "x": -2.2,
+        "y": -1.022,
+        "z": -24.8
+      },
+      {
+        "x": 3.4,
+        "y": -0.774,
+        "z": -27.2
+      },
+      {
+        "x": 2.5,
+        "y": -0.318,
+        "z": -35
+      }
+    ],
     "roles": [
       "graze",
       "branch-pull",
@@ -336,7 +366,7 @@
       {
         "cue": "search",
         "caption": "[a near call circles overhead]",
-        "at": 0.485
+        "at": 0.491
       },
       {
         "cue": "cover",
@@ -396,7 +426,7 @@
   "sceneChildren": 62,
   "calls": 1,
   "triangles": 1,
-  "textures": 34,
+  "textures": 35,
   "geometries": 616,
   "viewport": [
     1440,
@@ -407,8 +437,8 @@
     "maxPixelRatio": 1.25,
     "quality": "balanced",
     "activeFpsCap": 60,
-    "renderedFrames": 62,
-    "skippedFrames": 76,
+    "renderedFrames": 67,
+    "skippedFrames": 84,
     "activeFpsPolicy": "60fps-cap-across-refresh-rates",
     "idleFpsCap": 30,
     "pausedFpsCap": 15,
@@ -418,6 +448,6 @@
     "gtaoSamples": 4,
     "antialiasing": "single-pass-fxaa"
   },
-  "firstRenderedAt": 239.30000001192093,
-  "recentMedianFrameMs": 17.6
+  "firstRenderedAt": 306.7999999523163,
+  "recentMedianFrameMs": 16.8
 }

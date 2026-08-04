@@ -35,7 +35,7 @@
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 12.575,
+    "elapsedSeconds": 12.634,
     "distanceTravelled": 0,
     "paused": false,
     "pauseReason": null,
@@ -70,7 +70,7 @@
       "label": "BEHAVIOR \u2014 young play beside the adults.",
       "exposure": 2,
       "plateIndex": 2,
-      "remainingSeconds": 1.9665999999642374,
+      "remainingSeconds": 1.9665999999046326,
       "zone": "iguanodon-glade"
     },
     "previewSeconds": 0,
@@ -125,7 +125,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 167.425,
+    "remainingLight": 167.366,
     "returnRoute": null,
     "returnCostSeconds": 0,
     "returnStrike": false,
@@ -138,27 +138,57 @@
     "attackStage": "orbit",
     "attackProgress": 0,
     "flightPose": {
-      "wingBeat": 0.2297,
+      "wingBeat": -0.1097,
       "wingFold": 0,
-      "mode": "upstroke",
-      "bank": -0.2112,
+      "mode": "downstroke",
+      "bank": 0.1431,
       "direction": [
-        0.9539,
-        -0.2825,
-        -0.1013
+        0.8381,
+        0.1297,
+        -0.5299
       ]
     },
     "position": {
-      "x": 11.93,
-      "y": 10.88,
-      "z": -39.29
-    }
+      "x": -14.88,
+      "y": 8.82,
+      "z": -11.88
+    },
+    "scale": 0.7216,
+    "anchorModel": "fixed-world-orbit-latched-attack-origin"
   },
   "familyVisual": {
     "moment": "glade-young-play",
     "adults": 2,
     "young": 3,
-    "branchAngle": 0.08,
+    "branchAngle": 0.03,
+    "branchContactDistance": 0.98,
+    "positions": [
+      {
+        "x": -8,
+        "y": -0.605,
+        "z": -31
+      },
+      {
+        "x": 10.5,
+        "y": -0.302,
+        "z": -39
+      },
+      {
+        "x": -2.2,
+        "y": -0.936,
+        "z": -24.8
+      },
+      {
+        "x": 3.4,
+        "y": -0.814,
+        "z": -27.2
+      },
+      {
+        "x": 2.5,
+        "y": -0.315,
+        "z": -35
+      }
+    ],
     "roles": [
       "graze",
       "branch-pull",
@@ -340,52 +370,52 @@
       {
         "cue": "examine",
         "caption": "[fern brushes aside; pencil marks the field card]",
-        "at": 0.181
+        "at": 0.192
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 0.187
+        "at": 0.203
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 0.261
+        "at": 0.277
       },
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 2.261
+        "at": 2.283
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 2.261
+        "at": 2.283
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 2.427
+        "at": 2.453
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 2.501
+        "at": 2.528
       },
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 4.491
+        "at": 4.533
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 4.491
+        "at": 4.533
       },
       {
         "cue": "search",
         "caption": "[a near call circles overhead]",
-        "at": 10.597
+        "at": 10.603
       },
       {
         "cue": "examine",
@@ -395,12 +425,12 @@
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 12.395
+        "at": 12.421
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 12.469
+        "at": 12.496
       }
     ]
   },
@@ -438,13 +468,13 @@
   },
   "plateCapture": {
     "status": "ready",
-    "durationMs": 18.8,
+    "durationMs": 30.1,
     "error": null
   },
   "sceneChildren": 62,
   "calls": 1,
   "triangles": 1,
-  "textures": 34,
+  "textures": 35,
   "geometries": 616,
   "viewport": [
     1440,
@@ -455,8 +485,8 @@
     "maxPixelRatio": 1.25,
     "quality": "balanced",
     "activeFpsCap": 60,
-    "renderedFrames": 779,
-    "skippedFrames": 717,
+    "renderedFrames": 788,
+    "skippedFrames": 812,
     "activeFpsPolicy": "60fps-cap-across-refresh-rates",
     "idleFpsCap": 30,
     "pausedFpsCap": 15,
@@ -466,6 +496,6 @@
     "gtaoSamples": 4,
     "antialiasing": "single-pass-fxaa"
   },
-  "firstRenderedAt": 238.9000000357628,
+  "firstRenderedAt": 309.89999985694885,
   "recentMedianFrameMs": 16.7
 }

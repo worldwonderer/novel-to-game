@@ -35,7 +35,7 @@
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 14.968,
+    "elapsedSeconds": 15.298,
     "distanceTravelled": 0,
     "paused": false,
     "pauseReason": null,
@@ -58,7 +58,7 @@
     "threatAwareness": 3,
     "threatState": "attack",
     "lastThreatEvent": "plate-exposure:+2",
-    "attackSeconds": 2.1421000000238393,
+    "attackSeconds": 2.349800000190737,
     "examinedTrack": true,
     "observedBehavior": true,
     "lastObservation": "The young keep close while the adults feed.",
@@ -117,7 +117,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 165.032,
+    "remainingLight": 164.702,
     "returnRoute": null,
     "returnCostSeconds": 0,
     "returnStrike": false,
@@ -127,30 +127,60 @@
   "threatVisual": {
     "state": "attack",
     "response": "orbit",
-    "attackStage": "attack",
-    "attackProgress": 1,
+    "attackStage": "pull-up",
+    "attackProgress": 0.95,
     "flightPose": {
-      "wingBeat": 0.1306,
-      "wingFold": 0.82,
+      "wingBeat": -0.1012,
+      "wingFold": 0.7829,
       "mode": "fold-dive",
-      "bank": -0.09,
+      "bank": -0.0825,
       "direction": [
-        0.1349,
-        -0.1536,
-        0.9789
+        0.3592,
+        0.0905,
+        0.9289
       ]
     },
     "position": {
-      "x": -2.6,
+      "x": -2.59,
       "y": 6.5,
-      "z": -7.8
-    }
+      "z": -7.78
+    },
+    "scale": 0.8765,
+    "anchorModel": "fixed-world-orbit-latched-attack-origin"
   },
   "familyVisual": {
     "moment": "glade-young-play",
     "adults": 2,
     "young": 3,
-    "branchAngle": 0.08,
+    "branchAngle": 0.03,
+    "branchContactDistance": 0.925,
+    "positions": [
+      {
+        "x": -8,
+        "y": -0.589,
+        "z": -31
+      },
+      {
+        "x": 10.5,
+        "y": -0.284,
+        "z": -39
+      },
+      {
+        "x": -2.2,
+        "y": -0.973,
+        "z": -24.8
+      },
+      {
+        "x": 3.4,
+        "y": -0.796,
+        "z": -27.2
+      },
+      {
+        "x": 2.5,
+        "y": -0.328,
+        "z": -35
+      }
+    ],
     "roles": [
       "graze",
       "branch-pull",
@@ -327,82 +357,82 @@
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 0.267
+        "at": 0.331
       },
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 2.283
+        "at": 2.32
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 2.283
+        "at": 2.32
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 2.453
+        "at": 2.496
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 2.523
+        "at": 2.571
       },
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 4.533
+        "at": 4.555
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 4.533
+        "at": 4.555
       },
       {
         "cue": "search",
         "caption": "[a near call circles overhead]",
-        "at": 10.608
+        "at": 10.64
       },
       {
         "cue": "examine",
         "caption": "[fern brushes aside; pencil marks the field card]",
-        "at": 10.693
+        "at": 10.731
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 10.699
+        "at": 10.741
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 10.768
+        "at": 10.816
       },
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 12.763
+        "at": 12.821
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 12.763
+        "at": 12.821
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 12.805
+        "at": 13.072
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 12.875
+        "at": 13.147
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 14.891
+        "at": 15.157
       }
     ]
   },
@@ -420,7 +450,7 @@
     "storageKey": "project-plateau:presentation:v2"
   },
   "ui": {
-    "prompt": "Raise rifle [F] \u00b7 Fire before contact [Left Mouse]",
+    "prompt": "Hold rifle [F] \u00b7 Fire before contact [Left Mouse]",
     "cameraOverlay": false,
     "rifleOverlay": false,
     "plateRail": true,
@@ -435,18 +465,18 @@
     "contactNote": null,
     "cartridgesVisible": true,
     "caption": "[glass plate seats in its case]",
-    "lightWatch": 166,
+    "lightWatch": 165,
     "terminal": null
   },
   "plateCapture": {
     "status": "ready",
-    "durationMs": 24.5,
+    "durationMs": 31,
     "error": null
   },
   "sceneChildren": 62,
   "calls": 1,
   "triangles": 1,
-  "textures": 34,
+  "textures": 35,
   "geometries": 616,
   "viewport": [
     1440,
@@ -457,8 +487,8 @@
     "maxPixelRatio": 1.25,
     "quality": "balanced",
     "activeFpsCap": 60,
-    "renderedFrames": 913,
-    "skippedFrames": 888,
+    "renderedFrames": 944,
+    "skippedFrames": 970,
     "activeFpsPolicy": "60fps-cap-across-refresh-rates",
     "idleFpsCap": 30,
     "pausedFpsCap": 15,
@@ -468,6 +498,6 @@
     "gtaoSamples": 4,
     "antialiasing": "single-pass-fxaa"
   },
-  "firstRenderedAt": 237.69999998807907,
+  "firstRenderedAt": 363,
   "recentMedianFrameMs": 16.7
 }

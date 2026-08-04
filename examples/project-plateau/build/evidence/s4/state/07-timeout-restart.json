@@ -120,27 +120,57 @@
     "attackStage": "orbit",
     "attackProgress": 0,
     "flightPose": {
-      "wingBeat": -0.1963,
+      "wingBeat": -0.0706,
       "wingFold": 0,
       "mode": "downstroke",
-      "bank": -0.0473,
+      "bank": -0.0533,
       "direction": [
-        0.9647,
-        -0.025,
-        -0.2623
+        -0.7654,
+        0.1405,
+        0.628
       ]
     },
     "position": {
-      "x": -14.79,
-      "y": 24.16,
-      "z": 36.98
-    }
+      "x": 19.65,
+      "y": 9.35,
+      "z": -6.32
+    },
+    "scale": 0.7222,
+    "anchorModel": "fixed-world-orbit-latched-attack-origin"
   },
   "familyVisual": {
     "moment": "glade-branch-pull",
     "adults": 2,
     "young": 3,
-    "branchAngle": 0.767,
+    "branchAngle": 0.15,
+    "branchContactDistance": 0.2,
+    "positions": [
+      {
+        "x": -8,
+        "y": -0.592,
+        "z": -31
+      },
+      {
+        "x": 10.5,
+        "y": -0.296,
+        "z": -39
+      },
+      {
+        "x": -2.2,
+        "y": -1.03,
+        "z": -24.8
+      },
+      {
+        "x": 3.4,
+        "y": -0.774,
+        "z": -27.2
+      },
+      {
+        "x": 2.5,
+        "y": -0.328,
+        "z": -35
+      }
+    ],
     "roles": [
       "graze",
       "branch-pull",
@@ -317,12 +347,12 @@
       {
         "cue": "field-start",
         "caption": "[brook water and insects under the canopy]",
-        "at": 21.392
+        "at": 21.509
       },
       {
         "cue": "failure",
         "caption": "[the field sound narrows to wind and brook]",
-        "at": 21.621
+        "at": 21.781
       }
     ]
   },
@@ -366,7 +396,7 @@
   "sceneChildren": 62,
   "calls": 1,
   "triangles": 1,
-  "textures": 34,
+  "textures": 35,
   "geometries": 616,
   "viewport": [
     1440,
@@ -377,8 +407,8 @@
     "maxPixelRatio": 1.25,
     "quality": "balanced",
     "activeFpsCap": 60,
-    "renderedFrames": 1324,
-    "skippedFrames": 1244,
+    "renderedFrames": 1338,
+    "skippedFrames": 1371,
     "activeFpsPolicy": "60fps-cap-across-refresh-rates",
     "idleFpsCap": 30,
     "pausedFpsCap": 15,
@@ -388,6 +418,6 @@
     "gtaoSamples": 4,
     "antialiasing": "single-pass-fxaa"
   },
-  "firstRenderedAt": 238.30000001192093,
+  "firstRenderedAt": 311.30000019073486,
   "recentMedianFrameMs": 16.7
 }

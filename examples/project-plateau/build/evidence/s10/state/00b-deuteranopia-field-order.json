@@ -120,27 +120,57 @@
     "attackStage": "orbit",
     "attackProgress": 0,
     "flightPose": {
-      "wingBeat": 0.1447,
+      "wingBeat": -0.0331,
       "wingFold": 0,
-      "mode": "upstroke",
-      "bank": 0.0452,
+      "mode": "downstroke",
+      "bank": 0.0543,
       "direction": [
-        -0.3166,
-        0.2138,
-        0.9242
+        -0.3751,
+        0.207,
+        0.9036
       ]
     },
     "position": {
-      "x": 31.79,
-      "y": 23.28,
-      "z": 46.21
-    }
+      "x": 28.7,
+      "y": 23.34,
+      "z": -7.54
+    },
+    "scale": 0.88,
+    "anchorModel": "fixed-world-orbit-latched-attack-origin"
   },
   "familyVisual": {
     "moment": "glade-young-play",
     "adults": 2,
     "young": 3,
-    "branchAngle": 0.08,
+    "branchAngle": 0.03,
+    "branchContactDistance": 0.926,
+    "positions": [
+      {
+        "x": -8,
+        "y": -0.589,
+        "z": -31
+      },
+      {
+        "x": 10.5,
+        "y": -0.285,
+        "z": -39
+      },
+      {
+        "x": -2.2,
+        "y": -0.927,
+        "z": -24.8
+      },
+      {
+        "x": 3.4,
+        "y": -0.791,
+        "z": -27.2
+      },
+      {
+        "x": 2.5,
+        "y": -0.329,
+        "z": -35
+      }
+    ],
     "roles": [
       "graze",
       "branch-pull",
@@ -355,7 +385,7 @@
   "sceneChildren": 62,
   "calls": 1,
   "triangles": 1,
-  "textures": 31,
+  "textures": 32,
   "geometries": 614,
   "viewport": [
     1440,
@@ -366,8 +396,8 @@
     "maxPixelRatio": 1.25,
     "quality": "balanced",
     "activeFpsCap": 60,
-    "renderedFrames": 21,
-    "skippedFrames": 45,
+    "renderedFrames": 27,
+    "skippedFrames": 52,
     "activeFpsPolicy": "60fps-cap-across-refresh-rates",
     "idleFpsCap": 30,
     "pausedFpsCap": 15,
@@ -377,6 +407,6 @@
     "gtaoSamples": 4,
     "antialiasing": "single-pass-fxaa"
   },
-  "firstRenderedAt": 238.9000000357628,
-  "recentMedianFrameMs": 33.2
+  "firstRenderedAt": 309.89999985694885,
+  "recentMedianFrameMs": 33.3
 }

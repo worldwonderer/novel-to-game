@@ -35,7 +35,7 @@
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 20.975,
+    "elapsedSeconds": 20.983,
     "distanceTravelled": 0,
     "paused": false,
     "pauseReason": null,
@@ -67,7 +67,7 @@
     "cameraRaised": false,
     "plateRailRevealed": true,
     "pendingExposure": null,
-    "previewSeconds": 3.974699999988079,
+    "previewSeconds": 3.9835,
     "lastProofEvent": {
       "plateIndex": 3,
       "frameKey": "return-occluded",
@@ -119,7 +119,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 131.025,
+    "remainingLight": 131.017,
     "returnRoute": "covered",
     "returnCostSeconds": 28,
     "returnStrike": false,
@@ -143,27 +143,57 @@
     "attackStage": "search",
     "attackProgress": 0,
     "flightPose": {
-      "wingBeat": 0.0414,
+      "wingBeat": 0.0409,
       "wingFold": 0.1,
       "mode": "upstroke",
       "bank": -0.04,
       "direction": [
-        -0.5321,
-        0.2197,
-        -0.8176
+        0.7924,
+        0.129,
+        0.5962
       ]
     },
     "position": {
-      "x": -4.6,
-      "y": 10.4,
-      "z": 46
-    }
+      "x": -13.41,
+      "y": 8.97,
+      "z": -12.63
+    },
+    "scale": 0.7218,
+    "anchorModel": "fixed-world-orbit-latched-attack-origin"
   },
   "familyVisual": {
     "moment": "glade-young-play",
     "adults": 2,
     "young": 3,
-    "branchAngle": 0.08,
+    "branchAngle": 0.03,
+    "branchContactDistance": 0.96,
+    "positions": [
+      {
+        "x": -8,
+        "y": -0.6,
+        "z": -31
+      },
+      {
+        "x": 10.5,
+        "y": -0.291,
+        "z": -39
+      },
+      {
+        "x": -2.2,
+        "y": -1.024,
+        "z": -24.8
+      },
+      {
+        "x": 3.4,
+        "y": -0.77,
+        "z": -27.2
+      },
+      {
+        "x": 2.5,
+        "y": -0.318,
+        "z": -35
+      }
+    ],
     "roles": [
       "graze",
       "branch-pull",
@@ -340,17 +370,17 @@
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 17.536
+        "at": 17.52
       },
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 19.531
+        "at": 19.525
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 19.531
+        "at": 19.525
       },
       {
         "cue": "search",
@@ -365,22 +395,22 @@
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 25.808
+        "at": 25.813
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 25.861
+        "at": 25.867
       },
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 27.872
+        "at": 27.861
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 27.872
+        "at": 27.861
       },
       {
         "cue": "cover",
@@ -390,32 +420,32 @@
       {
         "cue": "search",
         "caption": "[a near call circles overhead]",
-        "at": 33.883
+        "at": 33.877
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 34.107
+        "at": 34.085
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 34.16
+        "at": 34.139
       },
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 36.149
+        "at": 36.155
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 36.149
+        "at": 36.155
       },
       {
         "cue": "result",
         "caption": "[glass plates settle on the light board]",
-        "at": 36.176
+        "at": 36.171
       }
     ]
   },
@@ -433,7 +463,7 @@
     "storageKey": "project-plateau:presentation:v2"
   },
   "ui": {
-    "prompt": "Raise rifle [F] \u00b7 Fire before contact [Left Mouse]",
+    "prompt": "Hold rifle [F] \u00b7 Fire before contact [Left Mouse]",
     "cameraOverlay": false,
     "rifleOverlay": false,
     "plateRail": true,
@@ -459,13 +489,13 @@
   },
   "plateCapture": {
     "status": "ready",
-    "durationMs": 27.5,
+    "durationMs": 25.6,
     "error": null
   },
   "sceneChildren": 62,
   "calls": 1,
   "triangles": 1,
-  "textures": 34,
+  "textures": 35,
   "geometries": 616,
   "viewport": [
     1280,
@@ -476,8 +506,8 @@
     "maxPixelRatio": 1.25,
     "quality": "balanced",
     "activeFpsCap": 60,
-    "renderedFrames": 2210,
-    "skippedFrames": 2133,
+    "renderedFrames": 2221,
+    "skippedFrames": 2314,
     "activeFpsPolicy": "60fps-cap-across-refresh-rates",
     "idleFpsCap": 30,
     "pausedFpsCap": 15,
@@ -487,6 +517,6 @@
     "gtaoSamples": 4,
     "antialiasing": "single-pass-fxaa"
   },
-  "firstRenderedAt": 239.30000001192093,
+  "firstRenderedAt": 306.7999999523163,
   "recentMedianFrameMs": 16.7
 }

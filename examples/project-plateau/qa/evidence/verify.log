@@ -1,10 +1,10 @@
 command=npm run verify
-sourceCommit=null
-sourceFingerprint=578d03cbfbcbe66ac192ac1bcb808d3e215b14d1d6759d63d2b3012bbc22ee6f
+sourceCommit=d7af84165e48e495644ac6fa91e25a1f41192fee
+sourceFingerprint=35a92c7843835e8c67d34713849bc08f35f32a38c5c4bcb3ebd9372ed46606c8
 runtime=Node.js
-runtimeVersion=v25.6.1
-packageManager=npm@11.9.0
-pythonVersion=3.14.3
+runtimeVersion=v25.9.0
+packageManager=npm@11.12.1
+pythonVersion=3.14.5
 browser=Google Chrome 150.0.7871.187
 registered=test/audio.test.js,test/capture_visual_upgrade.py,test/collision.test.js,test/controller.test.js,test/entry-mode.test.js,test/foundation.test.js,test/hy3d-field-camera.test.js,test/hy3d-iguanodon.test.js,test/hy3d-pterodactyl.test.js,test/hy3d-rifle.test.js,test/iguanodon.test.js,test/pterodactyl.test.js,test/qa_collision.py,test/qa_controller.py,test/qa_entry.py,test/qa_loading.py,test/qa_motion.py,test/qa_s0.py,test/qa_s1.py,test/qa_s10.py,test/qa_s2.py,test/qa_s3.py,test/qa_s4.py,test/qa_s5.py,test/qa_s6.py,test/qa_s7.py,test/qa_s8.py,test/qa_s9.py,test/qa_visual_targets.py,test/render-budget.test.js,test/settings.test.js,test/simulation.test.js,test/terrain.test.js
 excluded={"test/capture_demo_clip.py": "reproducible delivery-media recorder, not a pass/fail test suite", "test/verify.py": "authoritative suite orchestrator; registering it would recurse"}
@@ -15,123 +15,123 @@ command=npm test
 > project-plateau-proof-before-dark@0.1.0 test
 > node --test test/*.test.js
 
-✔ every core field cue has a concise sound caption (1.297375ms)
-✔ audio settings clamp channel volumes and expose caption state (0.123917ms)
-✔ cue history and threat transitions stay observable without Web Audio (0.186958ms)
-✔ cue history remains bounded during a long field session (0.092625ms)
-✔ collision contract is a jumping 3D capsule with authored solid/non-solid policy (1.34525ms)
-✔ every solid collider is finite, uniquely identified and tied to a visible anchor (0.116ms)
-✔ spawn and authored route checkpoints are outside all solid geometry (7.571334ms)
-✔ circle contact follows the curved surface instead of axis-sticking (0.988125ms)
-✔ rotated tent collider preserves tangential movement along its authored canvas wall (1.051709ms)
-✔ an invalid overlap is deterministically depenetrated before movement resumes (0.483333ms)
-✔ simulation ground height follows the same heightfield used by rendering (3.319917ms)
-✔ an airborne capsule still collides with tall authored solids (0.149417ms)
-✔ gameplay keys are accepted only by an active unpaused field view (0.635958ms)
-✔ mouse deltas update heading and pitch with explicit signs and clamps (0.102459ms)
-✔ camera-relative planar axes stay orthogonal for arbitrary headings (0.095625ms)
-✔ supported desktop environments enter the interactive WebGL2 build (1.306125ms)
-✔ missing WebGL2 always routes to the local preview (0.075917ms)
-✔ touch-only and undersized devices route to the conversion preview (0.108583ms)
-✔ known social in-app browsers route to preview even at a desktop viewport (0.052083ms)
-✔ explicit preview is deterministic while interactive override still requires WebGL2 (0.05ms)
-✔ foundation exposes the locked viewport and performance budgets (1.283ms)
-✔ procedural placement is deterministic for a recorded seed (0.064833ms)
-✔ representative scene contains all declared subject and pressure groups (0.063666ms)
-✔ every authored solid collider stays registered to the rendered object position (77.220584ms)
-✔ the family asset exposes two adults, three young and both authored behaviors (47.860083ms)
-✔ family actions remain planted while anatomical pivots and branch contact carry motion (37.804959ms)
-✔ pterodactyl attack reads as search, fold-dive and close attack from simulation time (36.068167ms)
-✔ pterodactyl flight uses a visible asymmetric flap cycle instead of a static glide (44.732042ms)
-✔ pterodactyl body forward follows the actual orbit and attack travel tangent (42.310625ms)
-✔ atmosphere exposes layered humid depth rather than a flat sky backdrop (0.874333ms)
-✔ the glade composition protects a lit family-and-basalt sightline (39.80625ms)
-✔ environment landmarks use authored organic and fractured silhouettes instead of stretched primitives (36.273125ms)
-✔ basalt seams inherit each tilted pillar frame instead of floating in world space (43.719125ms)
-✔ route and brook ribbons conform every feathered edge vertex to local terrain (37.924583ms)
-✔ every instanced tree keeps its authored root plane in contact with terrain (37.010667ms)
-✔ every instanced fern stays upright with its root plane touching terrain (35.204375ms)
-✔ Fort Plateau reads as pitched canvas shelters with soft camp smoke (34.156791ms)
-✔ frame percentile is stable and keeps the slow tail visible (0.091667ms)
-✔ one percent low FPS averages the slowest one percent of frame times (0.060375ms)
-✔ runtime sources contain no remote asset or CDN request while navigation links may leave the app (4.790875ms)
-✔ the central helper prompt clears the protected silver-frame exposure area (0.535ms)
-✔ evidence retention never removes a release-bound resource (40.194708ms)
-✔ evidence retention defaults to a non-destructive dry run (36.564292ms)
-✔ evidence retention blocks apply when an authoritative root is missing or malformed (74.264584ms)
-✔ evidence retention blocks malformed transitive manifests (40.878791ms)
-✔ evidence retention rejects symlinks without touching their targets (40.4415ms)
-✔ authoritative verification stages recovery outside the authoritative record (43.069875ms)
-✔ HY3D camera-and-hands viewmodel is the only production camera asset and stays within budget (2.180584ms)
-✔ field-camera loader caches one matte local template (1.685291ms)
-✔ camera mount receives one integrated HY3D held-camera visual without procedural hands (1.297792ms)
-✔ standalone held camera keeps the wide hand-and-forearm silhouette from the reference (0.277084ms)
-✔ held camera points its lens away from the player instead of presenting the front element (1.155875ms)
-✔ HY3D production asset stays within the approved shared package and render budget (1.610667ms)
-✔ cached loader fetches once and reuses a prepared template (1.927875ms)
-✔ shared morph targets restore behavioral posing without duplicating the source mesh (18.748709ms)
-✔ young family members reuse the adult mesh with a persistent juvenile proportion morph (10.87875ms)
-✔ HY3D instances share heavy geometry and material resources (0.367083ms)
-✔ play and reach poses move anatomy while keeping a diagonal support pair planted (0.302292ms)
-✔ adult HY3D swap hides the fallback without changing family roles or young assets (24.665791ms)
-✔ production family mode can reuse the same HY3D resource for adults and young (7.775625ms)
-✔ attaching twice is idempotent and preserves the procedural fallback meshes (3.131291ms)
-✔ HY3D pterodactyl asset stays within the approved shared delivery budget (1.67325ms)
-✔ pterodactyl loader caches one matte template with shared flight morphs (2.578708ms)
-✔ flight instances share geometry and accept independent morph poses (19.112459ms)
-✔ flock upgrade hides procedural meshes once and reuses the HY3D template (9.25275ms)
-✔ standalone visual uses the expected scale, orientation and centered source (0.180959ms)
-✔ HY3D rifle-and-hands viewmodel is the only production gun asset and stays within budget (2.300166ms)
-✔ rifle loader caches one matte local template (1.56325ms)
-✔ rifle mount receives one integrated HY3D held-rifle visual without procedural hands (0.388792ms)
-✔ standalone held-rifle instance preserves the long local-Z silhouette plus hand width (0.19325ms)
-✔ adult Iguanodon is a grounded articulated loft model rather than a primitive blob (22.201667ms)
-✔ young Iguanodon keeps the same action rig with distinct proportions and palette (5.7365ms)
-✔ pterodactyl is an articulated thick-membrane creature rather than a paper triangle (17.961083ms)
-✔ pterodactyl exposes multi-joint wings and readable anatomical anchors (7.309667ms)
-✔ pterodactyl membrane has clay skin, darker veins and restrained translucency (5.2355ms)
-✔ pterodactyl wrists carry three grasping free digits distinct from the long wing finger (3.599ms)
-✔ pterodactyl rear feet have connected soles, pads and three tapered clawed toes (3.435208ms)
-✔ render scale caps Retina fill-rate without degrading standard displays (1.533584ms)
-✔ quality profiles expose bounded fill-rate and active cadence budgets (3.390292ms)
-✔ render cadence saves power on title and pause while preserving active play (2.575708ms)
-✔ active rendering remains near 60 FPS across standard and high-refresh displays (2.080667ms)
-✔ idle cadence remains stable on a 120 Hz display (0.626959ms)
-✔ presentation settings normalize invalid persisted values (1.226875ms)
-✔ settings round-trip through versioned storage and can be reset (0.15325ms)
-✔ blocked or malformed storage falls back without disabling controls (0.135875ms)
-✔ the measured compact route starts with a 180-second light budget (1.145958ms)
-✔ fresh and restarted player states are clean copies (0.671917ms)
-✔ walking, sprinting and crouching have ordered deterministic speeds (7.185583ms)
-✔ movement accelerates, coasts briefly, and settles instead of snapping between speeds (1.11175ms)
-✔ a fast reversal must shed forward velocity before building speed backward (0.664417ms)
-✔ rotated view keeps WASD aligned with the camera horizontal axes (0.494667ms)
-✔ pause freezes both world time and movement (0.080667ms)
-✔ jump has deterministic takeoff, apex and landing without double-jump (1.204875ms)
-✔ jump is rejected while crouching, holding a tool, exposing or paused (0.404958ms)
-✔ one large delta and fixed slices produce the same ballistic landing (2.048666ms)
-✔ focus loss releases held tools while preserving an exposure already in flight (0.165666ms)
-✔ a solid obstacle blocks penetration and permits axis sliding (0.75075ms)
-✔ a long simulation step cannot tunnel through a circular obstacle (1.294125ms)
-✔ leaving the navigable world recovers the last stable position (0.067042ms)
-✔ zone topology distinguishes the observation fork and both return routes (0.034416ms)
-✔ territory, glade, open proof and cover produce four readable threat states (5.925458ms)
-✔ examining the brook makes context eligible without awarding evidence (0.208333ms)
-✔ successive observed glade plates record young play and branch pull separately (0.141917ms)
-✔ camera raise slows movement and shutter commits one physical plate for two live seconds (5.539583ms)
-✔ open proof adds two awareness states and contact cracks the best intact plate (3.145208ms)
-✔ a later contact without body margin fails while the first contact remains recoverable (0.14725ms)
-✔ a timely raised-rifle shot spends one cartridge and interrupts attack (0.105042ms)
-✔ pause freezes a raised camera and live shutter commitment without spending a plate (0.05325ms)
-✔ restart clears observation, proof, damage and action history (0.0505ms)
-✔ intact evidence and all four result thresholds are deterministic (0.064083ms)
-✔ covered return commits its deterministic cost once and submits intact proof at Fort (0.309333ms)
-✔ an attack-state exposed return cracks the best plate without spending body margin (0.125875ms)
-✔ a fired-shot exposed return costs eighteen seconds and preserves its best plate (0.173875ms)
-✔ remaining light expires outside Fort with exact cause and actionable cue (0.11825ms)
-✔ terrain field is deterministic, finite and visibly multi-scale (2.521833ms)
-✔ terrain derivatives stay gentle on the playable route while preserving rolling relief (0.229333ms)
-✔ terrain renders as a bounded low-cost layer without a repeated marker-like ground-cover field (72.797834ms)
+✔ every core field cue has a concise sound caption (1.941333ms)
+✔ audio settings clamp channel volumes and expose caption state (0.15275ms)
+✔ cue history and threat transitions stay observable without Web Audio (1.816125ms)
+✔ cue history remains bounded during a long field session (2.038625ms)
+✔ collision contract is a jumping 3D capsule with authored solid/non-solid policy (1.875583ms)
+✔ every solid collider is finite, uniquely identified and tied to a visible anchor (0.16025ms)
+✔ spawn and authored route checkpoints are outside all solid geometry (10.594125ms)
+✔ circle contact follows the curved surface instead of axis-sticking (0.8725ms)
+✔ rotated tent collider preserves tangential movement along its authored canvas wall (0.819917ms)
+✔ an invalid overlap is deterministically depenetrated before movement resumes (0.530625ms)
+✔ simulation ground height follows the same heightfield used by rendering (4.291041ms)
+✔ an airborne capsule still collides with tall authored solids (0.14075ms)
+✔ gameplay keys are accepted only by an active unpaused field view (0.898958ms)
+✔ mouse deltas update heading and pitch with explicit signs and clamps (0.167708ms)
+✔ camera-relative planar axes stay orthogonal for arbitrary headings (0.098375ms)
+✔ supported desktop environments enter the interactive WebGL2 build (1.686792ms)
+✔ missing WebGL2 always routes to the local preview (0.0815ms)
+✔ touch-only and undersized devices route to the conversion preview (0.139041ms)
+✔ known social in-app browsers route to preview even at a desktop viewport (0.065958ms)
+✔ explicit preview is deterministic while interactive override still requires WebGL2 (0.064167ms)
+✔ foundation exposes the locked viewport and performance budgets (4.68175ms)
+✔ procedural placement is deterministic for a recorded seed (0.127375ms)
+✔ representative scene contains all declared subject and pressure groups (0.092542ms)
+✔ every authored solid collider stays registered to the rendered object position (274.333667ms)
+✔ the family asset exposes two adults, three young and both authored behaviors (82.168958ms)
+✔ family actions remain planted while anatomical pivots and branch contact carry motion (67.00775ms)
+✔ pterodactyl attack reads as search, fold-dive and close attack from simulation time (211.443542ms)
+✔ pterodactyl flight uses a visible asymmetric flap cycle instead of a static glide (59.131167ms)
+✔ pterodactyl body forward follows the actual orbit and attack travel tangent (56.937125ms)
+✔ atmosphere exposes layered humid depth rather than a flat sky backdrop (2.206834ms)
+✔ the glade composition protects a lit family-and-basalt sightline (55.443708ms)
+✔ environment landmarks use authored organic and fractured silhouettes instead of stretched primitives (63.643333ms)
+✔ basalt seams inherit each tilted pillar frame instead of floating in world space (53.022875ms)
+✔ route and brook ribbons conform every feathered edge vertex to local terrain (51.935209ms)
+✔ every instanced tree keeps its authored root plane in contact with terrain (51.536916ms)
+✔ every instanced fern stays upright with its root plane touching terrain (51.20875ms)
+✔ Fort Plateau reads as pitched canvas shelters with soft camp smoke (54.320875ms)
+✔ frame percentile is stable and keeps the slow tail visible (0.278542ms)
+✔ one percent low FPS averages the slowest one percent of frame times (0.251ms)
+✔ runtime sources contain no remote asset or CDN request while navigation links may leave the app (6.424125ms)
+✔ the central helper prompt clears the protected silver-frame exposure area (0.863958ms)
+✔ evidence retention never removes a release-bound resource (57.523042ms)
+✔ evidence retention defaults to a non-destructive dry run (53.453875ms)
+✔ evidence retention blocks apply when an authoritative root is missing or malformed (107.265458ms)
+✔ evidence retention blocks malformed transitive manifests (51.472542ms)
+✔ evidence retention rejects symlinks without touching their targets (52.18325ms)
+✔ authoritative verification stages recovery outside the authoritative record (58.955417ms)
+✔ HY3D camera-and-hands viewmodel is the only production camera asset and stays within budget (3.263916ms)
+✔ field-camera loader caches one matte local template (39.998291ms)
+✔ camera mount receives one integrated HY3D held-camera visual without procedural hands (1.464583ms)
+✔ standalone held camera keeps the wide hand-and-forearm silhouette from the reference (0.297541ms)
+✔ held camera points its lens away from the player instead of presenting the front element (5.283916ms)
+✔ HY3D production asset stays within the approved shared package and render budget (2.5015ms)
+✔ cached loader fetches once and reuses a prepared template (82.564125ms)
+✔ shared morph targets restore behavioral posing without duplicating the source mesh (52.745792ms)
+✔ young family members reuse the adult mesh with a persistent juvenile proportion morph (14.241417ms)
+✔ HY3D instances share heavy geometry and material resources (0.48075ms)
+✔ play and reach poses move anatomy while keeping a diagonal support pair planted (0.404583ms)
+✔ adult HY3D swap hides the fallback without changing family roles or young assets (51.286833ms)
+✔ production family mode can reuse the same HY3D resource for adults and young (34.4655ms)
+✔ attaching twice is idempotent and preserves the procedural fallback meshes (9.568417ms)
+✔ HY3D pterodactyl asset stays within the approved shared delivery budget (4.923167ms)
+✔ pterodactyl loader caches one matte template with shared flight morphs (5.579ms)
+✔ flight instances share geometry and accept independent morph poses (75.091084ms)
+✔ flock upgrade hides procedural meshes once and reuses the HY3D template (55.244542ms)
+✔ standalone visual uses the expected scale, orientation and centered source (5.544ms)
+✔ HY3D rifle-and-hands viewmodel is the only production gun asset and stays within budget (4.53525ms)
+✔ rifle loader caches one matte local template (2.216875ms)
+✔ rifle mount receives one integrated HY3D held-rifle visual without procedural hands (0.510875ms)
+✔ standalone held-rifle instance preserves the long local-Z silhouette plus hand width (1.630625ms)
+✔ adult Iguanodon is a grounded articulated loft model rather than a primitive blob (49.117333ms)
+✔ young Iguanodon keeps the same action rig with distinct proportions and palette (40.337583ms)
+✔ pterodactyl is an articulated thick-membrane creature rather than a paper triangle (44.102417ms)
+✔ pterodactyl exposes multi-joint wings and readable anatomical anchors (12.853375ms)
+✔ pterodactyl membrane has clay skin, darker veins and restrained translucency (8.254041ms)
+✔ pterodactyl wrists carry three grasping free digits distinct from the long wing finger (32.469208ms)
+✔ pterodactyl rear feet have connected soles, pads and three tapered clawed toes (10.875042ms)
+✔ render scale caps Retina fill-rate without degrading standard displays (0.830583ms)
+✔ quality profiles expose bounded fill-rate and active cadence budgets (0.822333ms)
+✔ render cadence saves power on title and pause while preserving active play (0.08675ms)
+✔ active rendering remains near 60 FPS across standard and high-refresh displays (1.635834ms)
+✔ idle cadence remains stable on a 120 Hz display (0.207167ms)
+✔ presentation settings normalize invalid persisted values (7.282792ms)
+✔ settings round-trip through versioned storage and can be reset (0.242167ms)
+✔ blocked or malformed storage falls back without disabling controls (0.200541ms)
+✔ the measured compact route starts with a 180-second light budget (1.120917ms)
+✔ fresh and restarted player states are clean copies (0.871167ms)
+✔ walking, sprinting and crouching have ordered deterministic speeds (12.591875ms)
+✔ movement accelerates, coasts briefly, and settles instead of snapping between speeds (1.808ms)
+✔ a fast reversal must shed forward velocity before building speed backward (1.033958ms)
+✔ rotated view keeps WASD aligned with the camera horizontal axes (0.754667ms)
+✔ pause freezes both world time and movement (0.106375ms)
+✔ jump has deterministic takeoff, apex and landing without double-jump (2.621209ms)
+✔ jump is rejected while crouching, holding a tool, exposing or paused (0.769083ms)
+✔ one large delta and fixed slices produce the same ballistic landing (3.037959ms)
+✔ focus loss releases held tools while preserving an exposure already in flight (0.217625ms)
+✔ a solid obstacle blocks penetration and permits axis sliding (1.187875ms)
+✔ a long simulation step cannot tunnel through a circular obstacle (2.293666ms)
+✔ leaving the navigable world recovers the last stable position (0.141625ms)
+✔ zone topology distinguishes the observation fork and both return routes (0.053666ms)
+✔ territory, glade, open proof and cover produce four readable threat states (9.240667ms)
+✔ examining the brook makes context eligible without awarding evidence (0.33275ms)
+✔ successive observed glade plates record young play and branch pull separately (0.181542ms)
+✔ camera raise slows movement and shutter commits one physical plate for two live seconds (3.805042ms)
+✔ open proof adds two awareness states and contact cracks the best intact plate (5.353041ms)
+✔ a later contact without body margin fails while the first contact remains recoverable (0.081584ms)
+✔ a timely raised-rifle shot spends one cartridge and interrupts attack (0.12225ms)
+✔ pause freezes a raised camera and live shutter commitment without spending a plate (0.067792ms)
+✔ restart clears observation, proof, damage and action history (0.063083ms)
+✔ intact evidence and all four result thresholds are deterministic (0.086666ms)
+✔ covered return commits its deterministic cost once and submits intact proof at Fort (0.450292ms)
+✔ an attack-state exposed return cracks the best plate without spending body margin (0.183416ms)
+✔ a fired-shot exposed return costs eighteen seconds and preserves its best plate (0.283042ms)
+✔ remaining light expires outside Fort with exact cause and actionable cue (0.171917ms)
+✔ terrain field is deterministic, finite and visibly multi-scale (3.115375ms)
+✔ terrain derivatives stay gentle on the playable route while preserving rolling relief (0.298417ms)
+✔ terrain renders as a bounded low-cost layer without a repeated marker-like ground-cover field (114.674792ms)
 ℹ tests 117
 ℹ suites 0
 ℹ pass 117
@@ -139,9 +139,9 @@ command=npm test
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 1037.125125
+ℹ duration_ms 1933.733625
 exitCode=0
-durationMs=1210
+durationMs=2190
 suite=build:production
 cwd=examples/project-plateau/build/app
 command=npm run build
@@ -154,14 +154,14 @@ vite v8.2.0 building client environment for production...
 transforming...✓ 48 modules transformed.
 rendering chunks...
 computing gzip size...
-dist/index.html                                9.22 kB │ gzip:   2.91 kB
-dist/assets/index-CIucFXkv.css                18.47 kB │ gzip:   5.59 kB
-dist/assets/index-DXJ5NVKu.js                  6.12 kB │ gzip:   2.58 kB
+dist/index.html                                9.39 kB │ gzip:   2.97 kB
+dist/assets/index-NJZTe-wq.css                18.62 kB │ gzip:   5.63 kB
+dist/assets/index-Djax0QYc.js                  6.12 kB │ gzip:   2.58 kB
 dist/assets/GLTFLoader-DB8oIB9H.js            43.28 kB │ gzip:  12.86 kB
 dist/assets/BufferGeometryUtils-qQM6QJN6.js  253.24 kB │ gzip:  67.91 kB
-dist/assets/main-CIPHuGwQ.js                 610.88 kB │ gzip: 187.21 kB
+dist/assets/main-5tVpfuFA.js                 612.11 kB │ gzip: 187.62 kB
 
-✓ built in 144ms
+✓ built in 209ms
 
 [plugin builtin:vite-reporter]
 (!) Some chunks are larger than 500 kB after minification. Consider:
@@ -169,7 +169,7 @@ dist/assets/main-CIPHuGwQ.js                 610.88 kB │ gzip: 187.21 kB
 - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
 - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
 exitCode=0
-durationMs=407
+durationMs=595
 suite=browser:checkpoint-history
 cwd=examples/project-plateau/build/app
 command=python3 test/qa_s0.py
@@ -177,14 +177,14 @@ command=python3 test/qa_s0.py
   "stage": "s0-renderer",
   "source": {
     "scope": "index.html, package manifests, public assets and src",
-    "sha256": "578d03cbfbcbe66ac192ac1bcb808d3e215b14d1d6759d63d2b3012bbc22ee6f"
+    "sha256": "35a92c7843835e8c67d34713849bc08f35f32a38c5c4bcb3ebd9372ed46606c8"
   },
   "environment": {
-    "node": "v25.6.1",
-    "npm": "11.9.0",
+    "node": "v25.9.0",
+    "npm": "11.12.1",
     "vite": "8.2.0",
     "three": "0.185.1",
-    "python": "3.14.3",
+    "python": "3.14.5",
     "browser": "Google Chrome 150.0.7871.187",
     "baseUrl": "http://127.0.0.1:4173"
   },
@@ -205,14 +205,14 @@ command=python3 test/qa_s0.py
     "samples": 240,
     "medianFrameMs": 16.7,
     "medianFps": 59.9,
-    "onePercentLowFps": 39.3,
-    "worstFrameMs": 25.5
+    "onePercentLowFps": 56.5,
+    "worstFrameMs": 17.7
   },
   "loading": {
-    "observedTtiMs": 1057.5,
+    "observedTtiMs": 1507.1,
     "budgetTtiMs": 8000,
-    "distRawBytes": 6660269,
-    "distGzipBytes": 4792819,
+    "distRawBytes": 6842924,
+    "distGzipBytes": 4973189,
     "initialCompressedBudgetBytes": 20971520
   },
   "render": {
@@ -252,7 +252,7 @@ command=python3 test/qa_s0.py
       "heading": 0,
       "pitch": 0,
       "stance": "walk",
-      "elapsedSeconds": 0.968,
+      "elapsedSeconds": 1.04,
       "distanceTravelled": 0,
       "paused": false,
       "pauseReason": null,
@@ -324,7 +324,7 @@ command=python3 test/qa_s0.py
       "failed": false,
       "failureCause": null,
       "contactCount": 0,
-      "remainingLight": 179.032,
+      "remainingLight": 178.96,
       "returnRoute": null,
       "returnCostSeconds": 0,
       "returnStrike": false,
@@ -337,27 +337,57 @@ command=python3 test/qa_s0.py
       "attackStage": "orbit",
       "attackProgress": 0,
       "flightPose": {
-        "wingBeat": 0.2411,
+        "wingBeat": 0.2883,
         "wingFold": 0,
         "mode": "upstroke",
-        "bank": 0.1086,
+        "bank": 0.1182,
         "direction": [
-          -0.6689,
-          0.1471,
-          0.7286
+          -0.7113,
+          0.1335,
+          0.6901
         ]
       },
       "position": {
-        "x": 30.61,
-        "y": 23.7,
-        "z": 48.11
-      }
+        "x": 27.28,
+        "y": 23.77,
+        "z": -5.56
+      },
+      "scale": 0.88,
+      "anchorModel": "fixed-world-orbit-latched-attack-origin"
     },
     "familyVisual": {
       "moment": "glade-young-play",
       "adults": 2,
       "young": 3,
-      "branchAngle": 0.08,
+      "branchAngle": 0.03,
+      "branchContactDistance": 0.906,
+      "positions": [
+        {
+          "x": -8,
+          "y": -0.596,
+          "z": -31
+        },
+        {
+          "x": 10.5,
+          "y": -0.278,
+          "z": -39
+        },
+        {
+          "x": -2.2,
+          "y": -1.055,
+          "z": -24.8
+        },
+        {
+          "x": 3.4,
+          "y": -0.708,
+          "z": -27.2
+        },
+        {
+          "x": 2.5,
+          "y": -0.32,
+          "z": -35
+        }
+      ],
       "roles": [
         "graze",
         "branch-pull",
@@ -578,7 +608,7 @@ command=python3 test/qa_s0.py
     "sceneChildren": 62,
     "calls": 1,
     "triangles": 1,
-    "textures": 34,
+    "textures": 35,
     "geometries": 615,
     "viewport": [
       1440,
@@ -589,8 +619,8 @@ command=python3 test/qa_s0.py
       "maxPixelRatio": 1.25,
       "quality": "balanced",
       "activeFpsCap": 60,
-      "renderedFrames": 82,
-      "skippedFrames": 98,
+      "renderedFrames": 89,
+      "skippedFrames": 118,
       "activeFpsPolicy": "60fps-cap-across-refresh-rates",
       "idleFpsCap": 30,
       "pausedFpsCap": 15,
@@ -600,8 +630,8 @@ command=python3 test/qa_s0.py
       "gtaoSamples": 4,
       "antialiasing": "single-pass-fxaa"
     },
-    "firstRenderedAt": 239.70000004768372,
-    "recentMedianFrameMs": 17
+    "firstRenderedAt": 370.19999980926514,
+    "recentMedianFrameMs": 16.7
   },
   "minimumRender": {
     "stage": "s10-glade-clarity",
@@ -640,7 +670,7 @@ command=python3 test/qa_s0.py
       "heading": 0,
       "pitch": 0,
       "stance": "walk",
-      "elapsedSeconds": 5.81,
+      "elapsedSeconds": 5.857,
       "distanceTravelled": 0,
       "paused": false,
       "pauseReason": null,
@@ -712,7 +742,7 @@ command=python3 test/qa_s0.py
       "failed": false,
       "failureCause": null,
       "contactCount": 0,
-      "remainingLight": 174.19,
+      "remainingLight": 174.144,
       "returnRoute": null,
       "returnCostSeconds": 0,
       "returnStrike": false,
@@ -725,27 +755,57 @@ command=python3 test/qa_s0.py
       "attackStage": "orbit",
       "attackProgress": 0,
       "flightPose": {
-        "wingBeat": 0.2577,
+        "wingBeat": 0.1216,
         "wingFold": 0,
         "mode": "upstroke",
-        "bank": 0.0479,
+        "bank": 0.0365,
         "direction": [
-          -0.9879,
-          -0.063,
-          0.1415
+          -0.9894,
+          -0.066,
+          0.1294
         ]
       },
       "position": {
-        "x": 13.98,
-        "y": 23.84,
-        "z": 54.39
-      }
+        "x": 10.15,
+        "y": 23.79,
+        "z": 0.51
+      },
+      "scale": 0.88,
+      "anchorModel": "fixed-world-orbit-latched-attack-origin"
     },
     "familyVisual": {
       "moment": "glade-branch-pull",
       "adults": 2,
       "young": 3,
-      "branchAngle": 0.319,
+      "branchAngle": 0.042,
+      "branchContactDistance": 0.845,
+      "positions": [
+        {
+          "x": -8,
+          "y": -0.597,
+          "z": -31
+        },
+        {
+          "x": 10.5,
+          "y": -0.3,
+          "z": -39
+        },
+        {
+          "x": -2.2,
+          "y": -1.029,
+          "z": -24.8
+        },
+        {
+          "x": 3.4,
+          "y": -0.779,
+          "z": -27.2
+        },
+        {
+          "x": 2.5,
+          "y": -0.324,
+          "z": -35
+        }
+      ],
       "roles": [
         "graze",
         "branch-pull",
@@ -966,7 +1026,7 @@ command=python3 test/qa_s0.py
     "sceneChildren": 62,
     "calls": 1,
     "triangles": 1,
-    "textures": 34,
+    "textures": 35,
     "geometries": 615,
     "viewport": [
       1280,
@@ -977,8 +1037,8 @@ command=python3 test/qa_s0.py
       "maxPixelRatio": 1.25,
       "quality": "balanced",
       "activeFpsCap": 60,
-      "renderedFrames": 372,
-      "skippedFrames": 342,
+      "renderedFrames": 378,
+      "skippedFrames": 406,
       "activeFpsPolicy": "60fps-cap-across-refresh-rates",
       "idleFpsCap": 30,
       "pausedFpsCap": 15,
@@ -988,7 +1048,7 @@ command=python3 test/qa_s0.py
       "gtaoSamples": 4,
       "antialiasing": "single-pass-fxaa"
     },
-    "firstRenderedAt": 239.70000004768372,
+    "firstRenderedAt": 370.19999980926514,
     "recentMedianFrameMs": 16.7
   },
   "screenshots": [
@@ -1005,7 +1065,7 @@ command=python3 test/qa_s0.py
 }
 S0 PASS: build/evidence/s0/report.json
 exitCode=0
-durationMs=8250
+durationMs=10106
 suite=browser:checkpoint-history
 cwd=examples/project-plateau/build/app
 command=python3 test/qa_s1.py
@@ -1035,25 +1095,25 @@ command=python3 test/qa_s1.py
     "inputSegments": 30,
     "lifecycleRestarts": 0,
     "memory": {
-      "used": 69897551,
-      "total": 98359319
+      "used": 76657547,
+      "total": 100796623
     }
   },
   "performance": {
     "samples": 240,
     "medianFrameMs": 16.7,
     "medianFps": 59.9,
-    "onePercentLowFps": 39.1,
-    "worstFrameMs": 26
+    "onePercentLowFps": 56.5,
+    "worstFrameMs": 17.7
   },
   "source": {
     "scope": "index.html, package manifests, public assets and src",
-    "sha256": "578d03cbfbcbe66ac192ac1bcb808d3e215b14d1d6759d63d2b3012bbc22ee6f"
+    "sha256": "35a92c7843835e8c67d34713849bc08f35f32a38c5c4bcb3ebd9372ed46606c8"
   }
 }
 S1 PASS: build/evidence/s1/report.json
 exitCode=0
-durationMs=73258
+durationMs=74284
 suite=browser:checkpoint-history
 cwd=examples/project-plateau/build/app
 command=python3 test/qa_s2.py
@@ -1078,17 +1138,17 @@ command=python3 test/qa_s2.py
     "samples": 240,
     "medianFrameMs": 16.7,
     "medianFps": 59.9,
-    "onePercentLowFps": 39.1,
+    "onePercentLowFps": 39.2,
     "worstFrameMs": 25.7
   },
   "source": {
     "scope": "index.html, package manifests, public assets and src",
-    "sha256": "578d03cbfbcbe66ac192ac1bcb808d3e215b14d1d6759d63d2b3012bbc22ee6f"
+    "sha256": "35a92c7843835e8c67d34713849bc08f35f32a38c5c4bcb3ebd9372ed46606c8"
   }
 }
 S2 PASS: build/evidence/s2/report.json
 exitCode=0
-durationMs=18789
+durationMs=18244
 suite=browser:checkpoint-history
 cwd=examples/project-plateau/build/app
 command=python3 test/qa_s3.py
@@ -1115,17 +1175,17 @@ command=python3 test/qa_s3.py
     "samples": 240,
     "medianFrameMs": 16.7,
     "medianFps": 59.9,
-    "onePercentLowFps": 38.8,
-    "worstFrameMs": 26.2
+    "onePercentLowFps": 39.6,
+    "worstFrameMs": 25.5
   },
   "source": {
     "scope": "index.html, package manifests, public assets and src",
-    "sha256": "578d03cbfbcbe66ac192ac1bcb808d3e215b14d1d6759d63d2b3012bbc22ee6f"
+    "sha256": "35a92c7843835e8c67d34713849bc08f35f32a38c5c4bcb3ebd9372ed46606c8"
   }
 }
 S3 PASS: build/evidence/s3/report.json
 exitCode=0
-durationMs=16444
+durationMs=17941
 suite=browser:checkpoint-history
 cwd=examples/project-plateau/build/app
 command=python3 test/qa_s4.py
@@ -1153,17 +1213,17 @@ command=python3 test/qa_s4.py
     "samples": 240,
     "medianFrameMs": 16.7,
     "medianFps": 59.9,
-    "onePercentLowFps": 38.4,
-    "worstFrameMs": 26.1
+    "onePercentLowFps": 56.6,
+    "worstFrameMs": 17.7
   },
   "source": {
     "scope": "index.html, package manifests, public assets and src",
-    "sha256": "578d03cbfbcbe66ac192ac1bcb808d3e215b14d1d6759d63d2b3012bbc22ee6f"
+    "sha256": "35a92c7843835e8c67d34713849bc08f35f32a38c5c4bcb3ebd9372ed46606c8"
   }
 }
 S4 PASS: build/evidence/s4/report.json
 exitCode=0
-durationMs=38697
+durationMs=40060
 suite=browser:checkpoint-history
 cwd=examples/project-plateau/build/app
 command=python3 test/qa_s5.py
@@ -1194,17 +1254,17 @@ command=python3 test/qa_s5.py
     "samples": 240,
     "medianFrameMs": 16.7,
     "medianFps": 59.9,
-    "onePercentLowFps": 35.3,
-    "worstFrameMs": 33.6
+    "onePercentLowFps": 40,
+    "worstFrameMs": 25
   },
   "source": {
     "scope": "index.html, package manifests, public assets and src",
-    "sha256": "578d03cbfbcbe66ac192ac1bcb808d3e215b14d1d6759d63d2b3012bbc22ee6f"
+    "sha256": "35a92c7843835e8c67d34713849bc08f35f32a38c5c4bcb3ebd9372ed46606c8"
   }
 }
 S5 PASS: build/evidence/s5/report.json
 exitCode=0
-durationMs=53944
+durationMs=55680
 suite=browser:checkpoint-history
 cwd=examples/project-plateau/build/app
 command=python3 test/qa_s6.py
@@ -1233,17 +1293,17 @@ command=python3 test/qa_s6.py
     "samples": 240,
     "medianFrameMs": 16.7,
     "medianFps": 59.9,
-    "onePercentLowFps": 36.2,
-    "worstFrameMs": 32
+    "onePercentLowFps": 39.7,
+    "worstFrameMs": 25.3
   },
   "source": {
     "scope": "index.html, package manifests, public assets and src",
-    "sha256": "578d03cbfbcbe66ac192ac1bcb808d3e215b14d1d6759d63d2b3012bbc22ee6f"
+    "sha256": "35a92c7843835e8c67d34713849bc08f35f32a38c5c4bcb3ebd9372ed46606c8"
   }
 }
 S6 PASS: build/evidence/s6/report.json
 exitCode=0
-durationMs=15491
+durationMs=19023
 suite=browser:checkpoint-history
 cwd=examples/project-plateau/build/app
 command=python3 test/qa_s7.py
@@ -1269,9 +1329,9 @@ command=python3 test/qa_s7.py
   },
   "loading": {
     "firstNoCacheNavigation": {
-      "timeToFirstFrameMs": 3397.9,
-      "domInteractiveMs": 173.1,
-      "loadEventMs": 492.2,
+      "timeToFirstFrameMs": 3056.6,
+      "domInteractiveMs": 61.7,
+      "loadEventMs": 222.1,
       "resourceCount": 43,
       "ui": {
         "visible": false,
@@ -1280,9 +1340,9 @@ command=python3 test/qa_s7.py
       }
     },
     "finalNavigation": {
-      "timeToFirstFrameMs": 3504.8,
-      "domInteractiveMs": 187,
-      "loadEventMs": 620.9,
+      "timeToFirstFrameMs": 3077.6,
+      "domInteractiveMs": 90,
+      "loadEventMs": 228.7,
       "resourceCount": 44,
       "ui": {
         "visible": false,
@@ -1320,19 +1380,19 @@ command=python3 test/qa_s7.py
         "gzipBytes": 818165
       },
       {
-        "path": "assets/index-CIucFXkv.css",
-        "rawBytes": 18471,
-        "gzipBytes": 5546
-      },
-      {
-        "path": "assets/index-DXJ5NVKu.js",
+        "path": "assets/index-Djax0QYc.js",
         "rawBytes": 6124,
-        "gzipBytes": 2612
+        "gzipBytes": 2613
       },
       {
-        "path": "assets/main-CIPHuGwQ.js",
-        "rawBytes": 610887,
-        "gzipBytes": 185536
+        "path": "assets/index-NJZTe-wq.css",
+        "rawBytes": 18625,
+        "gzipBytes": 5585
+      },
+      {
+        "path": "assets/main-5tVpfuFA.js",
+        "rawBytes": 612116,
+        "gzipBytes": 185949
       },
       {
         "path": "assets/pterodactyl-hy3d-v35-stylized.glb",
@@ -1346,27 +1406,27 @@ command=python3 test/qa_s7.py
       },
       {
         "path": "index.html",
-        "rawBytes": 9229,
-        "gzipBytes": 2928
+        "rawBytes": 9398,
+        "gzipBytes": 2981
       },
       {
         "path": "media/project-plateau-preview-15s.mp4",
-        "rawBytes": 1143887,
-        "gzipBytes": 1138623
+        "rawBytes": 1319426,
+        "gzipBytes": 1314414
       },
       {
         "path": "media/project-plateau-preview-poster.jpg",
-        "rawBytes": 46128,
-        "gzipBytes": 44610
+        "rawBytes": 48411,
+        "gzipBytes": 47947
       },
       {
         "path": "media/project-plateau-preview.json",
-        "rawBytes": 3860,
-        "gzipBytes": 1533
+        "rawBytes": 7141,
+        "gzipBytes": 2269
       }
     ],
-    "rawBytes": 6660269,
-    "gzipBytes": 4792819,
+    "rawBytes": 6842924,
+    "gzipBytes": 4973189,
     "initialCompressedBudgetBytes": 20971520,
     "totalBudgetBytes": 52428800
   },
@@ -1375,25 +1435,25 @@ command=python3 test/qa_s7.py
       "samples": 120,
       "medianFrameMs": 16.7,
       "medianFps": 59.9,
-      "onePercentLowFps": 38.6,
-      "worstFrameMs": 26
+      "onePercentLowFps": 39.3,
+      "worstFrameMs": 25.6
     },
     "targetViewport": {
       "samples": 120,
       "medianFrameMs": 16.7,
       "medianFps": 59.9,
-      "onePercentLowFps": 39.5,
-      "worstFrameMs": 25.3
+      "onePercentLowFps": 39.8,
+      "worstFrameMs": 25.1
     }
   },
   "source": {
     "scope": "index.html, package manifests, public assets and src",
-    "sha256": "578d03cbfbcbe66ac192ac1bcb808d3e215b14d1d6759d63d2b3012bbc22ee6f"
+    "sha256": "35a92c7843835e8c67d34713849bc08f35f32a38c5c4bcb3ebd9372ed46606c8"
   }
 }
 S7 PASS: build/evidence/s7/report.json
 exitCode=0
-durationMs=36566
+durationMs=37763
 suite=browser:checkpoint-history
 cwd=examples/project-plateau/build/app
 command=python3 test/qa_s9.py
@@ -1417,26 +1477,26 @@ command=python3 test/qa_s9.py
   "plateImages": [
     {
       "plate": 1,
-      "bytesInCssValue": 108510,
-      "sha256": "70718472dcf3c6d691229834c15cbe812eb7e86d52b70755a98252c2a29aaa95",
+      "bytesInCssValue": 109846,
+      "sha256": "25edff3b8fc7924cc343700395cc3819485e12990de651b3b7a814bb73c8ff88",
       "filter": "grayscale(1) sepia(0.08) contrast(1.24) brightness(0.82)"
     },
     {
       "plate": 2,
-      "bytesInCssValue": 98822,
-      "sha256": "889829f2bdd3514ae229226d04fad66f47ecbfe7a8fa154ceb56455f3b79aaa5",
+      "bytesInCssValue": 97930,
+      "sha256": "d48b6dd763a20cec96fe95ab0c84321c7d70d78267d9835a026e82ca0c78721a",
       "filter": "grayscale(1) sepia(0.08) contrast(1.24) brightness(0.82)"
     },
     {
       "plate": 3,
-      "bytesInCssValue": 98330,
-      "sha256": "38991fc3a01db646ecd08d0509d68da4293ccc884c5defa187743d4d124d8971",
+      "bytesInCssValue": 99770,
+      "sha256": "ed2e69e0bf6e0e8aaec1625031450461ae93fee460ffcf85939a012785b342a9",
       "filter": "grayscale(1) sepia(0.08) contrast(1.24) brightness(0.82)"
     },
     {
       "plate": 4,
-      "bytesInCssValue": 100038,
-      "sha256": "880134adf641d13f5a0cbebddc1ad89b7601743032409093eeb584b2ca344df6",
+      "bytesInCssValue": 102282,
+      "sha256": "c537c23bcf667fba23c181b4ee96ff89819be681a1d3af432ae4bf52c73407b8",
       "filter": "grayscale(1) sepia(0.08) contrast(1.24) brightness(0.82)"
     }
   ],
@@ -1444,17 +1504,17 @@ command=python3 test/qa_s9.py
     "samples": 240,
     "medianFrameMs": 16.7,
     "medianFps": 59.9,
-    "onePercentLowFps": 38.9,
-    "worstFrameMs": 25.9
+    "onePercentLowFps": 39.7,
+    "worstFrameMs": 25.3
   },
   "source": {
     "scope": "index.html, package manifests, public assets and src",
-    "sha256": "578d03cbfbcbe66ac192ac1bcb808d3e215b14d1d6759d63d2b3012bbc22ee6f"
+    "sha256": "35a92c7843835e8c67d34713849bc08f35f32a38c5c4bcb3ebd9372ed46606c8"
   }
 }
 S9 PASS: build/evidence/s9/report.json
 exitCode=0
-durationMs=46707
+durationMs=36889
 suite=browser:complete-run
 cwd=examples/project-plateau/build/app
 command=python3 test/qa_s8.py
@@ -1482,10 +1542,10 @@ command=python3 test/qa_s8.py
   },
   "pathMetrics": {
     "Strong": {
-      "wallSeconds": 58.869,
-      "simulationSeconds": 58.942,
-      "distanceTravelled": 133.717,
-      "remainingLight": 93.058,
+      "wallSeconds": 58.987,
+      "simulationSeconds": 59.181,
+      "distanceTravelled": 133.744,
+      "remainingLight": 92.819,
       "returnCostSeconds": 28,
       "route": "covered",
       "result": {
@@ -1497,16 +1557,16 @@ command=python3 test/qa_s8.py
         "survivingPlates": 4,
         "route": "covered",
         "brookResponse": null,
-        "remainingLight": 93.1,
+        "remainingLight": 92.8,
         "gunshotCallback": null
       },
       "visionMode": "full-colour"
     },
     "Mixed": {
-      "wallSeconds": 38.66,
-      "simulationSeconds": 38.659,
-      "distanceTravelled": 131.447,
-      "remainingLight": 123.341,
+      "wallSeconds": 38.858,
+      "simulationSeconds": 38.866,
+      "distanceTravelled": 131.364,
+      "remainingLight": 123.134,
       "returnCostSeconds": 18,
       "route": "exposed",
       "result": {
@@ -1518,16 +1578,16 @@ command=python3 test/qa_s8.py
         "survivingPlates": 3,
         "route": "exposed",
         "brookResponse": "brush-moving",
-        "remainingLight": 123.3,
+        "remainingLight": 123.1,
         "gunshotCallback": "The report carried. Something answered by the brook."
       },
       "visionMode": "full-colour"
     },
     "Panic": {
-      "wallSeconds": 26.593,
-      "simulationSeconds": 26.6,
-      "distanceTravelled": 79.606,
-      "remainingLight": 135.4,
+      "wallSeconds": 26.745,
+      "simulationSeconds": 26.733,
+      "distanceTravelled": 79.559,
+      "remainingLight": 135.267,
       "returnCostSeconds": 18,
       "route": "exposed",
       "result": {
@@ -1540,10 +1600,10 @@ command=python3 test/qa_s8.py
       "visionMode": "full-colour"
     },
     "Achromatopsia Strong": {
-      "wallSeconds": 58.919,
-      "simulationSeconds": 58.916,
-      "distanceTravelled": 133.893,
-      "remainingLight": 93.084,
+      "wallSeconds": 58.878,
+      "simulationSeconds": 58.883,
+      "distanceTravelled": 133.646,
+      "remainingLight": 93.118,
       "returnCostSeconds": 28,
       "route": "covered",
       "result": {
@@ -1565,17 +1625,17 @@ command=python3 test/qa_s8.py
     "samples": 240,
     "medianFrameMs": 16.7,
     "medianFps": 59.9,
-    "onePercentLowFps": 39,
-    "worstFrameMs": 25.9
+    "onePercentLowFps": 56.6,
+    "worstFrameMs": 17.7
   },
   "source": {
     "scope": "index.html, package manifests, public assets and src",
-    "sha256": "578d03cbfbcbe66ac192ac1bcb808d3e215b14d1d6759d63d2b3012bbc22ee6f"
+    "sha256": "35a92c7843835e8c67d34713849bc08f35f32a38c5c4bcb3ebd9372ed46606c8"
   }
 }
 S8 PASS: build/evidence/s8/report.json
 exitCode=0
-durationMs=190374
+durationMs=193734
 suite=browser:controller-contract
 cwd=examples/project-plateau/build/app
 command=python3 test/qa_controller.py
@@ -1589,6 +1649,9 @@ command=python3 test/qa_controller.py
     "mouse delta to camera orientation",
     "camera-relative W projection",
     "spacebar ballistic jump and grounded landing",
+    "camera raise preserves pterodactyl position, scale and flight state",
+    "player movement preserves world-space pterodactyl and planted family transforms",
+    "compact desktop captions preserve the plate-rail safe area",
     "focus-loss transient tool reset",
     "non-blocking shutter capture",
     "pointer-lock loss pause",
@@ -1599,7 +1662,7 @@ command=python3 test/qa_controller.py
   ]
 }
 exitCode=0
-durationMs=5781
+durationMs=8573
 suite=browser:motion-visual
 cwd=examples/project-plateau/build/app
 command=python3 test/qa_motion.py
@@ -1607,36 +1670,36 @@ command=python3 test/qa_motion.py
   "status": "PASS",
   "pointerLockMode": "deterministic-browser-shim",
   "staticNormalizedDiffs": [
-    0.0,
-    0.0
+    0.000152,
+    0.000141
   ],
   "motionNormalizedDiffs": [
-    0.014519,
-    0.014837,
-    0.015813,
-    0.014463,
-    0.017239,
-    0.015108,
-    0.014496
+    0.015111,
+    0.01431,
+    0.015749,
+    0.015807,
+    0.018622,
+    0.015895,
+    0.015814
   ],
   "framePacing": {
     "samples": 120,
     "medianFrameMs": 16.7,
     "medianFps": 59.9,
-    "onePercentLowFps": 37.6,
-    "worstFrameMs": 26.7
+    "onePercentLowFps": 58,
+    "worstFrameMs": 17.3
   },
   "finalHeading": -0.332,
   "finalPosition": {
-    "x": 8.011,
-    "z": 55.021
+    "x": 8.155,
+    "z": 54.584
   },
   "evidence": [
     "build/evidence/motion/motion-contact-sheet.jpg"
   ]
 }
 exitCode=0
-durationMs=8686
+durationMs=10703
 suite=browser:collision-contract
 cwd=examples/project-plateau/build/app
 command=python3 test/qa_collision.py
@@ -1648,11 +1711,11 @@ command=python3 test/qa_collision.py
       "id": "01-visible-brook-boulder",
       "expectedCollision": "brook-boulder",
       "visual": "evidence/collision/01-visible-brook-boulder.jpg",
-      "visualSha256": "f77d566a0077c7ff8e4af9725555029d76f851f7aad62a3817ab76a9c64e2040",
+      "visualSha256": "1aef3cbd02bdeabeec7ff13f78a9c3e3de12218e25a0989cd9aa53ebbc60e75b",
       "state": "evidence/collision/state/01-visible-brook-boulder.json",
-      "stateSha256": "716c01c3621dc8efa949888c73da259dc5c461fe7a58123609655b5da27ce25b",
+      "stateSha256": "64ec3792047a8bdae74d19570e189c2d8f848b5e441761c0701bd808853971bb",
       "browser": "evidence/collision/browser/01-visible-brook-boulder.json",
-      "browserSha256": "4dee2e12bd2706108e294aee5e4f3b577f13b895e8a67b99e8d67609d1aa50e9",
+      "browserSha256": "9755db721713b0c50f648a11e1cc2bac1aebcbe1b9a9b2ba50a2ac3ec07aa630",
       "finalPosition": {
         "x": -7.5,
         "z": 37.45
@@ -1663,11 +1726,11 @@ command=python3 test/qa_collision.py
       "id": "02-rotated-fort-tent",
       "expectedCollision": "fort-tent-west",
       "visual": "evidence/collision/02-rotated-fort-tent.jpg",
-      "visualSha256": "2115ac457a0c742845cb310065c91bf32a76bef4f56943c0cea36d7a275bff9d",
+      "visualSha256": "5e9e9b084f66d25a40dc3e9e6f1b364a1bf283b52185be5dbd7a48710e0799ee",
       "state": "evidence/collision/state/02-rotated-fort-tent.json",
-      "stateSha256": "036615e8ce01d19e32c01dd35fb78bf449f332e8a0739ce8c1219361dd5c7de4",
+      "stateSha256": "ba87da216bd3e88353060ff96524be6833508789f3e55ca7d5a2e45f85ca3b9b",
       "browser": "evidence/collision/browser/02-rotated-fort-tent.json",
-      "browserSha256": "f69bc82f1b265d27e0a994fe686e522674ccc3ab89ca4ebb8593a8e00bc628f6",
+      "browserSha256": "efc6d107af2197ae104ce4e1bca3cb93011b3ddb154b5bd5c40801b673b9da34",
       "finalPosition": {
         "x": -5.687,
         "z": 77.313
@@ -1678,11 +1741,11 @@ command=python3 test/qa_collision.py
       "id": "03-cover-arch-trunk",
       "expectedCollision": "cover-arch-1-right-trunk",
       "visual": "evidence/collision/03-cover-arch-trunk.jpg",
-      "visualSha256": "b1e53e0098b5af8ea41e2d366141c532cba96d8337549bd4a5a4650a508b063d",
+      "visualSha256": "8b8c24f6512eeb4a8fbe54ab92d2c10013c40b8866cae2003d850a8cf05bec0c",
       "state": "evidence/collision/state/03-cover-arch-trunk.json",
-      "stateSha256": "6c8c2e0af076ec8b76cc175ead910e202031dc7e0927a67a6156cc179d4def9d",
+      "stateSha256": "3330d043b107c564ffc6a30c1c0514b4b41b0192c0325d8fa2e78d77345c5e5a",
       "browser": "evidence/collision/browser/03-cover-arch-trunk.json",
-      "browserSha256": "ac3e0d4debf8cf4c0426208b087122a2c806a02bfcc03b4af318fdc0971b0e5e",
+      "browserSha256": "b7e6da17fbeb412ce554499a15ab2250bbfad6bb6f21e7decdb4064a0bac6aa1",
       "finalPosition": {
         "x": -4.82,
         "z": 28
@@ -1693,14 +1756,14 @@ command=python3 test/qa_collision.py
       "id": "04-living-subject-space",
       "expectedCollision": "iguanodon-adult-graze",
       "visual": "evidence/collision/04-living-subject-space.jpg",
-      "visualSha256": "06c69aba97e70116748728adc64657e580297f22598693d159e641f073c0ec62",
+      "visualSha256": "4f04dd28815107e502bca6dfdd38cc9a0ec35541a09adceb8c63eb4fed61b625",
       "state": "evidence/collision/state/04-living-subject-space.json",
-      "stateSha256": "5672d4a0cafec7c50b7de6038925c90d73ae558bc4a94d306d5575d2e95c2d15",
+      "stateSha256": "bd85e26284c57581310b7edc974889111a5aaed7dcee0e8b46403f9ba318726c",
       "browser": "evidence/collision/browser/04-living-subject-space.json",
-      "browserSha256": "d21b571681f016767c6450375b5fa9623ef1da694ab82a0925af3d5ad7ca717d",
+      "browserSha256": "046dddd9fbf005920c426e778923e3698573dbd9b4f1142956bd35677c53fea6",
       "finalPosition": {
-        "x": -8.505,
-        "z": -29.211
+        "x": -8.526,
+        "z": -29.218
       },
       "groundY": -0.789
     }
@@ -1716,14 +1779,14 @@ command=python3 test/qa_collision.py
   ]
 }
 exitCode=0
-durationMs=6720
+durationMs=7905
 suite=browser:entry-conversion
 cwd=examples/project-plateau/build/app
 command=python3 test/qa_entry.py
 {
   "suite": "browser:entry-conversion",
   "status": "PASS",
-  "sourceFingerprint": "578d03cbfbcbe66ac192ac1bcb808d3e215b14d1d6759d63d2b3012bbc22ee6f",
+  "sourceFingerprint": "35a92c7843835e8c67d34713849bc08f35f32a38c5c4bcb3ebd9372ed46606c8",
   "checks": {
     "desktopWebGL2LoadsInteractiveBuild": true,
     "desktopDoesNotRequestPreviewMedia": true,
@@ -1794,14 +1857,14 @@ command=python3 test/qa_entry.py
   }
 }
 exitCode=0
-durationMs=3784
+durationMs=4854
 suite=browser:loading-state
 cwd=examples/project-plateau/build/app
 command=python3 test/qa_loading.py
 {
   "suite": "browser:loading-state",
   "status": "PASS",
-  "sourceFingerprint": "578d03cbfbcbe66ac192ac1bcb808d3e215b14d1d6759d63d2b3012bbc22ee6f",
+  "sourceFingerprint": "35a92c7843835e8c67d34713849bc08f35f32a38c5c4bcb3ebd9372ed46606c8",
   "checks": {
     "bootLoaderClearsAfterFirstFrame": true,
     "requiredAssetLoaderVisible": true,
@@ -1816,7 +1879,7 @@ command=python3 test/qa_loading.py
   ]
 }
 exitCode=0
-durationMs=3007
+durationMs=3828
 suite=browser:current-visual
 cwd=examples/project-plateau/build/app
 command=python3 test/qa_s10.py
@@ -1844,58 +1907,58 @@ command=python3 test/qa_s10.py
   "focusRegion": {
     "width": 777,
     "height": 504,
-    "darkRatio": 0.0174,
-    "brightRatio": 0.6649,
-    "chromaticRatio": 0.806
+    "darkRatio": 0.014,
+    "brightRatio": 0.6715,
+    "chromaticRatio": 0.807
   },
   "performance": {
     "samples": 240,
     "medianFrameMs": 16.7,
     "medianFps": 59.9,
-    "onePercentLowFps": 39.5,
-    "worstFrameMs": 25.4
+    "onePercentLowFps": 56.9,
+    "worstFrameMs": 17.6
   },
   "source": {
     "scope": "index.html, package manifests, public assets and src",
-    "sha256": "578d03cbfbcbe66ac192ac1bcb808d3e215b14d1d6759d63d2b3012bbc22ee6f"
+    "sha256": "35a92c7843835e8c67d34713849bc08f35f32a38c5c4bcb3ebd9372ed46606c8"
   }
 }
 S10 PASS: build/evidence/s10/report.json
 exitCode=0
-durationMs=29919
+durationMs=37125
 suite=browser:current-visual
 cwd=examples/project-plateau/build/app
 command=python3 test/qa_visual_targets.py
 {
-  "sourceSha256": "578d03cbfbcbe66ac192ac1bcb808d3e215b14d1d6759d63d2b3012bbc22ee6f",
-  "manifestSha256": "affd7c8590525039871234c98dd89830f59349799afb084ca0ae2070e28611da",
+  "sourceSha256": "35a92c7843835e8c67d34713849bc08f35f32a38c5c4bcb3ebd9372ed46606c8",
+  "manifestSha256": "3c99ba2a52adcfe190985fe7e327b69ae8e959b75b25c8b127a58d7d967b4159",
   "captureCount": 18,
   "targetPerformance": {
     "samples": 240,
     "medianFrameMs": 16.7,
     "medianFps": 59.9,
-    "onePercentLowFps": 37.9,
-    "worstFrameMs": 26.5
+    "onePercentLowFps": 56.9,
+    "worstFrameMs": 17.6
   },
   "minimumPerformance": {
     "samples": 240,
     "medianFrameMs": 16.7,
     "medianFps": 59.9,
-    "onePercentLowFps": 38.2,
-    "worstFrameMs": 26.4
+    "onePercentLowFps": 56.9,
+    "worstFrameMs": 17.6
   },
-  "evidence": "/Users/pitechen/novel-to-game/examples/project-plateau/build/evidence/visual-targets"
+  "evidence": "/Users/pite/makemoney/novel-to-game/examples/project-plateau/build/evidence/visual-targets"
 }
-VISUAL TARGETS PASS: /Users/pitechen/novel-to-game/examples/project-plateau/build/evidence/visual-targets/manifest.json
+VISUAL TARGETS PASS: /Users/pite/makemoney/novel-to-game/examples/project-plateau/build/evidence/visual-targets/manifest.json
 exitCode=0
-durationMs=40219
+durationMs=43156
 suite=browser:current-visual
 cwd=examples/project-plateau/build/app
 command=python3 test/capture_visual_upgrade.py
 {
   "schemaVersion": 2,
   "command": "npm run capture:visual",
-  "sourceFingerprint": "578d03cbfbcbe66ac192ac1bcb808d3e215b14d1d6759d63d2b3012bbc22ee6f",
+  "sourceFingerprint": "35a92c7843835e8c67d34713849bc08f35f32a38c5c4bcb3ebd9372ed46606c8",
   "scene": "glade-family-under-aerial-pressure",
   "seed": 139,
   "frozenAnimationSeconds": 4.25,
@@ -1907,8 +1970,8 @@ command=python3 test/capture_visual_upgrade.py
         1440,
         900
       ],
-      "sha256": "d2deb58084815a408d130b5b0c9969984dcb64aa86f2a7bf67e63994f46632b1",
-      "bytes": 90662,
+      "sha256": "8b99cbab52b3167f0e33ca47e25d5a613069d0cddf249d9f1a40c0773610b56e",
+      "bytes": 91664,
       "frozenAnimationSeconds": 4.25,
       "familyMoment": null,
       "threatState": "distant"
@@ -1920,8 +1983,8 @@ command=python3 test/capture_visual_upgrade.py
         1440,
         900
       ],
-      "sha256": "fe3adf25f37ac0287e33b8529f400c48788406dc31aae2e62fc3433178903992",
-      "bytes": 105978,
+      "sha256": "8a0afa831871dd9284b52d39fb51d55d73a80cbbcfeade353dff318ea376128d",
+      "bytes": 108905,
       "frozenAnimationSeconds": 4.25,
       "familyMoment": "glade-young-play",
       "threatState": "search"
@@ -1933,8 +1996,8 @@ command=python3 test/capture_visual_upgrade.py
         1440,
         900
       ],
-      "sha256": "7da9e6783838011bd91a574fd92986d456c40de36722d61b4ee1c67e9f559dc3",
-      "bytes": 105611,
+      "sha256": "a97d118c440169e0ec5f4291a6e705298a83f64acded226db3979ec8a0847c6c",
+      "bytes": 108422,
       "frozenAnimationSeconds": 4.25,
       "familyMoment": "glade-young-play",
       "threatState": "attack"
@@ -1946,8 +2009,8 @@ command=python3 test/capture_visual_upgrade.py
         1280,
         720
       ],
-      "sha256": "80fc2aec951e534cabdc034cc631a7c2e5d91603a4bda67921f2d9c4a245308e",
-      "bytes": 72119,
+      "sha256": "fced0a9bf38028de0a9f8a33339df0957002ed20d116594bb2806e5a4fb8c359",
+      "bytes": 72406,
       "frozenAnimationSeconds": 4.25,
       "familyMoment": null,
       "threatState": "distant"
@@ -1959,8 +2022,8 @@ command=python3 test/capture_visual_upgrade.py
         1280,
         720
       ],
-      "sha256": "b11b6b21766c71b6bfd6258d6a472db84d44de62921d49722d7d113ee5051360",
-      "bytes": 82332,
+      "sha256": "ae074cae74dacf409f34fa76012bc5e2275e877a0346a113556c71d4d4b426ac",
+      "bytes": 84516,
       "frozenAnimationSeconds": 4.25,
       "familyMoment": "glade-young-play",
       "threatState": "search"
@@ -1972,8 +2035,8 @@ command=python3 test/capture_visual_upgrade.py
         1280,
         720
       ],
-      "sha256": "ae55ee1a09d52e4acc47b42e25fe6f797f294149db5cd8c1ea83a41061e08e9c",
-      "bytes": 82049,
+      "sha256": "aa1a871c7260302e1ef4aab1ca180da337de6d68982cbf2f76032cbc7abdce03",
+      "bytes": 84137,
       "frozenAnimationSeconds": 4.25,
       "familyMoment": "glade-young-play",
       "threatState": "attack"
@@ -1981,8 +2044,8 @@ command=python3 test/capture_visual_upgrade.py
   ],
   "contactSheet": {
     "path": "build/evidence/visual-upgrade/generated/contact-sheet-supported-viewports.jpg",
-    "sha256": "5d45bbfc445f336ab8ccf0b6533cc637bdd70351011ea5a6929e3363e1d34b14",
-    "bytes": 125920
+    "sha256": "291e9c9cc1b1614841941ce38a0f6fbd47573f2b0ccd868747882feebcd7fc0d",
+    "bytes": 127910
   },
   "targets": [
     {
@@ -2007,8 +2070,8 @@ command=python3 test/capture_visual_upgrade.py
   "motionCadence": {
     "claim": "continuous real-browser watch to attack cycle plus deterministic phase samples",
     "captureMode": "one continuous real-time Playwright gameplay take after browser preroll removal; QA-clock JPEG samples are phase labels, not gameplay timing",
-    "authoredCycleSeconds": 3.2,
-    "trimmedBrowserPrerollMs": 1041,
+    "authoredCycleSeconds": 4.4,
+    "trimmedBrowserPrerollMs": 1307,
     "transitions": [
       {
         "phase": "watch",
@@ -2018,21 +2081,21 @@ command=python3 test/capture_visual_upgrade.py
       },
       {
         "phase": "bank-dive-pull-up-cycle",
-        "atMs": 904,
+        "atMs": 906,
         "threatState": "attack",
         "rendererResponse": "orbit"
       },
       {
         "phase": "cycle-complete",
-        "atMs": 5006,
+        "atMs": 5809,
         "threatState": "attack",
         "rendererResponse": "orbit"
       }
     ],
     "video": {
       "path": "build/evidence/visual-upgrade/generated/motion/watch-bank-dive-pull-up.webm",
-      "sha256": "d3b4531c12857484ebd6018afc981933416d2aca059f9ad00177bb417f99bd5b",
-      "bytes": 328538
+      "sha256": "d1b0828b66150f467f207e8dc52c032c4109d41dc822b8b866cbf11cc76bde72",
+      "bytes": 368423
     },
     "samples": [
       {
@@ -2041,26 +2104,26 @@ command=python3 test/capture_visual_upgrade.py
         "threatState": "watch",
         "rendererResponse": "orbit",
         "path": "build/evidence/visual-upgrade/generated/motion/watch.jpg",
-        "sha256": "fb9acd8a45b9e87e427719ea301612d31071e55dfcebaa591ea7daae25063763",
-        "bytes": 75563
+        "sha256": "a2920ea9f0ec3d673da2afcf0de863e2e754ec554b6a88e43a44ad126f9bef84",
+        "bytes": 75332
       },
       {
         "phase": "bank",
-        "rendererSeconds": 0.25,
+        "rendererSeconds": 0.72,
         "threatState": "attack",
         "rendererResponse": "orbit",
         "path": "build/evidence/visual-upgrade/generated/motion/bank.jpg",
-        "sha256": "6a53f3182105a2a483ceb5fac04b953add93deac36dfc3472ee93a62ab5d2e5a",
-        "bytes": 75654
+        "sha256": "0c9f6c504fba45b7691fafef78859d7ef82090cb69eb3d46d39393e11a36240b",
+        "bytes": 75584
       },
       {
         "phase": "dive",
-        "rendererSeconds": 2.0,
+        "rendererSeconds": 1.35,
         "threatState": "attack",
         "rendererResponse": "orbit",
         "path": "build/evidence/visual-upgrade/generated/motion/dive.jpg",
-        "sha256": "5dd196cf18d49e99f8addc5590ca02f09eaaec90fd76010c9739b5f28b3b38f0",
-        "bytes": 75824
+        "sha256": "2afd5e8c1a0f53ca494c5b23fe5160571156a09d21d2ed0a0ef7fb187b6b7a7a",
+        "bytes": 76115
       },
       {
         "phase": "pull-up",
@@ -2068,8 +2131,8 @@ command=python3 test/capture_visual_upgrade.py
         "threatState": "attack",
         "rendererResponse": "orbit",
         "path": "build/evidence/visual-upgrade/generated/motion/pull-up.jpg",
-        "sha256": "5e885447b862699592518da5f361f676e679a7094c4de6146c0e6dc577b4e0df",
-        "bytes": 77305
+        "sha256": "34f286e43ec5eabf457df7232aee0ec72b6274056b73c61e5f4cb4f6377e92a2",
+        "bytes": 77669
       }
     ],
     "consoleErrors": []
@@ -2077,19 +2140,19 @@ command=python3 test/capture_visual_upgrade.py
   "consoleErrors": []
 }
 exitCode=0
-durationMs=135
+durationMs=165
 suite=qa:design-invariants
 cwd=examples/project-plateau
 command=python3 qa/check_design_invariants.py
 design invariants: PASS (10/10)
 exitCode=0
-durationMs=25
+durationMs=38
 suite=repo:contract
 cwd=.
 command=python3 scripts/validate_repo.py --verification-candidate examples/project-plateau/qa/.verification-candidate.json
 Validation passed: 7 skills checked.
 exitCode=0
-durationMs=823
+durationMs=2671
 suite=repo:contract
 cwd=.
 command=python3 -m unittest discover -s tests -v
@@ -2172,10 +2235,10 @@ test_voiceover_release_is_hash_bound_and_fail_closed (test_validate_repo.Reposit
 test_web_verification_registry_must_match_actual_test_files (test_validate_repo.RepositoryValidationTests.test_web_verification_registry_must_match_actual_test_files) ... ok
 
 ----------------------------------------------------------------------
-Ran 76 tests in 5.417s
+Ran 76 tests in 10.783s
 
 OK
 exitCode=0
-durationMs=5473
+durationMs=10858
 authoritativeExitCode=0
-authoritativeDurationMs=605109
+authoritativeDurationMs=638143

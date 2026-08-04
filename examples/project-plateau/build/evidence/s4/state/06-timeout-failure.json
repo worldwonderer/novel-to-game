@@ -35,7 +35,7 @@
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 180.133,
+    "elapsedSeconds": 180.134,
     "distanceTravelled": 0,
     "paused": false,
     "pauseReason": null,
@@ -127,27 +127,57 @@
     "attackStage": "orbit",
     "attackProgress": 0,
     "flightPose": {
-      "wingBeat": -0.0148,
+      "wingBeat": -0.0186,
       "wingFold": 0,
       "mode": "downstroke",
-      "bank": -0.1469,
+      "bank": -0.0426,
       "direction": [
-        -0.994,
-        -0.0761,
-        -0.0788
+        -0.7364,
+        0.1637,
+        0.6564
       ]
     },
     "position": {
-      "x": -6.4,
-      "y": 22.48,
-      "z": 29.9
-    }
+      "x": 17.96,
+      "y": 8.91,
+      "z": -6.88
+    },
+    "scale": 0.7227,
+    "anchorModel": "fixed-world-orbit-latched-attack-origin"
   },
   "familyVisual": {
     "moment": "glade-branch-pull",
     "adults": 2,
     "young": 3,
-    "branchAngle": 0.219,
+    "branchAngle": 0.079,
+    "branchContactDistance": 0.641,
+    "positions": [
+      {
+        "x": -8,
+        "y": -0.6,
+        "z": -31
+      },
+      {
+        "x": 10.5,
+        "y": -0.291,
+        "z": -39
+      },
+      {
+        "x": -2.2,
+        "y": -1.019,
+        "z": -24.8
+      },
+      {
+        "x": 3.4,
+        "y": -0.774,
+        "z": -27.2
+      },
+      {
+        "x": 2.5,
+        "y": -0.319,
+        "z": -35
+      }
+    ],
     "roles": [
       "graze",
       "branch-pull",
@@ -324,12 +354,12 @@
       {
         "cue": "field-start",
         "caption": "[brook water and insects under the canopy]",
-        "at": 21.392
+        "at": 21.509
       },
       {
         "cue": "failure",
         "caption": "[the field sound narrows to wind and brook]",
-        "at": 21.621
+        "at": 21.781
       }
     ]
   },
@@ -379,7 +409,7 @@
   "sceneChildren": 62,
   "calls": 1,
   "triangles": 1,
-  "textures": 34,
+  "textures": 35,
   "geometries": 616,
   "viewport": [
     1440,
@@ -390,8 +420,8 @@
     "maxPixelRatio": 1.25,
     "quality": "balanced",
     "activeFpsCap": 60,
-    "renderedFrames": 1318,
-    "skippedFrames": 1236,
+    "renderedFrames": 1332,
+    "skippedFrames": 1361,
     "activeFpsPolicy": "60fps-cap-across-refresh-rates",
     "idleFpsCap": 30,
     "pausedFpsCap": 15,
@@ -401,6 +431,6 @@
     "gtaoSamples": 4,
     "antialiasing": "single-pass-fxaa"
   },
-  "firstRenderedAt": 238.30000001192093,
+  "firstRenderedAt": 311.30000019073486,
   "recentMedianFrameMs": 16.7
 }

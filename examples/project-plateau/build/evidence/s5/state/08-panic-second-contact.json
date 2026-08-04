@@ -35,7 +35,7 @@
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 10.249,
+    "elapsedSeconds": 10.258,
     "distanceTravelled": 0,
     "paused": false,
     "pauseReason": null,
@@ -62,7 +62,7 @@
     "cameraRaised": false,
     "plateRailRevealed": true,
     "pendingExposure": null,
-    "previewSeconds": 1.0168000000119264,
+    "previewSeconds": 1.0082999999523108,
     "lastProofEvent": {
       "plateIndex": 1,
       "frameKey": "basalt-scale",
@@ -114,7 +114,7 @@
     "failed": true,
     "failureCause": "second-unblocked-strike",
     "contactCount": 2,
-    "remainingLight": 169.751,
+    "remainingLight": 169.742,
     "returnRoute": null,
     "returnCostSeconds": 0,
     "returnStrike": false,
@@ -133,7 +133,7 @@
     "attackStage": "search",
     "attackProgress": 0,
     "flightPose": {
-      "wingBeat": 0.0168,
+      "wingBeat": 0.013,
       "wingFold": 0.1,
       "mode": "upstroke",
       "bank": -0.04,
@@ -147,13 +147,43 @@
       "x": 3.4,
       "y": 10.4,
       "z": -6
-    }
+    },
+    "scale": 0.8096,
+    "anchorModel": "fixed-world-orbit-latched-attack-origin"
   },
   "familyVisual": {
     "moment": "glade-branch-pull",
     "adults": 2,
     "young": 3,
-    "branchAngle": 0.08,
+    "branchAngle": 0.033,
+    "branchContactDistance": 0.897,
+    "positions": [
+      {
+        "x": -8,
+        "y": -0.6,
+        "z": -31
+      },
+      {
+        "x": 10.5,
+        "y": -0.288,
+        "z": -39
+      },
+      {
+        "x": -2.2,
+        "y": -1.017,
+        "z": -24.8
+      },
+      {
+        "x": 3.4,
+        "y": -0.773,
+        "z": -27.2
+      },
+      {
+        "x": 2.5,
+        "y": -0.318,
+        "z": -35
+      }
+    ],
     "roles": [
       "graze",
       "branch-pull",
@@ -330,22 +360,22 @@
       {
         "cue": "field-start",
         "caption": "[brook water and insects under the canopy]",
-        "at": 36.363
+        "at": 36.352
       },
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 36.443
+        "at": 36.432
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 36.496
+        "at": 36.491
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 36.549
+        "at": 36.544
       },
       {
         "cue": "attack",
@@ -360,42 +390,42 @@
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 41.536
-      },
-      {
-        "cue": "contact",
-        "caption": "[case strike; glass cracks]",
-        "at": 41.536
-      },
-      {
-        "cue": "camera-raise",
-        "caption": "[wood frame lifts; bellows opens]",
         "at": 41.547
       },
       {
+        "cue": "contact",
+        "caption": "[case strike; glass cracks]",
+        "at": 41.547
+      },
+      {
+        "cue": "camera-raise",
+        "caption": "[wood frame lifts; bellows opens]",
+        "at": 41.557
+      },
+      {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 41.6
+        "at": 41.611
       },
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 43.616
+        "at": 43.6
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 43.616
+        "at": 43.6
       },
       {
         "cue": "contact",
         "caption": "[case strike; glass cracks]",
-        "at": 46.603
+        "at": 46.592
       },
       {
         "cue": "failure",
         "caption": "[the field sound narrows to wind and brook]",
-        "at": 46.603
+        "at": 46.592
       }
     ]
   },
@@ -413,7 +443,7 @@
     "storageKey": "project-plateau:presentation:v2"
   },
   "ui": {
-    "prompt": "Raise rifle [F] \u00b7 Fire before contact [Left Mouse]",
+    "prompt": "Hold rifle [F] \u00b7 Fire before contact [Left Mouse]",
     "cameraOverlay": false,
     "rifleOverlay": false,
     "plateRail": true,
@@ -439,13 +469,13 @@
   },
   "plateCapture": {
     "status": "ready",
-    "durationMs": 23.3,
+    "durationMs": 34.7,
     "error": null
   },
   "sceneChildren": 62,
   "calls": 1,
   "triangles": 1,
-  "textures": 34,
+  "textures": 35,
   "geometries": 616,
   "viewport": [
     1440,
@@ -456,8 +486,8 @@
     "maxPixelRatio": 1.25,
     "quality": "balanced",
     "activeFpsCap": 60,
-    "renderedFrames": 2831,
-    "skippedFrames": 2690,
+    "renderedFrames": 2842,
+    "skippedFrames": 2940,
     "activeFpsPolicy": "60fps-cap-across-refresh-rates",
     "idleFpsCap": 30,
     "pausedFpsCap": 15,
@@ -467,6 +497,6 @@
     "gtaoSamples": 4,
     "antialiasing": "single-pass-fxaa"
   },
-  "firstRenderedAt": 239.30000001192093,
+  "firstRenderedAt": 306.7999999523163,
   "recentMedianFrameMs": 16.7
 }

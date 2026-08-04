@@ -6,11 +6,11 @@
       "id": "01-visible-brook-boulder",
       "expectedCollision": "brook-boulder",
       "visual": "evidence/collision/01-visible-brook-boulder.jpg",
-      "visualSha256": "f77d566a0077c7ff8e4af9725555029d76f851f7aad62a3817ab76a9c64e2040",
+      "visualSha256": "1aef3cbd02bdeabeec7ff13f78a9c3e3de12218e25a0989cd9aa53ebbc60e75b",
       "state": "evidence/collision/state/01-visible-brook-boulder.json",
-      "stateSha256": "716c01c3621dc8efa949888c73da259dc5c461fe7a58123609655b5da27ce25b",
+      "stateSha256": "64ec3792047a8bdae74d19570e189c2d8f848b5e441761c0701bd808853971bb",
       "browser": "evidence/collision/browser/01-visible-brook-boulder.json",
-      "browserSha256": "4dee2e12bd2706108e294aee5e4f3b577f13b895e8a67b99e8d67609d1aa50e9",
+      "browserSha256": "9755db721713b0c50f648a11e1cc2bac1aebcbe1b9a9b2ba50a2ac3ec07aa630",
       "finalPosition": {
         "x": -7.5,
         "z": 37.45
@@ -21,11 +21,11 @@
       "id": "02-rotated-fort-tent",
       "expectedCollision": "fort-tent-west",
       "visual": "evidence/collision/02-rotated-fort-tent.jpg",
-      "visualSha256": "2115ac457a0c742845cb310065c91bf32a76bef4f56943c0cea36d7a275bff9d",
+      "visualSha256": "5e9e9b084f66d25a40dc3e9e6f1b364a1bf283b52185be5dbd7a48710e0799ee",
       "state": "evidence/collision/state/02-rotated-fort-tent.json",
-      "stateSha256": "036615e8ce01d19e32c01dd35fb78bf449f332e8a0739ce8c1219361dd5c7de4",
+      "stateSha256": "ba87da216bd3e88353060ff96524be6833508789f3e55ca7d5a2e45f85ca3b9b",
       "browser": "evidence/collision/browser/02-rotated-fort-tent.json",
-      "browserSha256": "f69bc82f1b265d27e0a994fe686e522674ccc3ab89ca4ebb8593a8e00bc628f6",
+      "browserSha256": "efc6d107af2197ae104ce4e1bca3cb93011b3ddb154b5bd5c40801b673b9da34",
       "finalPosition": {
         "x": -5.687,
         "z": 77.313
@@ -36,11 +36,11 @@
       "id": "03-cover-arch-trunk",
       "expectedCollision": "cover-arch-1-right-trunk",
       "visual": "evidence/collision/03-cover-arch-trunk.jpg",
-      "visualSha256": "b1e53e0098b5af8ea41e2d366141c532cba96d8337549bd4a5a4650a508b063d",
+      "visualSha256": "8b8c24f6512eeb4a8fbe54ab92d2c10013c40b8866cae2003d850a8cf05bec0c",
       "state": "evidence/collision/state/03-cover-arch-trunk.json",
-      "stateSha256": "6c8c2e0af076ec8b76cc175ead910e202031dc7e0927a67a6156cc179d4def9d",
+      "stateSha256": "3330d043b107c564ffc6a30c1c0514b4b41b0192c0325d8fa2e78d77345c5e5a",
       "browser": "evidence/collision/browser/03-cover-arch-trunk.json",
-      "browserSha256": "ac3e0d4debf8cf4c0426208b087122a2c806a02bfcc03b4af318fdc0971b0e5e",
+      "browserSha256": "b7e6da17fbeb412ce554499a15ab2250bbfad6bb6f21e7decdb4064a0bac6aa1",
       "finalPosition": {
         "x": -4.82,
         "z": 28
@@ -51,14 +51,14 @@
       "id": "04-living-subject-space",
       "expectedCollision": "iguanodon-adult-graze",
       "visual": "evidence/collision/04-living-subject-space.jpg",
-      "visualSha256": "06c69aba97e70116748728adc64657e580297f22598693d159e641f073c0ec62",
+      "visualSha256": "4f04dd28815107e502bca6dfdd38cc9a0ec35541a09adceb8c63eb4fed61b625",
       "state": "evidence/collision/state/04-living-subject-space.json",
-      "stateSha256": "5672d4a0cafec7c50b7de6038925c90d73ae558bc4a94d306d5575d2e95c2d15",
+      "stateSha256": "bd85e26284c57581310b7edc974889111a5aaed7dcee0e8b46403f9ba318726c",
       "browser": "evidence/collision/browser/04-living-subject-space.json",
-      "browserSha256": "d21b571681f016767c6450375b5fa9623ef1da694ab82a0925af3d5ad7ca717d",
+      "browserSha256": "046dddd9fbf005920c426e778923e3698573dbd9b4f1142956bd35677c53fea6",
       "finalPosition": {
-        "x": -8.505,
-        "z": -29.211
+        "x": -8.526,
+        "z": -29.218
       },
       "groundY": -0.789
     }

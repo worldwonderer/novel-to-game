@@ -2,7 +2,7 @@
   "stage": "s7-lifecycle",
   "source": {
     "scope": "index.html, package manifests, public assets and src",
-    "sha256": "578d03cbfbcbe66ac192ac1bcb808d3e215b14d1d6759d63d2b3012bbc22ee6f"
+    "sha256": "35a92c7843835e8c67d34713849bc08f35f32a38c5c4bcb3ebd9372ed46606c8"
   },
   "environment": {
     "browser": "Google Chrome 150.0.7871.187",
@@ -42,9 +42,9 @@
   },
   "loading": {
     "firstNoCacheNavigation": {
-      "timeToFirstFrameMs": 3397.9,
-      "domInteractiveMs": 173.1,
-      "loadEventMs": 492.2,
+      "timeToFirstFrameMs": 3056.6,
+      "domInteractiveMs": 61.7,
+      "loadEventMs": 222.1,
       "resourceCount": 43,
       "ui": {
         "visible": false,
@@ -53,9 +53,9 @@
       }
     },
     "finalNavigation": {
-      "timeToFirstFrameMs": 3504.8,
-      "domInteractiveMs": 187,
-      "loadEventMs": 620.9,
+      "timeToFirstFrameMs": 3077.6,
+      "domInteractiveMs": 90,
+      "loadEventMs": 228.7,
       "resourceCount": 44,
       "ui": {
         "visible": false,
@@ -93,19 +93,19 @@
         "gzipBytes": 818165
       },
       {
-        "path": "assets/index-CIucFXkv.css",
-        "rawBytes": 18471,
-        "gzipBytes": 5546
-      },
-      {
-        "path": "assets/index-DXJ5NVKu.js",
+        "path": "assets/index-Djax0QYc.js",
         "rawBytes": 6124,
-        "gzipBytes": 2612
+        "gzipBytes": 2613
       },
       {
-        "path": "assets/main-CIPHuGwQ.js",
-        "rawBytes": 610887,
-        "gzipBytes": 185536
+        "path": "assets/index-NJZTe-wq.css",
+        "rawBytes": 18625,
+        "gzipBytes": 5585
+      },
+      {
+        "path": "assets/main-5tVpfuFA.js",
+        "rawBytes": 612116,
+        "gzipBytes": 185949
       },
       {
         "path": "assets/pterodactyl-hy3d-v35-stylized.glb",
@@ -119,27 +119,27 @@
       },
       {
         "path": "index.html",
-        "rawBytes": 9229,
-        "gzipBytes": 2928
+        "rawBytes": 9398,
+        "gzipBytes": 2981
       },
       {
         "path": "media/project-plateau-preview-15s.mp4",
-        "rawBytes": 1143887,
-        "gzipBytes": 1138623
+        "rawBytes": 1319426,
+        "gzipBytes": 1314414
       },
       {
         "path": "media/project-plateau-preview-poster.jpg",
-        "rawBytes": 46128,
-        "gzipBytes": 44610
+        "rawBytes": 48411,
+        "gzipBytes": 47947
       },
       {
         "path": "media/project-plateau-preview.json",
-        "rawBytes": 3860,
-        "gzipBytes": 1533
+        "rawBytes": 7141,
+        "gzipBytes": 2269
       }
     ],
-    "rawBytes": 6660269,
-    "gzipBytes": 4792819,
+    "rawBytes": 6842924,
+    "gzipBytes": 4973189,
     "initialCompressedBudgetBytes": 20971520,
     "totalBudgetBytes": 52428800
   },
@@ -148,15 +148,15 @@
       "samples": 120,
       "medianFrameMs": 16.7,
       "medianFps": 59.9,
-      "onePercentLowFps": 38.6,
-      "worstFrameMs": 26
+      "onePercentLowFps": 39.3,
+      "worstFrameMs": 25.6
     },
     "targetViewport": {
       "samples": 120,
       "medianFrameMs": 16.7,
       "medianFps": 59.9,
-      "onePercentLowFps": 39.5,
-      "worstFrameMs": 25.3
+      "onePercentLowFps": 39.8,
+      "worstFrameMs": 25.1
     }
   },
   "checkpoints": [

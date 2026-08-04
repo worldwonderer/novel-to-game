@@ -35,7 +35,7 @@
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 2.748,
+    "elapsedSeconds": 2.832,
     "distanceTravelled": 0,
     "paused": false,
     "pauseReason": null,
@@ -108,7 +108,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 177.252,
+    "remainingLight": 177.168,
     "returnRoute": null,
     "returnCostSeconds": 0,
     "returnStrike": false,
@@ -121,27 +121,57 @@
     "attackStage": "orbit",
     "attackProgress": 0,
     "flightPose": {
-      "wingBeat": 0.1909,
+      "wingBeat": -0.2372,
       "wingFold": 0,
-      "mode": "upstroke",
-      "bank": 0.16,
+      "mode": "downstroke",
+      "bank": 0.1577,
       "direction": [
-        -0.9097,
-        0.0317,
-        0.414
+        -0.9302,
+        0.0138,
+        0.3669
       ]
     },
     "position": {
-      "x": 22.99,
-      "y": 24.16,
-      "z": 25.19
-    }
+      "x": 21.69,
+      "y": 24.19,
+      "z": -2.26
+    },
+    "scale": 0.88,
+    "anchorModel": "fixed-world-orbit-latched-attack-origin"
   },
   "familyVisual": {
     "moment": "glade-young-play",
     "adults": 2,
     "young": 3,
-    "branchAngle": 0.08,
+    "branchAngle": 0.03,
+    "branchContactDistance": 0.948,
+    "positions": [
+      {
+        "x": -8,
+        "y": -0.612,
+        "z": -31
+      },
+      {
+        "x": 10.5,
+        "y": -0.289,
+        "z": -39
+      },
+      {
+        "x": -2.2,
+        "y": -1.043,
+        "z": -24.8
+      },
+      {
+        "x": 3.4,
+        "y": -0.794,
+        "z": -27.2
+      },
+      {
+        "x": 2.5,
+        "y": -0.306,
+        "z": -35
+      }
+    ],
     "roles": [
       "graze",
       "branch-pull",
@@ -323,7 +353,7 @@
       {
         "cue": "examine",
         "caption": "[fern brushes aside; pencil marks the field card]",
-        "at": 0.123
+        "at": 0.16
       }
     ]
   },
@@ -341,7 +371,7 @@
     "storageKey": "project-plateau:presentation:v2"
   },
   "ui": {
-    "prompt": "Raise camera [Right Mouse]",
+    "prompt": "Hold camera [Right Mouse]",
     "cameraOverlay": false,
     "rifleOverlay": false,
     "plateRail": false,
@@ -367,7 +397,7 @@
   "sceneChildren": 62,
   "calls": 1,
   "triangles": 1,
-  "textures": 34,
+  "textures": 35,
   "geometries": 615,
   "viewport": [
     1440,
@@ -378,8 +408,8 @@
     "maxPixelRatio": 1.25,
     "quality": "balanced",
     "activeFpsCap": 60,
-    "renderedFrames": 190,
-    "skippedFrames": 195,
+    "renderedFrames": 206,
+    "skippedFrames": 254,
     "activeFpsPolicy": "60fps-cap-across-refresh-rates",
     "idleFpsCap": 30,
     "pausedFpsCap": 15,
@@ -389,6 +419,6 @@
     "gtaoSamples": 4,
     "antialiasing": "single-pass-fxaa"
   },
-  "firstRenderedAt": 228.79999995231628,
+  "firstRenderedAt": 591.4000000953674,
   "recentMedianFrameMs": 16.7
 }

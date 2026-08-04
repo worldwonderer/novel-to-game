@@ -35,7 +35,7 @@
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 5.233,
+    "elapsedSeconds": 5.25,
     "distanceTravelled": 0,
     "paused": false,
     "pauseReason": null,
@@ -62,7 +62,7 @@
     "cameraRaised": false,
     "plateRailRevealed": true,
     "pendingExposure": null,
-    "previewSeconds": 1.008699999988085,
+    "previewSeconds": 1.0157999999523069,
     "lastProofEvent": {
       "plateIndex": 0,
       "frameKey": "basalt-scale",
@@ -114,7 +114,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 1,
-    "remainingLight": 174.767,
+    "remainingLight": 174.75,
     "returnRoute": null,
     "returnCostSeconds": 0,
     "returnStrike": false,
@@ -127,27 +127,57 @@
     "attackStage": "orbit",
     "attackProgress": 0,
     "flightPose": {
-      "wingBeat": 0.141,
+      "wingBeat": 0.2658,
       "wingFold": 0,
       "mode": "upstroke",
-      "bank": -0.1904,
+      "bank": 0.1462,
       "direction": [
-        -0.9515,
-        -0.0095,
-        0.3075
+        -0.986,
+        -0.1082,
+        -0.1272
       ]
     },
     "position": {
-      "x": 25.64,
-      "y": 10.6,
-      "z": -3.31
-    }
+      "x": 15.04,
+      "y": 11.92,
+      "z": 18.93
+    },
+    "scale": 0.8109,
+    "anchorModel": "fixed-world-orbit-latched-attack-origin"
   },
   "familyVisual": {
     "moment": "glade-young-play",
     "adults": 2,
     "young": 3,
-    "branchAngle": 0.08,
+    "branchAngle": 0.03,
+    "branchContactDistance": 0.965,
+    "positions": [
+      {
+        "x": -8,
+        "y": -0.612,
+        "z": -31
+      },
+      {
+        "x": 10.5,
+        "y": -0.297,
+        "z": -39
+      },
+      {
+        "x": -2.2,
+        "y": -0.959,
+        "z": -24.8
+      },
+      {
+        "x": 3.4,
+        "y": -0.71,
+        "z": -27.2
+      },
+      {
+        "x": 2.5,
+        "y": -0.308,
+        "z": -35
+      }
+    ],
     "roles": [
       "graze",
       "branch-pull",
@@ -324,42 +354,42 @@
       {
         "cue": "field-start",
         "caption": "[brook water and insects under the canopy]",
-        "at": 21.68
+        "at": 21.84
       },
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 21.76
+        "at": 21.92
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 21.845
+        "at": 22.005
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 21.909
+        "at": 22.075
       },
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 23.904
+        "at": 24.085
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 23.904
+        "at": 24.085
       },
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 26.896
+        "at": 27.072
       },
       {
         "cue": "contact",
         "caption": "[case strike; glass cracks]",
-        "at": 26.896
+        "at": 27.072
       }
     ]
   },
@@ -377,7 +407,7 @@
     "storageKey": "project-plateau:presentation:v2"
   },
   "ui": {
-    "prompt": "Raise camera [Right Mouse]",
+    "prompt": "Hold camera [Right Mouse]",
     "cameraOverlay": false,
     "rifleOverlay": false,
     "plateRail": true,
@@ -397,13 +427,13 @@
   },
   "plateCapture": {
     "status": "ready",
-    "durationMs": 23.9,
+    "durationMs": 37.8,
     "error": null
   },
   "sceneChildren": 62,
   "calls": 1,
   "triangles": 1,
-  "textures": 34,
+  "textures": 35,
   "geometries": 616,
   "viewport": [
     1440,
@@ -414,8 +444,8 @@
     "maxPixelRatio": 1.25,
     "quality": "balanced",
     "activeFpsCap": 60,
-    "renderedFrames": 1638,
-    "skippedFrames": 1524,
+    "renderedFrames": 1656,
+    "skippedFrames": 1688,
     "activeFpsPolicy": "60fps-cap-across-refresh-rates",
     "idleFpsCap": 30,
     "pausedFpsCap": 15,
@@ -425,6 +455,6 @@
     "gtaoSamples": 4,
     "antialiasing": "single-pass-fxaa"
   },
-  "firstRenderedAt": 238.30000001192093,
+  "firstRenderedAt": 311.30000019073486,
   "recentMedianFrameMs": 16.7
 }

@@ -1,7 +1,7 @@
 {
   "suite": "browser:loading-state",
   "status": "PASS",
-  "sourceFingerprint": "578d03cbfbcbe66ac192ac1bcb808d3e215b14d1d6759d63d2b3012bbc22ee6f",
+  "sourceFingerprint": "35a92c7843835e8c67d34713849bc08f35f32a38c5c4bcb3ebd9372ed46606c8",
   "checks": {
     "bootLoaderClearsAfterFirstFrame": true,
     "requiredAssetLoaderVisible": true,

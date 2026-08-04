@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
   "basePath": "build/app",
-  "sourceFingerprint": "578d03cbfbcbe66ac192ac1bcb808d3e215b14d1d6759d63d2b3012bbc22ee6f",
+  "sourceFingerprint": "35a92c7843835e8c67d34713849bc08f35f32a38c5c4bcb3ebd9372ed46606c8",
   "inputs": [
     {
       "path": "index.html",
-      "sha256": "dcf7b42eebd06199eca8aade75e53681036b2c0b3035dcbeed079d219bedba82",
-      "bytes": 9131
+      "sha256": "22b65956f08a7b35094d46eacb498eb2741cf455e8e934b08db21c72e5b9c419",
+      "bytes": 9300
     },
     {
       "path": "package.json",
@@ -45,18 +45,18 @@
     },
     {
       "path": "public/media/project-plateau-preview-15s.mp4",
-      "sha256": "0efb8307b4f3641e86abc6f024925ca3b4819cc590e04e32c387c49611eface2",
-      "bytes": 1143887
+      "sha256": "26042d338dd5d0c3280dbb61cfdfd8849500d4719de1b993c72324c67d2f3847",
+      "bytes": 1319426
     },
     {
       "path": "public/media/project-plateau-preview-poster.jpg",
-      "sha256": "0c93cc4e3bea155fd87c4f196b20d46da8f112b0f3c7f64831f90a9c3eae410b",
-      "bytes": 46128
+      "sha256": "ed063082c4b4a5f003b7ae2848e8ae9f81fbebe077da566a0fd35c71b13cbdf8",
+      "bytes": 48411
     },
     {
       "path": "public/media/project-plateau-preview.json",
-      "sha256": "8cadd85ab36ea13dd109fc20cf1da4445be134eb79f63295dd4aa7b04d9f3b82",
-      "bytes": 3860
+      "sha256": "60c88948bfe5ca2c1a0219acd83e5808be7c6c50e31ea6f562858a26b8936539",
+      "bytes": 7141
     },
     {
       "path": "src/atmosphere.js",
@@ -95,8 +95,8 @@
     },
     {
       "path": "src/environment-layout.js",
-      "sha256": "449bdc2bdb90fa59d1058127c8fcc32c46d5e6e54725531607aa0e1269fcaaff",
-      "bytes": 6741
+      "sha256": "fdf0251cebe22324abdc9c6d50a07db0ec634fc8fed8bbc8662ffb9f171ecb31",
+      "bytes": 7032
     },
     {
       "path": "src/hy3d-field-camera.js",
@@ -130,8 +130,8 @@
     },
     {
       "path": "src/main.js",
-      "sha256": "04513ab34b20bcea5f37b9b26f12052f5618e2fe28eca825977dc37f25ba6653",
-      "bytes": 52326
+      "sha256": "e9cb0a0bbd8bcf979a01718e210effcd32a30a77e1f3a4a1a3f5053d9f3bcadd",
+      "bytes": 52322
     },
     {
       "path": "src/preview-gateway.js",
@@ -160,8 +160,8 @@
     },
     {
       "path": "src/styles.css",
-      "sha256": "098714029fb458d6d38f153285781fb4b8bde6261778331fdbedd24a5610bc48",
-      "bytes": 22159
+      "sha256": "a022c0764e377d9d8d2dc23f8d31e41226b32873d7a5b28e3d362fb60b45431e",
+      "bytes": 22344
     },
     {
       "path": "src/terrain.js",
@@ -170,8 +170,8 @@
     },
     {
       "path": "src/world.js",
-      "sha256": "abea3f16fac5a9a365daa0bd27d79da24de5972a45f09c0973b817539845e525",
-      "bytes": 128824
+      "sha256": "d346c7f0f4c88ef31301e59c5f229f1d80046f5b9193917c8f8222f5d97ef9f2",
+      "bytes": 134436
     }
   ]
 }

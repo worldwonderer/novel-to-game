@@ -17,12 +17,12 @@
   "renderer": "WebGL2",
   "player": {
     "position": {
-      "x": -8.505,
-      "z": -29.211
+      "x": -8.526,
+      "z": -29.218
     },
     "lastStablePosition": {
-      "x": -8.505,
-      "z": -29.211
+      "x": -8.526,
+      "z": -29.218
     },
     "groundY": -0.789,
     "verticalOffset": 0,
@@ -35,12 +35,12 @@
     "heading": 0,
     "pitch": -0.03,
     "stance": "walk",
-    "elapsedSeconds": 4.791,
-    "distanceTravelled": 5.347,
+    "elapsedSeconds": 4.83,
+    "distanceTravelled": 5.369,
     "paused": false,
     "pauseReason": null,
     "boundaryRecoveries": 0,
-    "collisions": 154,
+    "collisions": 156,
     "lastEvent": "collision:iguanodon-adult-graze",
     "zone": "iguanodon-glade",
     "zoneHistory": [
@@ -111,7 +111,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 175.209,
+    "remainingLight": 175.17,
     "returnRoute": null,
     "returnCostSeconds": 0,
     "returnStrike": false,
@@ -124,27 +124,57 @@
     "attackStage": "orbit",
     "attackProgress": 0,
     "flightPose": {
-      "wingBeat": 0.3469,
+      "wingBeat": 0.3593,
       "wingFold": 0,
       "mode": "upstroke",
-      "bank": -0.208,
+      "bank": 0.1098,
       "direction": [
-        -0.9887,
-        -0.1304,
-        -0.0734
+        -0.9821,
+        -0.072,
+        0.1743
       ]
     },
     "position": {
-      "x": -12.03,
-      "y": 7.31,
-      "z": -51.39
-    }
+      "x": 9.81,
+      "y": 9.6,
+      "z": -2.23
+    },
+    "scale": 0.7216,
+    "anchorModel": "fixed-world-orbit-latched-attack-origin"
   },
   "familyVisual": {
     "moment": "glade-young-play",
     "adults": 2,
     "young": 3,
-    "branchAngle": 0.08,
+    "branchAngle": 0.03,
+    "branchContactDistance": 0.991,
+    "positions": [
+      {
+        "x": -8,
+        "y": -0.609,
+        "z": -31
+      },
+      {
+        "x": 10.5,
+        "y": -0.3,
+        "z": -39
+      },
+      {
+        "x": -2.2,
+        "y": -0.893,
+        "z": -24.8
+      },
+      {
+        "x": 3.4,
+        "y": -0.78,
+        "z": -27.2
+      },
+      {
+        "x": 2.5,
+        "y": -0.312,
+        "z": -35
+      }
+    ],
     "roles": [
       "graze",
       "branch-pull",
@@ -326,12 +356,12 @@
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 2.624
+        "at": 2.64
       },
       {
         "cue": "search",
         "caption": "[a near call circles overhead]",
-        "at": 3.637
+        "at": 3.664
       }
     ]
   },
@@ -375,8 +405,8 @@
   "sceneChildren": 62,
   "calls": 1,
   "triangles": 1,
-  "textures": 34,
-  "geometries": 622,
+  "textures": 35,
+  "geometries": 621,
   "viewport": [
     1440,
     900
@@ -386,8 +416,8 @@
     "maxPixelRatio": 1.25,
     "quality": "balanced",
     "activeFpsCap": 60,
-    "renderedFrames": 302,
-    "skippedFrames": 275,
+    "renderedFrames": 306,
+    "skippedFrames": 326,
     "activeFpsPolicy": "60fps-cap-across-refresh-rates",
     "idleFpsCap": 30,
     "pausedFpsCap": 15,
@@ -397,6 +427,6 @@
     "gtaoSamples": 4,
     "antialiasing": "single-pass-fxaa"
   },
-  "firstRenderedAt": 239,
+  "firstRenderedAt": 303.90000009536743,
   "recentMedianFrameMs": 16.7
 }

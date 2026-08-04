@@ -35,12 +35,12 @@
     "heading": -2.3562,
     "pitch": -0.04,
     "stance": "walk",
-    "elapsedSeconds": 2.658,
+    "elapsedSeconds": 2.68,
     "distanceTravelled": 1.993,
     "paused": false,
     "pauseReason": null,
     "boundaryRecoveries": 0,
-    "collisions": 92,
+    "collisions": 93,
     "lastEvent": "collision:fort-tent-west",
     "zone": "fort",
     "zoneHistory": [
@@ -109,7 +109,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 177.342,
+    "remainingLight": 177.32,
     "returnRoute": null,
     "returnCostSeconds": 0,
     "returnStrike": false,
@@ -122,27 +122,57 @@
     "attackStage": "orbit",
     "attackProgress": 0,
     "flightPose": {
-      "wingBeat": 0.2407,
+      "wingBeat": 0.2712,
       "wingFold": 0,
       "mode": "upstroke",
-      "bank": 0.1577,
+      "bank": 0.1584,
       "direction": [
-        -0.8822,
-        0.0521,
-        0.4679
+        -0.8871,
+        0.0488,
+        0.459
       ]
     },
     "position": {
-      "x": 18.52,
-      "y": 24.1,
-      "z": 57.9
-    }
+      "x": 24.02,
+      "y": 24.11,
+      "z": -3.31
+    },
+    "scale": 0.88,
+    "anchorModel": "fixed-world-orbit-latched-attack-origin"
   },
   "familyVisual": {
     "moment": "glade-young-play",
     "adults": 2,
     "young": 3,
-    "branchAngle": 0.08,
+    "branchAngle": 0.03,
+    "branchContactDistance": 0.924,
+    "positions": [
+      {
+        "x": -8,
+        "y": -0.608,
+        "z": -31
+      },
+      {
+        "x": 10.5,
+        "y": -0.282,
+        "z": -39
+      },
+      {
+        "x": -2.2,
+        "y": -0.902,
+        "z": -24.8
+      },
+      {
+        "x": 3.4,
+        "y": -0.798,
+        "z": -27.2
+      },
+      {
+        "x": 2.5,
+        "y": -0.308,
+        "z": -35
+      }
+    ],
     "roles": [
       "graze",
       "branch-pull",
@@ -363,7 +393,7 @@
   "sceneChildren": 62,
   "calls": 1,
   "triangles": 1,
-  "textures": 34,
+  "textures": 35,
   "geometries": 621,
   "viewport": [
     1440,
@@ -374,8 +404,8 @@
     "maxPixelRatio": 1.25,
     "quality": "balanced",
     "activeFpsCap": 60,
-    "renderedFrames": 174,
-    "skippedFrames": 166,
+    "renderedFrames": 177,
+    "skippedFrames": 197,
     "activeFpsPolicy": "60fps-cap-across-refresh-rates",
     "idleFpsCap": 30,
     "pausedFpsCap": 15,
@@ -385,6 +415,6 @@
     "gtaoSamples": 4,
     "antialiasing": "single-pass-fxaa"
   },
-  "firstRenderedAt": 239,
+  "firstRenderedAt": 303.90000009536743,
   "recentMedianFrameMs": 16.7
 }

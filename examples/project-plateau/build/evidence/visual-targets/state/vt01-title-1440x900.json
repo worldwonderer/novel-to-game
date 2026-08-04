@@ -9,9 +9,9 @@
     "status": "idle",
     "error": null,
     "cameraForward": {
-      "x": -0.2088,
+      "x": -0.209,
       "y": -0.0483,
-      "z": -0.9768
+      "z": -0.9767
     }
   },
   "renderer": "WebGL2",
@@ -120,27 +120,57 @@
     "attackStage": "orbit",
     "attackProgress": 0,
     "flightPose": {
-      "wingBeat": 0.2822,
+      "wingBeat": 0.0788,
       "wingFold": 0,
       "mode": "upstroke",
-      "bank": 0.0305,
+      "bank": 0.0488,
       "direction": [
-        -0.2176,
-        0.2226,
-        0.9503
+        -0.34,
+        0.2113,
+        0.9164
       ]
     },
     "position": {
-      "x": 31.91,
-      "y": 23.19,
-      "z": 45.81
-    }
+      "x": 28.76,
+      "y": 23.31,
+      "z": -7.69
+    },
+    "scale": 0.88,
+    "anchorModel": "fixed-world-orbit-latched-attack-origin"
   },
   "familyVisual": {
     "moment": "glade-young-play",
     "adults": 2,
     "young": 3,
-    "branchAngle": 0.08,
+    "branchAngle": 0.03,
+    "branchContactDistance": 0.928,
+    "positions": [
+      {
+        "x": -8,
+        "y": -0.589,
+        "z": -31
+      },
+      {
+        "x": 10.5,
+        "y": -0.286,
+        "z": -39
+      },
+      {
+        "x": -2.2,
+        "y": -0.911,
+        "z": -24.8
+      },
+      {
+        "x": 3.4,
+        "y": -0.787,
+        "z": -27.2
+      },
+      {
+        "x": 2.5,
+        "y": -0.329,
+        "z": -35
+      }
+    ],
     "roles": [
       "graze",
       "branch-pull",
@@ -355,7 +385,7 @@
   "sceneChildren": 62,
   "calls": 1,
   "triangles": 1,
-  "textures": 30,
+  "textures": 32,
   "geometries": 614,
   "viewport": [
     1440,
@@ -366,8 +396,8 @@
     "maxPixelRatio": 1.25,
     "quality": "balanced",
     "activeFpsCap": 60,
-    "renderedFrames": 13,
-    "skippedFrames": 32,
+    "renderedFrames": 22,
+    "skippedFrames": 51,
     "activeFpsPolicy": "60fps-cap-across-refresh-rates",
     "idleFpsCap": 30,
     "pausedFpsCap": 15,
@@ -377,6 +407,6 @@
     "gtaoSamples": 4,
     "antialiasing": "single-pass-fxaa"
   },
-  "firstRenderedAt": 228.79999995231628,
-  "recentMedianFrameMs": 33.3
+  "firstRenderedAt": 591.4000000953674,
+  "recentMedianFrameMs": 33.4
 }
