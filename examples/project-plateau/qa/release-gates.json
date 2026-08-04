@@ -24,6 +24,7 @@
     "status": "PASS",
     "evidence": [
       "qa/verification.json",
+      "build/evidence/visual-targets/manifest.json",
       "build/evidence/visual-upgrade/generated/manifest.json",
       "qa/evidence/independent-visual-review-2026-08-04.md"
     ]
@@ -94,11 +95,11 @@
   "visualReview": {
     "required": true,
     "status": "PASS",
-    "reviewer": "/root/visual_v17_review (vision, read-only independent reviewer, 2026-08-04)",
-    "independence": "The read-only vision reviewer made no implementation, capture, manifest or QA edits and judged VT01-VT06, both supported viewports, creature orbits, plate captures and fixed-transform bilateral wing phases.",
+    "reviewer": "/root/plateau_visual_release_review (read-only independent reviewer, 2026-08-04)",
+    "independence": "The reviewer made no implementation, capture, manifest, or QA edits and judged only the source-bound browser evidence.",
     "evidence": "qa/evidence/independent-visual-review-2026-08-04.md",
-    "reviewedSourceFingerprint": "a33f6d0439f7efb26e2437beff4ed334851cd0cd94b321e7918387061adfd454",
-    "reviewedManifestSha256": "7431410c921e0aa8c2f4916287d121c60a7b4a674ad673af070a92ccb193754e"
+    "reviewedSourceFingerprint": "578d03cbfbcbe66ac192ac1bcb808d3e215b14d1d6759d63d2b3012bbc22ee6f",
+    "reviewedManifestSha256": "1c30ba33aec7d5a48cb1aa7a7b3570b2460806eab5d6a282ba66a140ce56475d"
   },
   "focalReleaseAssets": [
     "world.connected_route",
@@ -116,7 +117,7 @@
       "id": "VIS-REVIEW-001",
       "severity": "major",
       "status": "CLOSED",
-      "summary": "Independent final visual review completed with zero blockers and zero majors.",
+      "summary": "Latest source-bound independent review completed with zero blockers and zero majors.",
       "owner": "build",
       "evidence": [
         "qa/evidence/independent-visual-review-2026-08-04.md"
@@ -203,23 +204,34 @@
       "id": "VIS-PTERO-WING-007",
       "severity": "major",
       "status": "CLOSED",
-      "summary": "Fixed-transform three-phase evidence confirms both HY3D pterodactyl wings complete a synchronized upstroke, neutral transition and downstroke.",
+      "summary": "Bilateral wing evidence and the corrected stable-up attack sequence pass independent review without clipping or orientation flips.",
       "owner": "build",
       "evidence": [
         "qa/evidence/independent-visual-review-2026-08-04.md",
         "build/evidence/visual-targets/contact-sheet-motion.jpg"
       ]
+    },
+    {
+      "id": "VIS-TERRAIN-COVER-008",
+      "severity": "major",
+      "status": "CLOSED",
+      "summary": "Removed the repeated marker-like ground-cover layer and reduced remaining ferns to sparse, darker tree-root clusters.",
+      "owner": "build",
+      "evidence": [
+        "qa/evidence/independent-visual-review-2026-08-04.md",
+        "build/evidence/visual-targets/contact-sheet-targets.jpg"
+      ]
     }
   ],
-  "notes": "Independent read-only review of the frozen HY3D candidate passes VT01-VT06, both supported viewports and fixed-transform bilateral wing phases with zero blockers and zero majors. Performance is capped near 60 FPS in active play, 30 FPS on title, 15 FPS paused and 4 FPS hidden.",
+  "notes": "The source-bound independent review passes with zero blockers and zero majors. The repeated marker-like ground cover is removed, trees remain grounded, the HY3D camera is held rear-first, and the pterodactyl attack remains fully framed with a stable forward/up orientation. Active play is capped near 60 FPS.",
   "degradableReleaseAssets": [
     "audio.core_world"
   ],
-  "sourceFingerprint": "a33f6d0439f7efb26e2437beff4ed334851cd0cd94b321e7918387061adfd454",
+  "sourceFingerprint": "578d03cbfbcbe66ac192ac1bcb808d3e215b14d1d6759d63d2b3012bbc22ee6f",
   "visualEvidenceManifests": [
     {
       "path": "build/evidence/visual-upgrade/generated/manifest.json",
-      "sha256": "7431410c921e0aa8c2f4916287d121c60a7b4a674ad673af070a92ccb193754e"
+      "sha256": "1c30ba33aec7d5a48cb1aa7a7b3570b2460806eab5d6a282ba66a140ce56475d"
     }
   ],
   "publicHost": {
@@ -229,6 +241,6 @@
   },
   "sourceInputManifest": {
     "path": "build/source-inputs.json",
-    "sha256": "60a8f620cbc53e96995568247a2179ef120d234d542ed072e6c01e8b1682d2f4"
+    "sha256": "3dfa3195c9ea10d3e8d926a1bdf4fb2e1ef61165a0fe2b1ac941187d2ae2000d"
   }
 }

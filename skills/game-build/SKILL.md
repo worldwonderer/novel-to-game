@@ -81,7 +81,19 @@ BUILD_BRIEF 含动态媒体（视频过场 / 环境循环 / 关键帧驱动演�
    把步骤与 checkpoint 写进 `qa/verification.json`。每个 checkpoint 分别登记 state、runtime、
    visual 相对路径；已有网页项目可用 `browser` 作为 `runtime` 的兼容字段。取不到就写
    `NOT_RUN: 原因`，不让截图证明隐藏状态，也不让状态值证明画面。
+   对第一 / 第三人称连续控制，另设不可被完整路线替代的 `controller-contract`：从目标输入设备
+   取得视角控制权，产生真实朝向变化，核对相机前向与移动前向，再覆盖失焦、暂停、恢复、输入
+   拒绝和释放事件丢失。网页的 pointer lock、手柄锁定或触控捕获失败不得静默继续；自动化运行器
+   不支持真实锁定时可用显式标记的确定性 shim 验跨层事件，但目标浏览器 / 设备实测仍写
+   `NOT_RUN`，不能据 shim 宣称目标输入已通过。
+   对连续 3D 移动再建立独立碰撞合同：可见实体与 collider 共用或可追溯到同一布局真值；记录
+   哪些可见物明确为 non-solid；模拟内部使用固定子步或 swept 检测而不是依赖渲染帧率；逐类覆盖
+   正向、反向、斜向、角点、最大允许 `delta`、滑动、解穿透和世界边界。浏览器证据至少实际接触
+   每类会改变路线的 collider，并保存接触前后位置，不能只用“最终到达结果”替代。
 5. 在 `testedRuntime` 启动真实游戏，修复构建失败、运行日志错误、资源失败和崩溃。
+   对 `focalReleaseAssets` 中运行期加载的必需资产，加载 / 解码失败必须阻断对应状态或进入明确的
+   非发布错误界面；不得静默换成灰盒 / 程序化物件后仍把同一候选记为 PASS。只有 ledger 明确列入
+   `degradableReleaseAssets` 且 fallback 五项保持合同成立时，才允许降级继续。
 6. **前提与品类自查（排在美术打磨之前）**：灰盒能完整游玩时，先起一个不给任何策划 / 构建
    文档的干净上下文子代理，只喂常速冷启动第一分钟按序截取的画面，让它回答四问：我是什么 /
    我要什么 / 什么会终结这一局 / 这是哪一类游戏（我主要在反复做什么、像我玩过的哪款游戏）。
@@ -92,6 +104,9 @@ BUILD_BRIEF 含动态媒体（视频过场 / 环境循环 / 关键帧驱动演�
 7. 核心规则走通后进入 `visualPromotion`，其状态只取 `NOT_RUN` / `FAIL` / `PASS`：先按 `VISUAL_TARGETS.md` 在代表场景做 spike，用固定种子、
    状态、机位和视口保存同机位 before/after contact sheet；逐项记录问题编号、严重度、处置和复验。
    代表场景无视觉 blocker/major 后，才把获批系统推广到全部签名时刻。
+   有连续镜头、实时阴影、LOD 或角色动画时，contact sheet 之外还必须保存常速的静止、直行、扫视
+   和最重状态帧序列；检查静止 shimmer、阴影闪烁、LOD pop、足滑 / 漂浮、时序重影与离散
+   longtask。只看单帧不得判动态视觉通过。
 8. 对照目标包量表逐帧复核全部签名时刻；每个 release-gate 资产键写 `status`、
    `releaseGatePassed`、`evidence`、`remaining`；status 为非空生产状态，passed 为布尔值，evidence
    为非空且按 ledger 目录解析后全部真实存在的相对路径，passed=true 时 remaining 必须明确无剩余。

@@ -168,6 +168,23 @@ declared states, real-view evidence and rights entry exist in
 | `audio.core_world` | Traverse/examine/camera/glass, four threat states, cover, rifle/callback, Fort/result/failure. | Original Web Audio synthesis/local recordings with no remote fetch. |
 | `accessibility.presentation` | Reduced motion, 100–150% text, captions, grayscale/non-colour redundancy, music/ambience/effects controls. | Functional settings with unstyled native controls during foundation only. |
 
+### 3D collision and required runtime assets
+
+Visible route anchors and collision shapes use the shared declarations in
+`build/app/src/environment-layout.js` and `build/app/src/collision-layout.js`.
+The runtime must expose every solid collider's visible anchor, shape and source
+key, plus an explicit non-solid decoration policy. Player collision runs in
+fixed `1/60 s` substeps with bounded iteration and must prove bidirectional,
+diagonal, corner, maximum-delta, sliding, depenetration and world-boundary
+behavior. Browser evidence must contact every route-affecting collider class;
+the render loop's frame clamp is not a collision guarantee.
+
+`tool.field_camera` and `tool.period_rifle` are focal, required asynchronous
+assets. Each is a single HY3D viewmodel containing the period tool and two
+gripping hands so motion/recoil cannot separate hands from the object. Their
+former procedural tool and secondary hand paths are removed. Load or decode
+failure is release-blocking and must not silently produce a graybox PASS.
+
 Degradable assets stay optional and must use the fallbacks in
 `ART_DIRECTION.md`: extra family markings, rookery population, small flora,
 volumetric humidity, Fort dressing, full distant gunshot responder, live title
@@ -316,6 +333,9 @@ verification:
     - build:production
     - browser:checkpoint-history
     - browser:complete-run
+    - browser:controller-contract
+    - browser:motion-visual
+    - browser:collision-contract
     - browser:current-visual
     - qa:design-invariants
     - repo:contract
@@ -358,10 +378,10 @@ are not claimed by automated verification.
 
 ## Final scope reconciliation
 
-Reconciled on 2026-08-03 against source commit
-`9d7f8736e5de17024569934df3da299358713adc` and authoritative command
-`npm run verify`. The 513.964-second run executed all seven registered suites
-and seventeen underlying commands; its log and 41-checkpoint handoff are
+Reconciled on 2026-08-04 against source fingerprint
+`578d03cbfbcbe66ac192ac1bcb808d3e215b14d1d6759d63d2b3012bbc22ee6f` and authoritative command
+`npm run verify`. The 605.109-second run executed all 12 registered suites
+and 23 underlying commands; its log and 41-checkpoint handoff are
 `../qa/evidence/verify.log` and `../qa/verification.json`.
 
 | Approved scope | Delivery | Evidence or deliberate boundary |
@@ -375,9 +395,9 @@ and seventeen underlying commands; its log and 41-checkpoint handoff are
 | Strong, partial and failure outcomes followed by a clean restart | Delivered | S4/S5 plus per-terminal S8 restart checkpoints |
 | Local audio/captions, HUD, sensitivity, motion reduction and text scaling | Delivered | S6/S7; subjective mix and comfort remain outside automated proof |
 | Non-colour redundancy across the supported colour-vision modes | Delivered technically | S8 complete full-colour and achromatopsia routes plus S10 protanopia/deuteranopia/tritanopia order, glade, attack/defence and result checkpoints; independent cue-readability review remains open |
-| Payload, loading, lifecycle and heaviest-state performance budgets | Delivered locally | 2,017,917 gzip bytes; 2,997.6 ms local 25 Mbps first frame; 59.9/38.6 target median/1%-low FPS in S7, with an intentional 60 FPS active cap |
+| Payload, loading, lifecycle and heaviest-state performance budgets | Delivered locally | 4,792,819 gzip bytes; 3,397.9 ms local 25 Mbps first frame; 59.9/39.5 target median/1%-low FPS in S7, with an intentional 60 FPS active cap |
 | First-time premise, genre and route comprehension | Not delivered as evidence | Three independent raw player records remain NOT_RUN; automation cannot substitute |
-| Independent non-compensating visual approval | Delivered for v23 | Eight categories at their ceiling, VT01–VT06 PASS; `../qa/evidence/perception/hy3d-v23-independent-review.md` |
+| Independent non-compensating visual approval | Delivered for the current source | 0 blockers and 0 majors across dual-view title/family/dive plus continuous aerial motion; `../qa/evidence/independent-visual-review-2026-08-04.md` |
 | Public deployment | Not delivered | Public-host cold load, anonymous play and restart smoke remain a release gate |
 
 The earlier paper target of 5–8 minutes and 420 seconds was deliberately revised
@@ -387,31 +407,31 @@ explicit non-goals remain excluded: this is not a full open world, arena
 shooter, crafting/survival progression game, multiplayer service, mobile build,
 chapter retelling or modern licensed adaptation.
 
-Automated verification and strict v23 visual promotion pass the local build
+Automated verification and source-bound visual promotion pass the local build
 handoff. General release remains gated by the first-time player records, full
 live colour-cue route review, final-source public-host checks and retained rights
 evidence in `../qa/QA_REPORT.md` and `asset-ledger.json`.
 
 ## Visual enhancement addendum · 2026-08-04
 
-The HY3D focal-creature pass is bound to source fingerprint
-`a33f6d0439f7efb26e2437beff4ed334851cd0cd94b321e7918387061adfd454` and
+The HY3D focal-asset pass is bound to source fingerprint
+`578d03cbfbcbe66ac192ac1bcb808d3e215b14d1d6759d63d2b3012bbc22ee6f` and
 evidence manifest SHA256
-`7431410c921e0aa8c2f4916287d121c60a7b4a674ad673af070a92ccb193754e` at
+`1c30ba33aec7d5a48cb1aa7a7b3570b2460806eab5d6a282ba66a140ce56475d` at
 `evidence/visual-upgrade/generated/manifest.json`.
 
 | Visual delivery item | Current result | Evidence |
 |---|---|---|
 | Iguanodon family | One 1,089,008-byte, 24,996-triangle, 1K PBR GLB shared by two adults and three young; six runtime morph targets preserve graze/reach/play/tail motion, weight transfer and juvenile proportions | `evidence/visual-sota/hy3d-stylized-v1/README.md`; v23 orbit/motion sheets |
 | Pterodactyl flock | One 1,327,456-byte, 30,496-triangle, 1K PBR GLB shared by three threats; three runtime morph targets preserve wing beat and dive fold; its moving ground shadow remains spatially continuous through attack | `evidence/visual-sota/hy3d-pterodactyl-v1/README.md`; v23 orbit/motion sheets |
-| Loading and fallback | Neither GLB is requested before interaction; each is requested once afterward; procedural creatures remain as loading/error fallback | `evidence/visual-sota/hy3d-creatures-runtime-v1/lazy-loading.json` |
-| Package | Combined creature payload 2,416,464 raw / 1,793,074 gzip-9 bytes; built distribution 3,243,756 raw bytes, below the 50 MB on-demand budget | `evidence/visual-sota/hy3d-creatures-runtime-v1/package.json` |
+| Loading and required assets | Entry exposes explicit boot and required-asset loading states; camera/rifle failures block field entry instead of showing procedural tool substitutes; creature templates retain their existing swap behavior | `evidence/visual-sota/hy3d-creatures-runtime-v1/lazy-loading.json` |
+| Package | Four focal HY3D GLBs total 4,524,984 raw / 3,331,720 gzip bytes; built distribution is 6,660,269 raw / 4,792,819 gzip bytes, below both payload budgets | `evidence/visual-sota/hy3d-creatures-runtime-v1/package.json` |
 | Renderer strategy | Retained Vite + raw Three.js WebGL2; capped Retina DPR at 1.25, replaced SMAA with FXAA, reduced GTAO sampling, selected the default GPU, disabled the persistent drawing buffer and applied state-aware 60/30/15/4 FPS caps | `app/src/render-budget.js`; `app/test/render-budget.test.js` |
-| Performance | `1440×900`: 59.9 median / 39.4 1%-low FPS; `1280×720`: 59.9 / 38.9 FPS in the source-bound visual suite, above the 45/30 budget | `evidence/visual-targets/performance.json` |
+| Performance | `1440×900`: 59.9 median / 37.9 1%-low FPS; `1280×720`: 59.9 / 38.2 FPS in the source-bound visual suite, above the 45/30 budget | `evidence/visual-targets/performance.json` |
 | Visual-target QA | All six target frames, eight creature orbits and four motion sequences, including fixed-transform up/neutral/down bilateral wing evidence; zero console/external-host errors | `evidence/visual-targets/manifest.json` |
 | Independent visual review | VT01–VT06, both viewports and bilateral wing phases pass with zero blockers and zero majors | `../qa/evidence/independent-visual-review-2026-08-04.md` |
 
-The source-bound independent review awards the strict `100/100` visual ceiling.
+The source-bound independent review returns PASS with zero blockers and zero majors.
 This is a visual-promotion result, not a general release waiver: retained Hunyuan
 output-rights evidence, first-time player records, full live colour-vision route
 review and public-host checks remain as recorded in `asset-ledger.json` and the

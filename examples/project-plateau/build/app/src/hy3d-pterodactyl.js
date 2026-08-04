@@ -22,6 +22,25 @@ function smoothstep(edge0, edge1, value) {
   return t * t * (3 - 2 * t);
 }
 
+function refinePterodactylSilhouette(geometry) {
+  const position = geometry.getAttribute('position');
+  if (!position || geometry.userData.silhouetteRefinement) return;
+  for (let index = 0; index < position.count; index += 1) {
+    const x = position.getX(index);
+    const influence = 1 - smoothstep(0.07, 0.23, Math.abs(x));
+    if (influence <= 0) continue;
+    const y = position.getY(index);
+    const z = position.getZ(index);
+    position.setY(index, 0.19 + (y - 0.19) * (1 + influence * 0.18));
+    position.setZ(index, 0.025 + (z - 0.025) * (1 + influence * 0.14));
+  }
+  position.needsUpdate = true;
+  geometry.computeVertexNormals();
+  geometry.computeBoundingBox();
+  geometry.computeBoundingSphere();
+  geometry.userData.silhouetteRefinement = 'integrated-torso-wing-root-volume';
+}
+
 function rotateWingPoint(x, y, angle, side) {
   const pivotX = side * 0.09;
   const pivotY = 0.235;
@@ -55,10 +74,18 @@ function createPoseAttribute(position, poseName) {
       nextY = THREE.MathUtils.lerp(y, bentY, wingInfluence);
     } else if (poseName === 'diveFold') {
       const normalizedSpan = smoothstep(0.09, 0.56, span);
-      const foldedX = side * (0.09 + Math.max(0, span - 0.09) * 0.32);
+      const foldedX = side * (0.09 + Math.max(0, span - 0.09) * 0.14);
+      const centralInfluence = 1 - smoothstep(0.055, 0.17, span);
+      const lowerInfluence = 1 - smoothstep(0.07, 0.18, y);
+      const appendageTuck = centralInfluence * lowerInfluence;
       nextX = THREE.MathUtils.lerp(x, foldedX, wingInfluence);
-      nextY -= normalizedSpan * 0.035;
-      nextZ -= normalizedSpan ** 1.25 * 0.34;
+      nextY -= normalizedSpan * 0.028;
+      nextZ -= normalizedSpan ** 1.25 * 0.49;
+      // HY3D's static stance leaves both feet hanging below a head-on dive.
+      // Pull the lower central silhouette into the torso only during the fold;
+      // the authored standing/orbit mesh remains untouched.
+      nextY += appendageTuck * 0.22;
+      nextZ = THREE.MathUtils.lerp(nextZ, 0.02, appendageTuck * 0.68);
     }
 
     const offset = index * 3;
@@ -103,6 +130,7 @@ function prepareTemplate(source) {
     const sourceGeometry = object.geometry;
     if (!preparedGeometries.has(sourceGeometry)) {
       const preparedGeometry = sourceGeometry.clone();
+      refinePterodactylSilhouette(preparedGeometry);
       addSharedPoseTargets(preparedGeometry);
       preparedGeometries.set(sourceGeometry, preparedGeometry);
     }

@@ -1,0 +1,75 @@
+{
+  "suite": "browser:collision-contract",
+  "status": "pass",
+  "checkpoints": [
+    {
+      "id": "01-visible-brook-boulder",
+      "expectedCollision": "brook-boulder",
+      "visual": "evidence/collision/01-visible-brook-boulder.jpg",
+      "visualSha256": "f77d566a0077c7ff8e4af9725555029d76f851f7aad62a3817ab76a9c64e2040",
+      "state": "evidence/collision/state/01-visible-brook-boulder.json",
+      "stateSha256": "716c01c3621dc8efa949888c73da259dc5c461fe7a58123609655b5da27ce25b",
+      "browser": "evidence/collision/browser/01-visible-brook-boulder.json",
+      "browserSha256": "4dee2e12bd2706108e294aee5e4f3b577f13b895e8a67b99e8d67609d1aa50e9",
+      "finalPosition": {
+        "x": -7.5,
+        "z": 37.45
+      },
+      "groundY": -1.337
+    },
+    {
+      "id": "02-rotated-fort-tent",
+      "expectedCollision": "fort-tent-west",
+      "visual": "evidence/collision/02-rotated-fort-tent.jpg",
+      "visualSha256": "2115ac457a0c742845cb310065c91bf32a76bef4f56943c0cea36d7a275bff9d",
+      "state": "evidence/collision/state/02-rotated-fort-tent.json",
+      "stateSha256": "036615e8ce01d19e32c01dd35fb78bf449f332e8a0739ce8c1219361dd5c7de4",
+      "browser": "evidence/collision/browser/02-rotated-fort-tent.json",
+      "browserSha256": "f69bc82f1b265d27e0a994fe686e522674ccc3ab89ca4ebb8593a8e00bc628f6",
+      "finalPosition": {
+        "x": -5.687,
+        "z": 77.313
+      },
+      "groundY": 0.548
+    },
+    {
+      "id": "03-cover-arch-trunk",
+      "expectedCollision": "cover-arch-1-right-trunk",
+      "visual": "evidence/collision/03-cover-arch-trunk.jpg",
+      "visualSha256": "b1e53e0098b5af8ea41e2d366141c532cba96d8337549bd4a5a4650a508b063d",
+      "state": "evidence/collision/state/03-cover-arch-trunk.json",
+      "stateSha256": "6c8c2e0af076ec8b76cc175ead910e202031dc7e0927a67a6156cc179d4def9d",
+      "browser": "evidence/collision/browser/03-cover-arch-trunk.json",
+      "browserSha256": "ac3e0d4debf8cf4c0426208b087122a2c806a02bfcc03b4af318fdc0971b0e5e",
+      "finalPosition": {
+        "x": -4.82,
+        "z": 28
+      },
+      "groundY": -1.858
+    },
+    {
+      "id": "04-living-subject-space",
+      "expectedCollision": "iguanodon-adult-graze",
+      "visual": "evidence/collision/04-living-subject-space.jpg",
+      "visualSha256": "06c69aba97e70116748728adc64657e580297f22598693d159e641f073c0ec62",
+      "state": "evidence/collision/state/04-living-subject-space.json",
+      "stateSha256": "5672d4a0cafec7c50b7de6038925c90d73ae558bc4a94d306d5575d2e95c2d15",
+      "browser": "evidence/collision/browser/04-living-subject-space.json",
+      "browserSha256": "d21b571681f016767c6450375b5fa9623ef1da694ab82a0925af3d5ad7ca717d",
+      "finalPosition": {
+        "x": -8.505,
+        "z": -29.211
+      },
+      "groundY": -0.789
+    }
+  ],
+  "consoleErrors": [],
+  "requestHosts": [
+    "",
+    "127.0.0.1:4173"
+  ],
+  "limitations": [
+    "Movement uses a vertical capsule on the shared terrain heightfield with fixed-step ballistic jumping and height-aware solid overlap.",
+    "Low decorative objects remain intentionally traversable and are listed in the runtime collision policy."
+  ]
+}

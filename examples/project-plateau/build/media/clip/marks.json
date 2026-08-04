@@ -6,32 +6,34 @@
     "height": 800
   },
   "url": "http://127.0.0.1:4173/?media=strong",
-  "sourceFingerprint": "e99883ce0a14f31782ac0dc6a91bd38f7e9869d86279d11ca04b5171a59af69d",
+  "pointerLockMode": "deterministic-browser-shim",
+  "sourceFingerprint": "568a32dcd33ef3ddc934d4fe795c882c9b7aaff5e71cd66ce7508095d3c12fdb",
   "consoleErrors": [],
   "requestHosts": [
+    "",
     "127.0.0.1:4173"
   ],
   "externalHosts": [],
   "raw": {
     "path": "media/clip/raw_take.webm",
-    "bytes": 6045400,
-    "sha256": "5f3b3766db627c25debe94c8e0bcc98933bdefb56fa9fb25b6e783d4149f8d34",
-    "durationSeconds": 56.48,
-    "marksToSourceOffset": 0.875
+    "bytes": 6732914,
+    "sha256": "335262a4eb0ec464b43c3d3a388835af67251902a9e4d611c7d0c9e03cd1adaf",
+    "durationSeconds": 63.68,
+    "marksToSourceOffset": 0.873
   },
   "strongWindow": {
-    "sourceStartSeconds": 2.949,
-    "sourceDurationSeconds": 53.531
+    "sourceStartSeconds": 2.816,
+    "sourceDurationSeconds": 60.864
   },
   "marks": [
     {
       "label": "strong_start",
-      "t": 2.074,
+      "t": 1.943,
       "state": "field-order"
     },
     {
       "label": "fort_to_brook:start",
-      "t": 2.461,
+      "t": 2.189,
       "input": "KeyW",
       "position": {
         "x": 3,
@@ -40,168 +42,229 @@
     },
     {
       "label": "fort_to_brook:end",
-      "t": 8.494,
+      "t": 8.332,
       "position": {
         "x": 3,
-        "z": 44.973
+        "z": 44.751
       }
     },
     {
       "label": "brook_plate:start",
-      "t": 8.496,
+      "t": 8.334,
       "input": "Right Mouse + Left Mouse",
       "plate": 1
     },
     {
       "label": "brook_plate:end",
-      "t": 10.637,
+      "t": 10.472,
       "frame": "brook-partial",
       "points": 1
     },
     {
+      "label": "clear_brook_boulder:start",
+      "t": 10.476,
+      "input": "KeyD",
+      "position": {
+        "x": 3,
+        "z": 44.598
+      }
+    },
+    {
+      "label": "clear_brook_boulder:end",
+      "t": 10.553,
+      "position": {
+        "x": 3,
+        "z": 44.598
+      }
+    },
+    {
       "label": "brook_to_basalt:start",
-      "t": 10.64,
+      "t": 10.558,
       "input": "KeyW",
       "position": {
         "x": 3,
-        "z": 44.973
+        "z": 44.598
       }
     },
     {
       "label": "brook_to_basalt:end",
-      "t": 17.147,
+      "t": 17.082,
       "position": {
         "x": 3,
-        "z": 17.983
+        "z": 17.739
       }
     },
     {
       "label": "basalt_plate:start",
-      "t": 17.147,
+      "t": 17.082,
       "input": "Right Mouse + Left Mouse",
       "plate": 2
     },
     {
       "label": "basalt_plate:end",
-      "t": 19.286,
+      "t": 19.236,
       "frame": "basalt-scale",
       "points": 2
     },
     {
       "label": "enter_canopy:start",
-      "t": 19.29,
+      "t": 19.239,
       "input": "KeyA",
       "position": {
         "x": 3,
-        "z": 17.983
+        "z": 17.586
       }
     },
     {
       "label": "enter_canopy:end",
-      "t": 19.445,
+      "t": 19.508,
       "position": {
-        "x": 2.681,
-        "z": 17.983
+        "x": 2.484,
+        "z": 17.586
       }
     },
     {
       "label": "first_cover_read:start",
-      "t": 19.445,
+      "t": 19.508,
       "input": "hold position under cover"
     },
     {
       "label": "first_cover_read:end",
-      "t": 25.296,
+      "t": 25.264,
       "awareness": 2
     },
     {
       "label": "canopy_to_glade:start",
-      "t": 25.298,
+      "t": 25.267,
       "input": "KeyW",
       "position": {
-        "x": 2.681,
-        "z": 17.983
+        "x": 2.341,
+        "z": 17.586
       }
     },
     {
       "label": "canopy_to_glade:end",
-      "t": 29.187,
+      "t": 29.167,
       "position": {
-        "x": 2.681,
-        "z": 1.982
+        "x": 2.341,
+        "z": 1.695
       }
     },
     {
       "label": "young_play_plate:start",
-      "t": 29.189,
+      "t": 29.168,
       "input": "Right Mouse + Left Mouse",
       "plate": 3
     },
     {
       "label": "young_play_plate:end",
-      "t": 31.328,
+      "t": 31.298,
       "frame": "glade-young-play",
       "points": 2
     },
     {
+      "label": "protect_young_play_plate:start",
+      "t": 31.301,
+      "input": "KeyS",
+      "position": {
+        "x": 2.341,
+        "z": 1.566
+      }
+    },
+    {
+      "label": "protect_young_play_plate:end",
+      "t": 31.894,
+      "position": {
+        "x": 2.341,
+        "z": 3.562
+      }
+    },
+    {
+      "label": "between_behavior_frames:start",
+      "t": 31.894,
+      "input": "hold position under cover"
+    },
+    {
+      "label": "between_behavior_frames:end",
+      "t": 37.727,
+      "awareness": 2
+    },
+    {
+      "label": "return_for_branch_pull:start",
+      "t": 37.731,
+      "input": "KeyW",
+      "position": {
+        "x": 2.341,
+        "z": 3.771
+      }
+    },
+    {
+      "label": "return_for_branch_pull:end",
+      "t": 38.332,
+      "position": {
+        "x": 2.341,
+        "z": 1.763
+      }
+    },
+    {
       "label": "branch_pull_plate:start",
-      "t": 31.328,
+      "t": 38.332,
       "input": "Right Mouse + Left Mouse",
       "plate": 4
     },
     {
       "label": "branch_pull_plate:end",
-      "t": 33.47,
+      "t": 40.482,
       "frame": "glade-branch-pull",
       "points": 2
     },
     {
       "label": "retreat_to_cover:start",
-      "t": 33.472,
+      "t": 40.485,
       "input": "KeyS",
       "position": {
-        "x": 2.681,
-        "z": 1.982
+        "x": 2.341,
+        "z": 1.609
       }
     },
     {
       "label": "retreat_to_cover:end",
-      "t": 33.845,
+      "t": 41.052,
       "position": {
-        "x": 2.681,
-        "z": 3.211
+        "x": 2.341,
+        "z": 3.476
       }
     },
     {
       "label": "final_cover_read:start",
-      "t": 33.845,
+      "t": 41.052,
       "input": "hold position under cover"
     },
     {
       "label": "final_cover_read:end",
-      "t": 39.721,
+      "t": 46.919,
       "awareness": 2
     },
     {
       "label": "covered_return:start",
-      "t": 39.723,
+      "t": 46.923,
       "input": "KeyS",
       "position": {
-        "x": 2.681,
-        "z": 3.211
+        "x": 2.341,
+        "z": 3.709
       }
     },
     {
       "label": "covered_return:end",
-      "t": 53.797,
+      "t": 61.003,
       "position": {
-        "x": 2.681,
-        "z": 62.009
+        "x": 2.341,
+        "z": 62.043
       }
     },
     {
       "label": "strong_end",
-      "t": 55.605,
+      "t": 62.807,
       "state": "strong-field-record"
     }
   ]

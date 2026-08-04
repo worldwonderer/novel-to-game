@@ -1,15 +1,15 @@
 {
-  "sourceFingerprint": "e99883ce0a14f31782ac0dc6a91bd38f7e9869d86279d11ca04b5171a59af69d",
+  "sourceFingerprint": "568a32dcd33ef3ddc934d4fe795c882c9b7aaff5e71cd66ce7508095d3c12fdb",
   "capture": "one continuous input-only Strong run",
   "edit": "uniform time compression only; no state cuts or splices",
-  "rawSha256": "5f3b3766db627c25debe94c8e0bcc98933bdefb56fa9fb25b6e783d4149f8d34",
+  "rawSha256": "335262a4eb0ec464b43c3d3a388835af67251902a9e4d611c7d0c9e03cd1adaf",
   "encodes": [
     {
       "path": "media/clip/project-plateau-30s.mp4",
       "targetSeconds": 30,
-      "speed": 1.78437,
-      "bytes": 6455492,
-      "sha256": "c55d5befb5a552b70352184ce0c04e17d86e01b9dc656870a00fa86678833d1d",
+      "speed": 2.0288,
+      "bytes": 9330388,
+      "sha256": "15ed02f10ece218f5587b49171d92373b30eaac9b2325910797a582606e6c948",
       "probe": {
         "streams": [
           {
@@ -44,7 +44,7 @@
             "start_time": "0.000000",
             "duration_ts": 460800,
             "duration": "30.000000",
-            "bit_rate": "1718389",
+            "bit_rate": "2485036",
             "bits_per_raw_sample": "8",
             "nb_frames": "900",
             "extradata_size": 51,
@@ -72,7 +72,7 @@
             "tags": {
               "language": "und",
               "handler_name": "VideoHandler",
-              "encoder": "Lavc62.28.101 libx264"
+              "encoder": "Lavc62.28.102 libx264"
             }
           }
         ],
@@ -85,14 +85,14 @@
           "format_long_name": "QuickTime / MOV",
           "start_time": "0.000000",
           "duration": "30.000000",
-          "size": "6455492",
-          "bit_rate": "1721464",
+          "size": "9330388",
+          "bit_rate": "2488103",
           "probe_score": 100,
           "tags": {
             "major_brand": "isom",
             "minor_version": "512",
             "compatible_brands": "isomiso2avc1mp41",
-            "encoder": "Lavf62.12.101"
+            "encoder": "Lavf62.12.102"
           }
         }
       },
@@ -107,9 +107,9 @@
         "  PASS  \u753b\u5e45\u6bd4: 1.600:1",
         "  PASS  \u5e27\u7387: 30.000",
         "  PASS  \u65f6\u957f: 30.000s",
-        "  PASS  \u6587\u4ef6\u5927\u5c0f: 6.46MB",
+        "  PASS  \u6587\u4ef6\u5927\u5c0f: 9.33MB",
         "  PASS  \u97f3\u8f68: \u65e0(\u9759\u97f3\u7247)",
-        "  PASS  \u9996\u5e27\u975e\u9ed1: YAVG=110.8",
+        "  PASS  \u9996\u5e27\u975e\u9ed1: YAVG=88.8",
         "  PASS  faststart: moov \u5728\u524d",
         "",
         "14/14 \u901a\u8fc7"
@@ -118,9 +118,9 @@
     {
       "path": "media/clip/project-plateau-15s.mp4",
       "targetSeconds": 15,
-      "speed": 3.56873,
-      "bytes": 3655216,
-      "sha256": "592095c8fbeb3add2bfe8014c27f25c722b459a6217a3eed266e23b486a49b28",
+      "speed": 4.0576,
+      "bytes": 5149312,
+      "sha256": "320b6cc34486614b73e779dbf394796193e66186202ad3c0ade0f938c2140462",
       "probe": {
         "streams": [
           {
@@ -155,7 +155,7 @@
             "start_time": "0.000000",
             "duration_ts": 230400,
             "duration": "15.000000",
-            "bit_rate": "1946131",
+            "bit_rate": "2742952",
             "bits_per_raw_sample": "8",
             "nb_frames": "450",
             "extradata_size": 51,
@@ -183,7 +183,7 @@
             "tags": {
               "language": "und",
               "handler_name": "VideoHandler",
-              "encoder": "Lavc62.28.101 libx264"
+              "encoder": "Lavc62.28.102 libx264"
             }
           }
         ],
@@ -196,14 +196,14 @@
           "format_long_name": "QuickTime / MOV",
           "start_time": "0.000000",
           "duration": "15.000000",
-          "size": "3655216",
-          "bit_rate": "1949448",
+          "size": "5149312",
+          "bit_rate": "2746299",
           "probe_score": 100,
           "tags": {
             "major_brand": "isom",
             "minor_version": "512",
             "compatible_brands": "isomiso2avc1mp41",
-            "encoder": "Lavf62.12.101"
+            "encoder": "Lavf62.12.102"
           }
         }
       },
@@ -218,9 +218,9 @@
         "  PASS  \u753b\u5e45\u6bd4: 1.600:1",
         "  PASS  \u5e27\u7387: 30.000",
         "  PASS  \u65f6\u957f: 15.000s",
-        "  PASS  \u6587\u4ef6\u5927\u5c0f: 3.66MB",
+        "  PASS  \u6587\u4ef6\u5927\u5c0f: 5.15MB",
         "  PASS  \u97f3\u8f68: \u65e0(\u9759\u97f3\u7247)",
-        "  PASS  \u9996\u5e27\u975e\u9ed1: YAVG=112.7",
+        "  PASS  \u9996\u5e27\u975e\u9ed1: YAVG=86.8",
         "  PASS  faststart: moov \u5728\u524d",
         "",
         "14/14 \u901a\u8fc7"
@@ -229,14 +229,14 @@
   ],
   "contactSheet": {
     "path": "media/clip/contact-sheet.jpg",
-    "bytes": 100618,
-    "sha256": "cb1ccf4db85191993a15e76da206c850c82225e05f2c1955fb0414e7d15204ff",
+    "bytes": 101820,
+    "sha256": "d25168ae6ca78fe0e4dc0305a9f2dd56b80ffa44821200a9e412ab1031d42de9",
     "sampling": "one frame every three seconds from the 30-second encode"
   },
   "shareCard": {
     "path": "media/project-plateau-github.jpg",
-    "bytes": 64850,
-    "sha256": "a9fa3cd1c5d0a6b95af32fef1bf38c0446869cc324ac49d85de8253dc9a8a72c",
+    "bytes": 73378,
+    "sha256": "dec18a9d208f98b193c19dc76f7dc30edd4fd53fce871fb38275c53fd22e1f0f",
     "source": "evidence/s10/02-young-play-silver-frame.jpg",
     "transform": "crop and resize only; no added text or generated imagery"
   },

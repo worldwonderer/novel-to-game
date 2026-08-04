@@ -81,6 +81,7 @@ def run() -> dict[str, object]:
             "s6-field-feedback", "s7-lifecycle", "s8-input-paths", "s9-living-plates", "s10-glade-clarity"
         }
         page.get_by_role("button", name="Enter the basin").click()
+        page.wait_for_function("window.__projectPlateau.snapshot().mode === 'order'", timeout=15000)
         page.get_by_role("button", name="Begin field work").click()
         page.wait_for_timeout(180)
 

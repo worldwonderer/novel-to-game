@@ -2,7 +2,7 @@
   "stage": "s9-living-plates",
   "source": {
     "scope": "index.html, package manifests, public assets and src",
-    "sha256": "a33f6d0439f7efb26e2437beff4ed334851cd0cd94b321e7918387061adfd454"
+    "sha256": "578d03cbfbcbe66ac192ac1bcb808d3e215b14d1d6759d63d2b3012bbc22ee6f"
   },
   "environment": {
     "browser": "Google Chrome 150.0.7871.187",
@@ -30,35 +30,35 @@
   "plateImages": [
     {
       "plate": 1,
-      "bytesInCssValue": 129530,
-      "sha256": "ef13940d1143d4b1506ba2bbf5674ffbb9e5050efeec32c19a805e7de15fc2fc",
-      "filter": "grayscale(1) contrast(1.14) brightness(0.86)"
+      "bytesInCssValue": 108510,
+      "sha256": "70718472dcf3c6d691229834c15cbe812eb7e86d52b70755a98252c2a29aaa95",
+      "filter": "grayscale(1) sepia(0.08) contrast(1.24) brightness(0.82)"
     },
     {
       "plate": 2,
-      "bytesInCssValue": 110642,
-      "sha256": "e0258d14b4a0d06429a207f1ee1b1538288a6a087c991c7b060cfb53d0f250de",
-      "filter": "grayscale(1) contrast(1.14) brightness(0.86)"
+      "bytesInCssValue": 98822,
+      "sha256": "889829f2bdd3514ae229226d04fad66f47ecbfe7a8fa154ceb56455f3b79aaa5",
+      "filter": "grayscale(1) sepia(0.08) contrast(1.24) brightness(0.82)"
     },
     {
       "plate": 3,
-      "bytesInCssValue": 126330,
-      "sha256": "96b657bf59d8cf95c10712e78cc2b3717d16b79b7c43060ed3169657133e0c87",
-      "filter": "grayscale(1) contrast(1.14) brightness(0.86)"
+      "bytesInCssValue": 98330,
+      "sha256": "38991fc3a01db646ecd08d0509d68da4293ccc884c5defa187743d4d124d8971",
+      "filter": "grayscale(1) sepia(0.08) contrast(1.24) brightness(0.82)"
     },
     {
       "plate": 4,
-      "bytesInCssValue": 127250,
-      "sha256": "56506db37061080125e9c12323e0d4fec96d4cc4ef8a04524910d4b40f37931e",
-      "filter": "grayscale(1) contrast(1.14) brightness(0.86)"
+      "bytesInCssValue": 100038,
+      "sha256": "880134adf641d13f5a0cbebddc1ad89b7601743032409093eeb584b2ca344df6",
+      "filter": "grayscale(1) sepia(0.08) contrast(1.24) brightness(0.82)"
     }
   ],
   "performance": {
     "samples": 240,
     "medianFrameMs": 16.7,
     "medianFps": 59.9,
-    "onePercentLowFps": 37.9,
-    "worstFrameMs": 26.7
+    "onePercentLowFps": 38.9,
+    "worstFrameMs": 25.9
   },
   "checkpoints": [
     {

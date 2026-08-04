@@ -1,0 +1,17 @@
+{
+  "suite": "browser:loading-state",
+  "status": "PASS",
+  "sourceFingerprint": "578d03cbfbcbe66ac192ac1bcb808d3e215b14d1d6759d63d2b3012bbc22ee6f",
+  "checks": {
+    "bootLoaderClearsAfterFirstFrame": true,
+    "requiredAssetLoaderVisible": true,
+    "loadingStatusNamesRequiredAssets": true,
+    "fieldOrderRemainsHiddenUntilReady": true,
+    "loaderClearsAfterSuccess": true,
+    "consoleErrors": []
+  },
+  "evidence": [
+    "01-required-assets-loading.jpg",
+    "02-field-order-ready.jpg"
+  ]
+}

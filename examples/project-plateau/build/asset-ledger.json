@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updated": "2026-08-04 PT \u00b7 merged visual quality gates with HY3D v23 candidate",
+  "updated": "2026-08-04 CST · HY3D first-person tool-and-hands viewmodels verified; final release candidate recapture pending",
   "policy": "Every shipped non-code asset must be original, public domain, or redistribution-compatible. Modern adaptation assets are prohibited.",
   "entries": [
     {
@@ -45,19 +45,54 @@
       "tier": "release-gate",
       "status": "playable-prototype-verified",
       "releaseGatePassed": true,
-      "source": "app/src/world.js",
-      "provenance": "Original primitive model informed by generic period camera construction",
-      "rights": "Original project geometry; no maker marks or copied product mesh",
+      "source": "app/art/source-references/field-camera-hands-imagegen-v4-rear-view.png; app/art/source-references/field-camera-hands-hy3d-preview-v4-rear-view.png; app/public/assets/field-camera-hands-hy3d-v31-50k-v4-rear-view-1k.glb; app/src/hy3d-field-camera.js; app/src/world.js; app/src/main.js",
+      "provenance": "Project-specific ImageGen rear-view reference followed by Tencent Hunyuan 3D image2ModelV3.1 reconstruction and local 50K/1K WebP optimization. The ground-glass back is authored toward the player; camera and both gripping hands ship as one required viewmodel with no runtime orientation patch, procedural fallback or alternate production camera path.",
+      "rights": "Project-specific generated reference and mesh; retain the applicable OpenAI ImageGen and Tencent Hunyuan output-rights records before distribution.",
       "evidence": [
-        "evidence/s0/01-title.jpg",
-        "evidence/s1/01-clean-start.jpg",
-        "evidence/s3/03-camera-raised.jpg",
-        "evidence/s3/05-partial-plate.jpg",
-        "evidence/s6/04-bellows-camera-raised.jpg",
-        "../qa/verification.json",
-        "../qa/evidence/independent-visual-review-2026-08-03.md"
+        "evidence/visual-targets/frames/vt02-first-controllable-track.jpg",
+        "evidence/visual-targets/frames/vt02-track-examined.jpg",
+        "evidence/visual-targets/manifest.json",
+        "app/art/source-references/field-camera-hands-imagegen-v4-rear-view.png",
+        "app/art/source-references/field-camera-hands-hy3d-preview-v4-rear-view.png",
+        "../qa/evidence/independent-viewmodel-review-2026-08-04.md",
+        "../qa/verification.json"
       ],
-      "remaining": "none"
+      "remaining": "none",
+      "generation": {
+        "reference": {
+          "path": "app/art/source-references/field-camera-hands-imagegen-v4-rear-view.png",
+          "sha256": "65fb884ff960f61716b0fb09ab1df5af6be7b216d38a0cd05d2ddc7f23545582",
+          "bytes": 1881431
+        },
+        "preview": {
+          "path": "app/art/source-references/field-camera-hands-hy3d-preview-v4-rear-view.png",
+          "sha256": "4f9162dccd56b3ff86c3feffc36b815bf15c86b96db7fe5ae109f58b2079379f",
+          "bytes": 70247
+        },
+        "acceptedRuntimeAsset": {
+          "path": "app/public/assets/field-camera-hands-hy3d-v31-50k-v4-rear-view-1k.glb",
+          "sha256": "b9130671704349c7e287c2edd7fa812e9f95ac04f19596957be6bd69fe1e5193",
+          "bytes": 1108408,
+          "triangles": 50000,
+          "textureSize": 1024,
+          "approximateGpuMiB": 18
+        },
+        "hunyuan": {
+          "version": "3.1",
+          "creationId": "165c0431-9378-4ac9-99a6-034c1011583e",
+          "assetId": "d9fa9671-32b3-4599-92b4-7982203ab6e7",
+          "taskId": "r_a44a8c758ff311f1b8ab7e059e38f1f1",
+          "rawSha256": "e7d080fecb459c9581a68470e77c46aac4573d8fae255f2428989ef592e44d60",
+          "rawBytes": 32122116
+        },
+        "optimizeCommand": "npx -y @gltf-transform/cli@4.2.1 optimize /tmp/field-camera-hands-hy3d-v4-rear-view-raw.glb app/public/assets/field-camera-hands-hy3d-v31-50k-v4-rear-view-1k.glb --compress quantize --texture-compress webp --texture-size 1024 --simplify false --palette false",
+        "integratedHands": 2,
+        "gripRoles": [
+          "camera-left-grip",
+          "camera-right-grip"
+        ],
+        "fallback": "none; required focal asset failures are release-blocking"
+      }
     },
     {
       "key": "tool.plate_case",
@@ -93,22 +128,51 @@
       "tier": "release-gate",
       "status": "playable-prototype-verified",
       "releaseGatePassed": true,
-      "source": "app/src/world.js; app/src/main.js; app/src/simulation.js; app/src/styles.css",
-      "provenance": "Original procedural period-rifle silhouette and CSS sight",
-      "rights": "Original project geometry required",
+      "source": "app/art/source-references/expedition-rifle-hands-imagegen-v1.png; app/public/assets/expedition-rifle-hands-hy3d-v31-50k-1k.glb; app/src/hy3d-rifle.js; app/src/world.js; app/src/main.js",
+      "provenance": "Project-specific ImageGen reference followed by Tencent Hunyuan 3D image2ModelV3.1 reconstruction and local 50K/1K WebP optimization. Period rifle and both gripping hands ship as one required viewmodel; the former procedural rifle, CSS sight and secondary hand path were removed.",
+      "rights": "Project-specific generated reference and mesh; retain the applicable OpenAI ImageGen and Tencent Hunyuan output-rights records before distribution.",
       "evidence": [
-        "evidence/s3/07-shot-interrupt.jpg",
-        "evidence/s5/03-noisy-exposed-return.jpg",
-        "evidence/s5/04-corroborating-shot-result.jpg",
-        "evidence/s6/08-rifle-brook-response.jpg",
-        "evidence/s8/08-mixed-rifle-brook.jpg",
-        "evidence/s8/09-mixed-input-result.jpg",
-        "evidence/s8/11-panic-first-contact.jpg",
-        "evidence/s8/12-panic-input-failure.jpg",
-        "../qa/verification.json",
-        "../qa/evidence/independent-visual-review-2026-08-03.md"
+        "evidence/visual-targets/frames/vt04-attack-defense.jpg",
+        "evidence/visual-targets/manifest.json",
+        "app/art/source-references/expedition-rifle-hands-imagegen-v1.png",
+        "app/art/source-references/expedition-rifle-hands-hy3d-preview-v1.png",
+        "../qa/verification.json"
       ],
-      "remaining": "none"
+      "remaining": "none",
+      "generation": {
+        "reference": {
+          "path": "app/art/source-references/expedition-rifle-hands-imagegen-v1.png",
+          "sha256": "cb0da7f456853c68960623e4d1b5d9160a89dd0d11d4d1d3ba5d4b0dda829c89",
+          "bytes": 1238298
+        },
+        "preview": {
+          "path": "app/art/source-references/expedition-rifle-hands-hy3d-preview-v1.png",
+          "sha256": "1f330d0baac1cd339448ad31ae0f3856d42145fa6248cefdade0cc998a0cfff4",
+          "bytes": 27337
+        },
+        "acceptedRuntimeAsset": {
+          "path": "app/public/assets/expedition-rifle-hands-hy3d-v31-50k-1k.glb",
+          "sha256": "db4f0a6dc2cab117e913b9179d31882c02c64c1f20de0e8645a06ba1f39c411c",
+          "bytes": 1000112,
+          "triangles": 50000,
+          "textureSize": 1024,
+          "approximateGpuMiB": 18
+        },
+        "hunyuan": {
+          "version": "3.1",
+          "creationId": "d8456aef-2144-4d3f-a860-21adf21250b8",
+          "assetId": "93f11215-ec3c-4c65-aff9-832045ac73ef",
+          "rawSha256": "6a71dc1bc6e471749cc61c8d123da4eebd0d2202623b0d5b0bbb65c777f6cb8e",
+          "rawBytes": 24322608
+        },
+        "optimizeCommand": "npx -y @gltf-transform/cli@4.2.1 optimize input.glb output.glb --compress quantize --texture-compress webp --texture-size 1024 --simplify false --palette false",
+        "integratedHands": 2,
+        "gripRoles": [
+          "fore-end-support",
+          "trigger-grip"
+        ],
+        "fallback": "none; required focal asset failures are release-blocking"
+      }
     },
     {
       "key": "subject.iguanodon_family",

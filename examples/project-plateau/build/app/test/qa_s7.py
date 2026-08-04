@@ -214,6 +214,7 @@ def run() -> dict[str, object]:
         assert_within_viewport(page.locator("#settings-panel"))
         page.locator("#settings-panel .panel-close").click()
         page.get_by_role("button", name="Enter the basin").click()
+        page.wait_for_function("window.__projectPlateau.snapshot().mode === 'order'", timeout=15000)
         order = capture("03-field-order-minimum", ["Enter the basin"])
         assert order["mode"] == "order", order
         assert_within_viewport(page.locator("#field-order"))
@@ -305,6 +306,7 @@ def run() -> dict[str, object]:
 
         # Repeat the heavy state at the target viewport for the final performance record.
         page.get_by_role("button", name="Enter the basin").click()
+        page.wait_for_function("window.__projectPlateau.snapshot().mode === 'order'", timeout=15000)
         page.get_by_role("button", name="Begin field work").click()
         page.wait_for_timeout(80)
         page.evaluate("window.__projectPlateau.teleportForTest({x: 0, z: -10})")

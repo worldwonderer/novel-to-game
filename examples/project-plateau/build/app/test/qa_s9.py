@@ -143,11 +143,16 @@ def run() -> dict[str, object]:
                 f"window.__projectPlateau.snapshot().player.pendingExposure?.key === '{frame_key}'",
                 timeout=1000,
             )
+            page.wait_for_function(
+                f"window.__projectPlateau.snapshot().ui.capturedPlateImages[{index}] === true",
+                timeout=1000,
+            )
             state = snapshot(page)
             assert state["ui"]["capturedPlateImages"][index], state
             return state
 
         page.get_by_role("button", name="Enter the basin").click()
+        page.wait_for_function("window.__projectPlateau.snapshot().mode === 'order'", timeout=15000)
         page.get_by_role("button", name="Begin field work").click()
         page.wait_for_timeout(100)
 
@@ -181,6 +186,11 @@ def run() -> dict[str, object]:
 
         branch_pending = begin_exposure(3, "glade-branch-pull")
         assert branch_pending["familyVisual"]["moment"] == "glade-branch-pull", branch_pending
+        page.wait_for_function(
+            "window.__projectPlateau.snapshot().familyVisual.branchAngle > 0.4",
+            timeout=1200,
+        )
+        branch_pending = snapshot(page)
         assert branch_pending["familyVisual"]["branchAngle"] > 0.4, branch_pending
         capture("03-branch-pull-commitment", ["second glade camera commitment"])
         page.wait_for_function(

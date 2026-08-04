@@ -7,6 +7,7 @@ import hashlib
 import base64
 import json
 from pathlib import Path
+import shutil
 import socket
 import subprocess
 import time
@@ -22,6 +23,7 @@ CHROME = Path("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
 VIEWPORTS = ((1440, 900), (1280, 720))
 FROZEN_TIME = 4.25
 JPEG_QUALITY = 84
+CAPTURE_SCHEMA_VERSION = 2
 
 
 def sha256(path: Path) -> str:
@@ -65,7 +67,11 @@ def reusable_capture_manifest(fingerprint: str) -> dict[str, object] | None:
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     except (json.JSONDecodeError, TypeError):
         return None
-    if manifest.get("sourceFingerprint") != fingerprint or manifest.get("consoleErrors") != []:
+    if (
+        manifest.get("schemaVersion") != CAPTURE_SCHEMA_VERSION
+        or manifest.get("sourceFingerprint") != fingerprint
+        or manifest.get("consoleErrors") != []
+    ):
         return None
     captures = manifest.get("captures")
     targets = manifest.get("targets")
@@ -97,7 +103,11 @@ def reusable_motion_cadence(fingerprint: str) -> dict[str, object] | None:
         cadence = manifest["motionCadence"]
     except (json.JSONDecodeError, KeyError, TypeError):
         return None
-    if manifest.get("sourceFingerprint") != fingerprint or not isinstance(cadence, dict):
+    if (
+        manifest.get("schemaVersion") != CAPTURE_SCHEMA_VERSION
+        or manifest.get("sourceFingerprint") != fingerprint
+        or not isinstance(cadence, dict)
+    ):
         return None
     samples = cadence.get("samples")
     if not isinstance(samples, list) or cadence.get("consoleErrors") != []:
@@ -237,7 +247,7 @@ def run(base_url: str) -> dict[str, object]:
     assert len({item["sha256"] for item in captures}) == 6, captures
     assert len(targets) == 3, targets
     result = {
-        "schemaVersion": 1,
+        "schemaVersion": CAPTURE_SCHEMA_VERSION,
         "command": "npm run capture:visual",
         "sourceFingerprint": fingerprint,
         "scene": "glade-family-under-aerial-pressure",
@@ -275,6 +285,7 @@ def capture_motion_cadence(browser, base_url: str) -> dict[str, object]:
         record_video_size={"width": 1280, "height": 720},
     )
     page = context.new_page()
+    recording_started = time.monotonic()
     page.on("console", lambda message: errors.append(message.text) if message.type == "error" else None)
     page.on("pageerror", lambda error: errors.append(f"PAGEERROR: {error}"))
     transitions: list[dict[str, object]] = []
@@ -286,6 +297,7 @@ def capture_motion_cadence(browser, base_url: str) -> dict[str, object]:
     page.evaluate("window.__projectPlateau.setView('glade')")
     page.evaluate("window.__projectPlateau.setThreatVisualForTest(1, null)")
     started = time.monotonic()
+    preroll_seconds = max(0, started - recording_started)
     transitions.append({"phase": "watch", "atMs": 0, "threatState": "watch", "rendererResponse": "orbit"})
     page.wait_for_timeout(900)
     page.evaluate("window.__projectPlateau.setThreatVisualForTest(3, null)")
@@ -310,7 +322,26 @@ def capture_motion_cadence(browser, base_url: str) -> dict[str, object]:
     context.close()
     recorded = Path(video.path())
     video_path = MOTION / "watch-bank-dive-pull-up.webm"
-    recorded.replace(video_path)
+    ffmpeg = shutil.which("ffmpeg")
+    if not ffmpeg:
+        raise RuntimeError("ffmpeg is required to remove browser initialization frames from motion evidence")
+    subprocess.run(
+        [
+            ffmpeg,
+            "-loglevel", "error",
+            "-ss", f"{preroll_seconds:.3f}",
+            "-i", str(recorded),
+            "-an",
+            "-c:v", "libvpx-vp9",
+            "-deadline", "realtime",
+            "-cpu-used", "4",
+            "-crf", "30",
+            "-b:v", "0",
+            "-y", str(video_path),
+        ],
+        check=True,
+    )
+    recorded.unlink()
 
     samples: list[dict[str, object]] = []
     sample_page = browser.new_page(viewport={"width": 1280, "height": 720})
@@ -346,8 +377,9 @@ def capture_motion_cadence(browser, base_url: str) -> dict[str, object]:
     assert not errors, errors
     result = {
         "claim": "continuous real-browser watch to attack cycle plus deterministic phase samples",
-        "captureMode": "one uncut real-time Playwright WebM; QA-clock JPEG samples are phase labels, not gameplay timing",
+        "captureMode": "one continuous real-time Playwright gameplay take after browser preroll removal; QA-clock JPEG samples are phase labels, not gameplay timing",
         "authoredCycleSeconds": 3.2,
+        "trimmedBrowserPrerollMs": round(preroll_seconds * 1000),
         "transitions": transitions,
         "video": {
             "path": video_path.relative_to(PROJECT).as_posix(),

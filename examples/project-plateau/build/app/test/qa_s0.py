@@ -96,7 +96,7 @@ def run() -> dict[str, object]:
         page.on("request", lambda request: request_hosts.add(urlparse(request.url).netloc))
 
         navigation_started = time.perf_counter()
-        response = page.goto(f"{BASE_URL}/?view=title", wait_until="networkidle")
+        response = page.goto(f"{BASE_URL}/?view=title&qa=s0-title", wait_until="networkidle")
         page.wait_for_function("window.__projectPlateau?.ready === true")
         tti_ms = round((time.perf_counter() - navigation_started) * 1000, 1)
         assert response and response.ok, "S0 document request failed"
@@ -107,6 +107,7 @@ def run() -> dict[str, object]:
         page.screenshot(path=EVIDENCE / "01-title.jpg", type="jpeg", quality=88)
 
         page.get_by_role("button", name="Enter the basin").click()
+        page.wait_for_function("window.__projectPlateau.snapshot().mode === 'order'", timeout=15000)
         assert page.get_by_text("FIELD ORDER // FORWARD SCOUT").is_visible()
         page.screenshot(path=EVIDENCE / "02-field-order.jpg", type="jpeg", quality=88)
         page.get_by_role("button", name="Begin field work").click()

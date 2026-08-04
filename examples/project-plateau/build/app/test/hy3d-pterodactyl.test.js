@@ -17,8 +17,12 @@ import { createPterodactyl } from '../src/pterodactyl.js';
 
 function templateWithMesh() {
   const template = new THREE.Group();
+  const geometry = new THREE.BoxGeometry(1, 0.4, 0.8);
+  // Give the fixture a central, low appendage vertex so the dive pose must
+  // prove it tucks legs as well as narrowing the outer wing span.
+  geometry.getAttribute('position').setXYZ(0, 0, -0.2, 0.08);
   template.add(new THREE.Mesh(
-    new THREE.BoxGeometry(1, 0.4, 0.8),
+    geometry,
     new THREE.MeshStandardMaterial({ roughness: 0.3, metalness: 0.4 }),
   ));
   return template;
@@ -55,6 +59,10 @@ test('pterodactyl loader caches one matte template with shared flight morphs', a
     mesh.geometry.userData.hy3dPterodactylPoseTargets,
     [...HY3D_PTERODACTYL_POSE_TARGETS],
   );
+  assert.equal(
+    mesh.geometry.userData.silhouetteRefinement,
+    'integrated-torso-wing-root-volume',
+  );
   assert.equal(mesh.material.roughness, 0.84);
   assert.equal(mesh.material.metalness, 0);
   const positions = mesh.geometry.getAttribute('position');
@@ -73,8 +81,20 @@ test('pterodactyl loader caches one matte template with shared flight morphs', a
   }
   assert.ok(
     Math.abs(positions.getX(widestIndex) + diveFold.getX(widestIndex))
-      < Math.abs(positions.getX(widestIndex)) * 0.55,
+      < Math.abs(positions.getX(widestIndex)) * 0.36,
     'full dive fold must visibly narrow the wing span',
+  );
+  let lowestCentralIndex = -1;
+  for (let index = 0; index < positions.count; index += 1) {
+    if (Math.abs(positions.getX(index)) > 0.04) continue;
+    if (lowestCentralIndex < 0 || positions.getY(index) < positions.getY(lowestCentralIndex)) {
+      lowestCentralIndex = index;
+    }
+  }
+  assert.ok(lowestCentralIndex >= 0);
+  assert.ok(
+    diveFold.getY(lowestCentralIndex) > 0.17,
+    'full dive fold must tuck the central legs against the body',
   );
   assert.ok(
     Math.abs(wingUp.getY(widestIndex) - wingDown.getY(widestIndex))

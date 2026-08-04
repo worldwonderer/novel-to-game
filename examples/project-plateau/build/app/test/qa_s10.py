@@ -145,6 +145,14 @@ def run() -> dict[str, object]:
             "window.__projectPlateau.snapshot().assets.pterodactyl.visualStatus === 'hy3d-flock-ready'",
             timeout=15000,
         )
+        page.wait_for_function(
+            "window.__projectPlateau.snapshot().assets.fieldCamera.visualStatus === 'hy3d-field-camera-ready'",
+            timeout=15000,
+        )
+        page.wait_for_function(
+            "window.__projectPlateau.snapshot().assets.rifle.visualStatus === 'hy3d-rifle-ready'",
+            timeout=15000,
+        )
         assert page.evaluate("window.__projectPlateau.stage") == "s10-glade-clarity"
 
         vision_mode = "full-colour"
@@ -227,12 +235,17 @@ def run() -> dict[str, object]:
                 f"window.__projectPlateau.snapshot().player.pendingExposure?.key === '{frame_key}'",
                 timeout=1000,
             )
+            page.wait_for_function(
+                f"window.__projectPlateau.snapshot().ui.capturedPlateImages[{index}] === true",
+                timeout=1000,
+            )
             state = snapshot(page)
             assert state["ui"]["capturedPlateImages"][index], state
             assert not page.locator("#context-prompt").is_visible(), state
             return state
 
         page.get_by_role("button", name="Enter the basin").click()
+        page.wait_for_function("window.__projectPlateau.snapshot().mode === 'order'", timeout=15000)
         for index, mode in enumerate(colour_vision_modes):
             set_vision(mode)
             identifier = f"00{chr(ord('a') + index)}-{mode}-field-order"
@@ -292,6 +305,11 @@ def run() -> dict[str, object]:
 
         branch_pending = begin_exposure(3, "glade-branch-pull")
         assert branch_pending["familyVisual"]["moment"] == "glade-branch-pull", branch_pending
+        page.wait_for_function(
+            "window.__projectPlateau.snapshot().familyVisual.branchAngle > 0.4",
+            timeout=1200,
+        )
+        branch_pending = snapshot(page)
         assert branch_pending["familyVisual"]["branchAngle"] > 0.4, branch_pending
         branch = capture("03-branch-pull-silver-frame", ["Right Mouse", "Left Mouse", "second live commitment"])
         assert young["player"]["pendingExposure"]["key"] != branch["player"]["pendingExposure"]["key"]

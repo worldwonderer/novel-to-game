@@ -3,7 +3,9 @@ import test from 'node:test';
 
 import {
   MAX_RENDER_PIXEL_RATIO,
+  QUALITY_PROFILES,
   advanceRenderSchedule,
+  qualityRenderPixelRatio,
   renderIntervalForState,
   renderPixelRatio,
   shouldRenderFrame,
@@ -27,6 +29,15 @@ test('render scale caps Retina fill-rate without degrading standard displays', (
   assert.equal(MAX_RENDER_PIXEL_RATIO, 1.25);
   assert.equal(renderPixelRatio(2), 1.25);
   assert.equal(renderPixelRatio(1), 1);
+});
+
+test('quality profiles expose bounded fill-rate and active cadence budgets', () => {
+  assert.deepEqual(Object.keys(QUALITY_PROFILES), ['low', 'balanced', 'high']);
+  assert.equal(qualityRenderPixelRatio(2, 'low'), 0.85);
+  assert.equal(qualityRenderPixelRatio(2, 'balanced'), 1);
+  assert.equal(qualityRenderPixelRatio(2, 'high'), MAX_RENDER_PIXEL_RATIO);
+  assert.equal(QUALITY_PROFILES.low.activeFps, 45);
+  assert.equal(QUALITY_PROFILES.balanced.activeFps, 60);
 });
 
 test('render cadence saves power on title and pause while preserving active play', () => {

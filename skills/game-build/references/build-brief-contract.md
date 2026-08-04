@@ -29,6 +29,12 @@ sourceFingerprint: [当前候选实际发布输入稳定清单的 64 位小写 S
   必须显式填写，passed=true 时只能为空、`none` 或等价无剩余值。任一字段缺失、路径不存在或
   焦点项 false 均阻止 playable 的 `visualPromotion: PASS`；可降级项 false 只有在已分类且有效
   fallback 通过时才不阻止 playable，polished/showcase 仍要求全部为 true
+- 3D 碰撞合同：逐类列 `visibleAnchor / colliderShape / sourceOfTruth / solidPolicy`，可见实体与
+  collider 必须共享布局真值或具备可追溯映射；明确 non-solid 物件。记录模拟固定子步 / swept
+  策略、最大 `delta`、滑动与解穿透规则，以及浏览器实触证据，不把渲染帧上限当防穿透保证
+- 必需运行期资产：对每个 focal 异步资产写加载成功可观察量、失败行为和发布裁决；必需资产失败
+  不得静默切程序化 / 灰盒回退后继续宣称同一 playable 候选通过。可降级资产只能采用 ledger 已批准
+  且保持五项合同的 fallback
 - 动态媒体台账（含视频 / 关键帧驱动演出时必填）：风格锁 STYLE_LOCK 去向、每张参考图的
   职责声明（may_control / must_not_control）、每镜 start_boundary / end_boundary、
   请求与响应、任务 ID、本地输出与哈希的落盘路径（默认 `build/media/evidence/<shot_key>/`）
@@ -88,7 +94,7 @@ commands:
   start: [实际命令]
   verify: [一条权威验证命令]
 verification:
-  suites: [稳定 suite id 列表]
+  suites: [稳定 suite id 列表；连续控制项目必须含独立 controller-contract，实时 3D 必须含 motion-visual]
   completeRun: qa/verification.json#completeRun
   evidenceIndex: qa/verification.json#checkpoints
 

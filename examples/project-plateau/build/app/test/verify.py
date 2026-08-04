@@ -38,17 +38,28 @@ class Suite:
 
 JS_TESTS = (
     "test/audio.test.js",
+    "test/controller.test.js",
+    "test/entry-mode.test.js",
     "test/foundation.test.js",
+    "test/hy3d-field-camera.test.js",
+    "test/collision.test.js",
     "test/hy3d-iguanodon.test.js",
     "test/hy3d-pterodactyl.test.js",
+    "test/hy3d-rifle.test.js",
     "test/iguanodon.test.js",
     "test/pterodactyl.test.js",
     "test/render-budget.test.js",
     "test/settings.test.js",
     "test/simulation.test.js",
+    "test/terrain.test.js",
 )
 HISTORY_QA = tuple(f"test/qa_s{stage}.py" for stage in range(8)) + ("test/qa_s9.py",)
 COMPLETE_RUN_QA = ("test/qa_s8.py",)
+CONTROLLER_QA = ("test/qa_controller.py",)
+MOTION_QA = ("test/qa_motion.py",)
+COLLISION_QA = ("test/qa_collision.py",)
+ENTRY_QA = ("test/qa_entry.py",)
+LOADING_QA = ("test/qa_loading.py",)
 CURRENT_VISUAL_QA = (
     "test/qa_s10.py",
     "test/qa_visual_targets.py",
@@ -61,6 +72,11 @@ EXCLUDED_TEST_TOOLS = {
 EXPECTED_TEST_SCRIPTS = {
     "test": "test/*.test.js",
     "test:browser": "test/qa_s0.py",
+    "test:controller": "test/qa_controller.py",
+    "test:motion": "test/qa_motion.py",
+    "test:collision": "test/qa_collision.py",
+    "test:entry": "test/qa_entry.py",
+    "test:loading": "test/qa_loading.py",
     **{f"test:s{stage}": f"test/qa_s{stage}.py" for stage in range(1, 11)},
 }
 
@@ -77,6 +93,36 @@ SUITES = (
         "browser:complete-run",
         COMPLETE_RUN_QA,
         ((sys.executable, COMPLETE_RUN_QA[0]),),
+        APP,
+    ),
+    Suite(
+        "browser:controller-contract",
+        CONTROLLER_QA,
+        ((sys.executable, CONTROLLER_QA[0]),),
+        APP,
+    ),
+    Suite(
+        "browser:motion-visual",
+        MOTION_QA,
+        ((sys.executable, MOTION_QA[0]),),
+        APP,
+    ),
+    Suite(
+        "browser:collision-contract",
+        COLLISION_QA,
+        ((sys.executable, COLLISION_QA[0]),),
+        APP,
+    ),
+    Suite(
+        "browser:entry-conversion",
+        ENTRY_QA,
+        ((sys.executable, ENTRY_QA[0]),),
+        APP,
+    ),
+    Suite(
+        "browser:loading-state",
+        LOADING_QA,
+        ((sys.executable, LOADING_QA[0]),),
         APP,
     ),
     Suite(
@@ -236,7 +282,10 @@ def audit_registry() -> dict[str, object]:
         for path in (APP / "test").iterdir()
         if path.is_file() and path.suffix in {".py", ".js"}
     }
-    registered = set(JS_TESTS + HISTORY_QA + COMPLETE_RUN_QA + CURRENT_VISUAL_QA)
+    registered = set(
+        JS_TESTS + HISTORY_QA + COMPLETE_RUN_QA + CONTROLLER_QA + MOTION_QA
+        + COLLISION_QA + ENTRY_QA + LOADING_QA + CURRENT_VISUAL_QA
+    )
     excluded = set(EXCLUDED_TEST_TOOLS)
     orphaned = sorted(discovered - registered - excluded)
     missing = sorted((registered | excluded) - discovered)

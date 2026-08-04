@@ -237,6 +237,7 @@ def run() -> dict[str, object]:
 
         def begin_first_path() -> float:
             page.get_by_role("button", name="Enter the basin").click()
+            page.wait_for_function("window.__projectPlateau.snapshot().mode === 'order'", timeout=15000)
             page.wait_for_timeout(60)
             clean = capture("00-clean-field-order", ["Enter the basin"])
             assert clean["mode"] == "order" and clean["player"]["remainingLight"] == 180, clean

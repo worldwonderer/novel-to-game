@@ -33,13 +33,21 @@ description: "Verify a game with evidence on its selected target runtime. Launch
 4. 在 `testedRuntime` 启动真实构建，记录构建/导出失败、运行日志错误、崩溃和关键资源失败。
    若 `testedRuntime` 不等于 `targetRuntime`，把目标平台独有的输入、性能、打包和发布项列为
    `NOT_RUN`，不得借替代版本判过。
+   对 focal 异步资产主动制造 404 / 解码失败：若运行时静默展示灰盒或程序化替身并继续形成 PASS
+   证据，按 `major` 处理；只有 manifest/ledger 明确批准为 degradable 且五项合同仍成立时才可继续。
 5. 证明画面非空且会变化；网页画布、引擎场景节点或窗口存在本身都不算渲染成功。
+   连续 3D 项目还要独立复核 collider-to-visible-anchor 映射、non-solid 清单、固定子步 / swept
+   防穿透、角点滑动与解穿透；浏览器至少实际接触每类路线 collider 并保存前后状态。只测一个箱体、
+   只看坐标变化或只走完整路线都不能证明碰撞完整。
 6. 从 `GAME_DESIGN.md` 提取会改变结果的关键不变量：把每个数值门槛、结局条件、破裂/冷却
    条件，以及「三段弧」每期的结束标记与新增动词 / 可达空间、BUILD_BRIEF 的「同玩法动词
    清单」，抄成期望表落盘 `qa/evidence/design-invariants.md`，逐项对照引擎常量或运行态
    取值，记录一致或漂移及证据。后两项要跑实测取证，核对文档写没写不算数。
 7. 使用真实输入走核心动作、进程变化、设计要求的结果和重开；确定性系统至少复现一次
-   相同状态与输入得到相同结果。
+   相同状态与输入得到相同结果。对连续镜头控制，必须单独证明“取得输入控制权 → 真实输入改变
+   朝向 → 相机前向与移动前向一致 → 转向后移动 → 释放 / 失焦 / 暂停 / 恢复归零 → 拒绝时有
+   可操作反馈”。测试钩子直接写 heading、摇杆值或玩家坐标只能覆盖规则层，不能替代输入链；
+   headless/shim 结果必须标运行器能力，目标运行时的真实锁定未跑就记 `NOT_RUN`。
 8. 在目标分辨率、窗口模式或设备朝向下检查遮挡、溢出、文字和控件可操作性；逐一切换策划要求的界面语言，
    检查缺字、截断、阅读顺序、术语一致性和关键玩法信息。
    显示模式、界面语言、控制方式与内容尺度按 `PRODUCT_BRIEF.md` 的目标平台与分级核对：
@@ -62,6 +70,9 @@ description: "Verify a game with evidence on its selected target runtime. Launch
     说明、逐帧问题、严重度、处置与复验证据。必需评审为 `NOT_RUN` 时可以完成记录，但只有
     graybox 可以携带；playable 及以上必须由独立评审 `PASS`，并把评审时的 source fingerprint
     与已校验视觉证据 manifest 哈希写入 release manifest。
+    实时 3D 还要审常速帧序列：固定镜头、直行、扫视、冲刺转弯和最重状态至少各一段，记录
+    静止差异、相邻帧变化、阴影 / LOD / 抗锯齿稳定性、动作接地与交互 longtask；单帧通过不能
+    抵消动态画面的 blocker/major。
 12. 每条 `blocker`/`major` 按 qa-contract 的归属定义标注 `build`/`design`/`product` 并写入
    发现与回流表；标 `design` 的本轮不得 `PASS`；回流路由由总入口执行。
 

@@ -33,6 +33,24 @@ XCLIP = REPO / "scripts" / "xclip.py"
 BASE_URL = os.environ.get("BASE_URL", "http://127.0.0.1:4173")
 CHROME = Path("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
 VIEW = {"width": 1280, "height": 800}
+POINTER_LOCK_SHIM = """
+(() => {
+  let lockedElement = null;
+  Object.defineProperty(Document.prototype, 'pointerLockElement', {
+    configurable: true,
+    get() { return lockedElement; },
+  });
+  HTMLCanvasElement.prototype.requestPointerLock = function requestPointerLock() {
+    lockedElement = this;
+    document.dispatchEvent(new Event('pointerlockchange'));
+    return Promise.resolve();
+  };
+  Document.prototype.exitPointerLock = function exitPointerLock() {
+    lockedElement = null;
+    document.dispatchEvent(new Event('pointerlockchange'));
+  };
+})();
+"""
 
 
 def need(tool: str) -> str:
@@ -95,6 +113,9 @@ def move_until(take: Take, key: str, predicate: str, label: str, timeout: int = 
     take.page.keyboard.down(key)
     try:
         take.page.wait_for_function(predicate, timeout=timeout)
+    except Exception:
+        print("  route timeout snapshot:", json.dumps(snapshot(take.page)["player"], sort_keys=True))
+        raise
     finally:
         take.page.keyboard.up(key)
     take.page.wait_for_timeout(70)
@@ -104,7 +125,6 @@ def move_until(take: Take, key: str, predicate: str, label: str, timeout: int = 
 def expose_plate(take: Take, index: int, label: str) -> None:
     page = take.page
     take.mark(f"{label}:start", input="Right Mouse + Left Mouse", plate=index + 1)
-    page.mouse.move(VIEW["width"] / 2, VIEW["height"] / 2)
     page.mouse.down(button="right")
     page.wait_for_timeout(60)
     page.mouse.down(button="left")
@@ -144,6 +164,7 @@ def record_take(out_dir: Path) -> tuple[Path, Take, list[str], set[str]]:
             record_video_dir=str(raw_dir),
             record_video_size=VIEW,
         )
+        context.add_init_script(POINTER_LOCK_SHIM)
         page = context.new_page()
         page.on("console", lambda message: errors.append(message.text) if message.type == "error" else None)
         page.on("pageerror", lambda error: errors.append(f"PAGEERROR: {error}"))
@@ -153,6 +174,7 @@ def record_take(out_dir: Path) -> tuple[Path, Take, list[str], set[str]]:
         page.goto(f"{BASE_URL}/?media=strong", wait_until="networkidle")
         page.wait_for_function("window.__projectPlateau?.ready === true")
         page.get_by_role("button", name="Enter the basin").click()
+        page.wait_for_function("window.__projectPlateau.snapshot().mode === 'order'", timeout=15000)
         page.wait_for_timeout(1200)
         take.mark("strong_start", state="field-order")
         page.get_by_role("button", name="Begin field work").click()
@@ -161,6 +183,7 @@ def record_take(out_dir: Path) -> tuple[Path, Take, list[str], set[str]]:
         move_until(take, "KeyW", "window.__projectPlateau.snapshot().player.position.z <= 45", "fort_to_brook")
         page.keyboard.press("KeyE")
         expose_plate(take, 0, "brook_plate")
+        move_until(take, "KeyD", "window.__projectPlateau.snapshot().player.position.x > -4.2", "clear_brook_boulder")
         move_until(take, "KeyW", "window.__projectPlateau.snapshot().player.position.z <= 18", "brook_to_basalt")
         expose_plate(take, 1, "basalt_plate")
         move_until(take, "KeyA", "window.__projectPlateau.snapshot().player.position.x < 2.7", "enter_canopy")
@@ -168,11 +191,13 @@ def record_take(out_dir: Path) -> tuple[Path, Take, list[str], set[str]]:
         move_until(take, "KeyW", "window.__projectPlateau.snapshot().player.position.z <= 2", "canopy_to_glade")
         page.keyboard.press("KeyE")
         expose_plate(take, 2, "young_play_plate")
+        move_until(take, "KeyS", "window.__projectPlateau.snapshot().player.position.z > 3.2", "protect_young_play_plate")
+        wait_for_cover(take, "between_behavior_frames")
+        move_until(take, "KeyW", "window.__projectPlateau.snapshot().player.position.z <= 2", "return_for_branch_pull")
         expose_plate(take, 3, "branch_pull_plate")
         move_until(take, "KeyS", "window.__projectPlateau.snapshot().player.position.z > 3.2", "retreat_to_cover")
         wait_for_cover(take, "final_cover_read")
-        move_until(take, "KeyS", "window.__projectPlateau.snapshot().player.position.z >= 62", "covered_return")
-        page.wait_for_function("window.__projectPlateau.snapshot().player.runStatus === 'result'", timeout=1000)
+        move_until(take, "KeyS", "window.__projectPlateau.snapshot().player.runStatus === 'result'", "covered_return")
         result = snapshot(page)
         assert result["player"]["result"]["band"] == "strong-field-record", result
         assert result["player"]["result"]["evidence"] == 7, result
@@ -254,7 +279,7 @@ def main() -> int:
                 server.terminate()
                 server.wait(timeout=5)
 
-        allowed = {urlparse(BASE_URL).netloc}
+        allowed = {"", urlparse(BASE_URL).netloc}
         external = sorted(hosts - allowed)
         assert not errors, errors
         assert not external, external
@@ -268,6 +293,7 @@ def main() -> int:
             "edit": "uniform time compression only; no state cuts or splices",
             "viewport": VIEW,
             "url": f"{BASE_URL}/?media=strong",
+            "pointerLockMode": "deterministic-browser-shim",
             "sourceFingerprint": json.loads((EVIDENCE / "report.json").read_text())["source"]["sha256"],
             "consoleErrors": errors,
             "requestHosts": sorted(hosts),

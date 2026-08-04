@@ -1,0 +1,32 @@
+{
+  "status": "PASS",
+  "pointerLockMode": "deterministic-browser-shim",
+  "staticNormalizedDiffs": [
+    0.0,
+    0.0
+  ],
+  "motionNormalizedDiffs": [
+    0.014519,
+    0.014837,
+    0.015813,
+    0.014463,
+    0.017239,
+    0.015108,
+    0.014496
+  ],
+  "framePacing": {
+    "samples": 120,
+    "medianFrameMs": 16.7,
+    "medianFps": 59.9,
+    "onePercentLowFps": 37.6,
+    "worstFrameMs": 26.7
+  },
+  "finalHeading": -0.332,
+  "finalPosition": {
+    "x": 8.011,
+    "z": 55.021
+  },
+  "evidence": [
+    "build/evidence/motion/motion-contact-sheet.jpg"
+  ]
+}

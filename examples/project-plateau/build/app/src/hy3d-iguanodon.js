@@ -18,6 +18,58 @@ const THUMB_SPIKE_MATERIAL = new THREE.MeshStandardMaterial({
   flatShading: true,
 });
 
+const TOE_MATERIAL = new THREE.MeshStandardMaterial({
+  color: 0x343837,
+  roughness: 0.86,
+  metalness: 0,
+  flatShading: true,
+});
+
+function createHindToeGeometry(spread = 0) {
+  const length = 0.052 - Math.abs(spread) * 0.004;
+  const direction = new THREE.Vector3(-0.98, -0.12, spread * 0.18).normalize();
+  const geometry = new THREE.ConeGeometry(0.0085, length, 6, 1, false);
+  geometry.applyQuaternion(new THREE.Quaternion().setFromUnitVectors(
+    new THREE.Vector3(0, 1, 0),
+    direction,
+  ));
+  geometry.translate(
+    0.105 + direction.x * length * 0.5,
+    0.028 + direction.y * length * 0.5,
+    spread * 0.022 + direction.z * length * 0.5,
+  );
+  geometry.computeVertexNormals();
+  geometry.computeBoundingBox();
+  geometry.computeBoundingSphere();
+  geometry.userData.profile = 'grounded-three-toed-hindfoot-claw';
+  return geometry;
+}
+
+const HIND_TOE_GEOMETRIES = [-1, 0, 1].map(createHindToeGeometry);
+
+function createSpeciesSilhouetteDetails() {
+  const details = new THREE.Group();
+  details.name = 'subject.iguanodon_family.species-silhouette-details';
+  details.userData.profile = 'three-toed-hindfoot';
+
+  for (const side of [-1, 1]) {
+    HIND_TOE_GEOMETRIES.forEach((geometry, index) => {
+      const toe = new THREE.Mesh(geometry, TOE_MATERIAL);
+      toe.name = `subject.iguanodon_family.${side < 0 ? 'left' : 'right'}-hind-toe-${index + 1}`;
+      toe.position.z = side * 0.108;
+      toe.userData.anatomicalFeature = 'hind-toe';
+      details.add(toe);
+    });
+  }
+
+  details.traverse((object) => {
+    if (!object.isMesh) return;
+    object.castShadow = true;
+    object.receiveShadow = true;
+  });
+  return details;
+}
+
 function createThumbSpikeGeometry() {
   const makeSpike = (side) => {
     // The source model is normalised to roughly 1.15 m nose-to-tail before the
@@ -66,6 +118,24 @@ export const HY3D_POSE_TARGETS = Object.freeze([
 function smoothstep(edge0, edge1, value) {
   const t = THREE.MathUtils.clamp((value - edge0) / (edge1 - edge0), 0, 1);
   return t * t * (3 - 2 * t);
+}
+
+function refineIguanodonSilhouette(geometry) {
+  const position = geometry.getAttribute('position');
+  if (!position || geometry.userData.silhouetteRefinement) return;
+  for (let index = 0; index < position.count; index += 1) {
+    const x = position.getX(index);
+    const y = position.getY(index);
+    if (x >= -0.24 || y <= 0.18) continue;
+    const influence = smoothstep(-0.24, -0.42, x);
+    position.setX(index, x - influence * 0.024);
+    position.setZ(index, position.getZ(index) * (1 - influence * 0.22));
+  }
+  position.needsUpdate = true;
+  geometry.computeVertexNormals();
+  geometry.computeBoundingBox();
+  geometry.computeBoundingSphere();
+  geometry.userData.silhouetteRefinement = 'narrow-integrated-beak';
 }
 
 function bendHead(x, y, angle, influence) {
@@ -171,6 +241,7 @@ function prepareTemplate(source) {
     const sourceGeometry = object.geometry;
     if (!preparedGeometries.has(sourceGeometry)) {
       const preparedGeometry = sourceGeometry.clone();
+      refineIguanodonSilhouette(preparedGeometry);
       addSharedPoseTargets(preparedGeometry);
       preparedGeometries.set(sourceGeometry, preparedGeometry);
     }
@@ -250,7 +321,7 @@ export function createHy3dIguanodonInstance(template, { scale = ADULT_MODEL_SCAL
   thumbSpikes.castShadow = true;
   thumbSpikes.receiveShadow = true;
   thumbSpikes.userData.anatomicalFeature = 'iguanodon-thumb-spike';
-  model.add(thumbSpikes);
+  model.add(thumbSpikes, createSpeciesSilhouetteDetails());
   visual.add(model);
   return visual;
 }

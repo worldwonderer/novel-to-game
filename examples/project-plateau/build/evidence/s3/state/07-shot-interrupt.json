@@ -4,26 +4,44 @@
   "cameraMode": "field",
   "visualReviewOrbit": null,
   "runActive": true,
+  "pointerLock": {
+    "active": false,
+    "status": "unavailable",
+    "error": "The browser denied pointer lock. Click Resume field work to retry.",
+    "cameraForward": {
+      "x": 0,
+      "y": 0,
+      "z": -1
+    }
+  },
   "renderer": "WebGL2",
   "player": {
     "position": {
       "x": 7,
-      "z": 11.192
+      "z": 11.282
     },
     "lastStablePosition": {
       "x": 7,
-      "z": 11.192
+      "z": 11.282
+    },
+    "groundY": -2.011,
+    "verticalOffset": 0,
+    "verticalVelocity": 0,
+    "grounded": true,
+    "velocity": {
+      "x": 0,
+      "z": -4.258
     },
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 1.433,
-    "distanceTravelled": 6.808,
+    "elapsedSeconds": 1.467,
+    "distanceTravelled": 6.718,
     "paused": false,
     "pauseReason": null,
     "boundaryRecoveries": 0,
     "collisions": 0,
-    "lastEvent": "rifle:interrupt",
+    "lastEvent": "movement",
     "zone": "exposed-creek",
     "zoneHistory": [
       "fort",
@@ -91,7 +109,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 166.567,
+    "remainingLight": 166.533,
     "returnRoute": "exposed",
     "returnCostSeconds": 12,
     "returnStrike": false,
@@ -104,21 +122,27 @@
     "attackStage": "orbit",
     "attackProgress": 0,
     "flightPose": {
-      "wingBeat": 0.1223,
+      "wingBeat": 0.0086,
       "wingFold": 0,
-      "mode": "upstroke"
+      "mode": "upstroke",
+      "bank": 0.0189,
+      "direction": [
+        -0.8282,
+        0.0936,
+        -0.5526
+      ]
     },
     "position": {
-      "x": -15.85,
-      "y": 8.39,
-      "z": -12.47
+      "x": -16.03,
+      "y": 8.41,
+      "z": -12.49
     }
   },
   "familyVisual": {
     "moment": "glade-branch-pull",
     "adults": 2,
     "young": 3,
-    "branchAngle": 0.232,
+    "branchAngle": 0.18,
     "roles": [
       "graze",
       "branch-pull",
@@ -131,14 +155,57 @@
     "state": "answering-call",
     "position": {
       "x": -10.5,
-      "y": -0.77,
+      "y": -0.6,
       "z": 47
     }
   },
   "assets": {
+    "terrain": {
+      "profile": "warped-multiscale-heightfield",
+      "vertices": 10961,
+      "surface": "slope-wetness-exposure-vertex-palette"
+    },
     "fieldCamera": {
-      "version": "bellows-camera",
-      "visibleParts": 13
+      "version": "hy3d-v3.1-field-camera-hands-v4-rear-view-50k-1k",
+      "visualStatus": "hy3d-field-camera-ready",
+      "visualError": null,
+      "loaded": true,
+      "singleAssetPath": true,
+      "bytes": 1108408,
+      "triangles": 50000,
+      "visibleParts": 1,
+      "hands": {
+        "loaded": true,
+        "styleVersion": "hy3d-v3.1-field-camera-hands-v4-rear-view-50k-1k",
+        "hands": 2,
+        "gripRoles": [
+          "camera-left-grip",
+          "camera-right-grip"
+        ],
+        "drawCalls": 1,
+        "integratedWithTool": true
+      }
+    },
+    "rifle": {
+      "version": "hy3d-v3.1-expedition-rifle-hands-v1-50k-1k",
+      "visualStatus": "hy3d-rifle-ready",
+      "visualError": null,
+      "loaded": true,
+      "singleAssetPath": true,
+      "bytes": 1000112,
+      "triangles": 50000,
+      "visibleParts": 2,
+      "hands": {
+        "loaded": true,
+        "styleVersion": "hy3d-v3.1-expedition-rifle-hands-v1-50k-1k",
+        "hands": 2,
+        "gripRoles": [
+          "fore-end-support",
+          "trigger-grip"
+        ],
+        "drawCalls": 1,
+        "integratedWithTool": true
+      }
     },
     "pterodactyl": {
       "silhouette": "continuous-skinned-membrane-wing",
@@ -200,6 +267,45 @@
       "familyWidth": 18.5
     }
   },
+  "collision": {
+    "model": "vertical-capsule-on-heightfield-with-ballistic-jump",
+    "broadPhase": "authored-static-collider-list",
+    "resolution": "iterative-depenetration-with-surface-slide",
+    "fixedMovementStepSeconds": 0.016666666666666666,
+    "jump": {
+      "speed": 5.8,
+      "gravity": 15,
+      "restrictedByTools": true
+    },
+    "capsule": {
+      "radius": 0.6,
+      "height": 1.78,
+      "eyeHeight": 1.62,
+      "maximumGroundStep": 0.42
+    },
+    "colliderCount": 59,
+    "categories": {
+      "shelter": 2,
+      "hazard": 1,
+      "boulder": 1,
+      "tree-trunk": 50,
+      "living-subject": 5
+    },
+    "nonSolidPolicy": {
+      "lowDecor": [
+        "ferns",
+        "ground-stones",
+        "driftwood",
+        "basalt-rubble"
+      ],
+      "traversableSurface": [
+        "brook-water",
+        "route-ribbons"
+      ],
+      "airborneThreat": "state-driven-contact; no ground capsule",
+      "canopy": "visual cover only; trunks remain solid"
+    }
+  },
   "audio": {
     "status": "running",
     "volumes": {
@@ -218,22 +324,22 @@
       {
         "cue": "search",
         "caption": "[a near call circles overhead]",
-        "at": 8.267
+        "at": 8.272
       },
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 9.376
+        "at": 9.392
       },
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 9.456
+        "at": 9.504
       },
       {
         "cue": "rifle",
         "caption": "[rifle report; echo runs toward the brook]",
-        "at": 9.456
+        "at": 9.504
       }
     ]
   },
@@ -241,12 +347,14 @@
     "reducedMotion": false,
     "captionsEnabled": true,
     "textScale": "1",
+    "quality": "balanced",
+    "lookSensitivity": 1,
     "volumes": {
       "ambience": 0.34,
       "effects": 0.72,
       "music": 0.2
     },
-    "storageKey": "project-plateau:presentation:v1"
+    "storageKey": "project-plateau:presentation:v2"
   },
   "ui": {
     "prompt": "Follow the Fort smoke through the gate.",
@@ -267,11 +375,16 @@
     "lightWatch": null,
     "terminal": null
   },
-  "sceneChildren": 59,
+  "plateCapture": {
+    "status": "idle",
+    "durationMs": null,
+    "error": null
+  },
+  "sceneChildren": 62,
   "calls": 1,
   "triangles": 1,
-  "textures": 32,
-  "geometries": 625,
+  "textures": 37,
+  "geometries": 617,
   "viewport": [
     1440,
     900
@@ -279,8 +392,10 @@
   "renderBudget": {
     "pixelRatio": 1,
     "maxPixelRatio": 1.25,
-    "renderedFrames": 609,
-    "skippedFrames": 612,
+    "quality": "balanced",
+    "activeFpsCap": 60,
+    "renderedFrames": 611,
+    "skippedFrames": 625,
     "activeFpsPolicy": "60fps-cap-across-refresh-rates",
     "idleFpsCap": 30,
     "pausedFpsCap": 15,
@@ -290,6 +405,6 @@
     "gtaoSamples": 4,
     "antialiasing": "single-pass-fxaa"
   },
-  "firstRenderedAt": 155.79999995231628,
+  "firstRenderedAt": 252.60000002384186,
   "recentMedianFrameMs": 16.7
 }

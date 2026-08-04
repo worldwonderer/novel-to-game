@@ -1,0 +1,18 @@
+{
+  "inputs": [
+    "teleport {'x': -8, 'z': -27, 'heading': 0, 'pitch': -0.03}",
+    "hold KeyW 1000ms"
+  ],
+  "expectedCollision": "iguanodon-adult-graze",
+  "viewport": [
+    1440,
+    900
+  ],
+  "url": "http://127.0.0.1:4173/?qa=collision",
+  "consoleErrorsAtCheckpoint": [],
+  "requestHostsAtCheckpoint": [
+    "",
+    "127.0.0.1:4173"
+  ],
+  "capturedAtUnixMs": 1785846912575
+}

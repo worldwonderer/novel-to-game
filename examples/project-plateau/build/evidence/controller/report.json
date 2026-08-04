@@ -1,0 +1,19 @@
+{
+  "status": "PASS",
+  "pointerLockMode": "deterministic-browser-shim",
+  "nativePointerLock": "NOT_RUN: headed Chrome did not grant pointer lock in the automated desktop session",
+  "checks": [
+    "pre-run held-key isolation",
+    "pointer-lock acquisition boundary",
+    "mouse delta to camera orientation",
+    "camera-relative W projection",
+    "spacebar ballistic jump and grounded landing",
+    "focus-loss transient tool reset",
+    "non-blocking shutter capture",
+    "pointer-lock loss pause",
+    "pointer-lock denial failure UI"
+  ],
+  "evidence": [
+    "build/evidence/controller/controller-contract.jpg"
+  ]
+}

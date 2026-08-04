@@ -3,17 +3,25 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { GTAOPass } from 'three/addons/postprocessing/GTAOPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { SMAAPass } from 'three/addons/postprocessing/SMAAPass.js';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { FXAAShader } from 'three/addons/shaders/FXAAShader.js';
-import './styles.css';
 import { createAtmosphere } from './atmosphere.js';
 import { FieldAudio, captionForCue } from './audio.js';
-import { PALETTE, PRODUCT_BUDGET, SCENE_BUDGET, percentile } from './config.js';
+import {
+  PALETTE,
+  PRODUCT_BUDGET,
+  SCENE_BUDGET,
+  onePercentLowFps,
+  percentile,
+} from './config.js';
+import { applyLookDelta, shouldCaptureGameplayKey } from './controller.js';
 import {
   MAX_RENDER_PIXEL_RATIO,
+  QUALITY_PROFILES,
   advanceRenderSchedule,
+  qualityRenderPixelRatio,
   renderIntervalForState,
-  renderPixelRatio,
   shouldRenderFrame,
 } from './render-budget.js';
 import {
@@ -25,21 +33,28 @@ import {
 } from './settings.js';
 import {
   EXPOSURE_SECONDS,
+  collisionContractSnapshot,
   createPlayerState,
   examine,
   fireDefensiveShot,
   frameForState,
   restartPlayer,
+  releaseTransientTools,
   setCameraRaised,
   setPaused,
   setRifleRaised,
   startExposure,
   stepPlayer,
 } from './simulation.js';
-import { createWorld, terrainHeight } from './world.js';
+import { terrainHeight } from './terrain.js';
+import { createWorld } from './world.js';
+import { showPreviewGateway } from './preview-gateway.js';
+import { hideLoading, loadingScreenSnapshot, showLoading } from './loading-screen.js';
 
 const canvas = document.querySelector('#game-canvas');
-const unsupported = document.querySelector('#unsupported');
+const requiredAssetsError = document.querySelector('#required-assets-error');
+const requiredAssetsCopy = document.querySelector('#required-assets-copy');
+const enterButton = document.querySelector('#enter-button');
 const pausePanel = document.querySelector('#pause-panel');
 const pauseLabel = document.querySelector('#pause-label');
 const boundaryNote = document.querySelector('#boundary-note');
@@ -59,7 +74,6 @@ const plateRail = document.querySelector('#plate-rail');
 const plateSlots = [...plateRail.children];
 const cartridgeDisplay = document.querySelector('#cartridge-display');
 const cartridgeSlots = [...cartridgeDisplay.children];
-const rifleOverlay = document.querySelector('#rifle-overlay');
 const captionLine = document.querySelector('#caption-line');
 const lightWatch = document.querySelector('#light-watch');
 const lightSeconds = document.querySelector('#light-seconds');
@@ -72,6 +86,9 @@ const terminalDetail = document.querySelector('#terminal-detail');
 const terminalCallback = document.querySelector('#terminal-callback');
 document.querySelector('#s0-badge').textContent = 'S10 · clear glade';
 const query = new URLSearchParams(window.location.search);
+const systemReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let presentationSettings = loadSettings(window.localStorage, systemReducedMotion);
+let reducedMotion = presentationSettings.reducedMotion;
 const explicitContext = canvas.getContext('webgl2', {
   antialias: true,
   alpha: false,
@@ -80,8 +97,7 @@ const explicitContext = canvas.getContext('webgl2', {
 });
 
 if (!explicitContext) {
-  unsupported.hidden = false;
-  document.querySelector('#title-screen').hidden = true;
+  showPreviewGateway('webgl2-unavailable');
   throw new Error('WebGL2 is required for Project Plateau.');
 }
 
@@ -91,43 +107,43 @@ const renderer = new THREE.WebGLRenderer({
   antialias: true,
   powerPreference: 'default',
 });
-renderer.setPixelRatio(renderPixelRatio(window.devicePixelRatio));
+renderer.setPixelRatio(qualityRenderPixelRatio(window.devicePixelRatio, presentationSettings.quality));
 renderer.setSize(window.innerWidth, window.innerHeight, false);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.02;
+renderer.toneMappingExposure = 1;
 renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFShadowMap;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x142d35);
-scene.fog = new THREE.FogExp2(0x35575a, 0.0096);
+scene.fog = new THREE.FogExp2(0x41656a, 0.0108);
 createAtmosphere(scene);
 
 const camera = new THREE.PerspectiveCamera(58, window.innerWidth / window.innerHeight, 0.1, 320);
 const titleCameraPosition = new THREE.Vector3(18, 7.6, 55);
 const titleCameraTarget = new THREE.Vector3(-1, 3.2, -34);
 
-const ambient = new THREE.AmbientLight(0x8fa39d, 0.27);
-const hemisphere = new THREE.HemisphereLight(0x9bc1cb, 0x30483c, 0.82);
-const sun = new THREE.DirectionalLight(0xffc982, 4.5);
+const ambient = new THREE.AmbientLight(0x81999a, 0.18);
+const hemisphere = new THREE.HemisphereLight(0x8cb7c2, 0x263c39, 0.7);
+const sun = new THREE.DirectionalLight(0xffc982, 4.65);
 sun.position.set(-46, 58, 76);
 sun.target.position.set(1, 0, 10);
 sun.castShadow = true;
 sun.shadow.mapSize.set(2048, 2048);
-sun.shadow.camera.left = -82;
-sun.shadow.camera.right = 82;
-sun.shadow.camera.top = 108;
-sun.shadow.camera.bottom = -108;
+sun.shadow.camera.left = -58;
+sun.shadow.camera.right = 58;
+sun.shadow.camera.top = 74;
+sun.shadow.camera.bottom = -74;
 sun.shadow.camera.near = 8;
 sun.shadow.camera.far = 230;
 sun.shadow.bias = -0.00045;
 sun.shadow.normalBias = 0.028;
-const gladeFill = new THREE.PointLight(0xf3b975, 4.2, 58, 1.9);
+const gladeFill = new THREE.PointLight(0xf3b975, 3.25, 52, 1.9);
 gladeFill.position.set(-4, 13, -18);
-const canopyRim = new THREE.DirectionalLight(0x88c5cf, 1.35);
+const canopyRim = new THREE.DirectionalLight(0x88c5cf, 1.05);
 canopyRim.position.set(32, 24, -36);
-const subjectFill = new THREE.DirectionalLight(0xbed6d5, 0.52);
+const subjectFill = new THREE.DirectionalLight(0xb8d5d8, 0.4);
 subjectFill.position.set(-12, 15, 36);
 subjectFill.target.position.set(1, 2.2, -33);
 const basaltBounce = new THREE.PointLight(0x799d9b, 2.6, 64, 2.05);
@@ -149,6 +165,10 @@ const gtaoExcluded = [world.fieldCamera, world.rifle];
 scene.traverse((object) => {
   if (!object.isMesh && !object.isSprite) return;
   if (gtaoExcluded.some((root) => root === object || root.getObjectById?.(object.id))) return;
+  if (object.userData.gtaoExcluded) {
+    gtaoExcluded.push(object);
+    return;
+  }
   const materials = Array.isArray(object.material) ? object.material : [object.material];
   if (materials.some((material) => material?.transparent || material?.opacity < 1)) {
     gtaoExcluded.push(object);
@@ -157,11 +177,16 @@ scene.traverse((object) => {
 gtaoExcluded.forEach((object) => { object.userData.gtaoExcluded = true; });
 let hy3dVisualPromise = null;
 function ensureHy3dVisuals() {
-  if (!hy3dVisualPromise) hy3dVisualPromise = world.enableHy3dVisuals();
+  if (!hy3dVisualPromise) {
+    hy3dVisualPromise = world.enableHy3dVisuals().catch((error) => {
+      hy3dVisualPromise = null;
+      throw error;
+    });
+  }
   return hy3dVisualPromise;
 }
 const composer = new EffectComposer(renderer);
-composer.setPixelRatio(renderPixelRatio(window.devicePixelRatio));
+composer.setPixelRatio(qualityRenderPixelRatio(window.devicePixelRatio, presentationSettings.quality));
 composer.setSize(window.innerWidth, window.innerHeight);
 composer.addPass(new RenderPass(scene, camera));
 const gtaoPass = new GTAOPass(
@@ -224,7 +249,11 @@ const fieldGradePass = new ShaderPass({
     void main() {
       vec4 source = texture2D(tDiffuse, vUv);
       float luma = dot(source.rgb, vec3(0.2126, 0.7152, 0.0722));
-      vec3 color = mix(vec3(luma), source.rgb, 1.045);
+      vec3 color = mix(vec3(luma), source.rgb, 1.055);
+      float shadowWeight = 1.0 - smoothstep(0.12, 0.52, luma);
+      float highlightWeight = smoothstep(0.46, 0.9, luma);
+      color = mix(color, color * vec3(0.91, 1.01, 1.08), shadowWeight * 0.095);
+      color = mix(color, color * vec3(1.045, 1.0, 0.93), highlightWeight * 0.055);
       vec2 centred = (vUv - 0.5) * vec2(1.0, 0.82);
       float vignette = smoothstep(0.34, 0.76, dot(centred, centred));
       color *= 1.0 - vignette * 0.085;
@@ -239,26 +268,41 @@ composer.addPass(fieldGradePass);
 const fxaaPass = new ShaderPass(FXAAShader);
 fxaaPass.material.name = 'Project Plateau single-pass FXAA';
 composer.addPass(fxaaPass);
+const smaaPass = new SMAAPass(window.innerWidth, window.innerHeight);
+smaaPass.name = 'Project Plateau balanced/high SMAA';
+composer.addPass(smaaPass);
 composer.addPass(new OutputPass());
 scene.add(camera);
 camera.add(world.fieldCamera);
 camera.add(world.rifle);
-world.fieldCamera.position.set(0.58, -0.72, -1.35);
-world.fieldCamera.rotation.set(-0.08, 0.18, 0);
-world.fieldCamera.scale.setScalar(0.34);
-world.rifle.position.set(0.64, -0.72, -1.08);
-world.rifle.rotation.set(-0.11, 0.12, -0.08);
-world.rifle.scale.setScalar(0.27);
+const FIELD_CAMERA_VIEWMODEL = Object.freeze({
+  position: Object.freeze([0.48, -0.82, -1.45]),
+  rotation: Object.freeze([-0.12, 0.13, -0.06]),
+  scale: 0.48,
+});
+const RIFLE_VIEWMODEL = Object.freeze({
+  position: Object.freeze([0.66, -0.84, -1.08]),
+  rotation: Object.freeze([-0.01, 0.12, -0.08]),
+  scale: 0.23,
+});
+world.fieldCamera.position.fromArray(FIELD_CAMERA_VIEWMODEL.position);
+world.fieldCamera.rotation.set(...FIELD_CAMERA_VIEWMODEL.rotation);
+world.fieldCamera.scale.setScalar(FIELD_CAMERA_VIEWMODEL.scale);
+world.rifle.position.fromArray(RIFLE_VIEWMODEL.position);
+world.rifle.rotation.set(...RIFLE_VIEWMODEL.rotation);
+world.rifle.scale.setScalar(RIFLE_VIEWMODEL.scale);
 const clock = new THREE.Clock();
 const fieldAudio = new FieldAudio();
 const pressed = new Set();
+let jumpQueued = false;
 let player = createPlayerState();
+let pointerLockStatus = 'idle';
+let pointerLockError = null;
+let smoothedEyeHeight = 3.45;
+let lastCameraMotionAt = null;
 let runActive = false;
 let cameraMode = 'title';
 let visualReviewOrbit = null;
-const systemReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-let presentationSettings = loadSettings(window.localStorage, systemReducedMotion);
-let reducedMotion = presentationSettings.reducedMotion;
 let frameSamples = [];
 let lastFrame = performance.now();
 let lastRenderedAt = 0;
@@ -276,25 +320,107 @@ let observedBoundaryRecoveries = 0;
 let observationNoticeUntil = 0;
 let contactNoticeUntil = 0;
 let captionNoticeUntil = 0;
+let observedViewmodelShotCount = 0;
+let rifleRecoilStartedAt = -Infinity;
 
 const ROMAN_PLATES = ['I', 'II', 'III', 'IV'];
 let plateImages = Array(ROMAN_PLATES.length).fill(null);
+let plateCaptureGeneration = 0;
+let pendingPlateCapture = null;
+let plateCaptureStatus = 'idle';
+let plateCaptureDurationMs = null;
+let plateCaptureError = null;
 
 function applyPlateImage(element, image) {
   element.dataset.captured = image ? 'true' : 'false';
   element.style.backgroundImage = image ? `url("${image}")` : '';
 }
 
+function updateViewmodelPose(now) {
+  if ((player.shotCount ?? 0) > observedViewmodelShotCount) {
+    observedViewmodelShotCount = player.shotCount;
+    rifleRecoilStartedAt = now;
+  }
+  const speed = Math.hypot(player.velocity?.x ?? 0, player.velocity?.z ?? 0);
+  const moving = speed > 0.08 && !player.paused;
+  const motion = moving && !reducedMotion ? Math.min(1, speed / 5.2) : 0;
+  const phase = player.distanceTravelled * 3.2;
+  const horizontal = Math.cos(phase * 0.5) * 0.012 * motion;
+  const vertical = Math.sin(phase) * 0.014 * motion;
+  const recoilAge = Math.max(0, now - rifleRecoilStartedAt);
+  const recoil = recoilAge < 150
+    ? Math.sin((recoilAge / 150) * Math.PI) * (1 - recoilAge / 150)
+    : 0;
+
+  world.fieldCamera.position.set(
+    FIELD_CAMERA_VIEWMODEL.position[0] + horizontal,
+    FIELD_CAMERA_VIEWMODEL.position[1] + vertical,
+    FIELD_CAMERA_VIEWMODEL.position[2],
+  );
+  world.fieldCamera.rotation.set(
+    FIELD_CAMERA_VIEWMODEL.rotation[0] + vertical * 0.35,
+    FIELD_CAMERA_VIEWMODEL.rotation[1] - horizontal * 0.55,
+    FIELD_CAMERA_VIEWMODEL.rotation[2] + horizontal * 0.8,
+  );
+  world.rifle.position.set(
+    RIFLE_VIEWMODEL.position[0] + horizontal * 0.65,
+    RIFLE_VIEWMODEL.position[1] + vertical * 0.75 - recoil * 0.015,
+    RIFLE_VIEWMODEL.position[2] + recoil * 0.08,
+  );
+  world.rifle.rotation.set(
+    RIFLE_VIEWMODEL.rotation[0] + vertical * 0.24 + recoil * 0.045,
+    RIFLE_VIEWMODEL.rotation[1] - horizontal * 0.4,
+    RIFLE_VIEWMODEL.rotation[2] + horizontal * 0.62,
+  );
+}
+
 function clearPlateImages() {
+  plateCaptureGeneration += 1;
+  pendingPlateCapture = null;
+  plateCaptureStatus = 'idle';
+  plateCaptureDurationMs = null;
+  plateCaptureError = null;
   plateImages = Array(ROMAN_PLATES.length).fill(null);
   applyPlateImage(previewImage, null);
   terminalBoardSlots.forEach((slot) => applyPlateImage(slot, null));
+}
+
+function queuePlateCapture(plateIndex) {
+  pendingPlateCapture = {
+    plateIndex,
+    generation: plateCaptureGeneration,
+    requestedAt: performance.now(),
+  };
+  plateCaptureStatus = 'queued';
+  plateCaptureError = null;
+}
+
+function encodeRenderedPlate(capture) {
+  plateCaptureStatus = 'encoding';
+  canvas.toBlob((blob) => {
+    if (!blob) {
+      plateCaptureStatus = 'error';
+      plateCaptureError = 'The rendered plate could not be encoded.';
+      return;
+    }
+    const reader = new FileReader();
+    reader.addEventListener('loadend', () => {
+      if (capture.generation !== plateCaptureGeneration) return;
+      plateImages[capture.plateIndex] = typeof reader.result === 'string' ? reader.result : null;
+      plateCaptureDurationMs = Number((performance.now() - capture.requestedAt).toFixed(2));
+      plateCaptureStatus = plateImages[capture.plateIndex] ? 'ready' : 'error';
+      if (plateCaptureStatus === 'error') plateCaptureError = 'The rendered plate was empty.';
+    }, { once: true });
+    reader.readAsDataURL(blob);
+  }, 'image/jpeg', 0.8);
 }
 
 function syncSettingsControls() {
   document.querySelector('#reduced-motion').checked = presentationSettings.reducedMotion;
   document.querySelector('#captions-enabled').checked = presentationSettings.captionsEnabled;
   document.querySelector('#text-scale').value = presentationSettings.textScale;
+  document.querySelector('#visual-quality').value = presentationSettings.quality;
+  document.querySelector('#look-sensitivity').value = presentationSettings.lookSensitivity;
   for (const channel of ['ambience', 'effects', 'music']) {
     document.querySelector(`#${channel}-volume`).value = presentationSettings.volumes[channel];
   }
@@ -306,11 +432,22 @@ function applyPresentationSettings(settings, persist = true) {
   document.body.classList.toggle('reduced-motion', reducedMotion);
   document.documentElement.style.setProperty('--text-scale', presentationSettings.textScale);
   document.documentElement.dataset.textScale = presentationSettings.textScale;
+  document.documentElement.dataset.quality = presentationSettings.quality;
+  const qualityProfile = QUALITY_PROFILES[presentationSettings.quality];
+  gtaoPass.enabled = qualityProfile.gtao;
+  smaaPass.enabled = presentationSettings.quality === 'high';
+  fxaaPass.enabled = presentationSettings.quality !== 'high';
+  if (sun.shadow.mapSize.x !== qualityProfile.shadowMapSize) {
+    sun.shadow.mapSize.setScalar(qualityProfile.shadowMapSize);
+    sun.shadow.map?.dispose();
+    sun.shadow.map = null;
+  }
   fieldAudio.setCaptionsEnabled(presentationSettings.captionsEnabled);
   for (const channel of ['ambience', 'effects', 'music']) {
     fieldAudio.setVolume(channel, presentationSettings.volumes[channel]);
   }
   if (!fieldAudio.captionsEnabled) captionLine.hidden = true;
+  resize();
   if (persist) presentationSettings = saveSettings(window.localStorage, presentationSettings);
   syncSettingsControls();
 }
@@ -363,10 +500,14 @@ function updateFieldHud(now) {
   const prompt = contextualCopy();
   contextPrompt.textContent = prompt;
   contextPrompt.hidden = !prompt || player.failed;
-  // At the opening track, preserve a single visual callout so the footprint
-  // wins the first read instead of competing with two stacked instruction
-  // plaques. The persistent movement legend returns outside this authored beat.
-  controlHint.hidden = player.zone === 'brook-blind';
+  // The complete legend is onboarding, not a permanent debug bar. Keep it on
+  // the first controllable metres, then let contextual prompts own the HUD.
+  const controlsLearned = player.distanceTravelled >= 5
+    || player.position.z < 60
+    || player.threatAwareness >= 1
+    || cameraMode === 'glade'
+    || visualThreatOverride !== null;
+  controlHint.hidden = player.zone === 'brook-blind' || controlsLearned;
 
   cameraOverlay.hidden = !player.cameraRaised;
   frameCondition.textContent = frameConditionCopy(currentFrame);
@@ -376,7 +517,6 @@ function updateFieldHud(now) {
   commitLine.style.setProperty('--commit-progress', `${Math.max(0, Math.min(100, commitProgress))}%`);
   document.body.dataset.camera = player.cameraRaised ? 'raised' : 'folded';
 
-  rifleOverlay.hidden = !player.rifleRaised;
   document.body.dataset.rifle = player.rifleRaised ? 'raised' : 'lowered';
   cartridgeDisplay.hidden = !(player.rifleRevealed || player.threatState === 'attack');
   cartridgeSlots.forEach((slot, index) => {
@@ -421,34 +561,41 @@ function updateFieldHud(now) {
     || now >= captionNoticeUntil;
   document.body.dataset.contact = contactNote.hidden ? 'false' : 'true';
 
-  world.fieldCamera.visible = runActive && !player.failed && !player.rifleRaised;
+  world.fieldCamera.visible = runActive
+    && !player.failed
+    && !player.rifleRaised
+    && !player.cameraRaised;
   world.rifle.visible = runActive && !player.failed && player.rifleRaised;
-  if (player.cameraRaised) {
-    world.fieldCamera.position.set(0.08, -0.57, -1.02);
-    world.fieldCamera.rotation.set(-0.02, 0, 0);
-    world.fieldCamera.scale.setScalar(0.45);
-  } else {
-    world.fieldCamera.position.set(0.58, -0.72, -1.35);
-    world.fieldCamera.rotation.set(-0.08, 0.18, 0);
-    world.fieldCamera.scale.setScalar(0.34);
-  }
+  updateViewmodelPose(now);
 }
 
 function setCameraToPlayer(now = performance.now()) {
-  const moving = pressed.has('KeyW') || pressed.has('KeyA') || pressed.has('KeyS') || pressed.has('KeyD');
-  const eyeHeight = player.stance === 'crouch' ? 2.55 : 3.45;
-  const bob = moving && !reducedMotion && !player.paused
-    ? Math.sin(player.distanceTravelled * 3.2) * (player.stance === 'sprint' ? 0.055 : 0.032)
+  const speed = Math.hypot(player.velocity?.x ?? 0, player.velocity?.z ?? 0);
+  const moving = speed > 0.08;
+  const desiredEyeHeight = player.stance === 'crouch' ? 2.55 : 3.45;
+  const cameraDelta = lastCameraMotionAt === null
+    ? 0
+    : Math.max(0, Math.min((now - lastCameraMotionAt) / 1000, 0.1));
+  lastCameraMotionAt = now;
+  const eyeBlend = 1 - Math.exp(-12 * cameraDelta);
+  smoothedEyeHeight += (desiredEyeHeight - smoothedEyeHeight) * eyeBlend;
+  const bob = moving && player.grounded && !reducedMotion && !player.paused
+    ? Math.sin(player.distanceTravelled * 3.2) * (player.stance === 'sprint' ? 0.05 : 0.028)
     : 0;
   camera.position.set(
     player.position.x,
-    terrainHeight(player.position.x, player.position.z) + eyeHeight + bob,
+    terrainHeight(player.position.x, player.position.z)
+      + (player.verticalOffset ?? 0)
+      + smoothedEyeHeight
+      + bob,
     player.position.z,
   );
   camera.rotation.set(player.pitch, player.heading, 0, 'YXZ');
-  const desiredFov = player.cameraRaised ? 58 : player.rifleRaised ? 66 : 70;
-  if (camera.fov !== desiredFov) {
-    camera.fov = desiredFov;
+  const sprintFov = player.stance === 'sprint' ? Math.min(2.4, speed * 0.35) : 0;
+  const desiredFov = player.cameraRaised ? 58 : player.rifleRaised ? 66 : 70 + sprintFov;
+  const nextFov = camera.fov + (desiredFov - camera.fov) * (1 - Math.exp(-10 * cameraDelta));
+  if (Math.abs(camera.fov - nextFov) > 0.001) {
+    camera.fov = nextFov;
     camera.updateProjectionMatrix();
   }
   if (player.boundaryRecoveries > observedBoundaryRecoveries) {
@@ -509,28 +656,48 @@ function setVisualReviewOrbitCamera() {
 }
 
 function inputSnapshot() {
-  return {
+  const snapshot = {
     forward: Number(pressed.has('KeyW')) - Number(pressed.has('KeyS')),
     right: Number(pressed.has('KeyD')) - Number(pressed.has('KeyA')),
     sprint: pressed.has('ShiftLeft') || pressed.has('ShiftRight'),
     crouch: pressed.has('KeyC') || pressed.has('ControlLeft') || pressed.has('ControlRight'),
+    jump: jumpQueued,
     heading: player.heading,
     pitch: player.pitch,
   };
+  jumpQueued = false;
+  return snapshot;
+}
+
+function clearTransientInput() {
+  pressed.clear();
+  jumpQueued = false;
+  player = releaseTransientTools(player);
+}
+
+function pointerLockUnavailable(error) {
+  pointerLockStatus = 'unavailable';
+  pointerLockError = error instanceof Error ? error.message : String(error || 'Pointer lock unavailable');
+  const qaMode = query.get('qa');
+  if (qaMode && qaMode !== 'pointer-lock-rejection') return;
+  if (runActive && !player.paused) pauseRun('pointer-lock-unavailable');
 }
 
 function requestFieldPointerLock() {
+  pointerLockStatus = 'requesting';
+  pointerLockError = null;
   try {
     const request = canvas.requestPointerLock();
-    request?.catch?.(() => {});
-  } catch {
-    // Keyboard movement remains available when browser policy denies pointer lock.
+    request?.catch?.(pointerLockUnavailable);
+  } catch (error) {
+    pointerLockUnavailable(error);
   }
 }
 
 function presentTerminal() {
   if (!player.result) return;
   emitCue(player.result.kind === 'alive' ? 'result' : 'failure', 3200);
+  clearTransientInput();
   runActive = false;
   cameraMode = 'terminal';
   document.body.dataset.mode = 'terminal';
@@ -572,6 +739,7 @@ function presentTerminal() {
 }
 
 function returnToFieldOrder() {
+  clearTransientInput();
   player = createPlayerState();
   clearPlateImages();
   runActive = false;
@@ -583,6 +751,7 @@ function returnToFieldOrder() {
 }
 
 function beginRun() {
+  clearTransientInput();
   player = restartPlayer(player);
   clearPlateImages();
   fieldAudio.resetRun();
@@ -601,9 +770,13 @@ function beginRun() {
 
 function pauseRun(reason = 'manual') {
   if (!runActive) return;
-  pressed.clear();
+  clearTransientInput();
   player = setPaused(player, true, reason);
-  pauseLabel.textContent = reason === 'window-inactive' ? 'PAUSED — WINDOW INACTIVE' : 'PAUSED';
+  pauseLabel.textContent = reason === 'window-inactive'
+    ? 'PAUSED — WINDOW INACTIVE'
+    : reason === 'pointer-lock-unavailable'
+      ? 'POINTER LOCK UNAVAILABLE'
+      : 'PAUSED';
   pausePanel.hidden = false;
   document.body.dataset.mode = 'paused';
   void fieldAudio.pause();
@@ -612,6 +785,7 @@ function pauseRun(reason = 'manual') {
 
 function resumeRun() {
   if (!runActive) return;
+  clearTransientInput();
   player = setPaused(player, false);
   pausePanel.hidden = true;
   cameraMode = 'field';
@@ -698,6 +872,7 @@ function animate(frameTime) {
     cameraMode,
     paused: player.paused,
     hidden: document.hidden,
+    activeFps: QUALITY_PROFILES[presentationSettings.quality].activeFps,
   });
   if (!shouldRenderFrame(frameTime, renderScheduleAt, renderInterval)) {
     skippedFrameCount += 1;
@@ -709,7 +884,21 @@ function animate(frameTime) {
   const deltaSeconds = Math.min(clock.getDelta(), 0.05);
   const now = performance.now();
   update(deltaSeconds, now);
+  const capture = pendingPlateCapture;
+  const cameraWasVisible = capture ? world.fieldCamera.visible : false;
+  const rifleWasVisible = capture ? world.rifle.visible : false;
+  if (capture) {
+    world.fieldCamera.visible = false;
+    world.rifle.visible = false;
+  }
   composer.render();
+  if (firstRenderedAt === null) hideLoading();
+  if (capture) {
+    pendingPlateCapture = null;
+    encodeRenderedPlate(capture);
+    world.fieldCamera.visible = cameraWasVisible;
+    world.rifle.visible = rifleWasVisible;
+  }
   renderedFrameCount += 1;
   frameSamples.push(now - lastFrame);
   if (frameSamples.length > 360) frameSamples.shift();
@@ -721,7 +910,7 @@ function animate(frameTime) {
 function resize() {
   const width = window.innerWidth;
   const height = window.innerHeight;
-  const pixelRatio = renderPixelRatio(window.devicePixelRatio);
+  const pixelRatio = qualityRenderPixelRatio(window.devicePixelRatio, presentationSettings.quality);
   renderer.setPixelRatio(pixelRatio);
   renderer.setSize(width, height, false);
   composer.setPixelRatio(pixelRatio);
@@ -730,6 +919,7 @@ function resize() {
     1 / (width * pixelRatio),
     1 / (height * pixelRatio),
   );
+  smaaPass.setSize(width * pixelRatio, height * pixelRatio);
   camera.aspect = width / height;
   camera.updateProjectionMatrix();
 }
@@ -741,13 +931,34 @@ function closePanels() {
   document.querySelector('#credits-panel').hidden = true;
 }
 
-document.querySelector('#enter-button').addEventListener('click', () => {
+async function enterBasin() {
   closePanels();
-  void ensureHy3dVisuals();
-  player = createPlayerState();
-  setView('order');
-  document.querySelector('#field-order').hidden = false;
-});
+  requiredAssetsError.hidden = true;
+  enterButton.disabled = true;
+  showLoading('Preparing field camera, rifle and wildlife…', 'assets');
+  try {
+    await ensureHy3dVisuals();
+    player = createPlayerState();
+    setView('order');
+    document.querySelector('#field-order').hidden = false;
+    hideLoading();
+  } catch (error) {
+    hideLoading();
+    clearTransientInput();
+    runActive = false;
+    requiredAssetsCopy.textContent = error instanceof Error
+      ? error.message
+      : 'A required local 3D asset could not be loaded.';
+    document.querySelector('#field-order').hidden = true;
+    requiredAssetsError.hidden = false;
+    document.body.dataset.mode = 'asset-error';
+  } finally {
+    enterButton.disabled = false;
+  }
+}
+
+enterButton.addEventListener('click', enterBasin);
+document.querySelector('#retry-assets').addEventListener('click', enterBasin);
 document.querySelector('#dismiss-order').addEventListener('click', () => {
   document.querySelector('#field-order').hidden = true;
   beginRun();
@@ -781,6 +992,12 @@ for (const channel of ['ambience', 'effects', 'music']) {
 document.querySelector('#text-scale').addEventListener('change', (event) => {
   applyPresentationSettings({ ...presentationSettings, textScale: event.currentTarget.value });
 });
+document.querySelector('#visual-quality').addEventListener('change', (event) => {
+  applyPresentationSettings({ ...presentationSettings, quality: event.currentTarget.value });
+});
+document.querySelector('#look-sensitivity').addEventListener('input', (event) => {
+  applyPresentationSettings({ ...presentationSettings, lookSensitivity: event.currentTarget.value });
+});
 document.querySelector('#settings-reset').addEventListener('click', () => {
   clearSettings(window.localStorage);
   applyPresentationSettings(normalizeSettings({}, systemReducedMotion), false);
@@ -807,7 +1024,17 @@ document.addEventListener('keydown', (event) => {
     player = setRifleRaised(player, true);
     return;
   }
-  pressed.add(event.code);
+  const captureGameplayKey = shouldCaptureGameplayKey(event.code, {
+    runActive,
+    paused: player.paused,
+    cameraMode,
+  });
+  if (captureGameplayKey && event.code === 'Space') {
+    event.preventDefault();
+    if (!event.repeat) jumpQueued = true;
+    return;
+  }
+  if (captureGameplayKey) pressed.add(event.code);
 });
 document.addEventListener('keyup', (event) => {
   if (event.code === 'KeyF') player = setRifleRaised(player, false);
@@ -837,20 +1064,7 @@ document.addEventListener('mousedown', (event) => {
     const hadPendingExposure = Boolean(player.pendingExposure);
     player = startExposure(player);
     if (!hadPendingExposure && player.pendingExposure) {
-      world.update(visualElapsed, reducedMotion, worldRuntime(0));
-      const cameraWasVisible = world.fieldCamera.visible;
-      const rifleWasVisible = world.rifle.visible;
-      world.fieldCamera.visible = false;
-      world.rifle.visible = false;
-      // Warm and flush the post-processing chain before reading the physical
-      // plate. The first shutter otherwise reads an uninitialised composer
-      // buffer and leaves Plate I blank on the result board.
-      composer.render();
-      composer.render();
-      renderer.getContext().finish();
-      plateImages[player.pendingExposure.plateIndex] = canvas.toDataURL('image/jpeg', 0.8);
-      world.fieldCamera.visible = cameraWasVisible;
-      world.rifle.visible = rifleWasVisible;
+      queuePlateCapture(player.pendingExposure.plateIndex);
       emitCue('shutter');
     }
   }
@@ -863,13 +1077,26 @@ document.addEventListener('contextmenu', (event) => {
 });
 document.addEventListener('mousemove', (event) => {
   if (document.pointerLockElement !== canvas || player.paused || cameraMode !== 'field') return;
-  player.heading -= event.movementX * 0.002;
-  player.pitch = THREE.MathUtils.clamp(player.pitch - event.movementY * 0.0016, -1.15, 1.1);
+  const orientation = applyLookDelta(player, event, {
+    horizontal: 0.002 * presentationSettings.lookSensitivity,
+    vertical: 0.0016 * presentationSettings.lookSensitivity,
+  });
+  player.heading = orientation.heading;
+  player.pitch = orientation.pitch;
 });
 document.addEventListener('pointerlockchange', () => {
+  if (document.pointerLockElement === canvas) {
+    pointerLockStatus = 'locked';
+    pointerLockError = null;
+    return;
+  }
   if (runActive && !player.paused && document.pointerLockElement !== canvas) {
+    pointerLockStatus = 'lost';
     pauseRun('pointer-lock');
   }
+});
+document.addEventListener('pointerlockerror', () => {
+  pointerLockUnavailable(new Error('The browser denied pointer lock. Click Resume field work to retry.'));
 });
 canvas.addEventListener('click', () => {
   if (runActive && !player.paused && cameraMode === 'field') requestFieldPointerLock();
@@ -896,12 +1123,12 @@ async function sampleFrames(count = 180) {
     requestAnimationFrame(take);
   });
   const p50Ms = percentile(samples, 0.5);
-  const p99Ms = percentile(samples, 0.99);
+  const lowFps = onePercentLowFps(samples);
   return {
     samples: samples.length,
     medianFrameMs: Number(p50Ms.toFixed(2)),
     medianFps: Number((1000 / p50Ms).toFixed(1)),
-    onePercentLowFps: Number((1000 / p99Ms).toFixed(1)),
+    onePercentLowFps: Number(lowFps.toFixed(1)),
     worstFrameMs: Number(Math.max(...samples).toFixed(2)),
   };
 }
@@ -917,6 +1144,14 @@ function playerSnapshot() {
       x: Number(player.lastStablePosition.x.toFixed(3)),
       z: Number(player.lastStablePosition.z.toFixed(3)),
     },
+    velocity: {
+      x: Number((player.velocity?.x ?? 0).toFixed(3)),
+      z: Number((player.velocity?.z ?? 0).toFixed(3)),
+    },
+    groundY: Number(player.groundY.toFixed(3)),
+    verticalOffset: Number((player.verticalOffset ?? 0).toFixed(3)),
+    verticalVelocity: Number((player.verticalVelocity ?? 0).toFixed(3)),
+    grounded: player.grounded,
     heading: Number(player.heading.toFixed(4)),
     pitch: Number(player.pitch.toFixed(4)),
     elapsedSeconds: Number(player.elapsedSeconds.toFixed(3)),
@@ -949,6 +1184,7 @@ window.__projectPlateau = {
       domInteractiveMs: navigation ? Number(navigation.domInteractive.toFixed(2)) : null,
       loadEventMs: navigation ? Number(navigation.loadEventEnd.toFixed(2)) : null,
       resourceCount: performance.getEntriesByType('resource').length,
+      ui: loadingScreenSnapshot(),
     };
   },
   pause: pauseRun,
@@ -991,6 +1227,11 @@ window.__projectPlateau = {
     if (!query.has('qa')) throw new Error('teleportForTest requires a qa query');
     player.position = { x: position.x, z: position.z };
     player.lastStablePosition = { ...player.position };
+    player.groundY = terrainHeight(player.position.x, player.position.z);
+    player.verticalOffset = 0;
+    player.verticalVelocity = 0;
+    player.grounded = true;
+    player.velocity = { x: 0, z: 0 };
     if (Number.isFinite(position.heading)) player.heading = position.heading;
     if (Number.isFinite(position.pitch)) player.pitch = position.pitch;
     setCameraToPlayer();
@@ -1023,18 +1264,31 @@ window.__projectPlateau = {
     return visualThreatOverride;
   },
   snapshot() {
+    camera.updateMatrixWorld();
+    const cameraForward = camera.getWorldDirection(new THREE.Vector3());
     return {
       stage: this.stage,
       mode: document.body.dataset.mode,
       cameraMode,
       visualReviewOrbit,
       runActive,
+      pointerLock: {
+        active: document.pointerLockElement === canvas,
+        status: pointerLockStatus,
+        error: pointerLockError,
+        cameraForward: {
+          x: Number(cameraForward.x.toFixed(4)),
+          y: Number(cameraForward.y.toFixed(4)),
+          z: Number(cameraForward.z.toFixed(4)),
+        },
+      },
       renderer: this.renderer,
       player: playerSnapshot(),
       threatVisual: world.threatSnapshot(),
       familyVisual: world.familySnapshot(),
       brookResponseVisual: world.brookResponseSnapshot(),
       assets: world.assetSnapshot(),
+      collision: collisionContractSnapshot(),
       audio: fieldAudio.snapshot(),
       presentationSettings: {
         ...presentationSettings,
@@ -1044,7 +1298,7 @@ window.__projectPlateau = {
       ui: {
         prompt: contextPrompt.hidden ? null : contextPrompt.textContent,
         cameraOverlay: !cameraOverlay.hidden,
-        rifleOverlay: !rifleOverlay.hidden,
+        rifleOverlay: player.rifleRaised && world.rifle.visible,
         plateRail: !plateRail.hidden,
         platePreview: platePreview.hidden ? null : previewCopy.textContent,
         capturedPlateImages: plateImages.map(Boolean),
@@ -1063,6 +1317,11 @@ window.__projectPlateau = {
               callback: terminalCallback.hidden ? null : terminalCallback.textContent,
             },
       },
+      plateCapture: {
+        status: plateCaptureStatus,
+        durationMs: plateCaptureDurationMs,
+        error: plateCaptureError,
+      },
       sceneChildren: scene.children.length,
       calls: renderer.info.render.calls,
       triangles: renderer.info.render.triangles,
@@ -1072,6 +1331,8 @@ window.__projectPlateau = {
       renderBudget: {
         pixelRatio: renderer.getPixelRatio(),
         maxPixelRatio: MAX_RENDER_PIXEL_RATIO,
+        quality: presentationSettings.quality,
+        activeFpsCap: QUALITY_PROFILES[presentationSettings.quality].activeFps,
         renderedFrames: renderedFrameCount,
         skippedFrames: skippedFrameCount,
         activeFpsPolicy: '60fps-cap-across-refresh-rates',
@@ -1081,7 +1342,7 @@ window.__projectPlateau = {
         powerPreference: 'default',
         preserveDrawingBuffer: false,
         gtaoSamples: 4,
-        antialiasing: 'single-pass-fxaa',
+        antialiasing: presentationSettings.quality === 'high' ? 'smaa' : 'single-pass-fxaa',
       },
       firstRenderedAt,
       recentMedianFrameMs: Number(percentile(frameSamples, 0.5).toFixed(2)),

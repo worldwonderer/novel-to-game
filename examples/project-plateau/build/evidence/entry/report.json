@@ -1,0 +1,73 @@
+{
+  "suite": "browser:entry-conversion",
+  "status": "PASS",
+  "sourceFingerprint": "578d03cbfbcbe66ac192ac1bcb808d3e215b14d1d6759d63d2b3012bbc22ee6f",
+  "checks": {
+    "desktopWebGL2LoadsInteractiveBuild": true,
+    "desktopDoesNotRequestPreviewMedia": true,
+    "mobileLoadsLocal15SecondPreview": true,
+    "mobileDoesNotLoadThreeRuntime": true,
+    "inAppBrowserLoadsPreview": true,
+    "missingWebGL2LoadsPreview": true,
+    "twoMobileDemoLinksVisible": true,
+    "caseStudyLinkVisible": true,
+    "consoleErrors": [],
+    "externalHosts": []
+  },
+  "records": {
+    "desktop": {
+      "entry": {
+        "ready": true,
+        "mode": "interactive",
+        "reason": "desktop-webgl2"
+      },
+      "previewRequested": false
+    },
+    "mobile": {
+      "entry": {
+        "ready": true,
+        "mode": "preview",
+        "reason": "mobile-controls-unavailable",
+        "video": "/media/project-plateau-preview-15s.mp4"
+      },
+      "media": {
+        "paused": false,
+        "muted": true,
+        "readyState": 4,
+        "duration": 15
+      },
+      "screenshot": "01-mobile-preview.jpg",
+      "interactiveRuntimeRequested": false
+    },
+    "inAppBrowser": {
+      "entry": {
+        "ready": true,
+        "mode": "preview",
+        "reason": "in-app-browser",
+        "video": "/media/project-plateau-preview-15s.mp4"
+      },
+      "media": {
+        "paused": false,
+        "muted": true,
+        "readyState": 4,
+        "duration": 15
+      },
+      "screenshot": "02-in-app-browser-preview.jpg"
+    },
+    "withoutWebGL2": {
+      "entry": {
+        "ready": true,
+        "mode": "preview",
+        "reason": "webgl2-unavailable",
+        "video": "/media/project-plateau-preview-15s.mp4"
+      },
+      "media": {
+        "paused": false,
+        "muted": true,
+        "readyState": 4,
+        "duration": 15
+      },
+      "screenshot": "03-without-webgl2-preview.jpg"
+    }
+  }
+}

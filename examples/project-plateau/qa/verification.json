@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "sourceCommit": null,
-  "sourceFingerprint": "a33f6d0439f7efb26e2437beff4ed334851cd0cd94b321e7918387061adfd454",
+  "sourceFingerprint": "578d03cbfbcbe66ac192ac1bcb808d3e215b14d1d6759d63d2b3012bbc22ee6f",
   "environment": {
     "runtime": "Node.js",
     "runtimeVersion": "v25.6.1",
@@ -20,22 +20,28 @@
   "verify": {
     "command": "npm run verify",
     "log": "qa/evidence/verify.log",
-    "logSha256": "d35bf0e60daf3735fe74c8ff4aa20dd35ff8c60ac8c0d0b0b2260005869b83d8",
+    "logSha256": "31d33d28c367ed68678b8704d8e7f2391774d57981f096c1da25ed7298a4a16a",
     "exitCode": 0,
-    "durationMs": 589252,
+    "durationMs": 605109,
     "suites": [
       {
         "id": "unit:simulation",
         "locations": [
           "test/audio.test.js",
+          "test/controller.test.js",
+          "test/entry-mode.test.js",
           "test/foundation.test.js",
+          "test/hy3d-field-camera.test.js",
+          "test/collision.test.js",
           "test/hy3d-iguanodon.test.js",
           "test/hy3d-pterodactyl.test.js",
+          "test/hy3d-rifle.test.js",
           "test/iguanodon.test.js",
           "test/pterodactyl.test.js",
           "test/render-budget.test.js",
           "test/settings.test.js",
-          "test/simulation.test.js"
+          "test/simulation.test.js",
+          "test/terrain.test.js"
         ],
         "executed": true,
         "passed": true,
@@ -43,7 +49,7 @@
           {
             "command": "npm test",
             "exitCode": 0,
-            "durationMs": 791
+            "durationMs": 1210
           }
         ]
       },
@@ -60,7 +66,7 @@
           {
             "command": "npm run build",
             "exitCode": 0,
-            "durationMs": 384
+            "durationMs": 407
           }
         ]
       },
@@ -83,47 +89,47 @@
           {
             "command": "python3 test/qa_s0.py",
             "exitCode": 0,
-            "durationMs": 8237
+            "durationMs": 8250
           },
           {
             "command": "python3 test/qa_s1.py",
             "exitCode": 0,
-            "durationMs": 72990
+            "durationMs": 73258
           },
           {
             "command": "python3 test/qa_s2.py",
             "exitCode": 0,
-            "durationMs": 18488
+            "durationMs": 18789
           },
           {
             "command": "python3 test/qa_s3.py",
             "exitCode": 0,
-            "durationMs": 16103
+            "durationMs": 16444
           },
           {
             "command": "python3 test/qa_s4.py",
             "exitCode": 0,
-            "durationMs": 47145
+            "durationMs": 38697
           },
           {
             "command": "python3 test/qa_s5.py",
             "exitCode": 0,
-            "durationMs": 53614
+            "durationMs": 53944
           },
           {
             "command": "python3 test/qa_s6.py",
             "exitCode": 0,
-            "durationMs": 13911
+            "durationMs": 15491
           },
           {
             "command": "python3 test/qa_s7.py",
             "exitCode": 0,
-            "durationMs": 48034
+            "durationMs": 36566
           },
           {
             "command": "python3 test/qa_s9.py",
             "exitCode": 0,
-            "durationMs": 46399
+            "durationMs": 46707
           }
         ]
       },
@@ -138,7 +144,82 @@
           {
             "command": "python3 test/qa_s8.py",
             "exitCode": 0,
-            "durationMs": 187526
+            "durationMs": 190374
+          }
+        ]
+      },
+      {
+        "id": "browser:controller-contract",
+        "locations": [
+          "test/qa_controller.py"
+        ],
+        "executed": true,
+        "passed": true,
+        "commands": [
+          {
+            "command": "python3 test/qa_controller.py",
+            "exitCode": 0,
+            "durationMs": 5781
+          }
+        ]
+      },
+      {
+        "id": "browser:motion-visual",
+        "locations": [
+          "test/qa_motion.py"
+        ],
+        "executed": true,
+        "passed": true,
+        "commands": [
+          {
+            "command": "python3 test/qa_motion.py",
+            "exitCode": 0,
+            "durationMs": 8686
+          }
+        ]
+      },
+      {
+        "id": "browser:collision-contract",
+        "locations": [
+          "test/qa_collision.py"
+        ],
+        "executed": true,
+        "passed": true,
+        "commands": [
+          {
+            "command": "python3 test/qa_collision.py",
+            "exitCode": 0,
+            "durationMs": 6720
+          }
+        ]
+      },
+      {
+        "id": "browser:entry-conversion",
+        "locations": [
+          "test/qa_entry.py"
+        ],
+        "executed": true,
+        "passed": true,
+        "commands": [
+          {
+            "command": "python3 test/qa_entry.py",
+            "exitCode": 0,
+            "durationMs": 3784
+          }
+        ]
+      },
+      {
+        "id": "browser:loading-state",
+        "locations": [
+          "test/qa_loading.py"
+        ],
+        "executed": true,
+        "passed": true,
+        "commands": [
+          {
+            "command": "python3 test/qa_loading.py",
+            "exitCode": 0,
+            "durationMs": 3007
           }
         ]
       },
@@ -155,17 +236,17 @@
           {
             "command": "python3 test/qa_s10.py",
             "exitCode": 0,
-            "durationMs": 29708
+            "durationMs": 29919
           },
           {
             "command": "python3 test/qa_visual_targets.py",
             "exitCode": 0,
-            "durationMs": 39889
+            "durationMs": 40219
           },
           {
             "command": "python3 test/capture_visual_upgrade.py",
             "exitCode": 0,
-            "durationMs": 97
+            "durationMs": 135
           }
         ]
       },
@@ -180,7 +261,7 @@
           {
             "command": "python3 qa/check_design_invariants.py",
             "exitCode": 0,
-            "durationMs": 23
+            "durationMs": 25
           }
         ]
       },
@@ -196,12 +277,12 @@
           {
             "command": "python3 scripts/validate_repo.py --verification-candidate examples/project-plateau/qa/.verification-candidate.json",
             "exitCode": 0,
-            "durationMs": 713
+            "durationMs": 823
           },
           {
             "command": "python3 -m unittest discover -s tests -v",
             "exitCode": 0,
-            "durationMs": 4869
+            "durationMs": 5473
           }
         ]
       }
@@ -211,11 +292,21 @@
         "test/audio.test.js",
         "test/capture_demo_clip.py",
         "test/capture_visual_upgrade.py",
+        "test/collision.test.js",
+        "test/controller.test.js",
+        "test/entry-mode.test.js",
         "test/foundation.test.js",
+        "test/hy3d-field-camera.test.js",
         "test/hy3d-iguanodon.test.js",
         "test/hy3d-pterodactyl.test.js",
+        "test/hy3d-rifle.test.js",
         "test/iguanodon.test.js",
         "test/pterodactyl.test.js",
+        "test/qa_collision.py",
+        "test/qa_controller.py",
+        "test/qa_entry.py",
+        "test/qa_loading.py",
+        "test/qa_motion.py",
         "test/qa_s0.py",
         "test/qa_s1.py",
         "test/qa_s10.py",
@@ -231,16 +322,27 @@
         "test/render-budget.test.js",
         "test/settings.test.js",
         "test/simulation.test.js",
+        "test/terrain.test.js",
         "test/verify.py"
       ],
       "registered": [
         "test/audio.test.js",
         "test/capture_visual_upgrade.py",
+        "test/collision.test.js",
+        "test/controller.test.js",
+        "test/entry-mode.test.js",
         "test/foundation.test.js",
+        "test/hy3d-field-camera.test.js",
         "test/hy3d-iguanodon.test.js",
         "test/hy3d-pterodactyl.test.js",
+        "test/hy3d-rifle.test.js",
         "test/iguanodon.test.js",
         "test/pterodactyl.test.js",
+        "test/qa_collision.py",
+        "test/qa_controller.py",
+        "test/qa_entry.py",
+        "test/qa_loading.py",
+        "test/qa_motion.py",
         "test/qa_s0.py",
         "test/qa_s1.py",
         "test/qa_s10.py",
@@ -255,7 +357,8 @@
         "test/qa_visual_targets.py",
         "test/render-budget.test.js",
         "test/settings.test.js",
-        "test/simulation.test.js"
+        "test/simulation.test.js",
+        "test/terrain.test.js"
       ],
       "excluded": {
         "test/capture_demo_clip.py": "reproducible delivery-media recorder, not a pass/fail test suite",
@@ -264,6 +367,11 @@
       "packageScripts": {
         "test": "node --test test/*.test.js",
         "test:browser": "python3 test/qa_s0.py",
+        "test:collision": "python3 test/qa_collision.py",
+        "test:controller": "python3 test/qa_controller.py",
+        "test:entry": "python3 test/qa_entry.py",
+        "test:loading": "python3 test/qa_loading.py",
+        "test:motion": "python3 test/qa_motion.py",
         "test:s1": "python3 test/qa_s1.py",
         "test:s10": "python3 test/qa_s10.py",
         "test:s2": "python3 test/qa_s2.py",

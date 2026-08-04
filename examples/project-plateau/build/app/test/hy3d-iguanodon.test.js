@@ -78,6 +78,7 @@ test('cached loader fetches once and reuses a prepared template', async () => {
   assert.ok(mesh.material.roughness >= 0.72);
   assert.ok(mesh.material.metalness <= 0.08);
   assert.deepEqual(mesh.geometry.userData.hy3dPoseTargets, [...HY3D_POSE_TARGETS]);
+  assert.equal(mesh.geometry.userData.silhouetteRefinement, 'narrow-integrated-beak');
   assert.deepEqual(Object.keys(mesh.morphTargetDictionary), [...HY3D_POSE_TARGETS]);
 });
 
@@ -151,6 +152,14 @@ test('HY3D instances share heavy geometry and material resources', () => {
     assert.ok(yRange > zRange * 2, 'each thumb spike must rise from the hand instead of splaying like a floor blade');
   }
   assert.equal(first.userData.speciesHandSilhouette, 'paired-thumb-spikes');
+  const speciesDetails = first.getObjectByName('subject.iguanodon_family.species-silhouette-details');
+  assert.ok(speciesDetails?.isGroup);
+  assert.equal(speciesDetails.userData.profile, 'three-toed-hindfoot');
+  let hindToes = 0;
+  speciesDetails.traverse((object) => {
+    if (object.userData.anatomicalFeature === 'hind-toe') hindToes += 1;
+  });
+  assert.equal(hindToes, 6);
 });
 
 test('play and reach poses move anatomy while keeping a diagonal support pair planted', async () => {

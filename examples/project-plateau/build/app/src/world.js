@@ -10,9 +10,38 @@ import {
   HY3D_PTERODACTYL_ASSET,
   upgradePterodactylFlockWithHy3d,
 } from './hy3d-pterodactyl.js';
+import {
+  attachHy3dFieldCameraVisual,
+  HY3D_FIELD_CAMERA_ASSET,
+  loadHy3dFieldCameraTemplate,
+} from './hy3d-field-camera.js';
+import {
+  attachHy3dRifleVisual,
+  HY3D_RIFLE_ASSET,
+  loadHy3dRifleTemplate,
+} from './hy3d-rifle.js';
 import { createIguanodon } from './iguanodon.js';
 import { createPterodactyl } from './pterodactyl.js';
 import { PALETTE, SCENE_BUDGET, seededRandom } from './config.js';
+import {
+  BROOK_BOULDER,
+  COVER_ARCH_LAYOUT,
+  FAMILY_LAYOUT,
+  FEEDING_BRANCH,
+  FOREGROUND_FROND_LAYOUT,
+  FORT_FIREPIT,
+  FORT_TENT_LAYOUT,
+  HABITAT_TREE_LAYOUT,
+  VEGETATION_LAYOUT,
+} from './environment-layout.js';
+import {
+  terrainHeight,
+  terrainSlope,
+  terrainVariation,
+  terrainWetness,
+} from './terrain.js';
+
+export { terrainHeight } from './terrain.js';
 
 function toNonIndexed(geometry) {
   if (!geometry.index) return geometry;
@@ -607,15 +636,27 @@ const TRACK_IMPRESSION = Object.freeze({
 
 export function pterodactylAttackPose(attackSeconds = 0, reducedMotion = false) {
   const clock = Math.max(0, Number.isFinite(attackSeconds) ? attackSeconds : 0);
-  const rawApproach = THREE.MathUtils.clamp((clock - 0.34) / 0.72, 0, 1);
+  // The threat must already be crossing the exposed corridor when the player
+  // reaches for the rifle. Delaying all approach motion until 0.34 s left the
+  // first defensive read as a distant bird in empty sky.
+  const rawApproach = THREE.MathUtils.clamp((clock - 0.18) / 0.74, 0, 1);
   const easedApproach = rawApproach * rawApproach * (3 - 2 * rawApproach);
-  const approach = reducedMotion ? easedApproach * 0.38 : easedApproach;
-  const stage = clock < 0.5 ? 'search' : clock < 0.92 ? 'fold-dive' : 'attack';
+  const rawRecovery = THREE.MathUtils.clamp((clock - 2.24) / (3.05 - 2.24), 0, 1);
+  const recovery = rawRecovery * rawRecovery * (3 - 2 * rawRecovery);
+  const attackEnvelope = easedApproach * (1 - recovery);
+  const approach = reducedMotion ? attackEnvelope * 0.38 : attackEnvelope;
+  const rawFlightProgress = THREE.MathUtils.clamp((clock - 0.12) / 1.4, 0, 1);
+  const easedFlightProgress = rawFlightProgress * rawFlightProgress * (3 - 2 * rawFlightProgress);
+  const stage = clock < 0.5
+    ? 'search'
+    : clock < 0.92 ? 'fold-dive' : clock < 2.24 ? 'attack' : 'pull-up';
   return {
     stage,
     approach,
-    wingFold: THREE.MathUtils.clamp(0.08 + approach * 0.9, 0, 1),
-    pitch: 0.06 + approach * 0.5,
+    recovery,
+    flightProgress: reducedMotion ? easedFlightProgress * 0.38 : easedFlightProgress,
+    wingFold: THREE.MathUtils.clamp(0.08 + approach * 0.74, 0, 0.82),
+    pitch: THREE.MathUtils.lerp(0.06 + approach * 0.5, -0.2, recovery),
   };
 }
 
@@ -629,22 +670,114 @@ export function pterodactylWingBeat(elapsed, phase = 0, awareness = 0, reducedMo
   return asymmetricStroke * (reducedMotion ? 0.045 : 0.29 + awareness * 0.035);
 }
 
-export function terrainHeight(x, z) {
-  const broad = Math.sin(x * 0.045) * 0.7 + Math.cos(z * 0.052) * 0.45;
-  const basin = -Math.exp(-(x * x + (z + 8) * (z + 8)) / 1200) * 1.4;
-  return broad + basin;
+const PTERODACTYL_LOCAL_FORWARD = new THREE.Vector3(0, 0, -1);
+const PTERODACTYL_WORLD_UP = new THREE.Vector3(0, 1, 0);
+
+function alignPterodactylToTravel(mesh, velocity, roll = 0) {
+  if (velocity.lengthSq() <= 1e-10) return;
+  const direction = velocity.clone().normalize();
+  const localZInWorld = direction.clone().negate();
+  const referenceUp = Math.abs(direction.dot(PTERODACTYL_WORLD_UP)) > 0.98
+    ? new THREE.Vector3(0, 0, 1)
+    : PTERODACTYL_WORLD_UP;
+  const localXInWorld = referenceUp.clone().cross(localZInWorld).normalize();
+  const localYInWorld = localZInWorld.clone().cross(localXInWorld).normalize();
+  const rotationBasis = new THREE.Matrix4().makeBasis(
+    localXInWorld,
+    localYInWorld,
+    localZInWorld,
+  );
+  mesh.quaternion.setFromRotationMatrix(rotationBasis);
+  mesh.rotateZ(roll);
+  mesh.userData.flightDirection = direction;
+}
+
+function cubicBezierPoint(start, controlA, controlB, end, progress) {
+  const inverse = 1 - progress;
+  return new THREE.Vector3(
+    inverse ** 3 * start.x
+      + 3 * inverse ** 2 * progress * controlA.x
+      + 3 * inverse * progress ** 2 * controlB.x
+      + progress ** 3 * end.x,
+    inverse ** 3 * start.y
+      + 3 * inverse ** 2 * progress * controlA.y
+      + 3 * inverse * progress ** 2 * controlB.y
+      + progress ** 3 * end.y,
+    inverse ** 3 * start.z
+      + 3 * inverse ** 2 * progress * controlA.z
+      + 3 * inverse * progress ** 2 * controlB.z
+      + progress ** 3 * end.z,
+  );
+}
+
+export function pterodactylAttackFlightState({
+  attackClock,
+  playerPosition,
+  cameraRaised,
+  familyMoment,
+  reducedMotion,
+}) {
+  const pose = pterodactylAttackPose(attackClock, reducedMotion);
+  const cameraProtection = cameraRaised ? 0.08 : 1;
+  const approach = pose.approach * cameraProtection;
+  const flightProgress = pose.flightProgress * cameraProtection;
+  const cameraAltitude = cameraRaised ? -1.8 : 0;
+  const cameraDistance = cameraRaised ? 14 : 0;
+  const cameraLateral = cameraRaised
+    ? familyMoment === 'glade-young-play' ? 10 : -9
+    : 0;
+  const diveStart = new THREE.Vector3(-4.6, 10.4, -24);
+  const diveControlA = new THREE.Vector3(-4.05, 10.05, -20);
+  const diveControlB = new THREE.Vector3(-3.15, 7.45, -13.5);
+  const diveEnd = new THREE.Vector3(-2.6, 6.5, -9.8);
+  const divePosition = cubicBezierPoint(
+    diveStart,
+    diveControlA,
+    diveControlB,
+    diveEnd,
+    flightProgress,
+  );
+  const recoveryProgress = pose.recovery * cameraProtection;
+  const recoveryPosition = cubicBezierPoint(
+    diveEnd,
+    new THREE.Vector3(-1.9, 6.55, -7.3),
+    new THREE.Vector3(2.8, 9.2, -3.2),
+    new THREE.Vector3(7.5, 12.2, 1.4),
+    recoveryProgress,
+  );
+  const authoredPosition = divePosition.lerp(recoveryPosition, recoveryProgress);
+  return {
+    pose,
+    approach,
+    position: authoredPosition.add(new THREE.Vector3(
+      playerPosition.x + cameraLateral,
+      cameraAltitude,
+      playerPosition.z - cameraDistance,
+    )),
+  };
 }
 
 function terrainColorAt(x, z) {
-  const drySoil = new THREE.Color(0x696445);
-  const mossSoil = new THREE.Color(0x425b45);
-  const wetSoil = new THREE.Color(0x304a48);
-  const broadMottle = Math.sin(x * 0.19 + z * 0.07) * 0.5
-    + Math.sin(x * 0.063 - z * 0.14) * 0.5;
-  const canopyWeight = THREE.MathUtils.clamp((broadMottle + 1) * 0.34, 0.08, 0.72);
-  const brookWeight = Math.exp(-((x + 11) * (x + 11)) / 74) * 0.7;
-  const color = drySoil.lerp(mossSoil, canopyWeight).lerp(wetSoil, brookWeight);
-  color.offsetHSL(0, 0, Math.sin(x * 0.53 + z * 0.37) * 0.018);
+  const drySoil = new THREE.Color(0x696044);
+  const mossSoil = new THREE.Color(0x405640);
+  const exposedSoil = new THREE.Color(0x817254);
+  const wetSoil = new THREE.Color(0x294745);
+  const variation = terrainVariation(x, z);
+  const wetness = terrainWetness(x, z);
+  const slope = terrainSlope(x, z);
+  const height = terrainHeight(x, z);
+  const exposure = THREE.MathUtils.clamp((height + 2.1) / 5.4, 0, 1);
+  const mossWeight = THREE.MathUtils.clamp(
+    0.4 + variation * 0.32 + (1 - exposure) * 0.24 - slope * 0.7,
+    0.08,
+    0.82,
+  );
+  const exposedWeight = THREE.MathUtils.clamp(exposure * 0.5 + slope * 1.2, 0, 0.62);
+  const color = drySoil
+    .lerp(mossSoil, mossWeight)
+    .lerp(exposedSoil, exposedWeight)
+    .lerp(wetSoil, wetness * 0.82);
+  color.offsetHSL(0, 0, variation * 0.045);
   return color;
 }
 
@@ -676,7 +809,9 @@ function trackSubsurfaceClearance(worldX, worldZ) {
 }
 
 function makeTerrain(scene) {
-  const geometry = new THREE.PlaneGeometry(180, 210, 72, 84);
+  const widthSegments = 96;
+  const heightSegments = 112;
+  const geometry = new THREE.PlaneGeometry(180, 210, widthSegments, heightSegments);
   const positions = geometry.attributes.position;
   const colors = [];
   for (let i = 0; i < positions.count; i += 1) {
@@ -688,6 +823,9 @@ function makeTerrain(scene) {
   }
   geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
   geometry.userData.trackSubsurfaceClearance = 'concealed-cutaway-under-impression';
+  geometry.userData.profile = 'warped-multiscale-heightfield';
+  geometry.userData.widthSegments = widthSegments;
+  geometry.userData.heightSegments = heightSegments;
   geometry.computeVertexNormals();
   geometry.rotateX(-Math.PI / 2);
   const material = new THREE.MeshStandardMaterial({
@@ -700,10 +838,12 @@ function makeTerrain(scene) {
     roughness: 1,
     metalness: 0,
   });
+  material.userData.surface = 'slope-wetness-exposure-vertex-palette';
   const mesh = new THREE.Mesh(geometry, material);
   mesh.receiveShadow = true;
   mesh.name = 'world.connected_route.terrain';
   scene.add(mesh);
+  return mesh;
 }
 
 function makeRibbon(points, width, color, yOffset = 0) {
@@ -1362,10 +1502,8 @@ function makeCoverArches(scene) {
     emissive: 0x0a1a11,
     emissiveIntensity: 0.2,
   });
-  const arches = [[-7, 28], [-12, 18], [-17, 8], [-22, -3], [-13, 13]];
-  arches.forEach(([centerX, z], index) => {
+  COVER_ARCH_LAYOUT.forEach(({ centerX, z, spread }, index) => {
     const ground = terrainHeight(centerX, z);
-    const spread = 3.5 + (index % 2) * 0.32;
     const leftGround = terrainHeight(centerX - spread, z);
     const rightGround = terrainHeight(centerX + spread, z);
     const left = primitive(
@@ -1423,7 +1561,7 @@ function makeCoverArches(scene) {
     group.add(left, right, crown, leftCrown, rightCrown, centreLeft, centreRight);
   });
   group.name = 'world.connected_route.cover_arches';
-  group.userData.archCount = arches.length;
+  group.userData.archCount = COVER_ARCH_LAYOUT.length;
   group.userData.minimumHalfClearance = 3.5;
   group.userData.profile = 'curved-tapered-branch-arches';
   scene.add(group);
@@ -1431,7 +1569,6 @@ function makeCoverArches(scene) {
 }
 
 function placeVegetation(scene) {
-  const random = seededRandom(139);
   const trunkMesh = new THREE.InstancedMesh(
     shared.trunkGeometry,
     shared.trunkMaterial,
@@ -1457,44 +1594,30 @@ function placeVegetation(scene) {
   const crownColor = new THREE.Color();
   let araucariaIndex = 0;
 
-  for (let i = 0; i < SCENE_BUDGET.trees; i += 1) {
-    let x;
-    let z;
-    do {
-      x = (random() - 0.5) * 150;
-      z = (random() - 0.5) * 190;
-    } while (
-      (Math.abs(x - 4) < 13 && z > -78)
-      || (z > -58 && z < 16 && Math.abs(x - 1) < GLADE_SIGHTLINE_HALF_WIDTH + 10)
-      || (z > -70 && z < 42 && x > -70 && x < 35)
-      || Math.hypot(x - 18, z - 77) < 21
-    );
-    const isAraucaria = i % 3 === 0;
-    const scale = 0.68 + random() * 0.62;
+  VEGETATION_LAYOUT.trees.forEach((tree) => {
+    const {
+      index: i, x, z, scale, isAraucaria,
+    } = tree;
     const y = terrainHeight(x, z);
     // The current authored trunk loft starts at y=0. The previous placement
     // still treated it like a center-origin cylinder and lifted every tree by
     // roughly half its height. Reset all Euler axes as well: otherwise a
     // crown's tilt leaks into the next trunk through the reused dummy object.
     dummy.position.set(x, y - 0.035 * scale, z);
-    dummy.rotation.set(0, random() * Math.PI, 0);
-    dummy.scale.set(
-      scale * (isAraucaria ? 0.68 : 0.86 + random() * 0.22),
-      scale * (isAraucaria ? 1.14 : 1),
-      scale * (isAraucaria ? 0.68 : 0.86 + random() * 0.2),
-    );
+    dummy.rotation.set(0, tree.trunkYaw, 0);
+    dummy.scale.set(...tree.trunkScale);
     dummy.updateMatrix();
     trunkMesh.setMatrixAt(i, dummy.matrix);
-    trunkColor.setHSL(0.24 + random() * 0.035, 0.2, 0.19 + random() * 0.055);
+    trunkColor.setHSL(...tree.trunkColor);
     trunkMesh.setColorAt(i, trunkColor);
 
     if (isAraucaria) {
       dummy.position.set(x, y + 5.72 * scale, z);
-      dummy.rotation.set(0, random() * Math.PI, 0);
-      dummy.scale.set(scale * (0.92 + random() * 0.16), scale * 1.08, scale * (0.92 + random() * 0.16));
+      dummy.rotation.set(0, tree.canopyYaw, 0);
+      dummy.scale.set(...tree.canopyScale);
       dummy.updateMatrix();
       araucariaMesh.setMatrixAt(araucariaIndex, dummy.matrix);
-      crownColor.setHSL(0.31 + random() * 0.035, 0.45 + random() * 0.08, 0.12 + random() * 0.045);
+      crownColor.setHSL(...tree.crownColor);
       araucariaMesh.setColorAt(araucariaIndex, crownColor);
       araucariaIndex += 1;
 
@@ -1507,29 +1630,28 @@ function placeVegetation(scene) {
       crownMesh.setColorAt(i, crownColor);
       crownAccentMesh.setColorAt(i, crownColor);
     } else {
-      const crownOffsetX = (random() - 0.5) * 0.9;
-      const crownOffsetZ = (random() - 0.5) * 0.7;
+      const [crownOffsetX, crownOffsetZ] = tree.crownOffset;
       dummy.position.set(x + crownOffsetX, y + 6.15 * scale, z + crownOffsetZ);
-      dummy.rotation.set(random() * 0.15, random() * Math.PI, random() * 0.1);
-      dummy.scale.set(scale * (0.96 + random() * 0.28), scale * 0.62, scale * (0.82 + random() * 0.24));
+      dummy.rotation.set(...tree.crownRotation);
+      dummy.scale.set(...tree.crownScale);
       dummy.updateMatrix();
       crownMesh.setMatrixAt(i, dummy.matrix);
-      crownColor.setHSL(0.32 + random() * 0.045, 0.42 + random() * 0.1, 0.14 + random() * 0.055);
+      crownColor.setHSL(...tree.crownColor);
       crownMesh.setColorAt(i, crownColor);
 
       dummy.position.set(
-        x + crownOffsetX + (random() - 0.5) * 2.1 * scale,
+        x + tree.accentOffset[0],
         y + 7.05 * scale,
-        z + crownOffsetZ + (random() - 0.5) * 1.3 * scale,
+        z + tree.accentOffset[1],
       );
-      dummy.rotation.set(random() * 0.18, random() * Math.PI, random() * 0.13);
-      dummy.scale.set(scale * (0.78 + random() * 0.2), scale * 0.5, scale * (0.7 + random() * 0.18));
+      dummy.rotation.set(...tree.accentRotation);
+      dummy.scale.set(...tree.accentScale);
       dummy.updateMatrix();
       crownAccentMesh.setMatrixAt(i, dummy.matrix);
       crownColor.offsetHSL(0.01, -0.02, 0.035);
       crownAccentMesh.setColorAt(i, crownColor);
     }
-  }
+  });
   trunkMesh.name = 'world.connected_route.tree_trunks';
   crownMesh.name = 'world.connected_route.canopy';
   crownAccentMesh.name = 'world.connected_route.canopy-highlights';
@@ -1549,35 +1671,21 @@ function placeVegetation(scene) {
     return new THREE.InstancedMesh(geometry, shared.fernMaterial, count);
   });
   const fernInstanceIndices = [0, 0, 0];
-  for (let i = 0; i < SCENE_BUDGET.ferns; i += 1) {
-    let x;
-    let z;
-    do {
-      x = (random() - 0.5) * 130;
-      z = (random() - 0.5) * 170;
-    } while (Math.hypot(x + 5.4, z - 35.4) < 3.2);
-    const scale = 0.38 + random() * 0.92;
-    const variantIndex = i % fernMeshes.length;
-    const variantScale = variantIndex === 1
-      ? [0.78, 1.18, 0.8]
-      : variantIndex === 2
-        ? [1.28, 0.72, 1.18]
-        : [1, 1, 1];
+  VEGETATION_LAYOUT.ferns.forEach((fern) => {
+    const {
+      x, z, scale, variantIndex,
+    } = fern;
     dummy.position.set(x, terrainHeight(x, z), z);
-    dummy.rotation.set(0, random() * Math.PI, 0);
-    dummy.scale.set(
-      scale * (0.85 + random() * 0.2) * variantScale[0],
-      scale * variantScale[1],
-      scale * (0.85 + random() * 0.2) * variantScale[2],
-    );
+    dummy.rotation.set(0, fern.rotation, 0);
+    dummy.scale.set(...fern.instanceScale);
     dummy.updateMatrix();
     const fernMesh = fernMeshes[variantIndex];
     const instanceIndex = fernInstanceIndices[variantIndex];
     fernMesh.setMatrixAt(instanceIndex, dummy.matrix);
-    crownColor.setHSL(0.3 + random() * 0.065, 0.34 + random() * 0.18, 0.19 + random() * 0.07);
+    crownColor.setHSL(...fern.color);
     fernMesh.setColorAt(instanceIndex, crownColor);
     fernInstanceIndices[variantIndex] += 1;
-  }
+  });
   fernMeshes.forEach((fernMesh, index) => {
     fernMesh.name = index === 0
       ? 'world.connected_route.ferns'
@@ -1593,18 +1701,18 @@ function placeVegetation(scene) {
     new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.96, flatShading: true }),
     stoneCount,
   );
-  for (let index = 0; index < stoneCount; index += 1) {
-    const x = (random() - 0.5) * 125;
-    const z = (random() - 0.5) * 160;
-    const scale = 0.24 + random() * 0.82;
+  VEGETATION_LAYOUT.stones.forEach((stone) => {
+    const {
+      index, x, z, scale,
+    } = stone;
     dummy.position.set(x, terrainHeight(x, z) + scale * 0.2, z);
-    dummy.rotation.set(random() * Math.PI, random() * Math.PI, random() * Math.PI);
-    dummy.scale.set(scale * (0.7 + random() * 0.5), scale * 0.46, scale);
+    dummy.rotation.set(...stone.rotation);
+    dummy.scale.set(...stone.instanceScale);
     dummy.updateMatrix();
     stoneMesh.setMatrixAt(index, dummy.matrix);
-    crownColor.setHSL(0.12 + random() * 0.05, 0.1 + random() * 0.1, 0.23 + random() * 0.08);
+    crownColor.setHSL(...stone.color);
     stoneMesh.setColorAt(index, crownColor);
-  }
+  });
   stoneMesh.name = 'world.connected_route.ground-stones';
   stoneMesh.castShadow = true;
   stoneMesh.receiveShadow = true;
@@ -1615,14 +1723,7 @@ function makeHabitatAccents(scene) {
   // The broad central sightline stays open, while authored tree-fern sentinels
   // provide near/mid/far scale at its margins.  This avoids solving depth with
   // indiscriminate scatter or a repeated wall of identical canopy crowns.
-  const placements = [
-    [-25, 53, 1.06, 0.2], [25.5, 49, 0.9, 2.6],
-    [-23, 31, 0.92, 1.1], [27, 24, 1.08, 3.4],
-    [-26, 11, 1.18, 2.0], [26, 3, 0.88, 0.65],
-    [-24.5, -13, 1.26, 4.2], [25.5, -18, 1.02, 2.85],
-    [-24, -42, 1.14, 5.1], [25, -49, 1.04, 1.75],
-    [-28, -67, 1.22, 3.25], [27, -70, 0.94, 0.35],
-  ];
+  const placements = HABITAT_TREE_LAYOUT;
   const trunks = new THREE.InstancedMesh(
     shared.treeFernTrunkGeometry,
     shared.treeFernTrunkMaterial,
@@ -1639,6 +1740,12 @@ function makeHabitatAccents(scene) {
     shared.fernGeometries[2],
     shared.fernMaterial,
     placements.length * 2,
+  );
+  const foregroundPlacements = FOREGROUND_FROND_LAYOUT;
+  const foregroundFronds = new THREE.InstancedMesh(
+    shared.fernGeometries[2],
+    shared.fernMaterial,
+    foregroundPlacements.length,
   );
   const dummy = new THREE.Object3D();
   const color = new THREE.Color();
@@ -1686,8 +1793,20 @@ function makeHabitatAccents(scene) {
     }
   });
 
+  foregroundPlacements.forEach(([x, z, scale, yaw], index) => {
+    const ground = terrainHeight(x, z);
+    dummy.position.set(x, ground + 0.025, z);
+    dummy.rotation.set(0, yaw, (index % 2 ? -1 : 1) * 0.035);
+    dummy.scale.set(scale * 1.18, scale * 0.72, scale);
+    dummy.updateMatrix();
+    foregroundFronds.setMatrixAt(index, dummy.matrix);
+    color.setHSL(0.305 + random() * 0.025, 0.45 + random() * 0.07, 0.115 + random() * 0.025);
+    foregroundFronds.setColorAt(index, color);
+  });
+
   trunks.name = 'world.connected_route.tree-fern-sentinels';
   skirts.name = 'world.connected_route.tree-fern-understory';
+  foregroundFronds.name = 'world.connected_route.foreground-depth-fronds';
   trunks.castShadow = true;
   trunks.receiveShadow = true;
   crownMeshes.forEach((crownMesh, index) => {
@@ -1700,9 +1819,37 @@ function makeHabitatAccents(scene) {
   });
   skirts.castShadow = true;
   skirts.receiveShadow = true;
+  foregroundFronds.castShadow = true;
+  foregroundFronds.receiveShadow = true;
+  foregroundFronds.userData.compositionRole = 'dark-foreground-depth-frame';
   trunks.userData.compositionRole = 'sightline-margin-scale-anchor';
-  scene.add(trunks, ...crownMeshes, skirts);
-  return { trunks, crowns: crownMeshes, skirts };
+  scene.add(trunks, ...crownMeshes, skirts, foregroundFronds);
+  return {
+    trunks, crowns: crownMeshes, skirts, foregroundFronds,
+  };
+}
+
+function makeBrookBoulder(scene) {
+  const geometry = new THREE.DodecahedronGeometry(1, 1);
+  const material = new THREE.MeshStandardMaterial({
+    color: 0x53584f,
+    roughness: 0.96,
+    flatShading: true,
+  });
+  const boulder = new THREE.Mesh(geometry, material);
+  boulder.position.set(
+    BROOK_BOULDER.x,
+    terrainHeight(BROOK_BOULDER.x, BROOK_BOULDER.z) + 1.18,
+    BROOK_BOULDER.z,
+  );
+  boulder.rotation.set(-0.12, 0.54, 0.18);
+  boulder.scale.set(1.85, 1.32, 1.68);
+  boulder.castShadow = true;
+  boulder.receiveShadow = true;
+  boulder.name = 'world.connected_route.brook-boulder';
+  boulder.userData.collisionRole = 'solid-boulder';
+  scene.add(boulder);
+  return boulder;
 }
 
 function makeBasalt(scene) {
@@ -1950,13 +2097,15 @@ function makeIguanodon(scene, x, z, scale, heading, young, behaviorRole) {
 }
 
 function makeFamily(scene) {
-  return [
-    makeIguanodon(scene, -8, -31, 1.22, -0.32, false, 'graze'),
-    makeIguanodon(scene, 10.5, -39, 1.14, 0.18, false, 'branch-pull'),
-    makeIguanodon(scene, -2.2, -24.8, 0.72, 0.58, true, 'young-play'),
-    makeIguanodon(scene, 3.4, -27.2, 0.66, 0.58 + Math.PI, true, 'young-play'),
-    makeIguanodon(scene, 2.5, -35, 0.73, 2.15, true, 'stay-close'),
-  ];
+  return FAMILY_LAYOUT.map((animal) => makeIguanodon(
+    scene,
+    animal.x,
+    animal.z,
+    animal.scale,
+    animal.heading,
+    animal.young,
+    animal.behaviorRole,
+  ));
 }
 
 function makeFeedingBranch(scene) {
@@ -2006,7 +2155,11 @@ function makeFeedingBranch(scene) {
     branchPivot.add(crown);
   }
   group.add(trunk, branchPivot);
-  group.position.set(14.5, terrainHeight(14.5, -36), -36);
+  group.position.set(
+    FEEDING_BRANCH.x,
+    terrainHeight(FEEDING_BRANCH.x, FEEDING_BRANCH.z),
+    FEEDING_BRANCH.z,
+  );
   group.name = 'subject.iguanodon_family.feeding_branch';
   group.userData.branchPivot = branchPivot;
   group.userData.leafClusters = branchPivot.children.slice(3);
@@ -2220,8 +2373,53 @@ function makePterodactylShadow(scene) {
   shadow.name = 'threat.pterodactyl.projected-shadow';
   shadow.visible = false;
   shadow.renderOrder = 2;
+
+  // Two quiet outer silhouettes soften the otherwise cut-paper edge without
+  // adding a screen-space blur pass or another dynamic shadow map.
+  [
+    [1.1, 0.085],
+    [1.22, 0.035],
+  ].forEach(([scale, opacity], index) => {
+    const haloMaterial = material.clone();
+    haloMaterial.opacity = opacity;
+    haloMaterial.polygonOffsetFactor = -4 - index;
+    const halo = new THREE.Mesh(geometry, haloMaterial);
+    halo.name = `threat.pterodactyl.projected-shadow-soft-edge-${index + 1}`;
+    halo.position.y = 0.003 * (index + 1);
+    halo.scale.setScalar(scale);
+    halo.renderOrder = 1;
+    shadow.add(halo);
+  });
   scene.add(shadow);
   return shadow;
+}
+
+function makeFamilyContactShadows(scene, family) {
+  const group = new THREE.Group();
+  group.name = 'subject.iguanodon_family.contact-shadows';
+  const geometry = new THREE.CircleGeometry(1, 28);
+  geometry.rotateX(-Math.PI / 2);
+  geometry.userData.profile = 'tight-foot-contact-shadow';
+
+  family.forEach((animal, index) => {
+    const material = new THREE.MeshBasicMaterial({
+      color: 0x17251f,
+      transparent: true,
+      opacity: animal.userData.young ? 0.17 : 0.2,
+      depthWrite: false,
+      polygonOffset: true,
+      polygonOffsetFactor: -2,
+    });
+    const shadow = new THREE.Mesh(geometry, material);
+    shadow.name = `subject.iguanodon_family.contact-shadow-${index + 1}`;
+    shadow.userData.profile = 'tight-foot-contact-shadow';
+    shadow.userData.familyIndex = index;
+    shadow.renderOrder = 1;
+    group.add(shadow);
+  });
+
+  scene.add(group);
+  return group;
 }
 
 function createTentPanelGeometry(vertices, indices) {
@@ -2406,7 +2604,7 @@ function makeSmokeTexture() {
 function makeFort(scene) {
   const tents = new THREE.Group();
   tents.name = 'world.connected_route.fort-tents';
-  for (const [x, z, rotation] of [[-3, 80, Math.PI / 4], [5, 84, Math.PI / 4]]) {
+  for (const { x, z, rotation } of FORT_TENT_LAYOUT) {
     const tent = makeAFrameTent();
     tent.position.set(x, terrainHeight(x, z), z);
     tent.rotation.y = rotation;
@@ -2414,8 +2612,8 @@ function makeFort(scene) {
   }
   scene.add(tents);
 
-  const fireX = -8;
-  const fireZ = 78;
+  const fireX = FORT_FIREPIT.x;
+  const fireZ = FORT_FIREPIT.z;
   const fireGround = terrainHeight(fireX, fireZ);
   const firepit = new THREE.Group();
   firepit.name = 'world.connected_route.fort-firepit';
@@ -2535,98 +2733,52 @@ function makeBrookResponse(scene) {
   return group;
 }
 
-function makeFieldCamera(scene) {
+function makeFieldCameraMount(scene) {
   const group = new THREE.Group();
-  const wood = new THREE.MeshStandardMaterial({ color: 0x4b2f24, roughness: 0.76 });
-  const brass = new THREE.MeshStandardMaterial({ color: PALETTE.brass, roughness: 0.52, metalness: 0.45 });
-  const black = new THREE.MeshStandardMaterial({ color: 0x151a18, roughness: 0.85 });
-  const glass = new THREE.MeshPhysicalMaterial({
-    color: 0xb8ccca,
-    roughness: 0.18,
-    metalness: 0,
-    clearcoat: 0.42,
-    clearcoatRoughness: 0.22,
-    transmission: 0.12,
-    thickness: 0.08,
-    transparent: true,
-    opacity: 0.68,
-    depthWrite: false,
-  });
-  const rear = primitive(wood, new THREE.BoxGeometry(1, 1, 1), [0, 0, 0.34], [1.8, 1.16, 0.34]);
-  const glassBack = primitive(glass, new THREE.BoxGeometry(1, 1, 1), [0, 0, 0.53], [1.38, 0.78, 0.05]);
-  group.add(rear, glassBack);
-  for (let index = 0; index < 5; index += 1) {
-    const depth = -0.05 - index * 0.23;
-    const taper = 1 - index * 0.065;
-    group.add(primitive(
-      index % 2 ? wood : black,
-      new THREE.BoxGeometry(1, 1, 1),
-      [0, 0, depth],
-      [1.48 * taper, 0.9 * taper, 0.14],
-    ));
-  }
-  const front = primitive(wood, new THREE.BoxGeometry(1, 1, 1), [0, 0, -1.25], [1.28, 0.88, 0.18]);
-  const lens = primitive(black, new THREE.CylinderGeometry(0.45, 0.63, 0.78, 12), [0, 0, -1.75], [1, 1, 1], [Math.PI / 2, 0, 0]);
-  const lensRing = primitive(brass, new THREE.TorusGeometry(0.48, 0.09, 8, 18), [0, 0, -2.16], [1, 1, 1], [Math.PI / 2, 0, 0]);
-  const railGeometry = new THREE.BoxGeometry(0.12, 0.12, 2.45);
-  group.add(front, lens, lensRing);
-  group.add(primitive(brass, railGeometry, [-0.68, -0.58, -0.78], [1, 1, 1]));
-  group.add(primitive(brass, railGeometry, [0.68, -0.58, -0.78], [1, 1, 1]));
-  const handle = new THREE.Mesh(new THREE.TorusGeometry(0.62, 0.08, 7, 16, Math.PI), brass);
-  handle.position.set(0, 0.67, 0.18);
-  handle.rotation.z = Math.PI;
-  group.add(handle);
   group.position.set(2.8, 1.55, 67);
   group.rotation.set(-0.06, Math.PI, 0);
   group.scale.setScalar(0.64);
   group.name = 'tool.field_camera';
-  group.userData.assetVersion = 'bellows-camera';
-  group.traverse((object) => {
-    if (!object.isMesh) return;
-    object.castShadow = false;
-    object.receiveShadow = false;
-  });
+  group.userData.singleAssetPath = true;
   scene.add(group);
   return group;
 }
 
-function makeRifle(scene) {
+function makeRifleMount(scene) {
   const group = new THREE.Group();
-  const wood = new THREE.MeshStandardMaterial({ color: 0x503126, roughness: 0.8 });
-  const steel = new THREE.MeshStandardMaterial({ color: 0x252a28, roughness: 0.48, metalness: 0.62 });
-  const brass = new THREE.MeshStandardMaterial({ color: PALETTE.brass, roughness: 0.45, metalness: 0.55 });
   const flashMaterial = new THREE.MeshBasicMaterial({
     color: 0xffd58a, transparent: true, opacity: 0, depthWrite: false,
   });
-  const stock = primitive(wood, new THREE.BoxGeometry(1, 1, 1), [0.25, -0.1, 0], [0.42, 0.3, 2.5], [0.03, 0, 0]);
-  const barrel = primitive(steel, new THREE.CylinderGeometry(0.09, 0.13, 4.8, 10), [0.1, 0.14, -2.45], [1, 1, 1], [Math.PI / 2, 0, 0]);
-  const chamber = primitive(brass, new THREE.BoxGeometry(1, 1, 1), [0.1, 0.06, -0.25], [0.36, 0.26, 0.6]);
-  const flash = primitive(flashMaterial, new THREE.ConeGeometry(0.35, 1.5, 8), [0.1, 0.14, -5.25], [1, 1, 1], [-Math.PI / 2, 0, 0]);
+  const flash = primitive(
+    flashMaterial,
+    new THREE.ConeGeometry(0.28, 1.1, 8),
+    [0, 0.11, -3.32],
+    [1, 1, 1],
+    [-Math.PI / 2, 0, 0],
+  );
   flash.name = 'tool.period_rifle.muzzle_flash';
   flash.visible = false;
-  group.add(stock, barrel, chamber, flash);
+  group.add(flash);
   group.position.set(2.8, 1.2, 67);
   group.rotation.set(-0.16, Math.PI, 0);
   group.scale.setScalar(0.34);
   group.name = 'tool.period_rifle';
   group.userData.flash = flash;
-  group.traverse((object) => {
-    if (!object.isMesh) return;
-    object.castShadow = false;
-    object.receiveShadow = false;
-  });
+  group.userData.singleAssetPath = true;
   scene.add(group);
   return group;
 }
 
 export function createWorld(scene) {
-  makeTerrain(scene);
+  const terrain = makeTerrain(scene);
   const routeAndBrook = makeRouteAndBrook(scene);
+  const brookBoulder = makeBrookBoulder(scene);
   const coverArches = makeCoverArches(scene);
   placeVegetation(scene);
   const habitatAccents = makeHabitatAccents(scene);
   makeBasalt(scene);
   const family = makeFamily(scene);
+  const familyContactShadows = makeFamilyContactShadows(scene, family);
   const feedingBranch = makeFeedingBranch(scene);
   const gladeSunLane = makeGladeSunLane(scene);
   const pterodactyls = [
@@ -2637,8 +2789,8 @@ export function createWorld(scene) {
   const pterodactylShadow = makePterodactylShadow(scene);
   const smoke = makeFort(scene);
   const brookResponse = makeBrookResponse(scene);
-  const fieldCamera = makeFieldCamera(scene);
-  const rifle = makeRifle(scene);
+  const fieldCamera = makeFieldCameraMount(scene);
+  const rifle = makeRifleMount(scene);
   let renderedThreatState = 'distant';
   let renderedThreatResponse = 'orbit';
   let renderedAttackStage = 'orbit';
@@ -2650,12 +2802,18 @@ export function createWorld(scene) {
   let familyVisualError = null;
   let pterodactylVisualStatus = 'procedural-fallback';
   let pterodactylVisualError = null;
-  let creatureVisualPromise = null;
+  let fieldCameraVisualStatus = 'required-not-loaded';
+  let fieldCameraVisualError = null;
+  let rifleVisualStatus = 'required-not-loaded';
+  let rifleVisualError = null;
+  let assetVisualPromise = null;
 
   function enableHy3dVisuals() {
-    if (!creatureVisualPromise) {
+    if (!assetVisualPromise) {
       familyVisualStatus = 'loading';
       pterodactylVisualStatus = 'loading';
+      fieldCameraVisualStatus = 'loading';
+      rifleVisualStatus = 'loading';
       const familyTask = upgradeIguanodonFamilyWithHy3d(family, { includeYoung: true })
         .then((result) => {
           familyVisualStatus = 'hy3d-family-ready';
@@ -2680,10 +2838,46 @@ export function createWorld(scene) {
             error: pterodactylVisualError,
           };
         });
-      creatureVisualPromise = Promise.all([familyTask, pterodactylTask])
-        .then(([familyResult, pterodactylResult]) => ({ familyResult, pterodactylResult }));
+      const rifleTask = loadHy3dRifleTemplate()
+        .then((template) => {
+          attachHy3dRifleVisual(rifle, template);
+          rifleVisualStatus = 'hy3d-rifle-ready';
+          return { status: rifleVisualStatus, attached: 1 };
+        })
+        .catch((error) => {
+          rifleVisualStatus = 'error';
+          rifleVisualError = error instanceof Error ? error.message : String(error);
+          throw new Error(`Required HY3D rifle failed to load: ${rifleVisualError}`);
+        });
+      const fieldCameraTask = loadHy3dFieldCameraTemplate()
+        .then((template) => {
+          attachHy3dFieldCameraVisual(fieldCamera, template);
+          fieldCameraVisualStatus = 'hy3d-field-camera-ready';
+          return { status: fieldCameraVisualStatus, attached: 1 };
+        })
+        .catch((error) => {
+          fieldCameraVisualStatus = 'error';
+          fieldCameraVisualError = error instanceof Error ? error.message : String(error);
+          throw new Error(`Required HY3D field camera failed to load: ${fieldCameraVisualError}`);
+        });
+      assetVisualPromise = Promise.all([
+        familyTask,
+        pterodactylTask,
+        fieldCameraTask,
+        rifleTask,
+      ])
+        .then(([familyResult, pterodactylResult, fieldCameraResult, rifleResult]) => ({
+          familyResult,
+          pterodactylResult,
+          fieldCameraResult,
+          rifleResult,
+        }))
+        .catch((error) => {
+          assetVisualPromise = null;
+          throw error;
+        });
     }
-    return creatureVisualPromise;
+    return assetVisualPromise;
   }
 
   return {
@@ -2694,6 +2888,7 @@ export function createWorld(scene) {
     pterodactylShadow,
     smoke,
     brookResponse,
+    brookBoulder,
     fieldCamera,
     rifle,
     enableHy3dVisuals,
@@ -2736,12 +2931,15 @@ export function createWorld(scene) {
       pterodactyls.forEach((mesh, index) => {
         const { radius, height, phase } = mesh.userData;
         const isPrimary = index === 0;
+        mesh.visible = isPrimary || awareness === 0;
         const stateRadius = isPrimary ? [radius, 26, 17, 9][awareness] : radius;
         const stateHeight = isPrimary ? [height, 9.4, 7.8, 6.7][awareness] : height;
         const stateSpeed = speed * (1 + awareness * 0.42) * (1 + index * 0.08);
         const angle = phase + elapsed * stateSpeed;
+        const flightVelocity = new THREE.Vector3();
         let diveApproach = 0;
         let attackWingFold = 0;
+        let attackRecovery = 0;
         if (isPrimary && awareness === 3 && runtime.inCover) {
           mesh.position.set(
             playerPosition.x + Math.cos(angle) * 3,
@@ -2749,15 +2947,34 @@ export function createWorld(scene) {
             playerPosition.z - 17 + Math.sin(angle) * 3,
           );
           mesh.scale.setScalar(mesh.userData.baseScale);
-          mesh.rotation.x = 0.32;
+          flightVelocity.set(
+            -Math.sin(angle) * 3 * stateSpeed,
+            Math.cos(angle * 1.6) * 1.12 * stateSpeed,
+            Math.cos(angle) * 3 * stateSpeed,
+          );
         } else if (isPrimary && awareness === 3) {
           const attackClock = Number.isFinite(runtime.attackSeconds)
             ? runtime.attackSeconds
             : elapsed % 3;
-          const attackPose = pterodactylAttackPose(attackClock, reducedMotion);
+          const flight = pterodactylAttackFlightState({
+            attackClock,
+            playerPosition,
+            cameraRaised: Boolean(runtime.cameraRaised),
+            familyMoment: renderedFamilyMoment,
+            reducedMotion,
+          });
+          const nextFlight = pterodactylAttackFlightState({
+            attackClock: attackClock + 1 / 120,
+            playerPosition,
+            cameraRaised: Boolean(runtime.cameraRaised),
+            familyMoment: renderedFamilyMoment,
+            reducedMotion,
+          });
+          const { pose: attackPose } = flight;
           const cameraProtection = runtime.cameraRaised ? 0.08 : 1;
-          diveApproach = attackPose.approach * cameraProtection;
+          diveApproach = flight.approach;
           attackWingFold = attackPose.wingFold * cameraProtection;
+          attackRecovery = attackPose.recovery * cameraProtection;
           if (runtime.rifleRaised || !runtime.cameraRaised) {
             renderedAttackStage = attackPose.stage;
             renderedAttackProgress = diveApproach;
@@ -2765,34 +2982,32 @@ export function createWorld(scene) {
             renderedAttackStage = 'camera-pressure';
             renderedAttackProgress = diveApproach;
           }
-          const searchAngle = phase + attackClock * 0.82;
-          const searchX = Math.cos(searchAngle) * 5.5;
-          const strikeX = Math.sin(searchAngle * 0.55) * 0.8;
-          const cameraAltitude = runtime.cameraRaised ? -1.8 : 0;
-          const cameraDistance = runtime.cameraRaised ? 14 : 0;
-          const cameraLateral = runtime.cameraRaised
-            ? renderedFamilyMoment === 'glade-young-play' ? 10 : -9
-            : 0;
-          mesh.position.set(
-            playerPosition.x + THREE.MathUtils.lerp(searchX, strikeX, diveApproach) + cameraLateral,
-            THREE.MathUtils.lerp(13.8, 6.4, diveApproach) + cameraAltitude,
-            playerPosition.z - THREE.MathUtils.lerp(18, 9.4, diveApproach) - cameraDistance,
-          );
+          // Graze the creek-side route edge instead of flying into the exact
+          // camera centre. Orient against this same authored curve so the
+          // animal cannot slide sideways or pitch upward while descending.
+          mesh.position.copy(flight.position);
+          flightVelocity.copy(nextFlight.position).sub(flight.position);
           const attackScale = mesh.userData.baseScale
             * (runtime.cameraRaised ? 0.42 : 1)
-            * (1 + diveApproach * 0.08);
+            * (0.92 + diveApproach * 0.08);
           mesh.scale.setScalar(attackScale);
-          mesh.rotation.x = attackPose.pitch * cameraProtection;
         } else {
           const protectedFamilyFrame = isPrimary && runtime.cameraRaised && awareness > 0;
           const familyLateral = renderedFamilyMoment === 'glade-young-play' ? 14 : -14;
+          const xRadius = protectedFamilyFrame ? 7 : stateRadius;
+          const zRadius = protectedFamilyFrame ? 2.4 : stateRadius * 0.35;
           mesh.position.set(
             playerPosition.x
-              + Math.cos(angle) * (protectedFamilyFrame ? 7 : stateRadius)
+              + Math.cos(angle) * xRadius
               + (protectedFamilyFrame ? familyLateral : 0),
             (protectedFamilyFrame ? 10.2 : stateHeight) + Math.sin(angle * 2) * 1.2,
             playerPosition.z - (protectedFamilyFrame ? 39 : isPrimary && awareness > 0 ? 28 : 25)
-              + Math.sin(angle) * (protectedFamilyFrame ? 2.4 : stateRadius * 0.35),
+              + Math.sin(angle) * zRadius,
+          );
+          flightVelocity.set(
+            -Math.sin(angle) * xRadius * stateSpeed,
+            Math.cos(angle * 2) * 2.4 * stateSpeed,
+            Math.cos(angle) * zRadius * stateSpeed,
           );
           mesh.scale.setScalar(
             mesh.userData.baseScale
@@ -2802,7 +3017,7 @@ export function createWorld(scene) {
         }
         mesh.name = `threat.pterodactyl.${isPrimary ? renderedThreatState : 'distant'}`;
         const wingFold = isPrimary && awareness === 3 && !runtime.inCover
-          ? Math.max(attackWingFold, 0.12 + diveApproach * 0.82)
+          ? Math.max(attackWingFold, 0.1 + diveApproach * 0.7)
           : 0;
         const wingBeat = pterodactylWingBeat(elapsed, phase, awareness, reducedMotion)
           * (1 - wingFold * 0.78);
@@ -2841,9 +3056,16 @@ export function createWorld(scene) {
           ? -0.08 - diveApproach * 0.3
           : Math.sin(angle * 1.7) * 0.025;
         mesh.userData.rig.tail.rotation.y = Math.sin(angle * 1.4) * 0.08;
-        mesh.rotation.y = -angle + Math.PI / 2;
+        const directAttack = isPrimary && awareness === 3 && !runtime.inCover;
         const rollAmplitude = awareness === 3 ? 0.08 : 0.16 + awareness * 0.035;
-        mesh.rotation.z = Math.sin(angle * 2.4) * rollAmplitude;
+        const flightRoll = directAttack
+          ? -0.04 - diveApproach * 0.05 + attackRecovery * 0.1
+          : Math.sin(angle * 2.4) * rollAmplitude;
+        alignPterodactylToTravel(mesh, flightVelocity, flightRoll);
+        mesh.userData.flightPose.bank = Number(flightRoll.toFixed(4));
+        mesh.userData.flightPose.direction = mesh.userData.flightDirection
+          ? mesh.userData.flightDirection.toArray().map((value) => Number(value.toFixed(4)))
+          : null;
       });
       if (runtime.captureThreatPose === 'family' || runtime.captureThreatPose === 'dive') {
         const primary = pterodactyls[0];
@@ -2862,20 +3084,21 @@ export function createWorld(scene) {
         });
       }
       const primaryThreat = pterodactyls[0];
-      const shadowVisible = awareness === 3 && !runtime.inCover && !runtime.cameraRaised;
+      const shadowVisible = awareness >= 2 && !runtime.inCover && !runtime.cameraRaised;
       pterodactylShadow.visible = shadowVisible;
       if (shadowVisible) {
-        const shadowX = THREE.MathUtils.lerp(primaryThreat.position.x, playerPosition.x, 0.2);
-        const shadowZ = primaryThreat.position.z - 1.6;
+        const shadowX = THREE.MathUtils.lerp(primaryThreat.position.x, playerPosition.x, 0.38);
+        const shadowZ = THREE.MathUtils.lerp(primaryThreat.position.z, playerPosition.z - 3.8, 0.36);
         pterodactylShadow.position.set(
           shadowX,
           terrainHeight(shadowX, shadowZ) + 0.048,
           shadowZ,
         );
         pterodactylShadow.rotation.y = primaryThreat.rotation.y;
-        const shadowScale = 1.42 + renderedAttackProgress * 0.72;
+        const shadowScale = 1.34 + renderedAttackProgress * 0.96;
         pterodactylShadow.scale.set(shadowScale, shadowScale, shadowScale);
-        pterodactylShadow.material.opacity = 0.24 + renderedAttackProgress * 0.14;
+        pterodactylShadow.material.opacity = (awareness === 3 ? 0.25 : 0.22)
+          + renderedAttackProgress * 0.18;
       }
       if (awareness !== 3) {
         renderedAttackStage = 'orbit';
@@ -2901,6 +3124,17 @@ export function createWorld(scene) {
         animal.position.y = baseY + breath * 0.012 * motion;
         animal.rotation.y = baseHeading;
         animal.rotation.z = Math.sin(elapsed * 0.45 + index) * 0.004 * motion;
+
+        const contactShadow = familyContactShadows.children[index];
+        const contactScale = animal.userData.young ? 0.88 : 1.36;
+        contactShadow.visible = animal.visible;
+        contactShadow.position.set(
+          baseX,
+          terrainHeight(baseX, baseZ) + 0.045,
+          baseZ,
+        );
+        contactShadow.rotation.y = baseHeading;
+        contactShadow.scale.set(contactScale * 1.55, 1, contactScale * 0.68);
 
         rig.neckPivot.rotation.z = restPose.neckZ + breath * 0.018 * motion;
         rig.headPivot.rotation.z = restPose.headZ - breath * 0.012 * motion;
@@ -3076,9 +3310,46 @@ export function createWorld(scene) {
     },
     assetSnapshot() {
       return {
+        terrain: {
+          profile: terrain.geometry.userData.profile,
+          vertices: terrain.geometry.attributes.position.count,
+          surface: terrain.material.userData.surface,
+        },
         fieldCamera: {
-          version: fieldCamera.userData.assetVersion,
+          version: HY3D_FIELD_CAMERA_ASSET.version,
+          visualStatus: fieldCameraVisualStatus,
+          visualError: fieldCameraVisualError,
+          loaded: Boolean(fieldCamera.userData.hy3dVisual),
+          singleAssetPath: true,
+          bytes: HY3D_FIELD_CAMERA_ASSET.bytes,
+          triangles: HY3D_FIELD_CAMERA_ASSET.triangles,
           visibleParts: fieldCamera.children.length,
+          hands: {
+            loaded: Boolean(fieldCamera.userData.hy3dVisual),
+            styleVersion: HY3D_FIELD_CAMERA_ASSET.version,
+            hands: HY3D_FIELD_CAMERA_ASSET.integratedHands,
+            gripRoles: [...HY3D_FIELD_CAMERA_ASSET.gripRoles],
+            drawCalls: fieldCamera.userData.hy3dVisual ? 1 : 0,
+            integratedWithTool: true,
+          },
+        },
+        rifle: {
+          version: HY3D_RIFLE_ASSET.version,
+          visualStatus: rifleVisualStatus,
+          visualError: rifleVisualError,
+          loaded: Boolean(rifle.userData.hy3dVisual),
+          singleAssetPath: true,
+          bytes: HY3D_RIFLE_ASSET.bytes,
+          triangles: HY3D_RIFLE_ASSET.triangles,
+          visibleParts: rifle.children.length,
+          hands: {
+            loaded: Boolean(rifle.userData.hy3dVisual),
+            styleVersion: HY3D_RIFLE_ASSET.version,
+            hands: HY3D_RIFLE_ASSET.integratedHands,
+            gripRoles: [...HY3D_RIFLE_ASSET.gripRoles],
+            drawCalls: rifle.userData.hy3dVisual ? 1 : 0,
+            integratedWithTool: true,
+          },
         },
         pterodactyl: {
           silhouette: pterodactyls[0].userData.silhouette,

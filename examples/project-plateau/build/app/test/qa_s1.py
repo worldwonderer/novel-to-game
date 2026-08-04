@@ -109,6 +109,7 @@ def run() -> dict[str, object]:
             page.wait_for_timeout(80)
 
         page.get_by_role("button", name="Enter the basin").click()
+        page.wait_for_function("window.__projectPlateau.snapshot().mode === 'order'", timeout=15000)
         assert page.get_by_text("FIELD ORDER // FORWARD SCOUT").is_visible()
         page.get_by_role("button", name="Begin field work").click()
         page.wait_for_timeout(200)

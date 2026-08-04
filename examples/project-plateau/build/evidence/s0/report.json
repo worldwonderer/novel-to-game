@@ -2,7 +2,7 @@
   "stage": "s0-renderer",
   "source": {
     "scope": "index.html, package manifests, public assets and src",
-    "sha256": "a33f6d0439f7efb26e2437beff4ed334851cd0cd94b321e7918387061adfd454"
+    "sha256": "578d03cbfbcbe66ac192ac1bcb808d3e215b14d1d6759d63d2b3012bbc22ee6f"
   },
   "environment": {
     "node": "v25.6.1",
@@ -30,14 +30,14 @@
     "samples": 240,
     "medianFrameMs": 16.7,
     "medianFps": 59.9,
-    "onePercentLowFps": 38.6,
-    "worstFrameMs": 26.5
+    "onePercentLowFps": 39.3,
+    "worstFrameMs": 25.5
   },
   "loading": {
-    "observedTtiMs": 984.2,
+    "observedTtiMs": 1057.5,
     "budgetTtiMs": 8000,
-    "distRawBytes": 3260636,
-    "distGzipBytes": 2017916,
+    "distRawBytes": 6660269,
+    "distGzipBytes": 4792819,
     "initialCompressedBudgetBytes": 20971520
   },
   "render": {
@@ -46,6 +46,16 @@
     "cameraMode": "glade",
     "visualReviewOrbit": null,
     "runActive": true,
+    "pointerLock": {
+      "active": false,
+      "status": "unavailable",
+      "error": "The browser denied pointer lock. Click Resume field work to retry.",
+      "cameraForward": {
+        "x": -0.2649,
+        "y": -0.0433,
+        "z": -0.9633
+      }
+    },
     "renderer": "WebGL2",
     "player": {
       "position": {
@@ -56,10 +66,18 @@
         "x": 3,
         "z": 70
       },
+      "groundY": 0.23,
+      "verticalOffset": 0,
+      "verticalVelocity": 0,
+      "grounded": true,
+      "velocity": {
+        "x": 0,
+        "z": 0
+      },
       "heading": 0,
       "pitch": 0,
       "stance": "walk",
-      "elapsedSeconds": 0.977,
+      "elapsedSeconds": 0.968,
       "distanceTravelled": 0,
       "paused": false,
       "pauseReason": null,
@@ -131,7 +149,7 @@
       "failed": false,
       "failureCause": null,
       "contactCount": 0,
-      "remainingLight": 179.023,
+      "remainingLight": 179.032,
       "returnRoute": null,
       "returnCostSeconds": 0,
       "returnStrike": false,
@@ -144,14 +162,20 @@
       "attackStage": "orbit",
       "attackProgress": 0,
       "flightPose": {
-        "wingBeat": 0.2874,
+        "wingBeat": 0.2411,
         "wingFold": 0,
-        "mode": "upstroke"
+        "mode": "upstroke",
+        "bank": 0.1086,
+        "direction": [
+          -0.6689,
+          0.1471,
+          0.7286
+        ]
       },
       "position": {
-        "x": 30.4,
-        "y": 23.74,
-        "z": 48.33
+        "x": 30.61,
+        "y": 23.7,
+        "z": 48.11
       }
     },
     "familyVisual": {
@@ -171,14 +195,57 @@
       "state": null,
       "position": {
         "x": -10.5,
-        "y": -0.77,
+        "y": -0.6,
         "z": 47
       }
     },
     "assets": {
+      "terrain": {
+        "profile": "warped-multiscale-heightfield",
+        "vertices": 10961,
+        "surface": "slope-wetness-exposure-vertex-palette"
+      },
       "fieldCamera": {
-        "version": "bellows-camera",
-        "visibleParts": 13
+        "version": "hy3d-v3.1-field-camera-hands-v4-rear-view-50k-1k",
+        "visualStatus": "hy3d-field-camera-ready",
+        "visualError": null,
+        "loaded": true,
+        "singleAssetPath": true,
+        "bytes": 1108408,
+        "triangles": 50000,
+        "visibleParts": 1,
+        "hands": {
+          "loaded": true,
+          "styleVersion": "hy3d-v3.1-field-camera-hands-v4-rear-view-50k-1k",
+          "hands": 2,
+          "gripRoles": [
+            "camera-left-grip",
+            "camera-right-grip"
+          ],
+          "drawCalls": 1,
+          "integratedWithTool": true
+        }
+      },
+      "rifle": {
+        "version": "hy3d-v3.1-expedition-rifle-hands-v1-50k-1k",
+        "visualStatus": "hy3d-rifle-ready",
+        "visualError": null,
+        "loaded": true,
+        "singleAssetPath": true,
+        "bytes": 1000112,
+        "triangles": 50000,
+        "visibleParts": 2,
+        "hands": {
+          "loaded": true,
+          "styleVersion": "hy3d-v3.1-expedition-rifle-hands-v1-50k-1k",
+          "hands": 2,
+          "gripRoles": [
+            "fore-end-support",
+            "trigger-grip"
+          ],
+          "drawCalls": 1,
+          "integratedWithTool": true
+        }
       },
       "pterodactyl": {
         "silhouette": "continuous-skinned-membrane-wing",
@@ -240,6 +307,45 @@
         "familyWidth": 18.5
       }
     },
+    "collision": {
+      "model": "vertical-capsule-on-heightfield-with-ballistic-jump",
+      "broadPhase": "authored-static-collider-list",
+      "resolution": "iterative-depenetration-with-surface-slide",
+      "fixedMovementStepSeconds": 0.016666666666666666,
+      "jump": {
+        "speed": 5.8,
+        "gravity": 15,
+        "restrictedByTools": true
+      },
+      "capsule": {
+        "radius": 0.6,
+        "height": 1.78,
+        "eyeHeight": 1.62,
+        "maximumGroundStep": 0.42
+      },
+      "colliderCount": 59,
+      "categories": {
+        "shelter": 2,
+        "hazard": 1,
+        "boulder": 1,
+        "tree-trunk": 50,
+        "living-subject": 5
+      },
+      "nonSolidPolicy": {
+        "lowDecor": [
+          "ferns",
+          "ground-stones",
+          "driftwood",
+          "basalt-rubble"
+        ],
+        "traversableSurface": [
+          "brook-water",
+          "route-ribbons"
+        ],
+        "airborneThreat": "state-driven-contact; no ground capsule",
+        "canopy": "visual cover only; trunks remain solid"
+      }
+    },
     "audio": {
       "status": "running",
       "volumes": {
@@ -261,12 +367,14 @@
       "reducedMotion": false,
       "captionsEnabled": true,
       "textScale": "1",
+      "quality": "balanced",
+      "lookSensitivity": 1,
       "volumes": {
         "ambience": 0.34,
         "effects": 0.72,
         "music": 0.2
       },
-      "storageKey": "project-plateau:presentation:v1"
+      "storageKey": "project-plateau:presentation:v2"
     },
     "ui": {
       "prompt": null,
@@ -287,11 +395,16 @@
       "lightWatch": null,
       "terminal": null
     },
-    "sceneChildren": 59,
+    "plateCapture": {
+      "status": "idle",
+      "durationMs": null,
+      "error": null
+    },
+    "sceneChildren": 62,
     "calls": 1,
     "triangles": 1,
-    "textures": 32,
-    "geometries": 621,
+    "textures": 34,
+    "geometries": 615,
     "viewport": [
       1440,
       900
@@ -299,8 +412,10 @@
     "renderBudget": {
       "pixelRatio": 1,
       "maxPixelRatio": 1.25,
-      "renderedFrames": 86,
-      "skippedFrames": 101,
+      "quality": "balanced",
+      "activeFpsCap": 60,
+      "renderedFrames": 82,
+      "skippedFrames": 98,
       "activeFpsPolicy": "60fps-cap-across-refresh-rates",
       "idleFpsCap": 30,
       "pausedFpsCap": 15,
@@ -310,8 +425,8 @@
       "gtaoSamples": 4,
       "antialiasing": "single-pass-fxaa"
     },
-    "firstRenderedAt": 162.19999998807907,
-    "recentMedianFrameMs": 16.8
+    "firstRenderedAt": 239.70000004768372,
+    "recentMedianFrameMs": 17
   },
   "minimumRender": {
     "stage": "s10-glade-clarity",
@@ -319,6 +434,16 @@
     "cameraMode": "glade",
     "visualReviewOrbit": null,
     "runActive": true,
+    "pointerLock": {
+      "active": false,
+      "status": "unavailable",
+      "error": "The browser denied pointer lock. Click Resume field work to retry.",
+      "cameraForward": {
+        "x": -0.2649,
+        "y": -0.0433,
+        "z": -0.9633
+      }
+    },
     "renderer": "WebGL2",
     "player": {
       "position": {
@@ -329,10 +454,18 @@
         "x": 3,
         "z": 70
       },
+      "groundY": 0.23,
+      "verticalOffset": 0,
+      "verticalVelocity": 0,
+      "grounded": true,
+      "velocity": {
+        "x": 0,
+        "z": 0
+      },
       "heading": 0,
       "pitch": 0,
       "stance": "walk",
-      "elapsedSeconds": 5.777,
+      "elapsedSeconds": 5.81,
       "distanceTravelled": 0,
       "paused": false,
       "pauseReason": null,
@@ -404,7 +537,7 @@
       "failed": false,
       "failureCause": null,
       "contactCount": 0,
-      "remainingLight": 174.223,
+      "remainingLight": 174.19,
       "returnRoute": null,
       "returnCostSeconds": 0,
       "returnStrike": false,
@@ -417,21 +550,27 @@
       "attackStage": "orbit",
       "attackProgress": 0,
       "flightPose": {
-        "wingBeat": 0.2036,
+        "wingBeat": 0.2577,
         "wingFold": 0,
-        "mode": "upstroke"
+        "mode": "upstroke",
+        "bank": 0.0479,
+        "direction": [
+          -0.9879,
+          -0.063,
+          0.1415
+        ]
       },
       "position": {
-        "x": 13.57,
-        "y": 23.81,
-        "z": 54.45
+        "x": 13.98,
+        "y": 23.84,
+        "z": 54.39
       }
     },
     "familyVisual": {
       "moment": "glade-branch-pull",
       "adults": 2,
       "young": 3,
-      "branchAngle": 0.227,
+      "branchAngle": 0.319,
       "roles": [
         "graze",
         "branch-pull",
@@ -444,14 +583,57 @@
       "state": null,
       "position": {
         "x": -10.5,
-        "y": -0.77,
+        "y": -0.6,
         "z": 47
       }
     },
     "assets": {
+      "terrain": {
+        "profile": "warped-multiscale-heightfield",
+        "vertices": 10961,
+        "surface": "slope-wetness-exposure-vertex-palette"
+      },
       "fieldCamera": {
-        "version": "bellows-camera",
-        "visibleParts": 13
+        "version": "hy3d-v3.1-field-camera-hands-v4-rear-view-50k-1k",
+        "visualStatus": "hy3d-field-camera-ready",
+        "visualError": null,
+        "loaded": true,
+        "singleAssetPath": true,
+        "bytes": 1108408,
+        "triangles": 50000,
+        "visibleParts": 1,
+        "hands": {
+          "loaded": true,
+          "styleVersion": "hy3d-v3.1-field-camera-hands-v4-rear-view-50k-1k",
+          "hands": 2,
+          "gripRoles": [
+            "camera-left-grip",
+            "camera-right-grip"
+          ],
+          "drawCalls": 1,
+          "integratedWithTool": true
+        }
+      },
+      "rifle": {
+        "version": "hy3d-v3.1-expedition-rifle-hands-v1-50k-1k",
+        "visualStatus": "hy3d-rifle-ready",
+        "visualError": null,
+        "loaded": true,
+        "singleAssetPath": true,
+        "bytes": 1000112,
+        "triangles": 50000,
+        "visibleParts": 2,
+        "hands": {
+          "loaded": true,
+          "styleVersion": "hy3d-v3.1-expedition-rifle-hands-v1-50k-1k",
+          "hands": 2,
+          "gripRoles": [
+            "fore-end-support",
+            "trigger-grip"
+          ],
+          "drawCalls": 1,
+          "integratedWithTool": true
+        }
       },
       "pterodactyl": {
         "silhouette": "continuous-skinned-membrane-wing",
@@ -513,6 +695,45 @@
         "familyWidth": 18.5
       }
     },
+    "collision": {
+      "model": "vertical-capsule-on-heightfield-with-ballistic-jump",
+      "broadPhase": "authored-static-collider-list",
+      "resolution": "iterative-depenetration-with-surface-slide",
+      "fixedMovementStepSeconds": 0.016666666666666666,
+      "jump": {
+        "speed": 5.8,
+        "gravity": 15,
+        "restrictedByTools": true
+      },
+      "capsule": {
+        "radius": 0.6,
+        "height": 1.78,
+        "eyeHeight": 1.62,
+        "maximumGroundStep": 0.42
+      },
+      "colliderCount": 59,
+      "categories": {
+        "shelter": 2,
+        "hazard": 1,
+        "boulder": 1,
+        "tree-trunk": 50,
+        "living-subject": 5
+      },
+      "nonSolidPolicy": {
+        "lowDecor": [
+          "ferns",
+          "ground-stones",
+          "driftwood",
+          "basalt-rubble"
+        ],
+        "traversableSurface": [
+          "brook-water",
+          "route-ribbons"
+        ],
+        "airborneThreat": "state-driven-contact; no ground capsule",
+        "canopy": "visual cover only; trunks remain solid"
+      }
+    },
     "audio": {
       "status": "running",
       "volumes": {
@@ -534,12 +755,14 @@
       "reducedMotion": false,
       "captionsEnabled": true,
       "textScale": "1",
+      "quality": "balanced",
+      "lookSensitivity": 1,
       "volumes": {
         "ambience": 0.34,
         "effects": 0.72,
         "music": 0.2
       },
-      "storageKey": "project-plateau:presentation:v1"
+      "storageKey": "project-plateau:presentation:v2"
     },
     "ui": {
       "prompt": null,
@@ -560,11 +783,16 @@
       "lightWatch": null,
       "terminal": null
     },
-    "sceneChildren": 59,
+    "plateCapture": {
+      "status": "idle",
+      "durationMs": null,
+      "error": null
+    },
+    "sceneChildren": 62,
     "calls": 1,
     "triangles": 1,
-    "textures": 32,
-    "geometries": 621,
+    "textures": 34,
+    "geometries": 615,
     "viewport": [
       1280,
       720
@@ -572,8 +800,10 @@
     "renderBudget": {
       "pixelRatio": 1,
       "maxPixelRatio": 1.25,
-      "renderedFrames": 374,
-      "skippedFrames": 366,
+      "quality": "balanced",
+      "activeFpsCap": 60,
+      "renderedFrames": 372,
+      "skippedFrames": 342,
       "activeFpsPolicy": "60fps-cap-across-refresh-rates",
       "idleFpsCap": 30,
       "pausedFpsCap": 15,
@@ -583,7 +813,7 @@
       "gtaoSamples": 4,
       "antialiasing": "single-pass-fxaa"
     },
-    "firstRenderedAt": 162.19999998807907,
+    "firstRenderedAt": 239.70000004768372,
     "recentMedianFrameMs": 16.7
   },
   "screenshots": [
