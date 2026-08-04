@@ -467,13 +467,13 @@ function emitCue(cue, duration) {
 function contextualCopy() {
   if (player.pendingExposure) return 'Hold steady.';
   if (player.cameraRaised) return 'Hold steady. Release the shutter [Left Mouse]';
-  if (player.threatState === 'attack') return 'Raise rifle [F] · Fire before contact [Left Mouse]';
+  if (player.threatState === 'attack') return 'Hold rifle [F] · Fire before contact [Left Mouse]';
   if (player.zone === 'brook-blind' && !player.examinedTrack) return 'Examine the track [E]';
-  if (player.zone === 'brook-blind') return 'Raise camera [Right Mouse]';
+  if (player.zone === 'brook-blind') return 'Hold camera [Right Mouse]';
   if (player.zone === 'iguanodon-glade' && !player.observedBehavior) return 'Read the family [E]';
   if (player.returnRoute) return 'Follow the Fort smoke through the gate.';
   if (player.zone !== 'fort' && player.plates.some((plate) => plate.status === 'unexposed')) {
-    return 'Raise camera [Right Mouse]';
+    return 'Hold camera [Right Mouse]';
   }
   return '';
 }
@@ -806,8 +806,6 @@ function worldRuntime(deltaSeconds = 0) {
     shotCount: player.shotCount,
     brookResponse: player.brookResponse,
     inCover: player.inCover,
-    cameraRaised: player.cameraRaised,
-    rifleRaised: player.rifleRaised,
     familyMoment: visualThreatPose === 'family'
       ? 'glade-young-play'
       : player.pendingExposure?.key ?? null,

@@ -171,6 +171,26 @@ test('pterodactyl attack reads as search, fold-dive and close attack from simula
     );
   }
 
+  const loweredCameraFlight = pterodactylAttackFlightState({
+    attackClock: 1.1,
+    playerPosition,
+    cameraRaised: false,
+    familyMoment: 'glade-young-play',
+    reducedMotion: false,
+  });
+  const raisedCameraFlight = pterodactylAttackFlightState({
+    attackClock: 1.1,
+    playerPosition,
+    cameraRaised: true,
+    familyMoment: 'glade-young-play',
+    reducedMotion: false,
+  });
+  assert.ok(
+    raisedCameraFlight.position.distanceTo(loweredCameraFlight.position) < 1e-9,
+    'raising the field camera must not teleport the attacking pterodactyl',
+  );
+  assert.equal(raisedCameraFlight.approach, loweredCameraFlight.approach);
+
   const scene = new THREE.Scene();
   const world = createWorld(scene);
   const primary = world.pterodactyls[0];
@@ -214,6 +234,22 @@ test('pterodactyl attack reads as search, fold-dive and close attack from simula
   assert.equal(world.pterodactyls[1].visible, false);
   assert.equal(world.pterodactyls[2].visible, false);
 
+  const attackPositionWithRifle = primary.position.clone();
+  const attackScaleWithRifle = primary.scale.x;
+  world.update(20.72, false, {
+    threatAwareness: 3,
+    attackSeconds: 1.1,
+    cameraRaised: true,
+    familyMoment: 'glade-young-play',
+    playerPosition: { x: 0, z: 2 },
+  });
+  assert.ok(
+    primary.position.distanceTo(attackPositionWithRifle) < 1e-9,
+    'the rendered attack position must remain continuous when the camera is raised',
+  );
+  assert.equal(primary.scale.x, attackScaleWithRifle);
+  assert.equal(world.threatSnapshot().attackStage, 'attack');
+
   world.update(22.85, false, {
     threatAwareness: 3,
     attackSeconds: 2.85,
@@ -225,19 +261,22 @@ test('pterodactyl attack reads as search, fold-dive and close attack from simula
 
   world.update(21, false, {
     threatAwareness: 2,
+    familyMoment: 'glade-young-play',
+    playerPosition: { x: 0, z: -5 },
+  });
+  const orbitPosition = primary.position.clone();
+  const orbitScale = primary.scale.x;
+  world.update(21, false, {
+    threatAwareness: 2,
     cameraRaised: true,
     familyMoment: 'glade-young-play',
     playerPosition: { x: 0, z: -5 },
   });
-  assert.ok(primary.scale.x <= primary.userData.baseScale * 0.35);
-  assert.ok(primary.position.x > 7, 'young-play frame keeps the threat in the secondary right lane');
-  world.update(21, false, {
-    threatAwareness: 2,
-    cameraRaised: true,
-    familyMoment: 'glade-branch-pull',
-    playerPosition: { x: 1, z: -6 },
-  });
-  assert.ok(primary.position.x < -7, 'branch-pull frame keeps the threat in the secondary left lane');
+  assert.ok(
+    primary.position.distanceTo(orbitPosition) < 1e-9,
+    'raising the field camera must not relocate an orbiting pterodactyl',
+  );
+  assert.equal(primary.scale.x, orbitScale);
 });
 
 test('pterodactyl flight uses a visible asymmetric flap cycle instead of a static glide', () => {

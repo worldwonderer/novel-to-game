@@ -184,9 +184,12 @@ body[data-contact="true"] #app::after { background: radial-gradient(circle, tran
 }
 @media (max-width: 1300px) {
   #context-prompt { left: 50%; bottom: 15vh; max-width: min(23rem, 34vw); transform: translateX(-14%) rotate(-.65deg); }
-  #caption-line { left: auto; right: 1rem; bottom: 1rem; transform: none; max-width: 43vw; }
+  #caption-line { left: auto; right: calc(3vw + 12rem); bottom: 1rem; transform: none; max-width: min(30rem, max(12rem, calc(54vw - 14rem))); }
   #control-hint { left: 1rem; bottom: 1rem; max-width: 43vw; }
 }
 html[data-text-scale="1.5"] #context-prompt { max-width: 25rem; font-size: .7rem; }
 html[data-text-scale="1.5"] #caption-line { max-width: 40vw; font-size: .68rem; }
 html[data-text-scale="1.5"] #control-hint { max-width: 40vw; font-size: .68rem; }
+@media (max-width: 1300px) {
+  html[data-text-scale="1.5"] #caption-line { max-width: min(26rem, max(12rem, calc(57vw - 14rem))); }
+}

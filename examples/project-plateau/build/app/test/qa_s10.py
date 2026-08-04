@@ -289,7 +289,7 @@ def run() -> dict[str, object]:
             identifier = f"{index:02d}-{mode}-glade"
             glade_mode = capture(identifier, [f"Chromium {mode}", "glade decision checkpoint"])
             assert glade_mode["mode"] == "field", glade_mode
-            assert glade_mode["ui"]["prompt"] == "Raise camera [Right Mouse]", glade_mode
+            assert glade_mode["ui"]["prompt"] == "Hold camera [Right Mouse]", glade_mode
             assert glade_mode["ui"]["plateRail"], glade_mode
             assert glade_mode["ui"]["lightWatch"] is not None, glade_mode
             colour_vision_matrix[mode]["glade"] = identifier
@@ -332,7 +332,7 @@ def run() -> dict[str, object]:
             identifier = f"{index:02d}-{mode}-attack-defense"
             attack_mode = capture(identifier, [f"Chromium {mode}", "F raised rifle"])
             assert attack_mode["player"]["threatState"] == "attack", attack_mode
-            assert attack_mode["ui"]["prompt"].startswith("Raise rifle"), attack_mode
+            assert attack_mode["ui"]["prompt"].startswith("Hold rifle"), attack_mode
             assert attack_mode["ui"]["rifleOverlay"], attack_mode
             assert attack_mode["ui"]["cartridgesVisible"], attack_mode
             colour_vision_matrix[mode]["attackDefense"] = identifier

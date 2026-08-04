@@ -713,19 +713,11 @@ function cubicBezierPoint(start, controlA, controlB, end, progress) {
 export function pterodactylAttackFlightState({
   attackClock,
   playerPosition,
-  cameraRaised,
-  familyMoment,
   reducedMotion,
 }) {
   const pose = pterodactylAttackPose(attackClock, reducedMotion);
-  const cameraProtection = cameraRaised ? 0.08 : 1;
-  const approach = pose.approach * cameraProtection;
-  const flightProgress = pose.flightProgress * cameraProtection;
-  const cameraAltitude = cameraRaised ? -1.8 : 0;
-  const cameraDistance = cameraRaised ? 14 : 0;
-  const cameraLateral = cameraRaised
-    ? familyMoment === 'glade-young-play' ? 10 : -9
-    : 0;
+  const approach = pose.approach;
+  const flightProgress = pose.flightProgress;
   const diveStart = new THREE.Vector3(-4.6, 10.4, -24);
   const diveControlA = new THREE.Vector3(-4.05, 10.05, -20);
   const diveControlB = new THREE.Vector3(-3.15, 7.45, -13.5);
@@ -737,7 +729,7 @@ export function pterodactylAttackFlightState({
     diveEnd,
     flightProgress,
   );
-  const recoveryProgress = pose.recovery * cameraProtection;
+  const recoveryProgress = pose.recovery;
   const recoveryPosition = cubicBezierPoint(
     diveEnd,
     new THREE.Vector3(-1.9, 6.55, -7.3),
@@ -750,9 +742,9 @@ export function pterodactylAttackFlightState({
     pose,
     approach,
     position: authoredPosition.add(new THREE.Vector3(
-      playerPosition.x + cameraLateral,
-      cameraAltitude,
-      playerPosition.z - cameraDistance,
+      playerPosition.x,
+      0,
+      playerPosition.z,
     )),
   };
 }
@@ -2959,49 +2951,34 @@ export function createWorld(scene) {
           const flight = pterodactylAttackFlightState({
             attackClock,
             playerPosition,
-            cameraRaised: Boolean(runtime.cameraRaised),
-            familyMoment: renderedFamilyMoment,
             reducedMotion,
           });
           const nextFlight = pterodactylAttackFlightState({
             attackClock: attackClock + 1 / 120,
             playerPosition,
-            cameraRaised: Boolean(runtime.cameraRaised),
-            familyMoment: renderedFamilyMoment,
             reducedMotion,
           });
           const { pose: attackPose } = flight;
-          const cameraProtection = runtime.cameraRaised ? 0.08 : 1;
           diveApproach = flight.approach;
-          attackWingFold = attackPose.wingFold * cameraProtection;
-          attackRecovery = attackPose.recovery * cameraProtection;
-          if (runtime.rifleRaised || !runtime.cameraRaised) {
-            renderedAttackStage = attackPose.stage;
-            renderedAttackProgress = diveApproach;
-          } else {
-            renderedAttackStage = 'camera-pressure';
-            renderedAttackProgress = diveApproach;
-          }
+          attackWingFold = attackPose.wingFold;
+          attackRecovery = attackPose.recovery;
+          renderedAttackStage = attackPose.stage;
+          renderedAttackProgress = diveApproach;
           // Graze the creek-side route edge instead of flying into the exact
           // camera centre. Orient against this same authored curve so the
           // animal cannot slide sideways or pitch upward while descending.
           mesh.position.copy(flight.position);
           flightVelocity.copy(nextFlight.position).sub(flight.position);
           const attackScale = mesh.userData.baseScale
-            * (runtime.cameraRaised ? 0.42 : 1)
             * (0.92 + diveApproach * 0.08);
           mesh.scale.setScalar(attackScale);
         } else {
-          const protectedFamilyFrame = isPrimary && runtime.cameraRaised && awareness > 0;
-          const familyLateral = renderedFamilyMoment === 'glade-young-play' ? 14 : -14;
-          const xRadius = protectedFamilyFrame ? 7 : stateRadius;
-          const zRadius = protectedFamilyFrame ? 2.4 : stateRadius * 0.35;
+          const xRadius = stateRadius;
+          const zRadius = stateRadius * 0.35;
           mesh.position.set(
-            playerPosition.x
-              + Math.cos(angle) * xRadius
-              + (protectedFamilyFrame ? familyLateral : 0),
-            (protectedFamilyFrame ? 10.2 : stateHeight) + Math.sin(angle * 2) * 1.2,
-            playerPosition.z - (protectedFamilyFrame ? 39 : isPrimary && awareness > 0 ? 28 : 25)
+            playerPosition.x + Math.cos(angle) * xRadius,
+            stateHeight + Math.sin(angle * 2) * 1.2,
+            playerPosition.z - (isPrimary && awareness > 0 ? 28 : 25)
               + Math.sin(angle) * zRadius,
           );
           flightVelocity.set(
@@ -3011,7 +2988,7 @@ export function createWorld(scene) {
           );
           mesh.scale.setScalar(
             mesh.userData.baseScale
-              * (protectedFamilyFrame ? 0.34 : isPrimary && awareness > 0 ? 0.82 : 1),
+              * (isPrimary && awareness > 0 ? 0.82 : 1),
           );
           mesh.rotation.x = 0;
         }
@@ -3084,7 +3061,7 @@ export function createWorld(scene) {
         });
       }
       const primaryThreat = pterodactyls[0];
-      const shadowVisible = awareness >= 2 && !runtime.inCover && !runtime.cameraRaised;
+      const shadowVisible = awareness >= 2 && !runtime.inCover;
       pterodactylShadow.visible = shadowVisible;
       if (shadowVisible) {
         const shadowX = THREE.MathUtils.lerp(primaryThreat.position.x, playerPosition.x, 0.38);
@@ -3287,6 +3264,7 @@ export function createWorld(scene) {
           y: Number(primary.position.y.toFixed(2)),
           z: Number(primary.position.z.toFixed(2)),
         },
+        scale: Number(primary.scale.x.toFixed(4)),
       };
     },
     brookResponseSnapshot() {

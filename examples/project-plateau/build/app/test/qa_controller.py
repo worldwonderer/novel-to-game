@@ -156,13 +156,51 @@ def run() -> dict[str, object]:
             assert airborne["player"]["grounded"] is False, airborne
             assert airborne["player"]["verticalOffset"] > 0.35, airborne
             assert airborne["player"]["verticalVelocity"] > 0, airborne
-            page.wait_for_function(
-                "window.__projectPlateau.snapshot().player.grounded === true",
-                timeout=2000,
-            )
+            page.evaluate("window.__projectPlateau.advanceTimeForTest(2)")
             landed = page.evaluate("window.__projectPlateau.snapshot()")
             assert landed["player"]["verticalOffset"] == 0, landed
             assert landed["player"]["verticalVelocity"] == 0, landed
+
+            page.evaluate("window.__projectPlateau.setThreatVisualForTest(2, null)")
+            page.set_viewport_size({"width": 1000, "height": 600})
+            page.evaluate("window.__projectPlateau.freezeVisualForTest(4.25, false)")
+            camera_lowered_threat = page.evaluate(
+                "window.__projectPlateau.snapshot().threatVisual"
+            )
+            page.mouse.down(button="right")
+            assert page.evaluate("window.__projectPlateau.snapshot().player.cameraRaised") is True
+            page.evaluate("window.__projectPlateau.freezeVisualForTest(4.25, false)")
+            camera_raised_threat = page.evaluate(
+                "window.__projectPlateau.snapshot().threatVisual"
+            )
+            assert camera_raised_threat["position"] == camera_lowered_threat["position"], {
+                "lowered": camera_lowered_threat,
+                "raised": camera_raised_threat,
+            }
+            assert camera_raised_threat["scale"] == camera_lowered_threat["scale"], {
+                "lowered": camera_lowered_threat,
+                "raised": camera_raised_threat,
+            }
+            assert camera_raised_threat["attackStage"] == camera_lowered_threat["attackStage"]
+            hud_layout = page.evaluate(
+                "() => {"
+                "  const box = (id) => {"
+                "    const rect = document.getElementById(id).getBoundingClientRect();"
+                "    return { left: rect.left, top: rect.top, right: rect.right, bottom: rect.bottom };"
+                "  };"
+                "  return { caption: box('caption-line'), plates: box('plate-rail') };"
+                "}"
+            )
+            overlaps = not (
+                hud_layout["caption"]["right"] <= hud_layout["plates"]["left"]
+                or hud_layout["plates"]["right"] <= hud_layout["caption"]["left"]
+                or hud_layout["caption"]["bottom"] <= hud_layout["plates"]["top"]
+                or hud_layout["plates"]["bottom"] <= hud_layout["caption"]["top"]
+            )
+            assert overlaps is False, hud_layout
+            page.mouse.up(button="right")
+            page.set_viewport_size({"width": 1440, "height": 900})
+            page.evaluate("window.__projectPlateau.setThreatVisualForTest(null, null)")
 
             page.keyboard.down("KeyF")
             assert page.evaluate("window.__projectPlateau.snapshot().player.rifleRaised") is True
@@ -199,6 +237,7 @@ def run() -> dict[str, object]:
             assert lost["player"]["pauseReason"] == "pointer-lock", lost
 
             assert "Look [Mouse]" in page.locator("#control-hint").text_content()
+            assert "Rifle [Hold F]" in page.locator("#control-hint").text_content()
             assert "Jump [Space]" in page.locator("#control-hint").text_content()
             screenshot = EVIDENCE / "controller-contract.jpg"
             page.screenshot(path=screenshot, type="jpeg", quality=86)
@@ -229,6 +268,8 @@ def run() -> dict[str, object]:
                 "mouse delta to camera orientation",
                 "camera-relative W projection",
                 "spacebar ballistic jump and grounded landing",
+                "camera raise preserves pterodactyl position, scale and flight state",
+                "compact desktop captions preserve the plate-rail safe area",
                 "focus-loss transient tool reset",
                 "non-blocking shutter capture",
                 "pointer-lock loss pause",
