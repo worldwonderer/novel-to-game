@@ -4,10 +4,18 @@ import { GTAOPass } from 'three/addons/postprocessing/GTAOPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
+import { FXAAShader } from 'three/addons/shaders/FXAAShader.js';
 import './styles.css';
 import { createAtmosphere } from './atmosphere.js';
 import { FieldAudio, captionForCue } from './audio.js';
 import { PALETTE, PRODUCT_BUDGET, SCENE_BUDGET, percentile } from './config.js';
+import {
+  MAX_RENDER_PIXEL_RATIO,
+  advanceRenderSchedule,
+  renderIntervalForState,
+  renderPixelRatio,
+  shouldRenderFrame,
+} from './render-budget.js';
 import {
   SETTINGS_STORAGE_KEY,
   clearSettings,
@@ -67,8 +75,8 @@ const query = new URLSearchParams(window.location.search);
 const explicitContext = canvas.getContext('webgl2', {
   antialias: true,
   alpha: false,
-  preserveDrawingBuffer: true,
-  powerPreference: 'high-performance',
+  preserveDrawingBuffer: false,
+  powerPreference: 'default',
 });
 
 if (!explicitContext) {
@@ -81,15 +89,15 @@ const renderer = new THREE.WebGLRenderer({
   canvas,
   context: explicitContext,
   antialias: true,
-  powerPreference: 'high-performance',
+  powerPreference: 'default',
 });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+renderer.setPixelRatio(renderPixelRatio(window.devicePixelRatio));
 renderer.setSize(window.innerWidth, window.innerHeight, false);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.02;
 renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.shadowMap.type = THREE.PCFShadowMap;
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x142d35);
@@ -100,20 +108,21 @@ const camera = new THREE.PerspectiveCamera(58, window.innerWidth / window.innerH
 const titleCameraPosition = new THREE.Vector3(18, 7.6, 55);
 const titleCameraTarget = new THREE.Vector3(-1, 3.2, -34);
 
-const ambient = new THREE.AmbientLight(0x819a93, 0.22);
-const hemisphere = new THREE.HemisphereLight(0x8fb8c3, 0x263a32, 0.72);
+const ambient = new THREE.AmbientLight(0x8fa39d, 0.27);
+const hemisphere = new THREE.HemisphereLight(0x9bc1cb, 0x30483c, 0.82);
 const sun = new THREE.DirectionalLight(0xffc982, 4.5);
-sun.position.set(-46, 58, 38);
-sun.target.position.set(1, 0, -28);
+sun.position.set(-46, 58, 76);
+sun.target.position.set(1, 0, 10);
 sun.castShadow = true;
 sun.shadow.mapSize.set(2048, 2048);
-sun.shadow.camera.left = -58;
-sun.shadow.camera.right = 58;
-sun.shadow.camera.top = 74;
-sun.shadow.camera.bottom = -74;
+sun.shadow.camera.left = -82;
+sun.shadow.camera.right = 82;
+sun.shadow.camera.top = 108;
+sun.shadow.camera.bottom = -108;
 sun.shadow.camera.near = 8;
-sun.shadow.camera.far = 150;
+sun.shadow.camera.far = 230;
 sun.shadow.bias = -0.00045;
+sun.shadow.normalBias = 0.028;
 const gladeFill = new THREE.PointLight(0xf3b975, 4.2, 58, 1.9);
 gladeFill.position.set(-4, 13, -18);
 const canopyRim = new THREE.DirectionalLight(0x88c5cf, 1.35);
@@ -136,13 +145,23 @@ scene.add(
 );
 
 const world = createWorld(scene);
+const gtaoExcluded = [world.fieldCamera, world.rifle];
+scene.traverse((object) => {
+  if (!object.isMesh && !object.isSprite) return;
+  if (gtaoExcluded.some((root) => root === object || root.getObjectById?.(object.id))) return;
+  const materials = Array.isArray(object.material) ? object.material : [object.material];
+  if (materials.some((material) => material?.transparent || material?.opacity < 1)) {
+    gtaoExcluded.push(object);
+  }
+});
+gtaoExcluded.forEach((object) => { object.userData.gtaoExcluded = true; });
 let hy3dVisualPromise = null;
 function ensureHy3dVisuals() {
   if (!hy3dVisualPromise) hy3dVisualPromise = world.enableHy3dVisuals();
   return hy3dVisualPromise;
 }
 const composer = new EffectComposer(renderer);
-composer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+composer.setPixelRatio(renderPixelRatio(window.devicePixelRatio));
 composer.setSize(window.innerWidth, window.innerHeight);
 composer.addPass(new RenderPass(scene, camera));
 const gtaoPass = new GTAOPass(
@@ -157,7 +176,7 @@ const gtaoPass = new GTAOPass(
     thickness: 1.15,
     distanceFallOff: 0.9,
     scale: 0.82,
-    samples: 8,
+    samples: 4,
     screenSpaceRadius: false,
   },
   {
@@ -167,10 +186,20 @@ const gtaoPass = new GTAOPass(
     radius: 6,
     radiusExponent: 2,
     rings: 2,
-    samples: 8,
+    samples: 4,
   },
 );
-gtaoPass.blendIntensity = 0.48;
+const renderGtao = gtaoPass.render.bind(gtaoPass);
+gtaoPass.render = (...args) => {
+  const visibility = gtaoExcluded.map((object) => object.visible);
+  gtaoExcluded.forEach((object) => { object.visible = false; });
+  try {
+    return renderGtao(...args);
+  } finally {
+    gtaoExcluded.forEach((object, index) => { object.visible = visibility[index]; });
+  }
+};
+gtaoPass.blendIntensity = 0.28;
 composer.addPass(gtaoPass);
 const fieldGradePass = new ShaderPass({
   name: 'ProjectPlateauFieldGrade',
@@ -207,6 +236,9 @@ const fieldGradePass = new ShaderPass({
 });
 fieldGradePass.material.name = 'Project Plateau restrained field grade';
 composer.addPass(fieldGradePass);
+const fxaaPass = new ShaderPass(FXAAShader);
+fxaaPass.material.name = 'Project Plateau single-pass FXAA';
+composer.addPass(fxaaPass);
 composer.addPass(new OutputPass());
 scene.add(camera);
 camera.add(world.fieldCamera);
@@ -229,8 +261,16 @@ let presentationSettings = loadSettings(window.localStorage, systemReducedMotion
 let reducedMotion = presentationSettings.reducedMotion;
 let frameSamples = [];
 let lastFrame = performance.now();
+let lastRenderedAt = 0;
+let renderScheduleAt = 0;
+let renderedFrameCount = 0;
+let skippedFrameCount = 0;
 let firstRenderedAt = null;
 let visualElapsed = 0;
+let visualTimeFrozen = false;
+let visualThreatOverride = null;
+let visualThreatPose = null;
+let visualPterodactylMorphPose = null;
 let boundaryNoticeUntil = 0;
 let observedBoundaryRecoveries = 0;
 let observationNoticeUntil = 0;
@@ -581,16 +621,24 @@ function resumeRun() {
 }
 
 function worldRuntime(deltaSeconds = 0) {
+  const threatAwareness = visualThreatOverride ?? player.threatAwareness;
+  const attackSeconds = visualThreatOverride === null
+    ? player.attackSeconds
+    : visualThreatPose === 'dive' ? 1.1 : visualElapsed % 3.2;
   return {
-    threatAwareness: player.threatAwareness,
-    attackSeconds: player.attackSeconds,
+    threatAwareness,
+    attackSeconds,
     playerPosition: player.position,
     shotCount: player.shotCount,
     brookResponse: player.brookResponse,
     inCover: player.inCover,
     cameraRaised: player.cameraRaised,
     rifleRaised: player.rifleRaised,
-    familyMoment: player.pendingExposure?.key ?? null,
+    familyMoment: visualThreatPose === 'family'
+      ? 'glade-young-play'
+      : player.pendingExposure?.key ?? null,
+    captureThreatPose: visualThreatPose,
+    pterodactylMorphPose: visualPterodactylMorphPose,
     deltaSeconds,
   };
 }
@@ -624,9 +672,9 @@ function update(deltaSeconds, now) {
         : 'CASE STRIKE — THE NEXT PASS WILL END THE RUN.';
     }
     if (previousRunStatus === 'active' && player.runStatus !== 'active') presentTerminal();
-    visualElapsed += deltaSeconds;
+    if (!visualTimeFrozen) visualElapsed += deltaSeconds;
   } else if (!runActive && cameraMode !== 'terminal') {
-    visualElapsed += deltaSeconds;
+    if (!visualTimeFrozen) visualElapsed += deltaSeconds;
   }
   world.update(
     visualElapsed,
@@ -644,11 +692,25 @@ function update(deltaSeconds, now) {
   }
 }
 
-function animate() {
+function animate(frameTime) {
+  const renderInterval = renderIntervalForState({
+    runActive,
+    cameraMode,
+    paused: player.paused,
+    hidden: document.hidden,
+  });
+  if (!shouldRenderFrame(frameTime, renderScheduleAt, renderInterval)) {
+    skippedFrameCount += 1;
+    requestAnimationFrame(animate);
+    return;
+  }
+  renderScheduleAt = advanceRenderSchedule(frameTime, renderScheduleAt, renderInterval);
+  lastRenderedAt = frameTime;
   const deltaSeconds = Math.min(clock.getDelta(), 0.05);
   const now = performance.now();
   update(deltaSeconds, now);
   composer.render();
+  renderedFrameCount += 1;
   frameSamples.push(now - lastFrame);
   if (frameSamples.length > 360) frameSamples.shift();
   lastFrame = now;
@@ -659,14 +721,20 @@ function animate() {
 function resize() {
   const width = window.innerWidth;
   const height = window.innerHeight;
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+  const pixelRatio = renderPixelRatio(window.devicePixelRatio);
+  renderer.setPixelRatio(pixelRatio);
   renderer.setSize(width, height, false);
-  composer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+  composer.setPixelRatio(pixelRatio);
   composer.setSize(width, height);
+  fxaaPass.material.uniforms.resolution.value.set(
+    1 / (width * pixelRatio),
+    1 / (height * pixelRatio),
+  );
   camera.aspect = width / height;
   camera.updateProjectionMatrix();
 }
 window.addEventListener('resize', resize);
+resize();
 
 function closePanels() {
   document.querySelector('#settings-panel').hidden = true;
@@ -813,11 +881,15 @@ document.addEventListener('visibilitychange', () => {
 
 async function sampleFrames(count = 180) {
   const samples = [];
-  let previous = performance.now();
+  let previousRenderAt = null;
+  let observedFrameCount = renderedFrameCount;
   await new Promise((resolve) => {
-    const take = (now) => {
-      samples.push(now - previous);
-      previous = now;
+    const take = () => {
+      if (renderedFrameCount !== observedFrameCount) {
+        if (previousRenderAt !== null) samples.push(lastRenderedAt - previousRenderAt);
+        previousRenderAt = lastRenderedAt;
+        observedFrameCount = renderedFrameCount;
+      }
       if (samples.length >= count) resolve();
       else requestAnimationFrame(take);
     };
@@ -861,6 +933,11 @@ window.__projectPlateau = {
   sceneBudget: SCENE_BUDGET,
   setView,
   sampleFrames,
+  renderFrameForTest() {
+    if (!query.has('qa')) throw new Error('renderFrameForTest requires a qa query');
+    composer.render();
+    return true;
+  },
   loadHy3dVisualsForTest() {
     if (!query.has('qa')) throw new Error('loadHy3dVisualsForTest requires a qa query');
     return ensureHy3dVisuals();
@@ -899,6 +976,17 @@ window.__projectPlateau = {
     setVisualReviewOrbitCamera();
     return { ...visualReviewOrbit };
   },
+  setPterodactylMorphPoseForTest(pose = {}) {
+    if (!query.has('qa')) throw new Error('setPterodactylMorphPoseForTest requires a qa query');
+    const normalized = Object.fromEntries(['wingUp', 'wingDown', 'diveFold'].map((target) => (
+      [target, THREE.MathUtils.clamp(Number(pose[target]) || 0, 0, 1)]
+    )));
+    visualPterodactylMorphPose = normalized;
+    visualTimeFrozen = true;
+    world.update(visualElapsed, reducedMotion, worldRuntime(0));
+    if (cameraMode === 'visual-review-orbit') setVisualReviewOrbitCamera();
+    return normalized;
+  },
   teleportForTest(position) {
     if (!query.has('qa')) throw new Error('teleportForTest requires a qa query');
     player.position = { x: position.x, z: position.z };
@@ -917,6 +1005,22 @@ window.__projectPlateau = {
     }
     if (player.runStatus !== 'active') presentTerminal();
     return playerSnapshot();
+  },
+  freezeVisualForTest(seconds = 4.25, useReducedMotion = true) {
+    if (!query.has('qa')) throw new Error('freezeVisualForTest requires a qa query');
+    visualElapsed = Math.max(0, Number(seconds) || 0);
+    visualTimeFrozen = true;
+    world.update(visualElapsed, Boolean(useReducedMotion), worldRuntime(0));
+    return visualElapsed;
+  },
+  setThreatVisualForTest(awareness = null, pose = null) {
+    if (!query.has('qa')) throw new Error('setThreatVisualForTest requires a qa query');
+    visualThreatOverride = awareness === null
+      ? null
+      : Math.max(0, Math.min(3, Number(awareness) || 0));
+    visualThreatPose = pose;
+    world.update(visualElapsed, true, worldRuntime(0));
+    return visualThreatOverride;
   },
   snapshot() {
     return {
@@ -965,6 +1069,20 @@ window.__projectPlateau = {
       textures: renderer.info.memory.textures,
       geometries: renderer.info.memory.geometries,
       viewport: [window.innerWidth, window.innerHeight],
+      renderBudget: {
+        pixelRatio: renderer.getPixelRatio(),
+        maxPixelRatio: MAX_RENDER_PIXEL_RATIO,
+        renderedFrames: renderedFrameCount,
+        skippedFrames: skippedFrameCount,
+        activeFpsPolicy: '60fps-cap-across-refresh-rates',
+        idleFpsCap: 30,
+        pausedFpsCap: 15,
+        hiddenFpsCap: 4,
+        powerPreference: 'default',
+        preserveDrawingBuffer: false,
+        gtaoSamples: 4,
+        antialiasing: 'single-pass-fxaa',
+      },
       firstRenderedAt,
       recentMedianFrameMs: Number(percentile(frameSamples, 0.5).toFixed(2)),
     };

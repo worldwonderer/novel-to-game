@@ -17,7 +17,7 @@
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 4.258,
+    "elapsedSeconds": 4.291,
     "distanceTravelled": 0,
     "paused": false,
     "pauseReason": null,
@@ -37,14 +37,14 @@
     "threatAwareness": 3,
     "threatState": "attack",
     "lastThreatEvent": "plate-exposure:+2",
-    "attackSeconds": 2.0164999999999966,
+    "attackSeconds": 2.050900000035761,
     "examinedTrack": false,
     "observedBehavior": true,
     "lastObservation": "The young keep close while the adults feed.",
     "cameraRaised": false,
     "plateRailRevealed": true,
     "pendingExposure": null,
-    "previewSeconds": 1.9919000000357645,
+    "previewSeconds": 1.9746999999880803,
     "lastProofEvent": {
       "plateIndex": 0,
       "frameKey": "glade-young-play",
@@ -96,7 +96,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 175.742,
+    "remainingLight": 175.709,
     "returnRoute": null,
     "returnCostSeconds": 0,
     "returnStrike": false,
@@ -108,8 +108,13 @@
     "response": "orbit",
     "attackStage": "attack",
     "attackProgress": 1,
+    "flightPose": {
+      "wingBeat": 0.0092,
+      "wingFold": 0.98,
+      "mode": "fold-dive"
+    },
     "position": {
-      "x": 0.63,
+      "x": 0.64,
       "y": 6.4,
       "z": -19.4
     }
@@ -161,7 +166,7 @@
     },
     "cover": {
       "archCount": 5,
-      "visibleParts": 25
+      "visibleParts": 35
     },
     "family": {
       "adults": 2,
@@ -218,22 +223,22 @@
       {
         "cue": "search",
         "caption": "[a near call circles overhead]",
-        "at": 0.091
+        "at": 0.101
       },
       {
         "cue": "examine",
         "caption": "[fern brushes aside; pencil marks the field card]",
-        "at": 0.149
+        "at": 0.139
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 0.155
+        "at": 0.149
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 0.256
+        "at": 0.24
       },
       {
         "cue": "attack",
@@ -280,12 +285,26 @@
   "sceneChildren": 59,
   "calls": 1,
   "triangles": 1,
-  "textures": 30,
-  "geometries": 509,
+  "textures": 32,
+  "geometries": 622,
   "viewport": [
     1440,
     900
   ],
-  "firstRenderedAt": 3017.199999988079,
-  "recentMedianFrameMs": 8.3
+  "renderBudget": {
+    "pixelRatio": 1,
+    "maxPixelRatio": 1.25,
+    "renderedFrames": 309,
+    "skippedFrames": 369,
+    "activeFpsPolicy": "60fps-cap-across-refresh-rates",
+    "idleFpsCap": 30,
+    "pausedFpsCap": 15,
+    "hiddenFpsCap": 4,
+    "powerPreference": "default",
+    "preserveDrawingBuffer": false,
+    "gtaoSamples": 4,
+    "antialiasing": "single-pass-fxaa"
+  },
+  "firstRenderedAt": 3050.199999988079,
+  "recentMedianFrameMs": 16.7
 }

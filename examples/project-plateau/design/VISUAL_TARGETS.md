@@ -1,5 +1,7 @@
 # Visual Targets · Project Plateau
 
+targetFinish: playable-prototype
+
 ## Purpose
 
 This file is a pre-implementation visual acceptance target. It does not record

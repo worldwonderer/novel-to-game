@@ -619,6 +619,16 @@ export function pterodactylAttackPose(attackSeconds = 0, reducedMotion = false) 
   };
 }
 
+export function pterodactylWingBeat(elapsed, phase = 0, awareness = 0, reducedMotion = false) {
+  const tempo = reducedMotion ? 0.72 : 4.15 + awareness * 0.38;
+  const cycle = elapsed * tempo + phase;
+  const sine = Math.sin(cycle);
+  const asymmetricStroke = sine >= 0
+    ? sine ** 0.72
+    : -((-sine) ** 1.28);
+  return asymmetricStroke * (reducedMotion ? 0.045 : 0.29 + awareness * 0.035);
+}
+
 export function terrainHeight(x, z) {
   const broad = Math.sin(x * 0.045) * 0.7 + Math.cos(z * 0.052) * 0.45;
   const basin = -Math.exp(-(x * x + (z + 8) * (z + 8)) / 1200) * 1.4;
@@ -698,6 +708,7 @@ function makeTerrain(scene) {
 
 function makeRibbon(points, width, color, yOffset = 0) {
   const vertices = [];
+  const colors = [];
   const uvs = [];
   const indices = [];
   for (let i = 0; i < points.length; i += 1) {
@@ -713,32 +724,52 @@ function makeRibbon(points, width, color, yOffset = 0) {
       + Math.sin(i * 1.71 + points.length * 0.13) * 0.08
       + Math.sin(i * 0.63 + 1.4) * 0.045;
     const half = width * widthBreak * 0.5;
-    const y = terrainHeight(current.x, current.z) + yOffset;
-    vertices.push(current.x + px * half, y, current.z + pz * half);
-    vertices.push(current.x - px * half, y, current.z - pz * half);
+    const offsets = [half * 1.08, half * 0.82, -half * 0.82, -half * 1.08];
+    const alphas = [0, 1, 1, 0];
     const progress = points.length > 1 ? i / (points.length - 1) : 0;
-    uvs.push(0, progress, 1, progress);
+    offsets.forEach((offset, crossIndex) => {
+      const x = current.x + px * offset;
+      const z = current.z + pz * offset;
+      vertices.push(x, terrainHeight(x, z) + yOffset, z);
+      colors.push(1, 1, 1, alphas[crossIndex]);
+      uvs.push(crossIndex / 3, progress);
+    });
     if (i < points.length - 1) {
-      const a = i * 2;
-      indices.push(a, a + 1, a + 2, a + 1, a + 3, a + 2);
+      const currentOffset = i * 4;
+      const nextOffset = (i + 1) * 4;
+      for (let band = 0; band < 3; band += 1) {
+        const a = currentOffset + band;
+        const b = currentOffset + band + 1;
+        const c = nextOffset + band;
+        const d = nextOffset + band + 1;
+        indices.push(a, b, c, b, d, c);
+      }
     }
   }
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+  geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 4));
   geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
   geometry.setIndex(indices);
   geometry.computeVertexNormals();
-  return new THREE.Mesh(
+  geometry.userData.yOffset = yOffset;
+  geometry.userData.profile = 'terrain-conforming-feathered-ribbon';
+  geometry.userData.crossSectionVertices = 4;
+  const ribbon = new THREE.Mesh(
     geometry,
     new THREE.MeshStandardMaterial({
       color,
       roughness: 0.42,
       metalness: 0.08,
+      vertexColors: true,
       transparent: true,
       opacity: 0.88,
+      depthWrite: false,
       side: THREE.DoubleSide,
     }),
   );
+  ribbon.receiveShadow = true;
+  return ribbon;
 }
 
 function smoothPath(points, divisionsPerSpan = 7) {
@@ -1071,20 +1102,25 @@ function makeRouteAndBrook(scene) {
   const brook = makeRibbon(brookPoints, 3.4, PALETTE.water, 0.12);
   brook.material.dispose();
   brook.material = new THREE.MeshPhysicalMaterial({
-    color: 0x3f7780,
+    color: 0x315e66,
     map: waterDetailTexture,
-    roughness: 0.24,
+    roughness: 0.68,
     roughnessMap: waterDetailTexture,
     bumpMap: waterDetailTexture,
     bumpScale: 0.075,
-    metalness: 0.06,
-    clearcoat: 0.45,
-    clearcoatRoughness: 0.18,
+    metalness: 0,
+    ior: 1.33,
+    specularIntensity: 0.05,
+    specularColor: new THREE.Color(0x587a78),
+    clearcoat: 0.02,
+    clearcoatRoughness: 0.72,
     transparent: true,
-    opacity: 0.78,
+    opacity: 0.7,
+    vertexColors: true,
+    depthWrite: false,
     side: THREE.DoubleSide,
     emissive: 0x0a1817,
-    emissiveIntensity: 0.32,
+    emissiveIntensity: 0.08,
   });
   brook.material.userData.surface = 'procedural-ripple-microdetail';
   brook.material.userData.motion = 'animated-downstream-uv-flow';
@@ -1109,9 +1145,9 @@ function makeRouteAndBrook(scene) {
   const brookRipples = new THREE.InstancedMesh(
     rippleGeometry,
     new THREE.MeshBasicMaterial({
-      color: 0x8fb8b4,
+      color: 0x739a97,
       transparent: true,
-      opacity: 0.2,
+      opacity: 0.16,
       depthWrite: false,
       side: THREE.DoubleSide,
       fog: true,
@@ -1280,39 +1316,80 @@ function makeRouteAndBrook(scene) {
   };
 }
 
+function createOrganicArchGeometry(spread, index) {
+  const sway = (index % 2 ? 1 : -1) * 0.18;
+  const points = [
+    [-spread + 0.08, 5.05, 0.02],
+    [-spread * 0.68, 5.7, -0.24 + sway],
+    [-spread * 0.28, 6.28, 0.16 - sway],
+    [spread * 0.12, 6.52, -0.14],
+    [spread * 0.52, 6.16, 0.26 + sway],
+    [spread - 0.1, 5.12, -0.02],
+  ];
+  const radii = [0.29, 0.255, 0.22, 0.185, 0.15, 0.105];
+  const parts = [];
+  for (let point = 0; point < points.length - 1; point += 1) {
+    parts.push(createCylinderBetween(
+      points[point],
+      points[point + 1],
+      radii[point],
+      radii[point + 1],
+      8,
+    ));
+  }
+  parts.push(
+    createCylinderBetween(points[2], [-spread * 0.52, 6.82, -0.62], 0.17, 0.055, 7),
+    createCylinderBetween(points[3], [spread * 0.42, 6.94, 0.54], 0.14, 0.045, 7),
+  );
+  const geometry = mergeParts(parts);
+  geometry.userData.profile = 'curved-tapered-forked-branch';
+  return geometry;
+}
+
 function makeCoverArches(scene) {
   const group = new THREE.Group();
-  const bark = new THREE.MeshStandardMaterial({ color: 0x29382d, roughness: 1 });
-  const leaf = new THREE.MeshStandardMaterial({ color: 0x153d2a, roughness: 0.96 });
+  const bark = new THREE.MeshStandardMaterial({
+    color: 0x526958,
+    roughness: 0.92,
+    vertexColors: true,
+    emissive: 0x132119,
+    emissiveIntensity: 0.32,
+  });
+  const leaf = new THREE.MeshStandardMaterial({
+    color: 0x37694a,
+    roughness: 0.9,
+    vertexColors: true,
+    emissive: 0x0a1a11,
+    emissiveIntensity: 0.2,
+  });
   const arches = [[-7, 28], [-12, 18], [-17, 8], [-22, -3], [-13, 13]];
   arches.forEach(([centerX, z], index) => {
     const ground = terrainHeight(centerX, z);
-    const spread = 2.7 + (index % 2) * 0.35;
+    const spread = 3.5 + (index % 2) * 0.32;
+    const leftGround = terrainHeight(centerX - spread, z);
+    const rightGround = terrainHeight(centerX + spread, z);
     const left = primitive(
       bark,
       shared.trunkGeometry,
-      [centerX - spread, ground, z],
+      [centerX - spread, leftGround, z],
       [0.82, 1.06 + index * 0.015, 0.82],
       [0, index * 0.72 + 0.2, 0],
     );
     const right = primitive(
       bark,
       shared.trunkGeometry,
-      [centerX + spread, ground, z],
+      [centerX + spread, rightGround, z],
       [0.84, 1.04 + index * 0.012, 0.84],
       [0, -index * 0.61 - 0.45, 0],
     );
     const crown = primitive(
       bark,
-      mergeParts([
-        createCylinderBetween([-spread + 0.12, 5.25, 0], [-spread * 0.35, 6.25, -0.12], 0.31, 0.24, 6),
-        createCylinderBetween([-spread * 0.35, 6.25, -0.12], [spread * 0.34, 6.38, 0.08], 0.25, 0.21, 6),
-        createCylinderBetween([spread * 0.34, 6.38, 0.08], [spread - 0.14, 5.3, 0], 0.22, 0.14, 6),
-      ]),
+      createOrganicArchGeometry(spread, index),
       [centerX, ground, z],
       [1, 1, 1],
       [0, 0, 0],
     );
+    crown.name = `organic-arch-bough-${index + 1}`;
     const leftCrown = primitive(
       leaf,
       shared.crownGeometry,
@@ -1327,10 +1404,28 @@ function makeCoverArches(scene) {
       [0.92, 0.76, 0.9],
       [0, -index * 0.47, 0],
     );
-    group.add(left, right, crown, leftCrown, rightCrown);
+    const centreLeft = primitive(
+      leaf,
+      shared.crownAccentGeometry,
+      [centerX - spread * 0.23, ground + 6.48, z - 0.22],
+      [0.68, 0.6, 0.64],
+      [0.05, index * 0.41, -0.04],
+    );
+    centreLeft.name = `joint-breaking-foliage-${index + 1}-left`;
+    const centreRight = primitive(
+      leaf,
+      shared.crownAccentGeometry,
+      [centerX + spread * 0.24, ground + 6.34, z + 0.18],
+      [0.66, 0.56, 0.62],
+      [-0.04, -index * 0.38, 0.05],
+    );
+    centreRight.name = `joint-breaking-foliage-${index + 1}-right`;
+    group.add(left, right, crown, leftCrown, rightCrown, centreLeft, centreRight);
   });
   group.name = 'world.connected_route.cover_arches';
   group.userData.archCount = arches.length;
+  group.userData.minimumHalfClearance = 3.5;
+  group.userData.profile = 'curved-tapered-branch-arches';
   scene.add(group);
   return group;
 }
@@ -1468,8 +1563,8 @@ function placeVegetation(scene) {
       : variantIndex === 2
         ? [1.28, 0.72, 1.18]
         : [1, 1, 1];
-    dummy.position.set(x, terrainHeight(x, z) + 0.035, z);
-    dummy.rotation.set((random() - 0.5) * 0.22, random() * Math.PI, (random() - 0.5) * 0.18);
+    dummy.position.set(x, terrainHeight(x, z), z);
+    dummy.rotation.set(0, random() * Math.PI, 0);
     dummy.scale.set(
       scale * (0.85 + random() * 0.2) * variantScale[0],
       scale * variantScale[1],
@@ -1659,6 +1754,8 @@ function makeBasalt(scene) {
     SCENE_BUDGET.basaltPillars * 2,
   );
   const dummy = new THREE.Object3D();
+  const attached = new THREE.Object3D();
+  const attachedMatrix = new THREE.Matrix4();
   const color = new THREE.Color();
   const random = seededRandom(720);
   const clusters = [
@@ -1705,48 +1802,58 @@ function makeBasalt(scene) {
     );
     dummy.updateMatrix();
     pillars.setMatrixAt(i, dummy.matrix);
+    const pillarMatrix = dummy.matrix.clone();
     color.setHSL(0.025 + random() * 0.018, 0.4 + random() * 0.12, 0.24 + random() * 0.075);
     pillars.setColorAt(i, color);
 
     const seamLevel = 0.24 + random() * 0.52;
-    dummy.position.set(x, ground - 0.34 + h * seamLevel, z);
-    dummy.rotation.set(0, pillarYaw + random() * 0.22, 0);
-    dummy.scale.set(radius * 1.02, 0.72 + random() * 0.35, radius * 0.96);
-    dummy.updateMatrix();
-    seams.setMatrixAt(i, dummy.matrix);
+    attached.position.set(0, seamLevel - 0.5, 0);
+    attached.rotation.set(0, random() * 0.22, 0);
+    attached.scale.set(1.02, (0.72 + random() * 0.35) / h, 0.96);
+    attached.updateMatrix();
+    attachedMatrix.multiplyMatrices(pillarMatrix, attached.matrix);
+    seams.setMatrixAt(i, attachedMatrix);
 
-    const ledgeAngle = pillarYaw + (i % 3) * 2.03 + random() * 0.42;
-    dummy.position.set(
-      x + Math.cos(ledgeAngle) * radius * 0.9,
-      ground - 0.25 + h * (0.31 + random() * 0.38),
-      z + Math.sin(ledgeAngle) * radius * 0.9,
+    const ledgeAngle = (i % 3) * 2.03 + random() * 0.42;
+    const ledgeLevel = 0.31 + random() * 0.38;
+    attached.position.set(
+      Math.cos(ledgeAngle) * 0.9,
+      ledgeLevel - 0.5,
+      Math.sin(ledgeAngle) * 0.9,
     );
-    dummy.rotation.set((random() - 0.5) * 0.4, ledgeAngle, (random() - 0.5) * 0.3);
-    dummy.scale.set(
-      radius * (0.32 + random() * 0.3),
-      0.16 + random() * 0.22,
-      radius * (0.24 + random() * 0.22),
+    attached.rotation.set((random() - 0.5) * 0.4, ledgeAngle, (random() - 0.5) * 0.3);
+    attached.scale.set(
+      0.32 + random() * 0.3,
+      (0.16 + random() * 0.22) / h,
+      0.24 + random() * 0.22,
     );
-    dummy.updateMatrix();
-    spalls.setMatrixAt(i, dummy.matrix);
+    attached.updateMatrix();
+    attachedMatrix.multiplyMatrices(pillarMatrix, attached.matrix);
+    spalls.setMatrixAt(i, attachedMatrix);
     color.offsetHSL(0.004, -0.04, -0.035);
     spalls.setColorAt(i, color);
 
     for (let patch = 0; patch < 2; patch += 1) {
-      const patchAngle = pillarYaw + (patch ? 2.12 : -1.26) + (random() - 0.5) * 0.55;
-      dummy.position.set(
-        x + Math.cos(patchAngle) * radius * 0.98,
-        ground + h * (0.22 + patch * 0.43 + random() * 0.12),
-        z + Math.sin(patchAngle) * radius * 0.98,
+      const patchAngle = (patch ? 2.12 : -1.26) + (random() - 0.5) * 0.55;
+      const patchLevel = 0.22 + patch * 0.43 + random() * 0.12;
+      attached.position.set(
+        Math.cos(patchAngle) * 0.98,
+        patchLevel - 0.5,
+        Math.sin(patchAngle) * 0.98,
       );
-      dummy.rotation.set((random() - 0.5) * 0.24, -patchAngle + Math.PI / 2, (random() - 0.5) * 0.3);
-      dummy.scale.set(
-        radius * (0.14 + random() * 0.16),
-        0.34 + random() * 0.72,
-        0.035 + random() * 0.035,
+      attached.rotation.set(
+        (random() - 0.5) * 0.24,
+        -patchAngle + Math.PI / 2,
+        (random() - 0.5) * 0.3,
       );
-      dummy.updateMatrix();
-      crusts.setMatrixAt(crustIndex, dummy.matrix);
+      attached.scale.set(
+        0.14 + random() * 0.16,
+        (0.34 + random() * 0.72) / h,
+        (0.035 + random() * 0.035) / radius,
+      );
+      attached.updateMatrix();
+      attachedMatrix.multiplyMatrices(pillarMatrix, attached.matrix);
+      crusts.setMatrixAt(crustIndex, attachedMatrix);
       color.setHSL(
         0.045 + random() * 0.03,
         0.28 + random() * 0.16,
@@ -2117,26 +2224,294 @@ function makePterodactylShadow(scene) {
   return shadow;
 }
 
+function createTentPanelGeometry(vertices, indices) {
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+  geometry.setIndex(indices);
+  geometry.computeVertexNormals();
+  return geometry;
+}
+
+function makeAFrameTent() {
+  const tent = new THREE.Group();
+  const width = 5.1;
+  const length = 6.4;
+  const ridgeHeight = 3.35;
+  const halfWidth = width / 2;
+  const halfLength = length / 2;
+  const canvasMaterial = new THREE.MeshStandardMaterial({
+    color: 0x95866b,
+    roughness: 0.96,
+    metalness: 0,
+    side: THREE.DoubleSide,
+  });
+  const endMaterial = new THREE.MeshStandardMaterial({
+    color: 0x7f7058,
+    roughness: 1,
+    side: THREE.DoubleSide,
+  });
+  const entryMaterial = new THREE.MeshStandardMaterial({
+    color: 0x242824,
+    roughness: 1,
+    side: THREE.DoubleSide,
+  });
+  const poleMaterial = new THREE.MeshStandardMaterial({
+    color: 0x493929,
+    roughness: 0.88,
+  });
+
+  const roof = new THREE.Mesh(
+    createTentPanelGeometry(
+      [
+        -halfWidth, 0.2, -halfLength,
+        0, ridgeHeight, -halfLength,
+        0, ridgeHeight, halfLength,
+        -halfWidth, 0.2, halfLength,
+        0, ridgeHeight, -halfLength,
+        halfWidth, 0.2, -halfLength,
+        halfWidth, 0.2, halfLength,
+        0, ridgeHeight, halfLength,
+      ],
+      [0, 1, 2, 0, 2, 3, 4, 5, 6, 4, 6, 7],
+    ),
+    canvasMaterial,
+  );
+  roof.name = 'canvas-roof';
+  roof.castShadow = true;
+  roof.receiveShadow = true;
+  tent.add(roof);
+
+  const seamPoints = [];
+  for (const z of [-halfLength * 0.5, 0, halfLength * 0.5]) {
+    seamPoints.push(
+      new THREE.Vector3(-halfWidth + 0.018, 0.215, z),
+      new THREE.Vector3(0, ridgeHeight + 0.018, z),
+      new THREE.Vector3(0, ridgeHeight + 0.018, z),
+      new THREE.Vector3(halfWidth - 0.018, 0.215, z),
+    );
+  }
+  const canvasSeams = new THREE.LineSegments(
+    new THREE.BufferGeometry().setFromPoints(seamPoints),
+    new THREE.LineBasicMaterial({ color: 0x74694f, transparent: true, opacity: 0.62 }),
+  );
+  canvasSeams.name = 'canvas-seams';
+  tent.add(canvasSeams);
+
+  const rear = new THREE.Mesh(
+    createTentPanelGeometry(
+      [
+        -halfWidth, 0.2, halfLength,
+        halfWidth, 0.2, halfLength,
+        0, ridgeHeight, halfLength,
+      ],
+      [0, 1, 2],
+    ),
+    endMaterial,
+  );
+  rear.name = 'rear-canvas-panel';
+  rear.castShadow = true;
+  tent.add(rear);
+
+  const darkEntry = new THREE.Mesh(
+    createTentPanelGeometry(
+      [-1.18, 0.18, -halfLength - 0.035, 1.18, 0.18, -halfLength - 0.035, 0, 2.72, -halfLength - 0.035],
+      [0, 1, 2],
+    ),
+    entryMaterial,
+  );
+  darkEntry.name = 'dark-entry';
+  tent.add(darkEntry);
+
+  for (const side of [-1, 1]) {
+    const flap = new THREE.Mesh(
+      createTentPanelGeometry(
+        [
+          0, ridgeHeight, -halfLength - 0.06,
+          side * halfWidth, 0.2, -halfLength - 0.06,
+          side * 0.82, 0.2, -halfLength - 0.08,
+        ],
+        [0, 1, 2],
+      ),
+      endMaterial,
+    );
+    flap.name = side < 0 ? 'entry-flap-left' : 'entry-flap-right';
+    flap.castShadow = true;
+    tent.add(flap);
+  }
+
+  const ridgePole = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.065, 0.075, length + 0.7, 7),
+    poleMaterial,
+  );
+  ridgePole.name = 'ridge-pole';
+  ridgePole.position.y = ridgeHeight + 0.04;
+  ridgePole.rotation.x = Math.PI / 2;
+  ridgePole.castShadow = true;
+  tent.add(ridgePole);
+  for (const z of [-halfLength - 0.12, halfLength + 0.12]) {
+    const upright = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.055, 0.075, ridgeHeight + 0.25, 7),
+      poleMaterial,
+    );
+    upright.position.set(0, ridgeHeight / 2, z);
+    upright.castShadow = true;
+    tent.add(upright);
+  }
+
+  const ropeGeometry = new THREE.BufferGeometry().setFromPoints([
+    new THREE.Vector3(0, ridgeHeight, -halfLength),
+    new THREE.Vector3(0, 0.04, -halfLength - 2.1),
+    new THREE.Vector3(0, ridgeHeight, halfLength),
+    new THREE.Vector3(0, 0.04, halfLength + 2.1),
+  ]);
+  const ropes = new THREE.LineSegments(
+    ropeGeometry,
+    new THREE.LineBasicMaterial({ color: 0x6c6049, transparent: true, opacity: 0.72 }),
+  );
+  ropes.name = 'guy-ropes';
+  tent.add(ropes);
+  tent.userData.profile = 'pitched-expedition-a-frame';
+  return tent;
+}
+
+function makeSmokeTexture() {
+  const size = 64;
+  const data = new Uint8Array(size * size * 4);
+  for (let y = 0; y < size; y += 1) {
+    for (let x = 0; x < size; x += 1) {
+      const u = (x / (size - 1)) * 2 - 1;
+      const v = (y / (size - 1)) * 2 - 1;
+      const warpedX = u + Math.sin((v + 0.23) * 5.1) * 0.085;
+      const edgeNoise = Math.sin(u * 13.7 + v * 8.3) * 0.045
+        + Math.sin(u * 5.4 - v * 11.2) * 0.028;
+      const distance = Math.hypot(warpedX * 0.9, v * 1.08) + edgeNoise;
+      const feather = THREE.MathUtils.smoothstep(1 - distance, 0, 0.58);
+      const index = (y * size + x) * 4;
+      data[index] = 255;
+      data[index + 1] = 255;
+      data[index + 2] = 255;
+      data[index + 3] = Math.round(255 * feather * feather);
+    }
+  }
+  const texture = new THREE.DataTexture(data, size, size, THREE.RGBAFormat);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.magFilter = THREE.LinearFilter;
+  texture.minFilter = THREE.LinearMipmapLinearFilter;
+  texture.generateMipmaps = true;
+  texture.needsUpdate = true;
+  texture.name = 'world.material.soft-smoke-wisp';
+  return texture;
+}
+
 function makeFort(scene) {
-  const canvasMaterial = new THREE.MeshStandardMaterial({ color: PALETTE.canvas, roughness: 1 });
-  const tentGeometry = new THREE.ConeGeometry(3.2, 4.5, 4);
+  const tents = new THREE.Group();
+  tents.name = 'world.connected_route.fort-tents';
   for (const [x, z, rotation] of [[-3, 80, Math.PI / 4], [5, 84, Math.PI / 4]]) {
-    const tent = new THREE.Mesh(tentGeometry, canvasMaterial);
-    tent.position.set(x, terrainHeight(x, z) + 2.1, z);
+    const tent = makeAFrameTent();
+    tent.position.set(x, terrainHeight(x, z), z);
     tent.rotation.y = rotation;
-    scene.add(tent);
+    tents.add(tent);
   }
-  const smokeGeometry = new THREE.SphereGeometry(1, 8, 6);
-  const smokeMaterial = new THREE.MeshBasicMaterial({ color: PALETTE.smoke, transparent: true, opacity: 0.28 });
+  scene.add(tents);
+
+  const fireX = -8;
+  const fireZ = 78;
+  const fireGround = terrainHeight(fireX, fireZ);
+  const firepit = new THREE.Group();
+  firepit.name = 'world.connected_route.fort-firepit';
+  firepit.userData.profile = 'stone-ring-and-charred-logs';
+  const stoneMaterial = new THREE.MeshStandardMaterial({ color: 0x4b4a42, roughness: 1 });
+  for (let index = 0; index < 9; index += 1) {
+    const angle = (index / 9) * Math.PI * 2;
+    const stone = new THREE.Mesh(new THREE.DodecahedronGeometry(0.22, 0), stoneMaterial);
+    stone.position.set(Math.cos(angle) * 0.72, 0.16, Math.sin(angle) * 0.72);
+    stone.scale.set(1.2, 0.62, 0.84);
+    stone.rotation.y = angle;
+    stone.castShadow = true;
+    firepit.add(stone);
+  }
+  const logMaterial = new THREE.MeshStandardMaterial({ color: 0x2d241d, roughness: 0.95 });
+  for (const rotation of [-0.62, 0.62]) {
+    const directionX = Math.cos(rotation) * 0.72;
+    const directionZ = Math.sin(rotation) * 0.72;
+    const log = new THREE.Mesh(
+      createCylinderBetween(
+        [-directionX, 0.27, -directionZ],
+        [directionX, 0.31, directionZ],
+        0.12,
+        0.105,
+        7,
+      ),
+      logMaterial,
+    );
+    log.castShadow = true;
+    firepit.add(log);
+  }
+  const flameGroup = new THREE.Group();
+  flameGroup.name = 'camp-flames';
+  const flameColors = [0xffb23e, 0xf4762b, 0xffd77a];
+  [[-0.18, 0.02, 0.76], [0.17, -0.08, 0.92], [0.02, 0.18, 0.62]].forEach(
+    ([x, z, height], index) => {
+      const flameGeometry = createVerticalLoft([
+        [0, 0, 0, 0.15, 0.12],
+        [height * 0.28, 0.035, -0.02, 0.2, 0.15],
+        [height * 0.64, -0.045, 0.025, 0.11, 0.085],
+        [height, 0.035, -0.015, 0.012, 0.012],
+      ], 6);
+      flameGeometry.computeVertexNormals();
+      const flame = new THREE.Mesh(
+        flameGeometry,
+        new THREE.MeshBasicMaterial({
+          color: flameColors[index],
+          transparent: true,
+          opacity: 0.86,
+          depthWrite: false,
+          toneMapped: true,
+        }),
+      );
+      flame.position.set(x, 0.34, z);
+      flame.userData.baseScale = 0.92 + index * 0.08;
+      flameGroup.add(flame);
+    },
+  );
+  const emberGlow = new THREE.PointLight(0xff8a3a, 3.1, 13, 2.05);
+  emberGlow.name = 'ember-glow';
+  emberGlow.position.y = 0.72;
+  emberGlow.castShadow = false;
+  firepit.add(flameGroup, emberGlow);
+  firepit.position.set(fireX, fireGround, fireZ);
+  scene.add(firepit);
+
   const smoke = new THREE.Group();
-  for (let i = 0; i < 6; i += 1) {
-    const puff = new THREE.Mesh(smokeGeometry, smokeMaterial);
-    puff.position.set(Math.sin(i) * 0.8, i * 1.75, 0);
-    puff.scale.setScalar(0.55 + i * 0.18);
-    smoke.add(puff);
+  const smokeTexture = makeSmokeTexture();
+  for (let index = 0; index < 9; index += 1) {
+    const smokeColor = new THREE.Color(PALETTE.smoke).lerp(
+      new THREE.Color(0xd1ad78),
+      (1 - index / 8) * 0.22,
+    );
+    const wisp = new THREE.Sprite(new THREE.SpriteMaterial({
+      map: smokeTexture,
+      color: smokeColor,
+      transparent: true,
+      opacity: 0.16 - index * 0.0085,
+      depthWrite: false,
+    }));
+    const baseX = Math.sin(index * 1.61) * (0.14 + index * 0.026);
+    const baseY = 0.58 + index * 0.79;
+    wisp.position.set(baseX, baseY, Math.cos(index * 1.27) * 0.16);
+    wisp.userData.baseX = baseX;
+    wisp.userData.baseY = baseY;
+    wisp.userData.baseRotation = Math.sin(index * 2.17) * 0.2;
+    wisp.scale.set(1.35 + index * 0.13, 1.65 + index * 0.19, 1);
+    wisp.material.rotation = wisp.userData.baseRotation;
+    wisp.renderOrder = 1;
+    smoke.add(wisp);
   }
-  smoke.position.set(-8, terrainHeight(-8, 78) + 2.5, 78);
+  smoke.position.set(fireX, fireGround + 0.42, fireZ);
   smoke.name = 'world.connected_route.fort_smoke';
+  smoke.userData.profile = 'layered-billboard-wisps';
+  smoke.userData.campFlames = flameGroup;
+  smoke.userData.emberGlow = emberGlow;
   scene.add(smoke);
   return smoke;
 }
@@ -2165,7 +2540,18 @@ function makeFieldCamera(scene) {
   const wood = new THREE.MeshStandardMaterial({ color: 0x4b2f24, roughness: 0.76 });
   const brass = new THREE.MeshStandardMaterial({ color: PALETTE.brass, roughness: 0.52, metalness: 0.45 });
   const black = new THREE.MeshStandardMaterial({ color: 0x151a18, roughness: 0.85 });
-  const glass = new THREE.MeshStandardMaterial({ color: 0x9ba69d, roughness: 0.2, metalness: 0.1 });
+  const glass = new THREE.MeshPhysicalMaterial({
+    color: 0xb8ccca,
+    roughness: 0.18,
+    metalness: 0,
+    clearcoat: 0.42,
+    clearcoatRoughness: 0.22,
+    transmission: 0.12,
+    thickness: 0.08,
+    transparent: true,
+    opacity: 0.68,
+    depthWrite: false,
+  });
   const rear = primitive(wood, new THREE.BoxGeometry(1, 1, 1), [0, 0, 0.34], [1.8, 1.16, 0.34]);
   const glassBack = primitive(glass, new THREE.BoxGeometry(1, 1, 1), [0, 0, 0.53], [1.38, 0.78, 0.05]);
   group.add(rear, glassBack);
@@ -2195,6 +2581,11 @@ function makeFieldCamera(scene) {
   group.scale.setScalar(0.64);
   group.name = 'tool.field_camera';
   group.userData.assetVersion = 'bellows-camera';
+  group.traverse((object) => {
+    if (!object.isMesh) return;
+    object.castShadow = false;
+    object.receiveShadow = false;
+  });
   scene.add(group);
   return group;
 }
@@ -2219,6 +2610,11 @@ function makeRifle(scene) {
   group.scale.setScalar(0.34);
   group.name = 'tool.period_rifle';
   group.userData.flash = flash;
+  group.traverse((object) => {
+    if (!object.isMesh) return;
+    object.castShadow = false;
+    object.receiveShadow = false;
+  });
   scene.add(group);
   return group;
 }
@@ -2408,9 +2804,8 @@ export function createWorld(scene) {
         const wingFold = isPrimary && awareness === 3 && !runtime.inCover
           ? Math.max(attackWingFold, 0.12 + diveApproach * 0.82)
           : 0;
-        const wingBeat = reducedMotion
-          ? 0
-          : Math.sin(angle * (2.8 + awareness * 0.4)) * (0.08 + awareness * 0.03);
+        const wingBeat = pterodactylWingBeat(elapsed, phase, awareness, reducedMotion)
+          * (1 - wingFold * 0.78);
         for (const [sideName, sideSign] of [['leftWing', -1], ['rightWing', 1]]) {
           const wing = mesh.userData.rig[sideName];
           const rest = mesh.userData.restPose[sideName];
@@ -2431,11 +2826,17 @@ export function createWorld(scene) {
             rest.wrist.z + bend * 0.2,
           );
         }
-        applyHy3dPterodactylPose(mesh, {
-          wingUp: Math.max(0, wingBeat) * 3.4 * (1 - wingFold),
-          wingDown: Math.max(0, -wingBeat) * 3.4 * (1 - wingFold),
+        const morphPose = runtime.pterodactylMorphPose ?? {
+          wingUp: Math.max(0, wingBeat) * 3.25,
+          wingDown: Math.max(0, -wingBeat) * 3.25,
           diveFold: wingFold,
-        });
+        };
+        applyHy3dPterodactylPose(mesh, morphPose);
+        mesh.userData.flightPose = {
+          wingBeat: Number(wingBeat.toFixed(4)),
+          wingFold: Number(wingFold.toFixed(4)),
+          mode: wingFold > 0.55 ? 'fold-dive' : wingBeat >= 0 ? 'upstroke' : 'downstroke',
+        };
         mesh.userData.rig.head.rotation.x = awareness === 3
           ? -0.08 - diveApproach * 0.3
           : Math.sin(angle * 1.7) * 0.025;
@@ -2444,6 +2845,22 @@ export function createWorld(scene) {
         const rollAmplitude = awareness === 3 ? 0.08 : 0.16 + awareness * 0.035;
         mesh.rotation.z = Math.sin(angle * 2.4) * rollAmplitude;
       });
+      if (runtime.captureThreatPose === 'family' || runtime.captureThreatPose === 'dive') {
+        const primary = pterodactyls[0];
+        const dive = runtime.captureThreatPose === 'dive';
+        primary.position.set(dive ? 4.8 : -4, dive ? 6.15 : 10.5, dive ? -25.5 : -31);
+        primary.rotation.set(
+          dive ? 0.62 : 0.12,
+          dive ? Math.PI + 0.46 : Math.PI,
+          dive ? -0.62 : -0.12,
+        );
+        primary.scale.setScalar(primary.userData.baseScale * (dive ? 0.92 : 0.86));
+        applyHy3dPterodactylPose(primary, {
+          wingUp: dive ? 0 : 0.2,
+          wingDown: 0,
+          diveFold: dive ? 0.9 : 0,
+        });
+      }
       const primaryThreat = pterodactyls[0];
       const shadowVisible = awareness === 3 && !runtime.inCover && !runtime.cameraRaised;
       pterodactylShadow.visible = shadowVisible;
@@ -2601,8 +3018,27 @@ export function createWorld(scene) {
         );
       });
       smoke.children.forEach((puff, index) => {
-        puff.position.x = Math.sin(elapsed * 0.22 + index) * (reducedMotion ? 0.15 : 0.55);
+        const drift = reducedMotion ? 0.08 : 0.32 + index * 0.025;
+        puff.position.x = puff.userData.baseX + Math.sin(elapsed * 0.22 + index) * drift;
+        puff.position.y = puff.userData.baseY
+          + Math.sin(elapsed * 0.16 + index * 0.7) * (reducedMotion ? 0.04 : 0.14);
+        puff.material.rotation = puff.userData.baseRotation
+          + (reducedMotion ? 0 : Math.sin(elapsed * 0.09 + index) * 0.12);
       });
+      smoke.userData.campFlames.children.forEach((flame, index) => {
+        const flicker = reducedMotion
+          ? 1
+          : 0.86 + Math.sin(elapsed * (5.2 + index * 0.7) + index * 1.8) * 0.14;
+        flame.scale.set(
+          flame.userData.baseScale * (1.02 - flicker * 0.04),
+          flame.userData.baseScale * flicker,
+          flame.userData.baseScale * (0.96 + flicker * 0.03),
+        );
+        flame.rotation.y = index * 1.7 + (reducedMotion ? 0 : Math.sin(elapsed * 2.1 + index) * 0.12);
+      });
+      smoke.userData.emberGlow.intensity = reducedMotion
+        ? 2.85
+        : 2.85 + Math.sin(elapsed * 5.6) * 0.22;
     },
     threatSnapshot() {
       const primary = pterodactyls[0];
@@ -2611,6 +3047,7 @@ export function createWorld(scene) {
         response: renderedThreatResponse,
         attackStage: renderedAttackStage,
         attackProgress: Number(renderedAttackProgress.toFixed(3)),
+        flightPose: primary.userData.flightPose ?? null,
         position: {
           x: Number(primary.position.x.toFixed(2)),
           y: Number(primary.position.y.toFixed(2)),

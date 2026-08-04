@@ -17,7 +17,7 @@
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 0.218,
+    "elapsedSeconds": 0.222,
     "distanceTravelled": 0,
     "paused": false,
     "pauseReason": null,
@@ -89,7 +89,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 179.782,
+    "remainingLight": 179.778,
     "returnRoute": null,
     "returnCostSeconds": 0,
     "returnStrike": false,
@@ -101,10 +101,15 @@
     "response": "orbit",
     "attackStage": "orbit",
     "attackProgress": 0,
+    "flightPose": {
+      "wingBeat": -0.1638,
+      "wingFold": 0,
+      "mode": "downstroke"
+    },
     "position": {
-      "x": 31.59,
-      "y": 23.4,
-      "z": 46.7
+      "x": 31.6,
+      "y": 23.39,
+      "z": 46.68
     }
   },
   "familyVisual": {
@@ -154,7 +159,7 @@
     },
     "cover": {
       "archCount": 5,
-      "visibleParts": 25
+      "visibleParts": 35
     },
     "family": {
       "adults": 2,
@@ -243,12 +248,26 @@
   "sceneChildren": 59,
   "calls": 1,
   "triangles": 1,
-  "textures": 29,
-  "geometries": 508,
+  "textures": 32,
+  "geometries": 621,
   "viewport": [
     1440,
     900
   ],
-  "firstRenderedAt": 210.19999998807907,
-  "recentMedianFrameMs": 8.3
+  "renderBudget": {
+    "pixelRatio": 1,
+    "maxPixelRatio": 1.25,
+    "renderedFrames": 34,
+    "skippedFrames": 60,
+    "activeFpsPolicy": "60fps-cap-across-refresh-rates",
+    "idleFpsCap": 30,
+    "pausedFpsCap": 15,
+    "hiddenFpsCap": 4,
+    "powerPreference": "default",
+    "preserveDrawingBuffer": false,
+    "gtaoSamples": 4,
+    "antialiasing": "single-pass-fxaa"
+  },
+  "firstRenderedAt": 148.10000002384186,
+  "recentMedianFrameMs": 33.1
 }

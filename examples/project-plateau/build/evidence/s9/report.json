@@ -2,7 +2,7 @@
   "stage": "s9-living-plates",
   "source": {
     "scope": "index.html, package manifests, public assets and src",
-    "sha256": "1d883375e0f5a07919df4948f569334b7d42ee191f21fbbbd306203ad66f2b1c"
+    "sha256": "8396d9b9879a3a934cac03cf83e02d1ccd305b77945185afce436094a46833e1"
   },
   "environment": {
     "browser": "Google Chrome 150.0.7871.187",
@@ -30,35 +30,35 @@
   "plateImages": [
     {
       "plate": 1,
-      "bytesInCssValue": 142146,
-      "sha256": "9e83cee24edb96b6f09545238c13151618b6375834dfb3c0aaee0a54ed2aff5f",
+      "bytesInCssValue": 129578,
+      "sha256": "38043a635263a4d86f430b2084c35c39a099ce6fcdfd2f644910c47da46c7dbc",
       "filter": "grayscale(1) contrast(1.14) brightness(0.86)"
     },
     {
       "plate": 2,
-      "bytesInCssValue": 133682,
-      "sha256": "c52eae3f75f7dc386dc29f1395dd186a673cca716a9cde356275a866a1457ef1",
+      "bytesInCssValue": 110598,
+      "sha256": "821e0e9a8d140e610ca0c0346e9a9f9ad2757abd66319484a8dfd9f767f42650",
       "filter": "grayscale(1) contrast(1.14) brightness(0.86)"
     },
     {
       "plate": 3,
-      "bytesInCssValue": 135306,
-      "sha256": "f2983df3350b8897b654b42b865b023dc078494d155b35b7be51ed65efdc194e",
+      "bytesInCssValue": 126266,
+      "sha256": "6215a309836e88580f2b0d27e7452ef85430b863e44b099cd22156005be244b7",
       "filter": "grayscale(1) contrast(1.14) brightness(0.86)"
     },
     {
       "plate": 4,
-      "bytesInCssValue": 136574,
-      "sha256": "e306ec709722d8076e25048efc2f5660954fb143cb0fd31d189e5ddd67fa4cca",
+      "bytesInCssValue": 127266,
+      "sha256": "8b1cc81e324b241d392a088c143f8086e899e230d17c772df112c77cf95e9721",
       "filter": "grayscale(1) contrast(1.14) brightness(0.86)"
     }
   ],
   "performance": {
     "samples": 240,
-    "medianFrameMs": 8.3,
-    "medianFps": 120.5,
-    "onePercentLowFps": 98,
-    "worstFrameMs": 10.3
+    "medianFrameMs": 16.7,
+    "medianFps": 59.9,
+    "onePercentLowFps": 39.4,
+    "worstFrameMs": 26.6
   },
   "checkpoints": [
     {

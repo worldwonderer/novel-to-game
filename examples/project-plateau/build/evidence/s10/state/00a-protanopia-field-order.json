@@ -101,10 +101,15 @@
     "response": "orbit",
     "attackStage": "orbit",
     "attackProgress": 0,
+    "flightPose": {
+      "wingBeat": 0.1283,
+      "wingFold": 0,
+      "mode": "upstroke"
+    },
     "position": {
-      "x": 31.77,
-      "y": 23.3,
-      "z": 46.29
+      "x": 31.78,
+      "y": 23.29,
+      "z": 46.24
     }
   },
   "familyVisual": {
@@ -154,7 +159,7 @@
     },
     "cover": {
       "archCount": 5,
-      "visibleParts": 25
+      "visibleParts": 35
     },
     "family": {
       "adults": 2,
@@ -237,12 +242,26 @@
   "sceneChildren": 59,
   "calls": 1,
   "triangles": 1,
-  "textures": 29,
-  "geometries": 496,
+  "textures": 31,
+  "geometries": 609,
   "viewport": [
     1440,
     900
   ],
-  "firstRenderedAt": 207.30000001192093,
-  "recentMedianFrameMs": 8.3
+  "renderBudget": {
+    "pixelRatio": 1,
+    "maxPixelRatio": 1.25,
+    "renderedFrames": 21,
+    "skippedFrames": 49,
+    "activeFpsPolicy": "60fps-cap-across-refresh-rates",
+    "idleFpsCap": 30,
+    "pausedFpsCap": 15,
+    "hiddenFpsCap": 4,
+    "powerPreference": "default",
+    "preserveDrawingBuffer": false,
+    "gtaoSamples": 4,
+    "antialiasing": "single-pass-fxaa"
+  },
+  "firstRenderedAt": 175.10000002384186,
+  "recentMedianFrameMs": 33.3
 }

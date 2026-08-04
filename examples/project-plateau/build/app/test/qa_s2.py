@@ -158,7 +158,11 @@ def run() -> dict[str, object]:
         expected_attack_event = "plate-exposure:+2" if complete_loop_stage else "exposed-sprint"
         assert attack["player"]["lastThreatEvent"] == expected_attack_event, attack
         assert attack["threatVisual"]["state"] == "attack", attack
-        wait_for_threat(max_x=5, min_forward=7)
+        # At attack the authored dive is already within ten metres laterally and
+        # seven metres forward.  Waiting for a narrower cosmetic orbit phase can
+        # outlive the gameplay contact window and turn this topology check into a
+        # timing race.
+        wait_for_threat(max_x=10, min_forward=7)
         capture("creek-attack", "04-creek-attack.jpg")
 
         page.evaluate("window.__projectPlateau.teleportForTest({x: 0, z: 18})")
@@ -168,6 +172,8 @@ def run() -> dict[str, object]:
         assert covered["player"]["inCover"], covered
         assert covered["player"]["threatState"] == "search", covered
         assert covered["player"]["lastThreatEvent"] == "cover-deescalation", covered
+        assert covered["player"]["contactCount"] == 0, covered
+        assert covered["player"]["bodyMargin"] == 1, covered
         assert covered["threatVisual"]["state"] == "search", covered
         capture("covered-deescalation", "05-covered-deescalation.jpg")
 

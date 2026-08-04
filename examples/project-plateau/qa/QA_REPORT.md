@@ -1,18 +1,15 @@
 # Project Plateau QA report
 
-## Verdict
+`targetFinish: playable-prototype`
 
 **Local automated build handoff: PASS. Strict visual promotion: 100/100 PASS. Public-host smoke: PASS. Example publication: MAINTAINER-GO.**
 
-The authoritative run completed every registered suite, a same-run input-only
-Strong path from clean field order through result and restart, a second complete
-Strong path under Chromium achromatopsia, and 41 direct state/browser/visual
-checkpoints. No local blocker, uncaught browser error, external runtime host,
-failed deterministic outcome or budget regression was observed.
+**Authoritative runtime QA: PASS. Independent visual review: PASS. Visual promotion: PASS. Demonstrated/publication tier: `playable-prototype`.**
 
-The v23 source-bound visual bundle also passed all six visual targets and all
-eight non-compensating review categories. The independent record is
-[`evidence/perception/hy3d-v23-independent-review.md`](evidence/perception/hy3d-v23-independent-review.md).
+The final source-bound visual bundle passed all six visual targets, both supported
+viewports and the fixed-transform bilateral pterodactyl wing sequence. The
+independent record is
+[`evidence/independent-visual-review-2026-08-04.md`](evidence/independent-visual-review-2026-08-04.md).
 
 On 2026-08-01 the maintainer reported three successful informal first-time
 sessions and explicitly accepted the project for publication under `examples/`.
@@ -23,25 +20,37 @@ composition/motion/UI/runtime visual review now passes; full live colour-cue
 route review remains `NOT_RUN`. Publication is a product decision with disclosed
 evidence gaps, not an inferred general release pass.
 
-## Authoritative run
+Independent reviewer `/root/visual_v17_review` (`vision`) made no implementation
+edits and judged only the approved targets and captured evidence. The final
+verdict is PASS / GO for `playable-prototype`, with 0 blockers and 0 majors.
+The durable rubric and reviewed paths are in
+[`evidence/independent-visual-review-2026-08-04.md`](evidence/independent-visual-review-2026-08-04.md).
+
+Nine focal release assets pass current runtime and review evidence. Audio remains
+an explicitly degradable asset: authored sound captions and existing visual/state
+feedback are the tested fallback. This supports a playable prototype, not polished
+or showcase quality.
+
+## Current authoritative run
 
 | Field | Observed |
 |---|---|
-| Source commit | `9d7f8736e5de17024569934df3da299358713adc` |
-| App fingerprint | `1d883375e0f5a07919df4948f569334b7d42ee191f21fbbbd306203ad66f2b1c` |
+| Source commit | `null` — merge candidate is bound by canonical app fingerprint |
+| App fingerprint | `8396d9b9879a3a934cac03cf83e02d1ccd305b77945185afce436094a46833e1` |
 | Install | [`npm ci`](evidence/install.log) — 24 packages, 0 vulnerabilities |
 | Verify | `npm run verify` |
 | Result | exit `0`; 7/7 suites; 17/17 commands |
-| Duration | `513964 ms` |
+| Duration | `588739 ms` |
 | Log | [`evidence/verify.log`](evidence/verify.log) |
 | Structured handoff | [`verification.json`](verification.json) |
-| Suite discovery | 20 registered pass/fail files; 2 explicit non-suite tools; 0 orphan |
+| Suite discovery | 22 registered pass/fail files; 2 explicit non-suite tools; 0 orphan |
 
-`capture_demo_clip.py` is recorded as a delivery-media tool rather than a test;
-`verify.py` is the orchestrator and would recurse if registered as its own
-suite. Any new Python or JavaScript file under `build/app/test/` that is neither
-registered nor explicitly classified now fails with `ORPHANED_TEST_SUITE
-major`.
+The retained verification locator `4ee6f47bac6f0d4be248569a24c310a78e588d0a`
+matches the candidate app bytes. The fingerprint remains the authoritative
+current-run identity; the commit is historical location metadata.
+
+The earlier `8793fb9` / `e99883ce…` 16-command run is historical gameplay
+evidence only and is superseded by the current structured handoff above.
 
 ## Environment and budgets
 
@@ -50,27 +59,29 @@ major`.
 | Runtime | Node.js `v25.6.1`; npm `11.9.0`; Python `3.14.3` | PASS |
 | Browser | Google Chrome `150.0.7871.187` | PASS |
 | Viewports | target `1440×900`; minimum `1280×720` | PASS |
-| Target heaviest state | median `120.5 FPS`; 1% low `97.1 FPS` | PASS vs `45/30` |
-| Minimum heaviest state | median `120.5 FPS`; 1% low `97.1 FPS` | PASS vs `45/30` |
-| Built payload | `3243756` raw bytes; `2012771` gzip bytes | PASS vs `50/20 MiB` |
-| First local no-cache frame | `2940.9 ms` at simulated 25 Mbps | PASS vs `8000 ms` locally |
+| Target heaviest state | median `59.9 FPS`; 1% low `39.4 FPS` | PASS vs `45/30`; active rendering capped near 60 FPS |
+| Minimum heaviest state | median `59.9 FPS`; 1% low `38.9 FPS` | PASS vs `45/30`; active rendering capped near 60 FPS |
+| Built payload | `3260635` raw bytes; `2017917` gzip bytes | PASS vs `50/20 MiB` |
+| First local no-cache frame | `2997.6 ms` at simulated 25 Mbps | PASS vs `8000 ms` locally |
+| Power policy | DPR capped at `1.25`; title `30 FPS`; paused `15 FPS`; hidden `4 FPS`; default GPU preference; no persistent drawing buffer | PASS |
 | Runtime requests | only `127.0.0.1:4173`; no external host | PASS |
-| Public preview | `https://plateau.vibecoco.ai`; Google Chrome `150.0.7871.187` | PASS; anonymous HTTPS load, full input routes, result and restart; no console error or third-party runtime host |
+| Historical public preview | `https://plateau.vibecoco.ai`; Google Chrome `150.0.7871.187` | `HISTORICAL / NOT_CURRENT`; the retained run is bound to `e99883ce…`, not the current `1b0ae821…` candidate, and does not count as current release proof |
 
 The loading measurement uses Chrome DevTools throttling against local Vite. It
-does not measure public-host cold-cache timing. The separate
-[`public-host`](evidence/public-host/report.json) run proves DNS/TLS reachability,
-clean-context loading and complete play against the deployed assets.
+does not measure public-host cold-cache timing. The separate historical
+[`public-host`](evidence/public-host/report.json) record proves only the older
+`e99883ce…` deployment; it is `HISTORICAL / NOT_CURRENT` for this candidate.
+No deployed current-fingerprint PASS is claimed.
 
 ## Suite discovery and execution
 
 | Suite | Discovered files or surfaces | Same-run result |
 |---|---|---|
-| `unit:simulation` | eight `test/*.test.js` files, 62 assertions | PASS |
+| `unit:simulation` | nine `test/*.test.js` files, 77 assertions | PASS |
 | `build:production` | `index.html`, `src/`, `public/` | PASS; Vite production build |
 | `browser:checkpoint-history` | `qa_s0.py`–`qa_s7.py`, `qa_s9.py` | PASS; 9/9 commands |
 | `browser:complete-run` | `qa_s8.py` | PASS; Strong/Mixed/Panic plus achromatopsia Strong by keyboard/mouse |
-| `browser:current-visual` | `qa_s10.py`, `qa_visual_targets.py` | PASS; glade/plates, four-state checkpoints for three additional vision deficiencies, six visual targets, eight creature orbits and three motion sequences |
+| `browser:current-visual` | `qa_s10.py`, `qa_visual_targets.py`, `capture_visual_upgrade.py` | PASS; glade/plates, four-state checkpoints for three additional vision deficiencies, six visual targets, eight creature orbits and four motion sequences |
 | `qa:design-invariants` | `qa/check_design_invariants.py` | PASS; 10/10 design-derived checks |
 | `repo:contract` | validator and repository unit discovery | PASS; validator plus 31 repository tests |
 
@@ -89,7 +100,7 @@ invoke `teleportForTest` or `advanceTimeForTest`.
 | Restart | Choose “Take the route again”; restore unexposed plates and zero travel | [`06`](../build/evidence/s8/state/06-strong-clean-restart.json) | [`06`](../build/evidence/s8/browser/06-strong-clean-restart.json) | [`06`](../build/evidence/s8/06-strong-clean-restart.jpg) |
 
 Observed Strong result: 7 evidence, 4 surviving plates, covered return, no shot,
-body margin retained, 100.004 seconds remaining. Mixed reached corroborating
+body margin retained, 93.5 seconds remaining. Mixed reached corroborating
 evidence 4 with three plates, one shot and the brook callback. Panic spent both
 rounds and failed on the second unblocked strike. Each terminal state has its
 own clean restart checkpoint.

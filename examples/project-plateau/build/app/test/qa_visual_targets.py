@@ -449,6 +449,26 @@ def run() -> dict[str, object]:
                         [f"QA visual orbit {subject}", f"{angle} degrees"],
                     )
 
+            # Lock subject transform and camera, then isolate the three HY3D
+            # morph phases. Ordinary elapsed-time samples also change the
+            # animal's orbit heading and cannot prove bilateral wing motion.
+            page.evaluate("window.__projectPlateau.freezeVisualForTest(0.35, false)")
+            page.evaluate(
+                "review => window.__projectPlateau.setVisualReviewOrbitForTest(review)",
+                {"subject": "pterodactyl", "angleDegrees": 0},
+            )
+            for frame_index, pose in enumerate((
+                {"wingUp": 1},
+                {},
+                {"wingDown": 1},
+            )):
+                page.evaluate(
+                    "pose => window.__projectPlateau.setPterodactylMorphPoseForTest(pose)",
+                    pose,
+                )
+                page.wait_for_timeout(120)
+                capture_motion_frame("pterodactyl-wingbeat", frame_index)
+
             user_agent = page.evaluate("navigator.userAgent")
             browser.close()
 
@@ -478,7 +498,12 @@ def run() -> dict[str, object]:
         assert plate_distances and min(plate_distances) >= 2.5, plate_distances
 
         motion_distances: dict[str, list[float]] = {}
-        for sequence in ("young-play", "branch-pull", "pterodactyl-attack"):
+        for sequence in (
+            "young-play",
+            "branch-pull",
+            "pterodactyl-attack",
+            "pterodactyl-wingbeat",
+        ):
             sequence_records = [
                 record for record in motion_captures if record["sequence"] == sequence
             ]

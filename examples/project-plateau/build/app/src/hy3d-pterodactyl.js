@@ -50,7 +50,7 @@ function createPoseAttribute(position, poseName) {
 
     if (poseName === 'wingUp' || poseName === 'wingDown') {
       const direction = poseName === 'wingUp' ? 1 : -1;
-      const [bentX, bentY] = rotateWingPoint(x, y, side * direction * 0.19, side);
+      const [bentX, bentY] = rotateWingPoint(x, y, side * direction * 0.36, side);
       nextX = THREE.MathUtils.lerp(x, bentX, wingInfluence);
       nextY = THREE.MathUtils.lerp(y, bentY, wingInfluence);
     } else if (poseName === 'diveFold') {

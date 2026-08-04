@@ -2,7 +2,7 @@
   "stage": "s8-input-paths",
   "source": {
     "scope": "index.html, package manifests, public assets and src",
-    "sha256": "1d883375e0f5a07919df4948f569334b7d42ee191f21fbbbd306203ad66f2b1c"
+    "sha256": "8396d9b9879a3a934cac03cf83e02d1ccd305b77945185afce436094a46833e1"
   },
   "environment": {
     "browser": "Google Chrome 150.0.7871.187",
@@ -41,10 +41,10 @@
   },
   "pathMetrics": {
     "Strong": {
-      "wallSeconds": 51.541,
-      "simulationSeconds": 51.601,
-      "distanceTravelled": 128.387,
-      "remainingLight": 100.399,
+      "wallSeconds": 58.097,
+      "simulationSeconds": 58.191,
+      "distanceTravelled": 130.928,
+      "remainingLight": 93.809,
       "returnCostSeconds": 28,
       "route": "covered",
       "result": {
@@ -56,16 +56,16 @@
         "survivingPlates": 4,
         "route": "covered",
         "brookResponse": null,
-        "remainingLight": 100.4,
+        "remainingLight": 93.8,
         "gunshotCallback": null
       },
       "visionMode": "full-colour"
     },
     "Mixed": {
-      "wallSeconds": 38.005,
-      "simulationSeconds": 37.991,
-      "distanceTravelled": 129.064,
-      "remainingLight": 124.009,
+      "wallSeconds": 37.924,
+      "simulationSeconds": 37.925,
+      "distanceTravelled": 129.12,
+      "remainingLight": 124.075,
       "returnCostSeconds": 18,
       "route": "exposed",
       "result": {
@@ -77,16 +77,16 @@
         "survivingPlates": 3,
         "route": "exposed",
         "brookResponse": "brush-moving",
-        "remainingLight": 124,
+        "remainingLight": 124.1,
         "gunshotCallback": "The report carried. Something answered by the brook."
       },
       "visionMode": "full-colour"
     },
     "Panic": {
-      "wallSeconds": 26.523,
-      "simulationSeconds": 26.522,
-      "distanceTravelled": 79.681,
-      "remainingLight": 135.478,
+      "wallSeconds": 26.42,
+      "simulationSeconds": 26.424,
+      "distanceTravelled": 79.71,
+      "remainingLight": 135.576,
       "returnCostSeconds": 18,
       "route": "exposed",
       "result": {
@@ -99,10 +99,10 @@
       "visionMode": "full-colour"
     },
     "Achromatopsia Strong": {
-      "wallSeconds": 51.541,
-      "simulationSeconds": 51.527,
-      "distanceTravelled": 128.374,
-      "remainingLight": 100.473,
+      "wallSeconds": 58.071,
+      "simulationSeconds": 58.077,
+      "distanceTravelled": 130.953,
+      "remainingLight": 93.924,
       "returnCostSeconds": 28,
       "route": "covered",
       "result": {
@@ -114,7 +114,7 @@
         "survivingPlates": 4,
         "route": "covered",
         "brookResponse": null,
-        "remainingLight": 100.5,
+        "remainingLight": 93.9,
         "gunshotCallback": null
       },
       "visionMode": "achromatopsia"
@@ -143,22 +143,22 @@
       "path": "Strong",
       "input": "KeyW",
       "purpose": "Fort to brook",
-      "wallSeconds": 6.036,
+      "wallSeconds": 6.049,
       "start": {
         "x": 3,
         "z": 70
       },
       "end": {
         "x": 3,
-        "z": 44.976
+        "z": 44.947
       },
-      "distanceAfter": 25.024
+      "distanceAfter": 25.053
     },
     {
       "path": "Strong",
       "input": "Right Mouse + Left Mouse",
       "purpose": "partial tutorial frame",
-      "wallSeconds": 2.149,
+      "wallSeconds": 2.15,
       "plate": 1,
       "frame": "brook-partial",
       "points": 1
@@ -167,22 +167,22 @@
       "path": "Strong",
       "input": "KeyW",
       "purpose": "brook to basalt",
-      "wallSeconds": 6.508,
+      "wallSeconds": 6.499,
       "start": {
         "x": 3,
-        "z": 44.976
+        "z": 44.947
       },
       "end": {
         "x": 3,
-        "z": 17.973
+        "z": 17.935
       },
-      "distanceAfter": 52.027
+      "distanceAfter": 52.065
     },
     {
       "path": "Strong",
       "input": "Right Mouse + Left Mouse",
       "purpose": "basalt scale frame",
-      "wallSeconds": 2.152,
+      "wallSeconds": 2.154,
       "plate": 2,
       "frame": "basalt-scale",
       "points": 2
@@ -191,22 +191,22 @@
       "path": "Strong",
       "input": "KeyA",
       "purpose": "enter canopy",
-      "wallSeconds": 0.157,
+      "wallSeconds": 0.152,
       "start": {
         "x": 3,
-        "z": 17.973
+        "z": 17.935
       },
       "end": {
-        "x": 2.676,
-        "z": 17.973
+        "x": 2.649,
+        "z": 17.935
       },
-      "distanceAfter": 52.35
+      "distanceAfter": 52.416
     },
     {
       "path": "Strong",
       "input": "hold position under cover",
       "purpose": "widen the attack before glade",
-      "wallSeconds": 5.847,
+      "wallSeconds": 5.843,
       "awarenessBefore": 3,
       "awarenessAfter": 2
     },
@@ -214,31 +214,69 @@
       "path": "Strong",
       "input": "KeyW",
       "purpose": "canopy to glade",
-      "wallSeconds": 3.882,
+      "wallSeconds": 3.872,
       "start": {
-        "x": 2.676,
-        "z": 17.973
+        "x": 2.649,
+        "z": 17.935
       },
       "end": {
-        "x": 2.676,
-        "z": 1.972
+        "x": 2.649,
+        "z": 1.973
       },
-      "distanceAfter": 68.352
+      "distanceAfter": 68.378
     },
     {
       "path": "Strong",
       "input": "Right Mouse + Left Mouse",
       "purpose": "young-at-play frame",
-      "wallSeconds": 2.155,
+      "wallSeconds": 2.131,
       "plate": 3,
       "frame": "glade-young-play",
       "points": 2
     },
     {
       "path": "Strong",
+      "input": "KeyS",
+      "purpose": "protect first behavior plate",
+      "wallSeconds": 0.367,
+      "start": {
+        "x": 2.649,
+        "z": 1.973
+      },
+      "end": {
+        "x": 2.649,
+        "z": 3.234
+      },
+      "distanceAfter": 69.639
+    },
+    {
+      "path": "Strong",
+      "input": "hold position under cover",
+      "purpose": "break the dive between behavior frames",
+      "wallSeconds": 5.871,
+      "awarenessBefore": 3,
+      "awarenessAfter": 2
+    },
+    {
+      "path": "Strong",
+      "input": "KeyW",
+      "purpose": "return for second behavior frame",
+      "wallSeconds": 0.369,
+      "start": {
+        "x": 2.649,
+        "z": 3.234
+      },
+      "end": {
+        "x": 2.649,
+        "z": 1.974
+      },
+      "distanceAfter": 70.899
+    },
+    {
+      "path": "Strong",
       "input": "Right Mouse + Left Mouse",
       "purpose": "branch-pull frame",
-      "wallSeconds": 2.149,
+      "wallSeconds": 2.135,
       "plate": 4,
       "frame": "glade-branch-pull",
       "points": 2
@@ -247,22 +285,22 @@
       "path": "Strong",
       "input": "KeyS",
       "purpose": "retreat into cover",
-      "wallSeconds": 0.375,
+      "wallSeconds": 0.378,
       "start": {
-        "x": 2.676,
-        "z": 1.972
+        "x": 2.649,
+        "z": 1.974
       },
       "end": {
-        "x": 2.676,
-        "z": 3.231
+        "x": 2.649,
+        "z": 3.233
       },
-      "distanceAfter": 69.61
+      "distanceAfter": 72.159
     },
     {
       "path": "Strong",
       "input": "hold position under cover",
       "purpose": "break the final dive",
-      "wallSeconds": 5.865,
+      "wallSeconds": 5.866,
       "awarenessBefore": 3,
       "awarenessAfter": 2
     },
@@ -270,37 +308,37 @@
       "path": "Strong",
       "input": "KeyS",
       "purpose": "covered return through the Fort gate",
-      "wallSeconds": 14.069,
+      "wallSeconds": 14.062,
       "start": {
-        "x": 2.676,
-        "z": 3.231
+        "x": 2.649,
+        "z": 3.233
       },
       "end": {
-        "x": 2.676,
-        "z": 62.007
+        "x": 2.649,
+        "z": 62.002
       },
-      "distanceAfter": 128.387
+      "distanceAfter": 130.928
     },
     {
       "path": "Mixed",
       "input": "KeyW",
       "purpose": "Fort to brook",
-      "wallSeconds": 6.038,
+      "wallSeconds": 6.047,
       "start": {
         "x": 3,
         "z": 70
       },
       "end": {
         "x": 3,
-        "z": 44.971
+        "z": 44.934
       },
-      "distanceAfter": 25.029
+      "distanceAfter": 25.066
     },
     {
       "path": "Mixed",
       "input": "Right Mouse + Left Mouse",
       "purpose": "partial tutorial frame",
-      "wallSeconds": 2.149,
+      "wallSeconds": 2.166,
       "plate": 1,
       "frame": "brook-partial",
       "points": 1
@@ -309,37 +347,37 @@
       "path": "Mixed",
       "input": "KeyA",
       "purpose": "choose canopy",
-      "wallSeconds": 0.148,
+      "wallSeconds": 0.144,
       "start": {
         "x": 3,
-        "z": 44.971
+        "z": 44.934
       },
       "end": {
-        "x": 2.682,
-        "z": 44.971
+        "x": 2.665,
+        "z": 44.934
       },
-      "distanceAfter": 25.346
+      "distanceAfter": 25.401
     },
     {
       "path": "Mixed",
       "input": "KeyW",
       "purpose": "brook to canopy frame",
-      "wallSeconds": 6.503,
+      "wallSeconds": 6.482,
       "start": {
-        "x": 2.682,
-        "z": 44.971
+        "x": 2.665,
+        "z": 44.934
       },
       "end": {
-        "x": 2.682,
-        "z": 17.991
+        "x": 2.665,
+        "z": 17.986
       },
-      "distanceAfter": 52.326
+      "distanceAfter": 52.35
     },
     {
       "path": "Mixed",
       "input": "Right Mouse + Left Mouse",
       "purpose": "covered flank frame",
-      "wallSeconds": 2.15,
+      "wallSeconds": 2.135,
       "plate": 2,
       "frame": "canopy-flank",
       "points": 1
@@ -348,22 +386,22 @@
       "path": "Mixed",
       "input": "KeyW",
       "purpose": "canopy to glade",
-      "wallSeconds": 3.882,
+      "wallSeconds": 3.881,
       "start": {
-        "x": 2.682,
-        "z": 17.991
+        "x": 2.665,
+        "z": 17.986
       },
       "end": {
-        "x": 2.682,
-        "z": 1.999
+        "x": 2.665,
+        "z": 1.981
       },
-      "distanceAfter": 68.319
+      "distanceAfter": 68.354
     },
     {
       "path": "Mixed",
       "input": "Right Mouse + Left Mouse",
       "purpose": "single behavior frame",
-      "wallSeconds": 2.149,
+      "wallSeconds": 2.131,
       "plate": 3,
       "frame": "glade-young-play",
       "points": 2
@@ -372,7 +410,7 @@
       "path": "Mixed",
       "input": "F + Left Mouse",
       "purpose": "interrupt committed dive",
-      "wallSeconds": 0.158,
+      "wallSeconds": 0.159,
       "shotCount": 1,
       "cartridges": 1
     },
@@ -380,67 +418,67 @@
       "path": "Mixed",
       "input": "KeyD",
       "purpose": "line up exposed creek",
-      "wallSeconds": 0.257,
+      "wallSeconds": 0.249,
       "start": {
-        "x": 2.682,
-        "z": 1.999
+        "x": 2.665,
+        "z": 1.981
       },
       "end": {
-        "x": 3.425,
-        "z": 1.999
+        "x": 3.404,
+        "z": 1.981
       },
-      "distanceAfter": 69.061
+      "distanceAfter": 69.093
     },
     {
       "path": "Mixed",
       "input": "KeyS",
       "purpose": "commit exposed return",
-      "wallSeconds": 0.371,
+      "wallSeconds": 0.366,
       "start": {
-        "x": 3.425,
-        "z": 1.999
+        "x": 3.404,
+        "z": 1.981
       },
       "end": {
-        "x": 3.425,
-        "z": 3.223
+        "x": 3.404,
+        "z": 3.242
       },
-      "distanceAfter": 70.286
+      "distanceAfter": 70.354
     },
     {
       "path": "Mixed",
       "input": "KeyS",
       "purpose": "creek return to Fort",
-      "wallSeconds": 14.075,
+      "wallSeconds": 14.073,
       "start": {
-        "x": 3.425,
-        "z": 3.223
+        "x": 3.404,
+        "z": 3.242
       },
       "end": {
-        "x": 3.425,
-        "z": 62.002
+        "x": 3.404,
+        "z": 62.008
       },
-      "distanceAfter": 129.064
+      "distanceAfter": 129.12
     },
     {
       "path": "Panic",
       "input": "KeyW",
       "purpose": "sprint Fort to shelf",
-      "wallSeconds": 7.729,
+      "wallSeconds": 7.721,
       "start": {
         "x": 3,
         "z": 70
       },
       "end": {
         "x": 3,
-        "z": 17.973
+        "z": 17.912
       },
-      "distanceAfter": 52.027
+      "distanceAfter": 52.088
     },
     {
       "path": "Panic",
       "input": "Right Mouse + Left Mouse",
       "purpose": "first immediate open frame",
-      "wallSeconds": 2.144,
+      "wallSeconds": 2.132,
       "plate": 1,
       "frame": "basalt-scale",
       "points": 2
@@ -449,7 +487,7 @@
       "path": "Panic",
       "input": "F + Left Mouse",
       "purpose": "interrupt committed dive",
-      "wallSeconds": 0.153,
+      "wallSeconds": 0.154,
       "shotCount": 1,
       "cartridges": 1
     },
@@ -457,7 +495,7 @@
       "path": "Panic",
       "input": "Right Mouse + Left Mouse",
       "purpose": "second immediate open frame",
-      "wallSeconds": 2.157,
+      "wallSeconds": 2.134,
       "plate": 2,
       "frame": "basalt-scale",
       "points": 2
@@ -466,7 +504,7 @@
       "path": "Panic",
       "input": "F + Left Mouse",
       "purpose": "interrupt committed dive",
-      "wallSeconds": 0.16,
+      "wallSeconds": 0.159,
       "shotCount": 2,
       "cartridges": 0
     },
@@ -474,7 +512,7 @@
       "path": "Panic",
       "input": "Right Mouse + Left Mouse",
       "purpose": "third immediate open frame",
-      "wallSeconds": 2.147,
+      "wallSeconds": 2.156,
       "plate": 3,
       "frame": "basalt-scale",
       "points": 2
@@ -483,22 +521,22 @@
       "path": "Panic",
       "input": "KeyW",
       "purpose": "continue to glade",
-      "wallSeconds": 3.884,
+      "wallSeconds": 3.879,
       "start": {
         "x": 3,
-        "z": 17.973
+        "z": 17.912
       },
       "end": {
         "x": 3,
-        "z": 1.98
+        "z": 1.947
       },
-      "distanceAfter": 68.02
+      "distanceAfter": 68.053
     },
     {
       "path": "Panic",
       "input": "Right Mouse + Left Mouse",
       "purpose": "fourth immediate frame without behavior read",
-      "wallSeconds": 2.15,
+      "wallSeconds": 2.133,
       "plate": 4,
       "frame": "glade-form",
       "points": 1
@@ -507,67 +545,67 @@
       "path": "Panic",
       "input": "KeyD",
       "purpose": "line up creek",
-      "wallSeconds": 0.173,
+      "wallSeconds": 0.164,
       "start": {
         "x": 3,
-        "z": 1.98
+        "z": 1.947
       },
       "end": {
         "x": 3.42,
-        "z": 1.98
+        "z": 1.947
       },
-      "distanceAfter": 68.44
+      "distanceAfter": 68.473
     },
     {
       "path": "Panic",
       "input": "KeyS",
       "purpose": "take exposed creek",
-      "wallSeconds": 0.365,
+      "wallSeconds": 0.368,
       "start": {
         "x": 3.42,
-        "z": 1.98
+        "z": 1.947
       },
       "end": {
         "x": 3.42,
-        "z": 3.205
+        "z": 3.207
       },
-      "distanceAfter": 69.665
+      "distanceAfter": 69.732
     },
     {
       "path": "Panic",
       "input": "KeyS",
       "purpose": "continue without cover discipline",
-      "wallSeconds": 2.459,
+      "wallSeconds": 2.45,
       "start": {
         "x": 3.42,
-        "z": 3.205
+        "z": 3.207
       },
       "end": {
         "x": 3.42,
-        "z": 13.221
+        "z": 13.185
       },
-      "distanceAfter": 79.681
+      "distanceAfter": 79.71
     },
     {
       "path": "Achromatopsia Strong",
       "input": "KeyW",
       "purpose": "Fort to brook",
-      "wallSeconds": 6.038,
+      "wallSeconds": 6.026,
       "start": {
         "x": 3,
         "z": 70
       },
       "end": {
         "x": 3,
-        "z": 44.97
+        "z": 44.99
       },
-      "distanceAfter": 25.03
+      "distanceAfter": 25.01
     },
     {
       "path": "Achromatopsia Strong",
       "input": "Right Mouse + Left Mouse",
       "purpose": "partial tutorial frame",
-      "wallSeconds": 2.149,
+      "wallSeconds": 2.168,
       "plate": 1,
       "frame": "brook-partial",
       "points": 1
@@ -576,22 +614,22 @@
       "path": "Achromatopsia Strong",
       "input": "KeyW",
       "purpose": "brook to basalt",
-      "wallSeconds": 6.496,
+      "wallSeconds": 6.501,
       "start": {
         "x": 3,
-        "z": 44.97
+        "z": 44.99
       },
       "end": {
         "x": 3,
-        "z": 17.979
+        "z": 17.96
       },
-      "distanceAfter": 52.021
+      "distanceAfter": 52.04
     },
     {
       "path": "Achromatopsia Strong",
       "input": "Right Mouse + Left Mouse",
       "purpose": "basalt scale frame",
-      "wallSeconds": 2.145,
+      "wallSeconds": 2.133,
       "plate": 2,
       "frame": "basalt-scale",
       "points": 2
@@ -600,22 +638,22 @@
       "path": "Achromatopsia Strong",
       "input": "KeyA",
       "purpose": "enter canopy",
-      "wallSeconds": 0.156,
+      "wallSeconds": 0.161,
       "start": {
         "x": 3,
-        "z": 17.979
+        "z": 17.96
       },
       "end": {
-        "x": 2.68,
-        "z": 17.979
+        "x": 2.649,
+        "z": 17.96
       },
-      "distanceAfter": 52.342
+      "distanceAfter": 52.391
     },
     {
       "path": "Achromatopsia Strong",
       "input": "hold position under cover",
       "purpose": "widen the attack before glade",
-      "wallSeconds": 5.853,
+      "wallSeconds": 5.843,
       "awarenessBefore": 3,
       "awarenessAfter": 2
     },
@@ -623,31 +661,69 @@
       "path": "Achromatopsia Strong",
       "input": "KeyW",
       "purpose": "canopy to glade",
-      "wallSeconds": 3.881,
+      "wallSeconds": 3.87,
       "start": {
-        "x": 2.68,
-        "z": 17.979
+        "x": 2.649,
+        "z": 17.96
       },
       "end": {
-        "x": 2.68,
-        "z": 1.979
+        "x": 2.649,
+        "z": 1.995
       },
-      "distanceAfter": 68.341
+      "distanceAfter": 68.356
     },
     {
       "path": "Achromatopsia Strong",
       "input": "Right Mouse + Left Mouse",
       "purpose": "young-at-play frame",
-      "wallSeconds": 2.158,
+      "wallSeconds": 2.134,
       "plate": 3,
       "frame": "glade-young-play",
       "points": 2
     },
     {
       "path": "Achromatopsia Strong",
+      "input": "KeyS",
+      "purpose": "protect first behavior plate",
+      "wallSeconds": 0.364,
+      "start": {
+        "x": 2.649,
+        "z": 1.995
+      },
+      "end": {
+        "x": 2.649,
+        "z": 3.256
+      },
+      "distanceAfter": 69.617
+    },
+    {
+      "path": "Achromatopsia Strong",
+      "input": "hold position under cover",
+      "purpose": "break the dive between behavior frames",
+      "wallSeconds": 5.869,
+      "awarenessBefore": 3,
+      "awarenessAfter": 2
+    },
+    {
+      "path": "Achromatopsia Strong",
+      "input": "KeyW",
+      "purpose": "return for second behavior frame",
+      "wallSeconds": 0.38,
+      "start": {
+        "x": 2.649,
+        "z": 3.256
+      },
+      "end": {
+        "x": 2.649,
+        "z": 1.964
+      },
+      "distanceAfter": 70.909
+    },
+    {
+      "path": "Achromatopsia Strong",
       "input": "Right Mouse + Left Mouse",
       "purpose": "branch-pull frame",
-      "wallSeconds": 2.142,
+      "wallSeconds": 2.159,
       "plate": 4,
       "frame": "glade-branch-pull",
       "points": 2
@@ -656,22 +732,22 @@
       "path": "Achromatopsia Strong",
       "input": "KeyS",
       "purpose": "retreat into cover",
-      "wallSeconds": 0.364,
+      "wallSeconds": 0.368,
       "start": {
-        "x": 2.68,
-        "z": 1.979
+        "x": 2.649,
+        "z": 1.964
       },
       "end": {
-        "x": 2.68,
-        "z": 3.205
+        "x": 2.649,
+        "z": 3.223
       },
-      "distanceAfter": 69.567
+      "distanceAfter": 72.168
     },
     {
       "path": "Achromatopsia Strong",
       "input": "hold position under cover",
       "purpose": "break the final dive",
-      "wallSeconds": 5.88,
+      "wallSeconds": 5.862,
       "awarenessBefore": 3,
       "awarenessAfter": 2
     },
@@ -679,24 +755,24 @@
       "path": "Achromatopsia Strong",
       "input": "KeyS",
       "purpose": "covered return through the Fort gate",
-      "wallSeconds": 14.08,
+      "wallSeconds": 14.078,
       "start": {
-        "x": 2.68,
-        "z": 3.205
+        "x": 2.649,
+        "z": 3.223
       },
       "end": {
-        "x": 2.68,
-        "z": 62.012
+        "x": 2.649,
+        "z": 62.008
       },
-      "distanceAfter": 128.374
+      "distanceAfter": 130.953
     }
   ],
   "performance": {
     "samples": 240,
-    "medianFrameMs": 8.3,
-    "medianFps": 120.5,
-    "onePercentLowFps": 97.1,
-    "worstFrameMs": 10.4
+    "medianFrameMs": 16.7,
+    "medianFps": 59.9,
+    "onePercentLowFps": 38.3,
+    "worstFrameMs": 26.2
   },
   "checkpoints": [
     {

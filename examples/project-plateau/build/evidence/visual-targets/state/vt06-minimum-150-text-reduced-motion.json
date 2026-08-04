@@ -17,7 +17,7 @@
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 0.284,
+    "elapsedSeconds": 0.259,
     "distanceTravelled": 0,
     "paused": false,
     "pauseReason": null,
@@ -31,7 +31,7 @@
     ],
     "reachedGlade": false,
     "inCover": true,
-    "coverSeconds": 0.26709999996423733,
+    "coverSeconds": 0.25880000001192094,
     "sprintExposureSeconds": 0,
     "sprintEscalationCharged": false,
     "threatAwareness": 1,
@@ -90,7 +90,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 179.716,
+    "remainingLight": 179.741,
     "returnRoute": null,
     "returnCostSeconds": 0,
     "returnStrike": false,
@@ -102,17 +102,22 @@
     "response": "orbit",
     "attackStage": "orbit",
     "attackProgress": 0,
+    "flightPose": {
+      "wingBeat": -0.0357,
+      "wingFold": 0,
+      "mode": "downstroke"
+    },
     "position": {
-      "x": -25.08,
-      "y": 10.01,
-      "z": -12.41
+      "x": -23.01,
+      "y": 10.39,
+      "z": -14.24
     }
   },
   "familyVisual": {
     "moment": "glade-branch-pull",
     "adults": 2,
     "young": 3,
-    "branchAngle": 0.24,
+    "branchAngle": 0.239,
     "roles": [
       "graze",
       "branch-pull",
@@ -155,7 +160,7 @@
     },
     "cover": {
       "archCount": 5,
-      "visibleParts": 25
+      "visibleParts": 35
     },
     "family": {
       "adults": 2,
@@ -207,12 +212,12 @@
       {
         "cue": "field-start",
         "caption": "[brook water and insects under the canopy]",
-        "at": 28.773
+        "at": 30.667
       },
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 28.779
+        "at": 30.667
       }
     ]
   },
@@ -249,12 +254,26 @@
   "sceneChildren": 59,
   "calls": 1,
   "triangles": 1,
-  "textures": 29,
-  "geometries": 512,
+  "textures": 32,
+  "geometries": 625,
   "viewport": [
     1280,
     720
   ],
-  "firstRenderedAt": 205.5,
-  "recentMedianFrameMs": 8.3
+  "renderBudget": {
+    "pixelRatio": 1,
+    "maxPixelRatio": 1.25,
+    "renderedFrames": 1885,
+    "skippedFrames": 1702,
+    "activeFpsPolicy": "60fps-cap-across-refresh-rates",
+    "idleFpsCap": 30,
+    "pausedFpsCap": 15,
+    "hiddenFpsCap": 4,
+    "powerPreference": "default",
+    "preserveDrawingBuffer": false,
+    "gtaoSamples": 4,
+    "antialiasing": "single-pass-fxaa"
+  },
+  "firstRenderedAt": 161,
+  "recentMedianFrameMs": 16.7
 }

@@ -2,7 +2,7 @@
   "stage": "s0-renderer",
   "source": {
     "scope": "index.html, package manifests, public assets and src",
-    "sha256": "1d883375e0f5a07919df4948f569334b7d42ee191f21fbbbd306203ad66f2b1c"
+    "sha256": "8396d9b9879a3a934cac03cf83e02d1ccd305b77945185afce436094a46833e1"
   },
   "environment": {
     "node": "v25.6.1",
@@ -28,16 +28,16 @@
   },
   "performance": {
     "samples": 240,
-    "medianFrameMs": 8.3,
-    "medianFps": 120.5,
-    "onePercentLowFps": 98,
-    "worstFrameMs": 10.4
+    "medianFrameMs": 16.7,
+    "medianFps": 59.9,
+    "onePercentLowFps": 39.4,
+    "worstFrameMs": 25.7
   },
   "loading": {
-    "observedTtiMs": 1027.3,
+    "observedTtiMs": 971.3,
     "budgetTtiMs": 8000,
-    "distRawBytes": 3243756,
-    "distGzipBytes": 2012771,
+    "distRawBytes": 3260635,
+    "distGzipBytes": 2017917,
     "initialCompressedBudgetBytes": 20971520
   },
   "render": {
@@ -59,7 +59,7 @@
       "heading": 0,
       "pitch": 0,
       "stance": "walk",
-      "elapsedSeconds": 0.968,
+      "elapsedSeconds": 0.961,
       "distanceTravelled": 0,
       "paused": false,
       "pauseReason": null,
@@ -131,7 +131,7 @@
       "failed": false,
       "failureCause": null,
       "contactCount": 0,
-      "remainingLight": 179.032,
+      "remainingLight": 179.039,
       "returnRoute": null,
       "returnCostSeconds": 0,
       "returnStrike": false,
@@ -143,10 +143,15 @@
       "response": "orbit",
       "attackStage": "orbit",
       "attackProgress": 0,
+      "flightPose": {
+        "wingBeat": 0.2817,
+        "wingFold": 0,
+        "mode": "upstroke"
+      },
       "position": {
-        "x": 30.42,
-        "y": 23.74,
-        "z": 48.31
+        "x": 30.45,
+        "y": 23.73,
+        "z": 48.27
       }
     },
     "familyVisual": {
@@ -196,7 +201,7 @@
       },
       "cover": {
         "archCount": 5,
-        "visibleParts": 25
+        "visibleParts": 35
       },
       "family": {
         "adults": 2,
@@ -285,14 +290,28 @@
     "sceneChildren": 59,
     "calls": 1,
     "triangles": 1,
-    "textures": 31,
-    "geometries": 510,
+    "textures": 32,
+    "geometries": 621,
     "viewport": [
       1440,
       900
     ],
-    "firstRenderedAt": 211.4000000357628,
-    "recentMedianFrameMs": 8.3
+    "renderBudget": {
+      "pixelRatio": 1,
+      "maxPixelRatio": 1.25,
+      "renderedFrames": 84,
+      "skippedFrames": 104,
+      "activeFpsPolicy": "60fps-cap-across-refresh-rates",
+      "idleFpsCap": 30,
+      "pausedFpsCap": 15,
+      "hiddenFpsCap": 4,
+      "powerPreference": "default",
+      "preserveDrawingBuffer": false,
+      "gtaoSamples": 4,
+      "antialiasing": "single-pass-fxaa"
+    },
+    "firstRenderedAt": 160.20000004768372,
+    "recentMedianFrameMs": 16.9
   },
   "minimumRender": {
     "stage": "s10-glade-clarity",
@@ -313,7 +332,7 @@
       "heading": 0,
       "pitch": 0,
       "stance": "walk",
-      "elapsedSeconds": 3.768,
+      "elapsedSeconds": 5.759,
       "distanceTravelled": 0,
       "paused": false,
       "pauseReason": null,
@@ -385,7 +404,7 @@
       "failed": false,
       "failureCause": null,
       "contactCount": 0,
-      "remainingLight": 176.232,
+      "remainingLight": 174.241,
       "returnRoute": null,
       "returnCostSeconds": 0,
       "returnStrike": false,
@@ -397,17 +416,22 @@
       "response": "orbit",
       "attackStage": "orbit",
       "attackProgress": 0,
+      "flightPose": {
+        "wingBeat": 0.2267,
+        "wingFold": 0,
+        "mode": "upstroke"
+      },
       "position": {
-        "x": 22.45,
-        "y": 24.19,
-        "z": 52.53
+        "x": 13.72,
+        "y": 23.82,
+        "z": 54.43
       }
     },
     "familyVisual": {
-      "moment": "glade-young-play",
+      "moment": "glade-branch-pull",
       "adults": 2,
       "young": 3,
-      "branchAngle": 0.08,
+      "branchAngle": 0.259,
       "roles": [
         "graze",
         "branch-pull",
@@ -450,7 +474,7 @@
       },
       "cover": {
         "archCount": 5,
-        "visibleParts": 25
+        "visibleParts": 35
       },
       "family": {
         "adults": 2,
@@ -539,14 +563,28 @@
     "sceneChildren": 59,
     "calls": 1,
     "triangles": 1,
-    "textures": 31,
-    "geometries": 510,
+    "textures": 32,
+    "geometries": 621,
     "viewport": [
       1280,
       720
     ],
-    "firstRenderedAt": 211.4000000357628,
-    "recentMedianFrameMs": 8.3
+    "renderBudget": {
+      "pixelRatio": 1,
+      "maxPixelRatio": 1.25,
+      "renderedFrames": 372,
+      "skippedFrames": 339,
+      "activeFpsPolicy": "60fps-cap-across-refresh-rates",
+      "idleFpsCap": 30,
+      "pausedFpsCap": 15,
+      "hiddenFpsCap": 4,
+      "powerPreference": "default",
+      "preserveDrawingBuffer": false,
+      "gtaoSamples": 4,
+      "antialiasing": "single-pass-fxaa"
+    },
+    "firstRenderedAt": 160.20000004768372,
+    "recentMedianFrameMs": 16.7
   },
   "screenshots": [
     "build/evidence/s0/01-title.jpg",

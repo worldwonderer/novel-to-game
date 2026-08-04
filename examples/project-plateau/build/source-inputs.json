@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 1,
+  "basePath": "build/app",
+  "sourceFingerprint": "8396d9b9879a3a934cac03cf83e02d1ccd305b77945185afce436094a46833e1",
+  "inputs": [
+    {
+      "path": "index.html",
+      "sha256": "8be6a6fdf2fff4a6e11601facde6e212d8766a4cd5cbb154da44ce17d503d91a",
+      "bytes": 6690
+    },
+    {
+      "path": "package.json",
+      "sha256": "baaa15d01f65bae017f217a432d9c177dab2afcc72ac28e77bacb0c737df8938",
+      "bytes": 1779
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "dc813de790af81a1b988d4658e8aa651460318102913cc5c1eeb8ddefd8b0fc7",
+      "bytes": 28586
+    },
+    {
+      "path": "public/assets/iguanodon-hy3d-v35-stylized.glb",
+      "sha256": "74a46de82a54dcdb25119e24d3db87485ad814a37a5a92d28756b9e9cbb60de5",
+      "bytes": 1089008
+    },
+    {
+      "path": "public/assets/pterodactyl-hy3d-v35-stylized.glb",
+      "sha256": "e55fb8979f4349e8887943395ca58979dc417fd30f7df2fe438062161c620113",
+      "bytes": 1327456
+    },
+    {
+      "path": "public/favicon.svg",
+      "sha256": "b7a11528ee25cc03b147e7969333d2bcd1c8d3a0b7061622bd5319d329425593",
+      "bytes": 170
+    },
+    {
+      "path": "src/atmosphere.js",
+      "sha256": "9f8df55bced5049470c88fb648b36e4e01ff531609fc58b10c27fe6d7f01f5a1",
+      "bytes": 6848
+    },
+    {
+      "path": "src/audio.js",
+      "sha256": "d1e02d33e4a50e44abf4eed40dc2ef7272af08a5ebc128011affd9b6f6fa68bd",
+      "bytes": 7483
+    },
+    {
+      "path": "src/config.js",
+      "sha256": "565ebb3aba5d328db6b507a372be1a34afb86ba6e6801f4fb3efe7ec6001ec7c",
+      "bytes": 1151
+    },
+    {
+      "path": "src/hy3d-iguanodon.js",
+      "sha256": "60888f433de6ab01f7f3d82ba7efda428454ebe15ca39f6f81a23c475e1c244b",
+      "bytes": 11149
+    },
+    {
+      "path": "src/hy3d-pterodactyl.js",
+      "sha256": "624fbf633b261fc7d3cbfb7f74826f18cc515b1097d6821e28a27785313fb134",
+      "bytes": 7328
+    },
+    {
+      "path": "src/iguanodon.js",
+      "sha256": "e2b08d3678318c3f18f9cfb9d9db99504abf6bb5f0c204a98c1290fe1edd875d",
+      "bytes": 29494
+    },
+    {
+      "path": "src/main.js",
+      "sha256": "31e82ed308e204fde21b773cf86249a63777e232f74feb364d96334097984fbc",
+      "bytes": 42593
+    },
+    {
+      "path": "src/pterodactyl.js",
+      "sha256": "f833928d2007d3fbc83a7ae8585229191283c446fb53d14a5f797b4fee00470d",
+      "bytes": 21435
+    },
+    {
+      "path": "src/render-budget.js",
+      "sha256": "95444ffe411db55292043575d3be7d3c9239f20ec1660e8da58b0640d1ade080",
+      "bytes": 945
+    },
+    {
+      "path": "src/settings.js",
+      "sha256": "119ceeef83cae1b160951bd2075e308c704937f3cd7687885333120a253af75a",
+      "bytes": 1994
+    },
+    {
+      "path": "src/simulation.js",
+      "sha256": "9b4f818a05c510fa5687862dac69b1b0eae4e781f7bf549b71b4d0cfbba61369",
+      "bytes": 21307
+    },
+    {
+      "path": "src/styles.css",
+      "sha256": "fb79de16e8daedf9db2229b7aa9055c6e1f0cac048b3c20981123ad7f05fa73d",
+      "bytes": 20037
+    },
+    {
+      "path": "src/world.js",
+      "sha256": "dd7ded6de2483087a46659d2dbad93df6a04539fd475b9eb6b94b437ce1195a4",
+      "bytes": 120919
+    }
+  ]
+}

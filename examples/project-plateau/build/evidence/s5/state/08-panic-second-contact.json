@@ -17,7 +17,7 @@
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 10.246,
+    "elapsedSeconds": 10.219,
     "distanceTravelled": 0,
     "paused": false,
     "pauseReason": null,
@@ -44,7 +44,7 @@
     "cameraRaised": false,
     "plateRailRevealed": true,
     "pendingExposure": null,
-    "previewSeconds": 1.0070000000000052,
+    "previewSeconds": 1.0158999999761633,
     "lastProofEvent": {
       "plateIndex": 1,
       "frameKey": "basalt-scale",
@@ -96,7 +96,7 @@
     "failed": true,
     "failureCause": "second-unblocked-strike",
     "contactCount": 2,
-    "remainingLight": 169.754,
+    "remainingLight": 169.781,
     "returnRoute": null,
     "returnCostSeconds": 0,
     "returnStrike": false,
@@ -114,6 +114,11 @@
     "response": "orbit",
     "attackStage": "search",
     "attackProgress": 0,
+    "flightPose": {
+      "wingBeat": 0.0169,
+      "wingFold": 0.12,
+      "mode": "upstroke"
+    },
     "position": {
       "x": 13.5,
       "y": 13.8,
@@ -121,7 +126,7 @@
     }
   },
   "familyVisual": {
-    "moment": "glade-young-play",
+    "moment": "glade-branch-pull",
     "adults": 2,
     "young": 3,
     "branchAngle": 0.08,
@@ -167,7 +172,7 @@
     },
     "cover": {
       "archCount": 5,
-      "visibleParts": 25
+      "visibleParts": 35
     },
     "family": {
       "adults": 2,
@@ -219,72 +224,72 @@
       {
         "cue": "field-start",
         "caption": "[brook water and insects under the canopy]",
-        "at": 30.096
+        "at": 36.432
       },
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 30.165
+        "at": 36.507
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 30.235
+        "at": 36.571
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 30.304
+        "at": 36.64
       },
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 32.283
+        "at": 38.619
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 32.283
+        "at": 38.619
       },
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 35.275
+        "at": 41.605
       },
       {
         "cue": "contact",
         "caption": "[case strike; glass cracks]",
-        "at": 35.275
+        "at": 41.605
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 35.285
+        "at": 41.616
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 35.36
+        "at": 41.685
       },
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 37.333
+        "at": 43.653
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 37.333
+        "at": 43.653
       },
       {
         "cue": "contact",
         "caption": "[case strike; glass cracks]",
-        "at": 40.331
+        "at": 46.64
       },
       {
         "cue": "failure",
         "caption": "[the field sound narrows to wind and brook]",
-        "at": 40.331
+        "at": 46.64
       }
     ]
   },
@@ -327,12 +332,26 @@
   "sceneChildren": 59,
   "calls": 1,
   "triangles": 1,
-  "textures": 29,
-  "geometries": 509,
+  "textures": 32,
+  "geometries": 622,
   "viewport": [
     1440,
     900
   ],
-  "firstRenderedAt": 215.5,
-  "recentMedianFrameMs": 8.3
+  "renderBudget": {
+    "pixelRatio": 1,
+    "maxPixelRatio": 1.25,
+    "renderedFrames": 2836,
+    "skippedFrames": 2726,
+    "activeFpsPolicy": "60fps-cap-across-refresh-rates",
+    "idleFpsCap": 30,
+    "pausedFpsCap": 15,
+    "hiddenFpsCap": 4,
+    "powerPreference": "default",
+    "preserveDrawingBuffer": false,
+    "gtaoSamples": 4,
+    "antialiasing": "single-pass-fxaa"
+  },
+  "firstRenderedAt": 157.5,
+  "recentMedianFrameMs": 16.7
 }

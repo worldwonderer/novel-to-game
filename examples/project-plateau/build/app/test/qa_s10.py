@@ -77,6 +77,7 @@ def snapshot(page: Page) -> dict[str, object]:
 def focus_metrics(page: Page) -> dict[str, float | int]:
     return page.evaluate(
         """() => {
+          window.__projectPlateau.renderFrameForTest();
           const source = document.querySelector('#game-canvas');
           const copy = document.createElement('canvas');
           copy.width = source.width;

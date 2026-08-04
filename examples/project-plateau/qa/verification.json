@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "sourceCommit": "9d7f8736e5de17024569934df3da299358713adc",
-  "sourceFingerprint": "1d883375e0f5a07919df4948f569334b7d42ee191f21fbbbd306203ad66f2b1c",
+  "sourceCommit": null,
+  "sourceFingerprint": "8396d9b9879a3a934cac03cf83e02d1ccd305b77945185afce436094a46833e1",
   "environment": {
     "runtime": "Node.js",
     "runtimeVersion": "v25.6.1",
@@ -20,8 +20,9 @@
   "verify": {
     "command": "npm run verify",
     "log": "qa/evidence/verify.log",
+    "logSha256": "6e9bbb0ce3dcf81b273201b4fb4baad366c192ef150422fd731b555bf3667960",
     "exitCode": 0,
-    "durationMs": 513964,
+    "durationMs": 588739,
     "suites": [
       {
         "id": "unit:simulation",
@@ -32,6 +33,7 @@
           "test/hy3d-pterodactyl.test.js",
           "test/iguanodon.test.js",
           "test/pterodactyl.test.js",
+          "test/render-budget.test.js",
           "test/settings.test.js",
           "test/simulation.test.js"
         ],
@@ -41,7 +43,7 @@
           {
             "command": "npm test",
             "exitCode": 0,
-            "durationMs": 456
+            "durationMs": 813
           }
         ]
       },
@@ -58,7 +60,7 @@
           {
             "command": "npm run build",
             "exitCode": 0,
-            "durationMs": 389
+            "durationMs": 385
           }
         ]
       },
@@ -81,47 +83,47 @@
           {
             "command": "python3 test/qa_s0.py",
             "exitCode": 0,
-            "durationMs": 6720
+            "durationMs": 8057
           },
           {
             "command": "python3 test/qa_s1.py",
             "exitCode": 0,
-            "durationMs": 70647
+            "durationMs": 72251
           },
           {
             "command": "python3 test/qa_s2.py",
             "exitCode": 0,
-            "durationMs": 17642
+            "durationMs": 18575
           },
           {
             "command": "python3 test/qa_s3.py",
             "exitCode": 0,
-            "durationMs": 14630
+            "durationMs": 16185
           },
           {
             "command": "python3 test/qa_s4.py",
             "exitCode": 0,
-            "durationMs": 30762
+            "durationMs": 38332
           },
           {
             "command": "python3 test/qa_s5.py",
             "exitCode": 0,
-            "durationMs": 58625
+            "durationMs": 53783
           },
           {
             "command": "python3 test/qa_s6.py",
             "exitCode": 0,
-            "durationMs": 12464
+            "durationMs": 14046
           },
           {
             "command": "python3 test/qa_s7.py",
             "exitCode": 0,
-            "durationMs": 30992
+            "durationMs": 46997
           },
           {
             "command": "python3 test/qa_s9.py",
             "exitCode": 0,
-            "durationMs": 30364
+            "durationMs": 29764
           }
         ]
       },
@@ -136,7 +138,7 @@
           {
             "command": "python3 test/qa_s8.py",
             "exitCode": 0,
-            "durationMs": 173234
+            "durationMs": 187745
           }
         ]
       },
@@ -144,7 +146,8 @@
         "id": "browser:current-visual",
         "locations": [
           "test/qa_s10.py",
-          "test/qa_visual_targets.py"
+          "test/qa_visual_targets.py",
+          "test/capture_visual_upgrade.py"
         ],
         "executed": true,
         "passed": true,
@@ -152,12 +155,17 @@
           {
             "command": "python3 test/qa_s10.py",
             "exitCode": 0,
-            "durationMs": 30243
+            "durationMs": 47273
           },
           {
             "command": "python3 test/qa_visual_targets.py",
             "exitCode": 0,
-            "durationMs": 35969
+            "durationMs": 47613
+          },
+          {
+            "command": "python3 test/capture_visual_upgrade.py",
+            "exitCode": 0,
+            "durationMs": 115
           }
         ]
       },
@@ -172,7 +180,7 @@
           {
             "command": "python3 qa/check_design_invariants.py",
             "exitCode": 0,
-            "durationMs": 33
+            "durationMs": 24
           }
         ]
       },
@@ -186,14 +194,14 @@
         "passed": true,
         "commands": [
           {
-            "command": "python3 scripts/validate_repo.py",
+            "command": "python3 scripts/validate_repo.py --verification-candidate examples/project-plateau/qa/.verification-candidate.json",
             "exitCode": 0,
-            "durationMs": 304
+            "durationMs": 1363
           },
           {
             "command": "python3 -m unittest discover -s tests -v",
             "exitCode": 0,
-            "durationMs": 337
+            "durationMs": 5068
           }
         ]
       }
@@ -202,6 +210,7 @@
       "discovered": [
         "test/audio.test.js",
         "test/capture_demo_clip.py",
+        "test/capture_visual_upgrade.py",
         "test/foundation.test.js",
         "test/hy3d-iguanodon.test.js",
         "test/hy3d-pterodactyl.test.js",
@@ -219,12 +228,14 @@
         "test/qa_s8.py",
         "test/qa_s9.py",
         "test/qa_visual_targets.py",
+        "test/render-budget.test.js",
         "test/settings.test.js",
         "test/simulation.test.js",
         "test/verify.py"
       ],
       "registered": [
         "test/audio.test.js",
+        "test/capture_visual_upgrade.py",
         "test/foundation.test.js",
         "test/hy3d-iguanodon.test.js",
         "test/hy3d-pterodactyl.test.js",
@@ -242,6 +253,7 @@
         "test/qa_s8.py",
         "test/qa_s9.py",
         "test/qa_visual_targets.py",
+        "test/render-budget.test.js",
         "test/settings.test.js",
         "test/simulation.test.js"
       ],

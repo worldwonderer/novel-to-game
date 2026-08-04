@@ -288,6 +288,19 @@ def run() -> dict[str, object]:
             move_until(path, "KeyW", "window.__projectPlateau.snapshot().player.position.z <= 2", "canopy to glade")
             page.keyboard.press("KeyE")
             expose_plate(path, 2, "young-at-play frame")
+            move_until(
+                path,
+                "KeyS",
+                "window.__projectPlateau.snapshot().player.position.z > 3.2",
+                "protect first behavior plate",
+            )
+            wait_for_cover(path, "break the dive between behavior frames")
+            move_until(
+                path,
+                "KeyW",
+                "window.__projectPlateau.snapshot().player.position.z <= 2",
+                "return for second behavior frame",
+            )
             expose_plate(path, 3, "branch-pull frame")
             glade = capture(glade_id, ["W to glade", "E", "two camera commitments"])
             assert sum(plate["points"] for plate in glade["player"]["plates"]) == 7, glade

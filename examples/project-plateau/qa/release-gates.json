@@ -1,0 +1,234 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": null,
+  "evidenceCommit": null,
+  "targetFinish": "playable-prototype",
+  "demonstratedTier": "playable-prototype",
+  "publicationTier": "playable-prototype",
+  "pipelineGates": {
+    "intake": "PASS",
+    "analyze": "PASS",
+    "concept": "PASS",
+    "design": "PASS",
+    "art": "PASS",
+    "build": "PASS",
+    "qa": "PASS"
+  },
+  "grayboxReady": {
+    "status": "PASS",
+    "evidence": [
+      "qa/verification.json"
+    ]
+  },
+  "visualPromotion": {
+    "status": "PASS",
+    "evidence": [
+      "qa/verification.json",
+      "build/evidence/visual-upgrade/generated/manifest.json",
+      "qa/evidence/independent-visual-review-2026-08-04.md"
+    ]
+  },
+  "visualFrames": [
+    {
+      "id": "title-route",
+      "status": "PASS",
+      "operationPath": "cd build/app && npm run capture:visual; inspect title at both supported viewports",
+      "evidence": [
+        "build/evidence/visual-upgrade/generated/title-1440x900.jpg",
+        "build/evidence/visual-upgrade/generated/title-1280x720.jpg"
+      ],
+      "rubric": {
+        "focus": "PASS",
+        "silhouette": "PASS",
+        "depth": "PASS",
+        "materialLine": "PASS",
+        "lightColor": "PASS",
+        "hud": "PASS",
+        "motionFeedback": "PASS",
+        "artifacts": "PASS",
+        "failureExamples": "PASS"
+      }
+    },
+    {
+      "id": "glade-family",
+      "status": "PASS",
+      "operationPath": "cd build/app && npm run capture:visual; inspect the fixed glade family state at both supported viewports",
+      "evidence": [
+        "build/evidence/visual-upgrade/generated/family-1440x900.jpg",
+        "build/evidence/visual-upgrade/generated/family-1280x720.jpg"
+      ],
+      "rubric": {
+        "focus": "PASS",
+        "silhouette": "PASS",
+        "depth": "PASS",
+        "materialLine": "PASS",
+        "lightColor": "PASS",
+        "hud": "PASS",
+        "motionFeedback": "PASS",
+        "artifacts": "PASS",
+        "failureExamples": "PASS"
+      }
+    },
+    {
+      "id": "aerial-pressure",
+      "status": "PASS",
+      "operationPath": "cd build/app && npm run capture:visual; inspect the fixed dive at both viewports and the bound watch \u2192 bank \u2192 dive \u2192 pull-up cadence",
+      "evidence": [
+        "build/evidence/visual-upgrade/generated/dive-1440x900.jpg",
+        "build/evidence/visual-upgrade/generated/dive-1280x720.jpg",
+        "build/evidence/visual-upgrade/generated/motion/watch-bank-dive-pull-up.webm"
+      ],
+      "rubric": {
+        "focus": "PASS",
+        "silhouette": "PASS",
+        "depth": "PASS",
+        "materialLine": "PASS",
+        "lightColor": "PASS",
+        "hud": "PASS",
+        "motionFeedback": "PASS",
+        "artifacts": "PASS",
+        "failureExamples": "PASS"
+      }
+    }
+  ],
+  "visualReview": {
+    "required": true,
+    "status": "PASS",
+    "reviewer": "/root/visual_v17_review (vision, read-only independent reviewer, 2026-08-04)",
+    "independence": "The read-only vision reviewer made no implementation, capture, manifest or QA edits and judged VT01-VT06, both supported viewports, creature orbits, plate captures and fixed-transform bilateral wing phases.",
+    "evidence": "qa/evidence/independent-visual-review-2026-08-04.md",
+    "reviewedSourceFingerprint": "8396d9b9879a3a934cac03cf83e02d1ccd305b77945185afce436094a46833e1",
+    "reviewedManifestSha256": "25d8a2a3a3a801ed83da27d51ab3b1613169c0968c3d6cde8b3da745a5f1ca3e"
+  },
+  "focalReleaseAssets": [
+    "world.connected_route",
+    "tool.field_camera",
+    "tool.plate_case",
+    "tool.period_rifle",
+    "subject.iguanodon_family",
+    "threat.pterodactyl",
+    "ui.field_system",
+    "light.functional_arc",
+    "accessibility.presentation"
+  ],
+  "unresolvedDefects": [
+    {
+      "id": "VIS-REVIEW-001",
+      "severity": "major",
+      "status": "CLOSED",
+      "summary": "Independent final visual review completed with zero blockers and zero majors.",
+      "owner": "build",
+      "evidence": [
+        "qa/evidence/independent-visual-review-2026-08-04.md"
+      ]
+    },
+    {
+      "id": "VIS-PROMOTION-002",
+      "severity": "major",
+      "status": "CLOSED",
+      "summary": "Folded diagonal dive corridor and directly visible material responses passed independent re-review.",
+      "owner": "build",
+      "evidence": [
+        "qa/evidence/independent-visual-review-2026-08-03.md",
+        "build/evidence/visual-upgrade/generated/contact-sheet-supported-viewports.jpg"
+      ]
+    },
+    {
+      "id": "VIS-MINOR-01",
+      "severity": "minor",
+      "status": "CLOSED",
+      "summary": "Iguanodon eyes, muzzle, hands, fingers and thumb accents now meet playable-prototype readability.",
+      "owner": "build",
+      "evidence": [
+        "qa/evidence/independent-visual-review-2026-08-03.md",
+        "build/evidence/visual-upgrade/generated/manifest.json"
+      ]
+    },
+    {
+      "id": "VIS-MINOR-02",
+      "severity": "minor",
+      "status": "CLOSED",
+      "summary": "The representative dive now retains safe upper-edge clearance at both supported viewports.",
+      "owner": "build",
+      "evidence": [
+        "qa/evidence/independent-visual-review-2026-08-03.md",
+        "build/evidence/visual-upgrade/generated/manifest.json"
+      ]
+    },
+    {
+      "id": "VIS-MINOR-03",
+      "severity": "minor",
+      "status": "CLOSED",
+      "summary": "World-space low cover and the foreground rifle now provide the approved defensive choice without a HUD label.",
+      "owner": "build",
+      "evidence": [
+        "qa/evidence/independent-visual-review-2026-08-03.md",
+        "build/evidence/visual-upgrade/generated/manifest.json"
+      ]
+    },
+    {
+      "id": "VIS-MINOR-04",
+      "severity": "minor",
+      "status": "CLOSED",
+      "summary": "Creature and world material separation now meets the approved playable-prototype target finish.",
+      "owner": "build",
+      "evidence": [
+        "qa/evidence/independent-visual-review-2026-08-03.md",
+        "build/evidence/visual-upgrade/generated/manifest.json"
+      ]
+    },
+    {
+      "id": "VIS-MINOR-05",
+      "severity": "minor",
+      "status": "CLOSED",
+      "summary": "The title canopy and menu no longer form an independent heavy dark block.",
+      "owner": "build",
+      "evidence": [
+        "qa/evidence/independent-visual-review-2026-08-03.md",
+        "build/evidence/visual-upgrade/generated/manifest.json"
+      ]
+    },
+    {
+      "id": "VIS-MINOR-06",
+      "severity": "minor",
+      "status": "CLOSED",
+      "summary": "An uncut hash-bound WebM and ordered phase samples now prove watch \u2192 bank \u2192 dive \u2192 pull-up cadence.",
+      "owner": "build",
+      "evidence": [
+        "qa/evidence/independent-visual-review-2026-08-03.md",
+        "build/evidence/visual-upgrade/generated/manifest.json"
+      ]
+    },
+    {
+      "id": "VIS-PTERO-WING-007",
+      "severity": "major",
+      "status": "CLOSED",
+      "summary": "Fixed-transform three-phase evidence confirms both HY3D pterodactyl wings complete a synchronized upstroke, neutral transition and downstroke.",
+      "owner": "build",
+      "evidence": [
+        "qa/evidence/independent-visual-review-2026-08-04.md",
+        "build/evidence/visual-targets/contact-sheet-motion.jpg"
+      ]
+    }
+  ],
+  "notes": "Independent read-only review of the frozen HY3D candidate passes VT01-VT06, both supported viewports and fixed-transform bilateral wing phases with zero blockers and zero majors. Performance is capped near 60 FPS in active play, 30 FPS on title, 15 FPS paused and 4 FPS hidden.",
+  "degradableReleaseAssets": [
+    "audio.core_world"
+  ],
+  "sourceFingerprint": "8396d9b9879a3a934cac03cf83e02d1ccd305b77945185afce436094a46833e1",
+  "visualEvidenceManifests": [
+    {
+      "path": "build/evidence/visual-upgrade/generated/manifest.json",
+      "sha256": "25d8a2a3a3a801ed83da27d51ab3b1613169c0968c3d6cde8b3da745a5f1ca3e"
+    }
+  ],
+  "publicHost": {
+    "status": "HISTORICAL",
+    "evidence": "qa/evidence/public-host/report.json",
+    "sourceFingerprint": "e99883ce0a14f31782ac0dc6a91bd38f7e9869d86279d11ca04b5171a59af69d"
+  },
+  "sourceInputManifest": {
+    "path": "build/source-inputs.json",
+    "sha256": "e3d6382522cd2846a7c37ea4ff404518a01b2fea36dcd1df869c0b37bdc33cd7"
+  }
+}

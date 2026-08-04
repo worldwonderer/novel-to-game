@@ -201,7 +201,7 @@ def run() -> dict[str, object]:
         assert covered["player"]["returnRoute"] == "covered", covered
         assert covered["player"]["inCover"] is True, covered
         assert covered["threatVisual"]["response"] == "cover-pull-up", covered
-        assert covered["assets"]["cover"] == {"archCount": 5, "visibleParts": 25}, covered
+        assert covered["assets"]["cover"] == {"archCount": 5, "visibleParts": 35}, covered
         assert covered["ui"]["caption"] == "[branches scrape the camera; wingbeats widen]", covered
 
         # A second run demonstrates rifle, noisy-brook and result feedback in one causal chain.

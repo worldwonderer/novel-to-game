@@ -17,7 +17,7 @@
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 15.211,
+    "elapsedSeconds": 21.39,
     "distanceTravelled": 0,
     "paused": false,
     "pauseReason": null,
@@ -29,6 +29,7 @@
       "fort",
       "brook-blind",
       "basalt-shelf",
+      "canopy-overlook",
       "iguanodon-glade",
       "covered-return",
       "fort"
@@ -48,7 +49,7 @@
     "cameraRaised": false,
     "plateRailRevealed": true,
     "pendingExposure": null,
-    "previewSeconds": 3.956600000023842,
+    "previewSeconds": 3.96,
     "lastProofEvent": {
       "plateIndex": 3,
       "frameKey": "return-occluded",
@@ -100,7 +101,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 136.789,
+    "remainingLight": 130.61,
     "returnRoute": "covered",
     "returnCostSeconds": 28,
     "returnStrike": false,
@@ -114,7 +115,7 @@
       "survivingPlates": 4,
       "route": "covered",
       "brookResponse": null,
-      "remainingLight": 136.8,
+      "remainingLight": 130.6,
       "gunshotCallback": null
     }
   },
@@ -123,6 +124,11 @@
     "response": "orbit",
     "attackStage": "search",
     "attackProgress": 0,
+    "flightPose": {
+      "wingBeat": -0.0051,
+      "wingFold": 0.12,
+      "mode": "downstroke"
+    },
     "position": {
       "x": 5.5,
       "y": 13.8,
@@ -130,10 +136,10 @@
     }
   },
   "familyVisual": {
-    "moment": "glade-young-play",
+    "moment": "glade-branch-pull",
     "adults": 2,
     "young": 3,
-    "branchAngle": 0.08,
+    "branchAngle": 0.137,
     "roles": [
       "graze",
       "branch-pull",
@@ -176,7 +182,7 @@
     },
     "cover": {
       "archCount": 5,
-      "visibleParts": 25
+      "visibleParts": 35
     },
     "family": {
       "adults": 2,
@@ -226,84 +232,84 @@
     "threatState": "attack",
     "recentCues": [
       {
-        "cue": "plate-slide",
-        "caption": "[glass plate seats in its case]",
-        "at": 2.341
-      },
-      {
-        "cue": "camera-raise",
-        "caption": "[wood frame lifts; bellows opens]",
-        "at": 2.443
-      },
-      {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 2.523
+        "at": 2.512
       },
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 4.507
+        "at": 4.48
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 4.507
-      },
-      {
-        "cue": "examine",
-        "caption": "[fern brushes aside; pencil marks the field card]",
-        "at": 4.581
-      },
-      {
-        "cue": "camera-raise",
-        "caption": "[wood frame lifts; bellows opens]",
-        "at": 4.592
-      },
-      {
-        "cue": "shutter",
-        "caption": "[shutter releases]",
-        "at": 4.672
-      },
-      {
-        "cue": "plate-slide",
-        "caption": "[glass plate seats in its case]",
-        "at": 6.656
-      },
-      {
-        "cue": "cover",
-        "caption": "[branches scrape the camera; wingbeats widen]",
-        "at": 6.672
+        "at": 4.48
       },
       {
         "cue": "search",
         "caption": "[a near call circles overhead]",
-        "at": 12.667
+        "at": 10.507
+      },
+      {
+        "cue": "examine",
+        "caption": "[fern brushes aside; pencil marks the field card]",
+        "at": 10.768
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 13.035
+        "at": 10.773
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 13.115
+        "at": 10.853
       },
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 15.099
+        "at": 12.848
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 15.099
+        "at": 12.848
+      },
+      {
+        "cue": "cover",
+        "caption": "[branches scrape the camera; wingbeats widen]",
+        "at": 12.864
+      },
+      {
+        "cue": "search",
+        "caption": "[a near call circles overhead]",
+        "at": 18.859
+      },
+      {
+        "cue": "camera-raise",
+        "caption": "[wood frame lifts; bellows opens]",
+        "at": 19.216
+      },
+      {
+        "cue": "shutter",
+        "caption": "[shutter releases]",
+        "at": 19.296
+      },
+      {
+        "cue": "attack",
+        "caption": "[wingbeats tighten into a dive]",
+        "at": 21.269
+      },
+      {
+        "cue": "plate-slide",
+        "caption": "[glass plate seats in its case]",
+        "at": 21.269
       },
       {
         "cue": "result",
         "caption": "[glass plates settle on the light board]",
-        "at": 15.141
+        "at": 21.307
       }
     ]
   },
@@ -334,24 +340,38 @@
     "contactNote": null,
     "cartridgesVisible": true,
     "caption": "[glass plates settle on the light board]",
-    "lightWatch": 137,
+    "lightWatch": 131,
     "terminal": {
       "kind": "alive",
       "title": "Strong field record",
       "copy": "Scale. Living form. Behavior. The field record holds.",
-      "detail": "6 evidence cues \u00b7 4 recorded plates \u00b7 covered return \u00b7 137s light",
+      "detail": "6 evidence cues \u00b7 4 recorded plates \u00b7 covered return \u00b7 131s light",
       "callback": null
     }
   },
   "sceneChildren": 59,
   "calls": 1,
   "triangles": 1,
-  "textures": 29,
-  "geometries": 509,
+  "textures": 32,
+  "geometries": 622,
   "viewport": [
     1440,
     900
   ],
-  "firstRenderedAt": 210.19999998807907,
-  "recentMedianFrameMs": 8.3
+  "renderBudget": {
+    "pixelRatio": 1,
+    "maxPixelRatio": 1.25,
+    "renderedFrames": 1302,
+    "skippedFrames": 1137,
+    "activeFpsPolicy": "60fps-cap-across-refresh-rates",
+    "idleFpsCap": 30,
+    "pausedFpsCap": 15,
+    "hiddenFpsCap": 4,
+    "powerPreference": "default",
+    "preserveDrawingBuffer": false,
+    "gtaoSamples": 4,
+    "antialiasing": "single-pass-fxaa"
+  },
+  "firstRenderedAt": 148.10000002384186,
+  "recentMedianFrameMs": 16.7
 }

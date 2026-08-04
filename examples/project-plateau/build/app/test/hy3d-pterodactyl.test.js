@@ -61,6 +61,12 @@ test('pterodactyl loader caches one matte template with shared flight morphs', a
   const diveFold = mesh.geometry.morphAttributes.position[
     mesh.morphTargetDictionary.diveFold
   ];
+  const wingUp = mesh.geometry.morphAttributes.position[
+    mesh.morphTargetDictionary.wingUp
+  ];
+  const wingDown = mesh.geometry.morphAttributes.position[
+    mesh.morphTargetDictionary.wingDown
+  ];
   let widestIndex = 0;
   for (let index = 1; index < positions.count; index += 1) {
     if (Math.abs(positions.getX(index)) > Math.abs(positions.getX(widestIndex))) widestIndex = index;
@@ -69,6 +75,11 @@ test('pterodactyl loader caches one matte template with shared flight morphs', a
     Math.abs(positions.getX(widestIndex) + diveFold.getX(widestIndex))
       < Math.abs(positions.getX(widestIndex)) * 0.55,
     'full dive fold must visibly narrow the wing span',
+  );
+  assert.ok(
+    Math.abs(wingUp.getY(widestIndex) - wingDown.getY(widestIndex))
+      > Math.abs(positions.getX(widestIndex)) * 0.5,
+    'full upstroke and downstroke must create a visibly different wing silhouette',
   );
 });
 

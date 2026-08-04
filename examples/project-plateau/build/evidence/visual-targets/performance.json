@@ -5,10 +5,10 @@
       900
     ],
     "samples": 240,
-    "medianFrameMs": 8.3,
-    "medianFps": 120.5,
-    "onePercentLowFps": 98,
-    "worstFrameMs": 10.3
+    "medianFrameMs": 16.7,
+    "medianFps": 59.9,
+    "onePercentLowFps": 39.4,
+    "worstFrameMs": 26.6
   },
   "minimumViewport": {
     "viewport": [
@@ -16,9 +16,9 @@
       720
     ],
     "samples": 240,
-    "medianFrameMs": 8.3,
-    "medianFps": 120.5,
-    "onePercentLowFps": 98,
-    "worstFrameMs": 10.3
+    "medianFrameMs": 16.7,
+    "medianFps": 59.9,
+    "onePercentLowFps": 38.9,
+    "worstFrameMs": 26.8
   }
 }

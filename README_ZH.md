@@ -12,7 +12,7 @@ NovelToGame 是一套面向 Claude Code、Codex 和 Kimi Code 的开源 Agent Sk
 
 ## 在线试玩
 
-### Project Plateau · 精选 3D 案例
+### Project Plateau · 可玩原型 · 3D
 
 这是一款由柯南·道尔《失落的世界》改编而来的实时**第一人称 3D 野外摄影游戏**。玩家穿过连通的高原，观察共同生活的禽龙家庭，在空中威胁下拍完四张玻璃底片，再带着幸存的影像返回。
 
@@ -20,11 +20,11 @@ NovelToGame 是一套面向 Claude Code、Codex 和 Kimi Code 的开源 Agent Sk
 
 https://github.com/user-attachments/assets/4d0b501e-09be-49b6-9070-c605afce3fae
 
-**[浏览器直接试玩，无需安装](https://plateau.vibecoco.ai)** · **[查看完整改编案例](examples/project-plateau/)** · [反馈体验](https://github.com/worldwonderer/novel-to-game/discussions/7)
+**[历史浏览器预览，非当前发布证据](https://plateau.vibecoco.ai)** · **[查看完整改编案例](examples/project-plateau/)** · [反馈体验](https://github.com/worldwonderer/novel-to-game/discussions/7)
 
-### 更多可玩改编
+### 更多开发中案例
 
-| [《西游记》· 三借芭蕉扇](examples/journey-to-the-west/) | [《金瓶梅》· 风月总账](examples/jin-ping-mei/) |
+| [《西游记》· 三借芭蕉扇 · 灰盒](examples/journey-to-the-west/) | [《金瓶梅》· 风月总账 · 灰盒](examples/jin-ping-mei/) |
 |---|---|
 | [![《三借芭蕉扇》标题画面](examples/journey-to-the-west/screenshots/title.jpg)](https://xiyouji.vibecoco.ai) | [![《风月总账》标题画面](examples/jin-ping-mei/screenshots/title.jpg)](https://jinpingmei.vibecoco.ai) |
 | 回合制系统 RPG：五行、阵型、变化、携宠与多阶段 Boss | 18+ 六日关系策略游戏：角色意志、资源与人情债，以及三种结局 |

@@ -24,6 +24,11 @@ description: "Build the game for its approved target runtime. Compress GAME_DESI
 
 只固定：成品目标、核心体验、类型契约中会改变结果的不变量、视觉锚点、原型范围、
 非目标和完成证据。框架、架构、文件拆分、渲染技术和资产制作由实现模型根据环境决定。
+`BUILD_BRIEF.md` 必须逐字继承 `targetFinish`，索引 `VISUAL_TARGETS.md` 的目标帧与发布门禁资产键，
+并声明当前渲染、镜头、动画、FX 和资产管线的能力差距；不能表达目标时，先做一个代表场景 spike，
+通过后才向全部签名时刻推广，不由实现阶段重选美术方向。
+同时记录当前候选实际发布输入的 `sourceFingerprint`（64 位小写 SHA-256 十六进制串）；输入变化即重算，不能用
+旧 commit ID 或旧 PASS 证明 dirty / 当前候选。
 
 同时固定首发界面语言和已批准的其他语言。玩家可见文案必须集中、可替换，不把文字
 烙进图片；第一版只实现策划明确要求的语言，不擅自扩大本地化范围。
@@ -62,7 +67,9 @@ BUILD_BRIEF 含动态媒体（视频过场 / 环境循环 / 关键帧驱动演�
 
 ## 完成循环
 
-1. 用灰盒实现最小但完整的核心循环，先验证规则和范围。
+1. 用灰盒实现最小但完整的核心循环，先验证规则和范围；显式写 `grayboxReady`，状态只取
+   `NOT_RUN` / `FAIL` / `PASS`；达到 PASS 时记录核心循环、
+   输入、结果、重开与真实运行证据，但不得据此给 playable 及以上写 `gate:build pass`。
 2. 从实际环境回写目标平台、生产引擎、实际运行器及其版本、包管理器；网页项目再记录浏览器
    版本。记录 install / build / start / export 命令，再从 manifest scripts、CI workflow、测试目录
    与 BUILD_BRIEF runner 声明中发现 suite，给 required suite 稳定 ID。未知值写
@@ -82,17 +89,33 @@ BUILD_BRIEF 含动态媒体（视频过场 / 环境循环 / 关键帧驱动演�
    `CONCEPT.md` 选定方向的子类型或同玩法先例作品名（后者是 QA「前提传达门」的判据，成品
    画面上会按它复跑），回设计改，不进美术打磨——打磨只能
    把已经成立的东西变好看，救不了没人看得懂的东西。逐字回答落 `build/evidence/`，交 QA 复跑。
-7. 核心规则走通后再补批准的视觉方向：对照 `ART_DIRECTION.md` 的招牌时刻清单与功能色 /
-   构图规则逐帧核对，每张招牌画面从真实游玩状态触发并截一张干净证据帧记入构建证据，
-   到不了或不符的按缺陷修复；一轮核对零新缺陷即停，证据帧随构建完成记录交 QA 复核。
-8. 操作核心路径、设计要求的结果和重开；根据证据修复并重复权威验证与完整路径。
+7. 核心规则走通后进入 `visualPromotion`，其状态只取 `NOT_RUN` / `FAIL` / `PASS`：先按 `VISUAL_TARGETS.md` 在代表场景做 spike，用固定种子、
+   状态、机位和视口保存同机位 before/after contact sheet；逐项记录问题编号、严重度、处置和复验。
+   代表场景无视觉 blocker/major 后，才把获批系统推广到全部签名时刻。
+8. 对照目标包量表逐帧复核全部签名时刻；每个 release-gate 资产键写 `status`、
+   `releaseGatePassed`、`evidence`、`remaining`；status 为非空生产状态，passed 为布尔值，evidence
+   为非空且按 ledger 目录解析后全部真实存在的相对路径，passed=true 时 remaining 必须明确无剩余。
+   同时把所有 `tier: release-gate` 键恰好分入互斥的 `focalReleaseAssets` 或
+   `degradableReleaseAssets`；后者逐键写结构化 fallback：behavior、五项 preserved 布尔值
+   （coreAction / state / result / readableFeedback / restart）和工作区内真实 evidence，缺一不可。
+   停止条件只有：逐帧零 blocker/major、目标等级要求的发布资产通过（playable 为全部 focal
+   通过且 degradable fallback 有效；polished/showcase 为全部通过）、目标视口与性能预算通过。
+   时间 / 调用上限可以停止执行，但只能留下 `NOT_RUN`/`FAIL`
+   或降低经批准的 publication tier，不能判 `PASS`。
+9. 操作核心路径、设计要求的结果和重开；根据证据修复并重复权威验证与完整路径。图像生成失败
+   可保留 `grayboxReady: PASS`，但最高可声明等级受剩余灰盒资产限制。只有 graybox 可携带视觉 major、
+   `NOT_RUN` 或灰盒资产；playable 起必须零 blocker/major、焦点发布资产和必需视觉证据通过。
 
 游戏必须提供一种可重复核心路径和足够的可观察状态，但具体使用命令行参数、启动配置、
 测试接口或自动演示由实现模型决定。
 
 ## 输出
 
-生成 `build/BUILD_BRIEF.md`、实际游戏和最小 `qa/verification.json`。构建说明在完成后补充
+生成 `build/BUILD_BRIEF.md`、实际游戏和最小 `qa/verification.json`。BUILD_BRIEF 首部显式逐字
+继承 `targetFinish`，并记录满足 `publicationTier <= demonstratedTier <= targetFinish` 的两个实际
+等级；还记录
+`grayboxReady` 与 `visualPromotion` 的 `NOT_RUN` / `FAIL` / `PASS` 状态，并以资产账本和逐帧证据
+支持最高可声明等级。构建说明在完成后补充
 实际工具链、运行命令、权威验证结果与已知
 限制。构建证据（测试输出、证据帧、招牌帧、导出清单）必须落在工作区内 qa/evidence/ 或
 build 目录下的持久路径（本阶段默认 `build/evidence/`），BUILD_BRIEF 用相对路径引用，

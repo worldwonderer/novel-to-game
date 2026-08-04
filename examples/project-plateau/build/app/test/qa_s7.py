@@ -311,10 +311,12 @@ def run() -> dict[str, object]:
         page.wait_for_timeout(60)
         page.keyboard.press("KeyE")
         expose_plate(0)
-        target_performance = page.evaluate("window.__projectPlateau.sampleFrames(240)")
+        # Two seconds at the release 60 FPS cap is long enough to expose missed
+        # frames while keeping this checkpoint inside the authored attack window.
+        target_performance = page.evaluate("window.__projectPlateau.sampleFrames(120)")
         assert target_performance["medianFps"] >= 45, target_performance
         assert target_performance["onePercentLowFps"] >= 30, target_performance
-        heavy = capture("10-heavy-state-target", ["glade observation", "open proof", "240-frame sample"])
+        heavy = capture("10-heavy-state-target", ["glade observation", "open proof", "120-frame sample"])
         assert heavy["player"]["threatState"] == "attack", heavy
 
         final_loading = page.evaluate("window.__projectPlateau.loadingSnapshot()")

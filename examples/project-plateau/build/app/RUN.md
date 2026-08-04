@@ -163,11 +163,11 @@ S7 persists one validated, versioned presentation record,
 offers a visible defaults reset and exercises title, settings, order, field,
 manual pause, focus-loss pause, result and restart at `1440×900` and
 `1280×720`, including 150% text. Its no-cache 25 Mbps run reached the first
-frame in 2.16 seconds; the built app measured 596,121 raw / 152,779 gzip bytes.
+frame in 2.26 seconds; the built app measured 616,503 raw / 159,325 gzip bytes.
 Public-host cold loading, final non-colour review and uncompressed reference
 runs remained open at that checkpoint. S8 replaces the earlier paper timing
-assumption with measured traversal: its Strong path finishes in about 51.6 seconds,
-travels 128.3 world units, preserves seven cues and returns with about 100.3 seconds
+assumption with measured traversal: its Strong path finishes in about 58.4 seconds,
+travels 130.8 world units, preserves seven cues and returns with about 93.5 seconds
 of the revised 180-second light budget. Mixed reaches the four-cue result with
 one shot and its creek callback; Panic reaches the second-contact failure after
 spending both rounds. All three use keyboard/mouse movement without teleport or
@@ -182,7 +182,8 @@ behavior windows under separate frame keys. Every shutter now preserves the
 actual local renderer view, without the camera body, as that plate's
 monochrome image; the preview and terminal board carry the same image and a
 restart clears it. The six-checkpoint S9 asset matrix verifies four distinct
-captured images, non-colour treatment, exact Strong output and 120.5/98.0 FPS.
+captured images, non-colour treatment, exact Strong output and a capped
+59.9/39.4 FPS median/1%-low sample.
 It uses QA placement to isolate those states and therefore does not replace S8
 traversal evidence or independent anatomy, composition and first-time premise
 review. S10 protects a 44-unit glade corridor, moves dense vegetation to the
@@ -191,10 +192,17 @@ visible eyes. Its matrix clears the observation prose before the hero frame,
 preserves both behavior commitments, exercises a Chromium achromatopsia attack
 state, retains the Strong board/reset, and adds order, glade, attack/defense and
 result checkpoints under protanopia, deuteranopia and tritanopia. The focus
-region records about 19.8% dark / 59.3% bright / 82.1% chromatic pixels at
-120.5/106.4 FPS. These numeric and state floors catch gross omissions; they do
+region records about 1.3% dark / 66.3% bright / 81.1% chromatic pixels at
+59.9/38.3 FPS. These numeric and state floors catch gross omissions; they do
 not replace independent composition, anatomy, motion, colour-cue or premise
 review.
+
+The release renderer caps device pixel ratio at 1.25, active play near 60 FPS,
+the title at 30 FPS, pause/terminal states at 15 FPS and hidden tabs at 4 FPS.
+It uses the browser's default GPU preference, FXAA, four-sample GTAO and no
+persistent drawing buffer; the shutter performs its own synchronous render
+before reading a plate image. This reduces idle/high-refresh fill-rate without
+changing the 45/30 FPS acceptance budget or the captured-plate contract.
 
 The media capture replays the S8 Strong class without teleport or direct-time
 hooks. Its 30-second and 15-second versions uniformly compress the same uncut
@@ -202,8 +210,8 @@ source window and pass all 14 container/codec/profile/pixel/aspect/frame-rate/
 duration/size/audio/first-frame/fast-start checks. Because their playback is
 time-compressed, S8—not the delivery clips—remains the timing authority.
 
-The latest clean-install `npm run verify` handoff passed seven suites and all
-sixteen commands, indexed 41 direct checkpoints and produced a separate 10/10
+The latest authoritative `npm run verify` handoff passed seven suites and all
+seventeen commands, indexed 41 direct checkpoints and produced a separate 10/10
 design-invariant audit. See [`../../qa/QA_REPORT.md`](../../qa/QA_REPORT.md) and
 [`../../qa/verification.json`](../../qa/verification.json). Independent
 first-time sessions and perception review now have

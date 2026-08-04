@@ -17,7 +17,7 @@
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 0.719,
+    "elapsedSeconds": 0.726,
     "distanceTravelled": 0,
     "paused": true,
     "pauseReason": "window-inactive",
@@ -49,7 +49,7 @@
       "label": "PARTIAL \u2014 foliage hides the flank.",
       "exposure": 1,
       "plateIndex": 0,
-      "remainingSeconds": 1.5920000000000007,
+      "remainingSeconds": 1.6005000000000003,
       "zone": "brook-blind"
     },
     "previewSeconds": 0,
@@ -98,7 +98,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 179.281,
+    "remainingLight": 179.274,
     "returnRoute": null,
     "returnCostSeconds": 0,
     "returnStrike": false,
@@ -110,10 +110,15 @@
     "response": "orbit",
     "attackStage": "orbit",
     "attackProgress": 0,
+    "flightPose": {
+      "wingBeat": 0.0435,
+      "wingFold": 0,
+      "mode": "upstroke"
+    },
     "position": {
-      "x": 28.42,
-      "y": 23.47,
-      "z": 22.03
+      "x": 28.37,
+      "y": 23.49,
+      "z": 22.1
     }
   },
   "familyVisual": {
@@ -163,7 +168,7 @@
     },
     "cover": {
       "archCount": 5,
-      "visibleParts": 25
+      "visibleParts": 35
     },
     "family": {
       "adults": 2,
@@ -220,17 +225,17 @@
       {
         "cue": "examine",
         "caption": "[fern brushes aside; pencil marks the field card]",
-        "at": 0.235
+        "at": 0.203
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 0.24
+        "at": 0.219
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 0.256
+        "at": 0.229
       }
     ]
   },
@@ -267,12 +272,26 @@
   "sceneChildren": 59,
   "calls": 1,
   "triangles": 1,
-  "textures": 29,
-  "geometries": 508,
+  "textures": 32,
+  "geometries": 621,
   "viewport": [
     1280,
     720
   ],
-  "firstRenderedAt": 2973.099999964237,
-  "recentMedianFrameMs": 8.3
+  "renderBudget": {
+    "pixelRatio": 1,
+    "maxPixelRatio": 1.25,
+    "renderedFrames": 110,
+    "skippedFrames": 253,
+    "activeFpsPolicy": "60fps-cap-across-refresh-rates",
+    "idleFpsCap": 30,
+    "pausedFpsCap": 15,
+    "hiddenFpsCap": 4,
+    "powerPreference": "default",
+    "preserveDrawingBuffer": false,
+    "gtaoSamples": 4,
+    "antialiasing": "single-pass-fxaa"
+  },
+  "firstRenderedAt": 3030.600000023842,
+  "recentMedianFrameMs": 32.2
 }

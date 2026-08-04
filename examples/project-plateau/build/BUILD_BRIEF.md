@@ -2,6 +2,23 @@
 
 ## Finished-product target
 
+`targetFinish: playable-prototype`
+`publicationTier: playable-prototype`
+`demonstratedTier: playable-prototype`
+`grayboxReady: PASS`
+
+Evidence: `qa/verification.json` retains the complete input paths, results and clean restart evidence.
+
+`visualPromotion: PASS`
+
+The representative scene has reproducible dual-viewport captures, current authoritative verification and an independent PASS with zero blockers/majors. Nine focal assets pass; audio uses the tested captioned fallback recorded in the release manifest.
+
+The approved visual target index is `../design/VISUAL_TARGETS.md`. The
+representative promotion scene is the glade family view under approaching
+pterodactyl pressure. Release-gate asset keys remain authoritative in
+`asset-ledger.json`; a working or improved asset is not a passed release gate
+until its evidence and independent disposition exist.
+
 Build a free, anonymous, single-player desktop web vertical slice for English-
 speaking players who already understand first-person controls. One compact run
 lasts 1–3 minutes: leave Fort Challenger, read the plateau, make a limited
@@ -349,7 +366,7 @@ and seventeen underlying commands; its log and 41-checkpoint handoff are
 
 | Approved scope | Delivery | Evidence or deliberate boundary |
 |---|---|---|
-| Free anonymous desktop WebGL2 slice at `1440×900`, minimum `1280×720` | Delivered locally | S0/S7 browser evidence; public HTTPS and anonymous-host smoke remain NOT_RUN |
+| Free anonymous desktop WebGL2 slice at `1440×900`, minimum `1280×720` | Delivered for the current local candidate | S0/S7 browser evidence; the retained public-host run is historical and does not prove deployment of the current fingerprint |
 | Continuous first-person connected zone, collision, pause, focus recovery and restart | Delivered | S1/S2/S7 plus the S8 input-only complete run |
 | Five same-play verbs performed by input | Delivered | `../qa/evidence/design-invariants.md#same-play-verbs`; S8 input trace and checkpoints |
 | Four physical plates with view-dependent proof and persistent recovered views | Delivered | S3/S9/S10 state, browser and renderer-derived visual evidence |
@@ -358,7 +375,7 @@ and seventeen underlying commands; its log and 41-checkpoint handoff are
 | Strong, partial and failure outcomes followed by a clean restart | Delivered | S4/S5 plus per-terminal S8 restart checkpoints |
 | Local audio/captions, HUD, sensitivity, motion reduction and text scaling | Delivered | S6/S7; subjective mix and comfort remain outside automated proof |
 | Non-colour redundancy across the supported colour-vision modes | Delivered technically | S8 complete full-colour and achromatopsia routes plus S10 protanopia/deuteranopia/tritanopia order, glade, attack/defence and result checkpoints; independent cue-readability review remains open |
-| Payload, loading, lifecycle and heaviest-state performance budgets | Delivered locally | 2,012,771 gzip bytes; 2,940.9 ms local 25 Mbps first frame; 120.5/97.1 target median/1%-low FPS in S7 |
+| Payload, loading, lifecycle and heaviest-state performance budgets | Delivered locally | 2,017,917 gzip bytes; 2,997.6 ms local 25 Mbps first frame; 59.9/38.6 target median/1%-low FPS in S7, with an intentional 60 FPS active cap |
 | First-time premise, genre and route comprehension | Not delivered as evidence | Three independent raw player records remain NOT_RUN; automation cannot substitute |
 | Independent non-compensating visual approval | Delivered for v23 | Eight categories at their ceiling, VT01–VT06 PASS; `../qa/evidence/perception/hy3d-v23-independent-review.md` |
 | Public deployment | Not delivered | Public-host cold load, anonymous play and restart smoke remain a release gate |
@@ -375,13 +392,13 @@ handoff. General release remains gated by the first-time player records, full
 live colour-cue route review, final-source public-host checks and retained rights
 evidence in `../qa/QA_REPORT.md` and `asset-ledger.json`.
 
-## Visual enhancement addendum · 2026-08-03
+## Visual enhancement addendum · 2026-08-04
 
 The HY3D focal-creature pass is bound to source fingerprint
-`1d883375e0f5a07919df4948f569334b7d42ee191f21fbbbd306203ad66f2b1c` and
+`8396d9b9879a3a934cac03cf83e02d1ccd305b77945185afce436094a46833e1` and
 evidence manifest SHA256
-`bb46775a878a397b093778cf4272aa8ae7b284e8214ce9d0420a7f415eb34d6a` at
-`evidence/visual-sota/hy3d-creatures-v23/manifest.json`.
+`25d8a2a3a3a801ed83da27d51ab3b1613169c0968c3d6cde8b3da745a5f1ca3e` at
+`evidence/visual-upgrade/generated/manifest.json`.
 
 | Visual delivery item | Current result | Evidence |
 |---|---|---|
@@ -389,10 +406,10 @@ evidence manifest SHA256
 | Pterodactyl flock | One 1,327,456-byte, 30,496-triangle, 1K PBR GLB shared by three threats; three runtime morph targets preserve wing beat and dive fold; its moving ground shadow remains spatially continuous through attack | `evidence/visual-sota/hy3d-pterodactyl-v1/README.md`; v23 orbit/motion sheets |
 | Loading and fallback | Neither GLB is requested before interaction; each is requested once afterward; procedural creatures remain as loading/error fallback | `evidence/visual-sota/hy3d-creatures-runtime-v1/lazy-loading.json` |
 | Package | Combined creature payload 2,416,464 raw / 1,793,074 gzip-9 bytes; built distribution 3,243,756 raw bytes, below the 50 MB on-demand budget | `evidence/visual-sota/hy3d-creatures-runtime-v1/package.json` |
-| Renderer strategy | Retained the approved Vite + raw Three.js WebGL2 runtime; localized `ShaderMaterial`, soft `Points`, varied `InstancedMesh`, UV water animation and lightweight post-processing supply the useful gallery techniques without an R3F/GSAP, Pixi/Matter or WebGPU migration | v23 target sheets; `app/test/foundation.test.js` |
-| Performance | `1440×900`: 120.5 median / 97.1 1%-low FPS; `1280×720`: 120.5 / 98.0 FPS in the source-bound visual suite | `evidence/visual-sota/hy3d-creatures-v23/performance.json` |
-| Visual-target QA | 18 current checkpoints, all six target frames, eight creature orbits, three motion sequences, visible brook-blind sound captions, zero console/external-host errors | `evidence/visual-sota/hy3d-creatures-v23/manifest.json` |
-| Independent visual review | Eight non-compensating categories all at their ceiling; VT01–VT06 all pass; zero remaining visual blocker | `../qa/evidence/perception/hy3d-v23-independent-review.md` |
+| Renderer strategy | Retained Vite + raw Three.js WebGL2; capped Retina DPR at 1.25, replaced SMAA with FXAA, reduced GTAO sampling, selected the default GPU, disabled the persistent drawing buffer and applied state-aware 60/30/15/4 FPS caps | `app/src/render-budget.js`; `app/test/render-budget.test.js` |
+| Performance | `1440×900`: 59.9 median / 39.4 1%-low FPS; `1280×720`: 59.9 / 38.9 FPS in the source-bound visual suite, above the 45/30 budget | `evidence/visual-targets/performance.json` |
+| Visual-target QA | All six target frames, eight creature orbits and four motion sequences, including fixed-transform up/neutral/down bilateral wing evidence; zero console/external-host errors | `evidence/visual-targets/manifest.json` |
+| Independent visual review | VT01–VT06, both viewports and bilateral wing phases pass with zero blockers and zero majors | `../qa/evidence/independent-visual-review-2026-08-04.md` |
 
 The source-bound independent review awards the strict `100/100` visual ceiling.
 This is a visual-promotion result, not a general release waiver: retained Hunyuan

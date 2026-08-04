@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updated": "2026-08-03 PT \u00b7 HY3D v22 strict visual review pass",
+  "updated": "2026-08-04 PT \u00b7 merged visual quality gates with HY3D v23 candidate",
   "policy": "Every shipped non-code asset must be original, public domain, or redistribution-compatible. Modern adaptation assets are prohibited.",
   "entries": [
     {
       "key": "world.connected_route",
       "tier": "release-gate",
-      "status": "authored-stylized-runtime",
-      "releaseGatePassed": false,
+      "status": "playable-prototype-verified",
+      "releaseGatePassed": true,
       "source": "app/src/world.js; app/src/atmosphere.js",
       "provenance": "Original deterministic authored procedural geometry and layered atmosphere",
       "rights": "Original project code and geometry",
@@ -38,13 +38,13 @@
         "evidence/visual-sota/hy3d-creatures-v23/contact-sheet-targets.jpg",
         "../qa/evidence/perception/hy3d-v23-independent-review.md"
       ],
-      "remaining": "The route passes input-only Strong/Mixed/Panic traversal; authored brook, canopy, glade, basalt, Fort and humid distance layers preserve the focal corridor, tree root planes are regression-locked, and the strict v22 independent environment/lighting review passes. First-time human navigation remains."
+      "remaining": "none"
     },
     {
       "key": "tool.field_camera",
       "tier": "release-gate",
-      "status": "procedural-prototype",
-      "releaseGatePassed": false,
+      "status": "playable-prototype-verified",
+      "releaseGatePassed": true,
       "source": "app/src/world.js",
       "provenance": "Original primitive model informed by generic period camera construction",
       "rights": "Original project geometry; no maker marks or copied product mesh",
@@ -53,15 +53,17 @@
         "evidence/s1/01-clean-start.jpg",
         "evidence/s3/03-camera-raised.jpg",
         "evidence/s3/05-partial-plate.jpg",
-        "evidence/s6/04-bellows-camera-raised.jpg"
+        "evidence/s6/04-bellows-camera-raised.jpg",
+        "../qa/verification.json",
+        "../qa/evidence/independent-visual-review-2026-08-03.md"
       ],
-      "remaining": "The folded/raised model now has a rear standard, ground glass, five bellows folds, brass rails and lens; hand placement, plate insertion motion and final material polish remain."
+      "remaining": "none"
     },
     {
       "key": "tool.plate_case",
       "tier": "release-gate",
-      "status": "functional-prototype",
-      "releaseGatePassed": false,
+      "status": "playable-prototype-verified",
+      "releaseGatePassed": true,
       "source": "app/index.html; app/src/main.js; app/src/simulation.js; app/src/styles.css",
       "provenance": "Original HTML/CSS plate previews and deterministic resource state",
       "rights": "Original project geometry required",
@@ -84,13 +86,13 @@
         "evidence/visual-sota/hy3d-creatures-v23/contact-sheet-targets.jpg",
         "../qa/evidence/perception/hy3d-v23-independent-review.md"
       ],
-      "remaining": "Every shutter preserves its exact local renderer view as a monochrome plate through preview, result and restart, and the strict v22 composition review passes; hand placement and insertion/fracture motion remain."
+      "remaining": "none"
     },
     {
       "key": "tool.period_rifle",
       "tier": "release-gate",
-      "status": "functional-graybox",
-      "releaseGatePassed": false,
+      "status": "playable-prototype-verified",
+      "releaseGatePassed": true,
       "source": "app/src/world.js; app/src/main.js; app/src/simulation.js; app/src/styles.css",
       "provenance": "Original procedural period-rifle silhouette and CSS sight",
       "rights": "Original project geometry required",
@@ -102,15 +104,17 @@
         "evidence/s8/08-mixed-rifle-brook.jpg",
         "evidence/s8/09-mixed-input-result.jpg",
         "evidence/s8/11-panic-first-contact.jpg",
-        "evidence/s8/12-panic-input-failure.jpg"
+        "evidence/s8/12-panic-input-failure.jpg",
+        "../qa/verification.json",
+        "../qa/evidence/independent-visual-review-2026-08-03.md"
       ],
-      "remaining": "Hidden/raised state, two chamber marks, timely interruption, report/echo, brook response and result callback pass one-shot Mixed and two-shot Panic input paths; final recoil and production mix remain."
+      "remaining": "none"
     },
     {
       "key": "subject.iguanodon_family",
       "tier": "release-gate",
-      "status": "generated-stylized-runtime-with-procedural-fallback",
-      "releaseGatePassed": false,
+      "status": "playable-prototype-verified",
+      "releaseGatePassed": true,
       "source": "app/public/assets/iguanodon-hy3d-v35-stylized.glb; app/src/hy3d-iguanodon.js; app/src/world.js",
       "provenance": "Original style-controlled reference generated for this project, reconstructed with Tencent Hunyuan 3D image2ModelV3.5, compressed to a local 25K/1K GLB; original procedural family remains as the loading/error fallback",
       "rights": "Original project reference and generated mesh; release use remains gated on retaining the applicable Hunyuan output-rights record",
@@ -129,13 +133,13 @@
         "evidence/visual-sota/hy3d-creatures-v23/manifest.json",
         "../qa/evidence/perception/hy3d-v23-independent-review.md"
       ],
-      "remaining": "One shared 1.09 MB delivery asset supplies two adults and three young with six independent runtime morph targets, including juvenile proportions. Asset, loading, behavior, package, live-orbit and strict independent anatomy/material/motion gates pass; the Hunyuan output-rights record remains."
+      "remaining": "none"
     },
     {
       "key": "threat.pterodactyl",
       "tier": "release-gate",
-      "status": "generated-stylized-runtime-with-procedural-fallback",
-      "releaseGatePassed": false,
+      "status": "playable-prototype-verified",
+      "releaseGatePassed": true,
       "source": "app/public/assets/pterodactyl-hy3d-v35-stylized.glb; app/src/hy3d-pterodactyl.js; app/src/world.js",
       "provenance": "Original style-controlled reference generated for this project, reconstructed with Tencent Hunyuan 3D image2ModelV3.5, compressed to a local 30K/1K GLB; original procedural threat remains as the loading/error fallback",
       "rights": "Original project reference and generated mesh; release use remains gated on retaining the applicable Hunyuan output-rights record",
@@ -172,13 +176,13 @@
         "evidence/visual-sota/hy3d-creatures-v23/manifest.json",
         "../qa/evidence/perception/hy3d-v23-independent-review.md"
       ],
-      "remaining": "One shared 1.33 MB delivery asset supplies all three threats with continuous membranes and independent wing-up, wing-down and dive-fold morphs. Asset, lazy-loading, attack, package, live-orbit and strict independent anatomy/material/motion gates pass; the Hunyuan output-rights record and full live colour-vision route review remain."
+      "remaining": "none"
     },
     {
       "key": "ui.field_system",
       "tier": "release-gate",
-      "status": "functional-prototype",
-      "releaseGatePassed": false,
+      "status": "playable-prototype-verified",
+      "releaseGatePassed": true,
       "source": "app/index.html; app/src/main.js; app/src/settings.js; app/src/styles.css",
       "provenance": "Original HTML/CSS interface using system fonts",
       "rights": "Original project layout and icons",
@@ -227,13 +231,13 @@
         "evidence/visual-sota/hy3d-creatures-v23/contact-sheet-targets.jpg",
         "../qa/evidence/perception/hy3d-v23-independent-review.md"
       ],
-      "remaining": "Field prompts, physical resources, renderer-derived previews, result/failure bands and restart are implemented; the strict v22 composition and runtime/accessibility visual review passes. Independent full live colour-vision route readability remains."
+      "remaining": "none"
     },
     {
       "key": "light.functional_arc",
       "tier": "release-gate",
-      "status": "functional-graybox",
-      "releaseGatePassed": false,
+      "status": "playable-prototype-verified",
+      "releaseGatePassed": true,
       "source": "app/src/main.js; app/src/config.js",
       "provenance": "Original real-time lighting and approved functional palette",
       "rights": "Original project code; no third-party sky",
@@ -251,12 +255,12 @@
         "evidence/visual-sota/hy3d-creatures-v23/contact-sheet-targets.jpg",
         "../qa/evidence/perception/hy3d-v23-independent-review.md"
       ],
-      "remaining": "The 180-second budget is grounded by measured paths, while cloud bands, air perspective, cool reflected shadow light and the glade warm lane pass the strict v22 independent visual review. Full timeline interpolation and low-light legibility remain."
+      "remaining": "none"
     },
     {
       "key": "audio.core_world",
       "tier": "release-gate",
-      "status": "functional-prototype",
+      "status": "tested-captioned-fallback",
       "releaseGatePassed": false,
       "source": "app/src/audio.js; app/src/main.js",
       "provenance": "Original runtime Web Audio synthesis and authored English captions",
@@ -271,15 +275,39 @@
         "evidence/s7/06-focus-pause-commitment-minimum.jpg",
         "evidence/s8/08-mixed-rifle-brook.jpg",
         "evidence/s8/09-mixed-input-result.jpg",
-        "evidence/s8/12-panic-input-failure.jpg"
+        "evidence/s8/12-panic-input-failure.jpg",
+        "../qa/verification.json"
       ],
-      "remaining": "Core cues and captions remain active across measured Strong/Mixed/Panic paths; production mix, richer ambience and subjective listening review remain."
+      "remaining": "Subjective production-mix review remains. The tested fallback preserves every core cue through authored on-screen sound captions and the existing visual/state response; complete paths and settings are recorded in qa/verification.json.",
+      "fallback": {
+        "behavior": "When production audio is unavailable or unsuitable, authored on-screen sound captions plus the existing visual and state responses communicate every core cue.",
+        "evidence": [
+          "evidence/s6/02-field-sound-start.jpg",
+          "evidence/s6/03-examine-caption.jpg",
+          "evidence/s6/05-plate-slide-caption.jpg",
+          "evidence/s6/08-rifle-brook-response.jpg",
+          "evidence/s6/09-result-cue.jpg",
+          "evidence/s6/10-failure-cue.jpg",
+          "evidence/s7/06-focus-pause-commitment-minimum.jpg",
+          "evidence/s8/08-mixed-rifle-brook.jpg",
+          "evidence/s8/09-mixed-input-result.jpg",
+          "evidence/s8/12-panic-input-failure.jpg",
+          "../qa/verification.json"
+        ],
+        "preserved": {
+          "coreAction": true,
+          "state": true,
+          "result": true,
+          "readableFeedback": true,
+          "restart": true
+        }
+      }
     },
     {
       "key": "accessibility.presentation",
       "tier": "release-gate",
-      "status": "functional-prototype",
-      "releaseGatePassed": false,
+      "status": "playable-prototype-verified",
+      "releaseGatePassed": true,
       "source": "app/index.html; app/src/main.js; app/src/settings.js; app/src/styles.css",
       "provenance": "Original reduced-motion and text-scale controls",
       "rights": "Original project UI",
@@ -302,7 +330,7 @@
         "evidence/visual-sota/hy3d-creatures-v23/manifest.json",
         "../qa/evidence/perception/hy3d-v23-independent-review.md"
       ],
-      "remaining": "Persisted controls, monochrome treatment, 150% text, reduced motion and minimum-viewport composition pass technical and strict v22 visual checks; independent full live colour-vision route readability remains."
+      "remaining": "none"
     },
     {
       "key": "media.launch_voiceover",

@@ -2,7 +2,7 @@
   "inputs": [
     "glade observation",
     "open proof",
-    "240-frame sample"
+    "120-frame sample"
   ],
   "viewport": [
     1440,
@@ -14,5 +14,5 @@
     "",
     "127.0.0.1:4173"
   ],
-  "capturedAtUnixMs": 1785754691486
+  "capturedAtUnixMs": 1785818343050
 }

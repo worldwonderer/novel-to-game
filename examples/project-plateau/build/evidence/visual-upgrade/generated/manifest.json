@@ -1,0 +1,183 @@
+{
+  "schemaVersion": 1,
+  "command": "npm run capture:visual",
+  "sourceFingerprint": "8396d9b9879a3a934cac03cf83e02d1ccd305b77945185afce436094a46833e1",
+  "scene": "glade-family-under-aerial-pressure",
+  "seed": 139,
+  "frozenAnimationSeconds": 4.25,
+  "captures": [
+    {
+      "id": "title-1440x900",
+      "path": "build/evidence/visual-upgrade/generated/title-1440x900.jpg",
+      "viewport": [
+        1440,
+        900
+      ],
+      "sha256": "f50c945884c88a7638a728bbc036078787c7779905b9a67bb5f3da7611d2c6d8",
+      "bytes": 104548,
+      "frozenAnimationSeconds": 4.25,
+      "familyMoment": null,
+      "threatState": "distant"
+    },
+    {
+      "id": "family-1440x900",
+      "path": "build/evidence/visual-upgrade/generated/family-1440x900.jpg",
+      "viewport": [
+        1440,
+        900
+      ],
+      "sha256": "fcbd8573bbafe9053b213467967b3a2565c23d05b97889a5db97864dd5da3cbd",
+      "bytes": 110459,
+      "frozenAnimationSeconds": 4.25,
+      "familyMoment": "glade-young-play",
+      "threatState": "search"
+    },
+    {
+      "id": "dive-1440x900",
+      "path": "build/evidence/visual-upgrade/generated/dive-1440x900.jpg",
+      "viewport": [
+        1440,
+        900
+      ],
+      "sha256": "9bea42b7797bd9f98447a29ae63fa33958658562be8327cc0d146dba21c0814b",
+      "bytes": 110536,
+      "frozenAnimationSeconds": 4.25,
+      "familyMoment": "glade-young-play",
+      "threatState": "attack"
+    },
+    {
+      "id": "title-1280x720",
+      "path": "build/evidence/visual-upgrade/generated/title-1280x720.jpg",
+      "viewport": [
+        1280,
+        720
+      ],
+      "sha256": "1ed520e3ebe9ee83c00c2fb5feaf97f026d7226f5d8ba04cca923f61fb63cb74",
+      "bytes": 82193,
+      "frozenAnimationSeconds": 4.25,
+      "familyMoment": null,
+      "threatState": "distant"
+    },
+    {
+      "id": "family-1280x720",
+      "path": "build/evidence/visual-upgrade/generated/family-1280x720.jpg",
+      "viewport": [
+        1280,
+        720
+      ],
+      "sha256": "b9ad581f743091969495adca852ad4d8d7c99118de0b8cd7c098272c72548495",
+      "bytes": 85737,
+      "frozenAnimationSeconds": 4.25,
+      "familyMoment": "glade-young-play",
+      "threatState": "search"
+    },
+    {
+      "id": "dive-1280x720",
+      "path": "build/evidence/visual-upgrade/generated/dive-1280x720.jpg",
+      "viewport": [
+        1280,
+        720
+      ],
+      "sha256": "1ae20ac01bf223f1dbbc6c3ecb54423d1a4a268ed0e88dc51445a03dffa810e3",
+      "bytes": 85930,
+      "frozenAnimationSeconds": 4.25,
+      "familyMoment": "glade-young-play",
+      "threatState": "attack"
+    }
+  ],
+  "contactSheet": {
+    "path": "build/evidence/visual-upgrade/generated/contact-sheet-supported-viewports.jpg",
+    "sha256": "56c67fcd805c5f1df2ee862a6aecf26cd4c762890068ee709ff2f10ac8da1f76",
+    "bytes": 133068
+  },
+  "targets": [
+    {
+      "id": "title-route",
+      "path": "design/visual-targets/01-title-route.svg",
+      "sha256": "7a282e7165599ac6020a7abb015b1610e3593b17942989ddb326bbc3cf8cb274",
+      "bytes": 993
+    },
+    {
+      "id": "glade-family",
+      "path": "design/visual-targets/02-glade-family.svg",
+      "sha256": "9d6af8aec91d2874092dda11ea9c109a6552442c7cf26c54a18dccc4f77f9e0a",
+      "bytes": 1151
+    },
+    {
+      "id": "aerial-pressure",
+      "path": "design/visual-targets/03-aerial-pressure.svg",
+      "sha256": "15f57266802978a17751aa0b13f9174188af4fad27278d42d2adc2a17552da6a",
+      "bytes": 903
+    }
+  ],
+  "motionCadence": {
+    "claim": "continuous real-browser watch to attack cycle plus deterministic phase samples",
+    "captureMode": "one uncut real-time Playwright WebM; QA-clock JPEG samples are phase labels, not gameplay timing",
+    "authoredCycleSeconds": 3.2,
+    "transitions": [
+      {
+        "phase": "watch",
+        "atMs": 0,
+        "threatState": "watch",
+        "rendererResponse": "orbit"
+      },
+      {
+        "phase": "bank-dive-pull-up-cycle",
+        "atMs": 904,
+        "threatState": "attack",
+        "rendererResponse": "orbit"
+      },
+      {
+        "phase": "cycle-complete",
+        "atMs": 5004,
+        "threatState": "attack",
+        "rendererResponse": "orbit"
+      }
+    ],
+    "video": {
+      "path": "build/evidence/visual-upgrade/generated/motion/watch-bank-dive-pull-up.webm",
+      "sha256": "468350103eab11857dd66c482576d8943f4c46b552e735279dda37973d4698e3",
+      "bytes": 749998
+    },
+    "samples": [
+      {
+        "phase": "watch",
+        "rendererSeconds": 0.0,
+        "threatState": "watch",
+        "rendererResponse": "orbit",
+        "path": "build/evidence/visual-upgrade/generated/motion/watch.jpg",
+        "sha256": "6ab01747bc68311ca80dd2ccda232667cceb0681e1e8f6ec89f8e40684aa5e21",
+        "bytes": 84757
+      },
+      {
+        "phase": "bank",
+        "rendererSeconds": 0.25,
+        "threatState": "attack",
+        "rendererResponse": "orbit",
+        "path": "build/evidence/visual-upgrade/generated/motion/bank.jpg",
+        "sha256": "2a10c23d3f00b0d5e9fc82c7f81f08ee0fd1a541488e3377ae85b50b93bd7ad3",
+        "bytes": 85087
+      },
+      {
+        "phase": "dive",
+        "rendererSeconds": 2.0,
+        "threatState": "attack",
+        "rendererResponse": "orbit",
+        "path": "build/evidence/visual-upgrade/generated/motion/dive.jpg",
+        "sha256": "9ca1196420a79888ae568fdef60a88816e730e677ddbd8141efc3bc39af20a11",
+        "bytes": 85348
+      },
+      {
+        "phase": "pull-up",
+        "rendererSeconds": 2.85,
+        "threatState": "attack",
+        "rendererResponse": "orbit",
+        "path": "build/evidence/visual-upgrade/generated/motion/pull-up.jpg",
+        "sha256": "916bb42942bbdb31f442f803f888c53e665b04b31b8b3eb1c96aaebfc2480bc9",
+        "bytes": 85147
+      }
+    ],
+    "consoleErrors": []
+  },
+  "consoleErrors": []
+}
