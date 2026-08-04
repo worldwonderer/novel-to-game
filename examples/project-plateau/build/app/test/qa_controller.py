@@ -54,6 +54,16 @@ POINTER_LOCK_REJECTION = """
 })();
 """
 
+HY3D_ASSETS_READY = """
+() => {
+  const assets = window.__projectPlateau.snapshot().assets;
+  return assets.family.visualStatus === 'hy3d-family-ready'
+    && assets.pterodactyl.visualStatus === 'hy3d-flock-ready'
+    && assets.fieldCamera.visualStatus === 'hy3d-field-camera-ready'
+    && assets.rifle.visualStatus === 'hy3d-rifle-ready';
+}
+"""
+
 
 def start_server() -> subprocess.Popen[str] | None:
     parsed = urlparse(BASE_URL)
@@ -84,6 +94,10 @@ def start_server() -> subprocess.Popen[str] | None:
 
 
 def enter_field(page) -> None:
+    # `ready` exposes the QA API while HY3D parsing is still asynchronous. On Linux's
+    # software renderer, clicking during that work can block Playwright's action
+    # acknowledgement even though the button itself is visible and enabled.
+    page.wait_for_function(HY3D_ASSETS_READY, timeout=120_000)
     page.get_by_role("button", name="Enter the basin").click()
     page.get_by_role("button", name="Begin field work").click()
     page.wait_for_timeout(180)
@@ -177,10 +191,9 @@ def run() -> dict[str, object]:
                 (camera_raised_threat["position"][axis] - camera_lowered_threat["position"][axis]) ** 2
                 for axis in ("x", "y", "z")
             ))
-            # The animal keeps flying while the tool input is handled. Bound
-            # that normal one-frame motion instead of requiring an impossible
-            # byte-identical pose from a continuous world-space orbit.
-            assert camera_raise_drift < 0.25, {
+            # Authored time is frozen here: tool input must not advance the orbit,
+            # awareness blend, or any other world-space threat state.
+            assert camera_raise_drift < 0.002, {
                 "lowered": camera_lowered_threat,
                 "raised": camera_raised_threat,
                 "drift": camera_raise_drift,

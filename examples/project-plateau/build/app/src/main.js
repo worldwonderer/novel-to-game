@@ -853,7 +853,7 @@ function update(deltaSeconds, now) {
   world.update(
     visualElapsed,
     reducedMotion || player.paused || cameraMode === 'terminal',
-    worldRuntime(deltaSeconds),
+    worldRuntime(visualTimeFrozen ? 0 : deltaSeconds),
   );
 
   if (cameraMode === 'visual-review-orbit') setVisualReviewOrbitCamera();

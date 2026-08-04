@@ -43,6 +43,16 @@ POINTER_LOCK_SHIM = """
 })();
 """
 
+HY3D_ASSETS_READY = """
+() => {
+  const assets = window.__projectPlateau.snapshot().assets;
+  return assets.family.visualStatus === 'hy3d-family-ready'
+    && assets.pterodactyl.visualStatus === 'hy3d-flock-ready'
+    && assets.fieldCamera.visualStatus === 'hy3d-field-camera-ready'
+    && assets.rifle.visualStatus === 'hy3d-rifle-ready';
+}
+"""
+
 
 def start_server() -> subprocess.Popen[str] | None:
     parsed = urlparse(BASE_URL)
@@ -110,8 +120,8 @@ def run() -> dict[str, object]:
             page = context.new_page()
             page.goto(f"{BASE_URL}/?qa=motion", wait_until="networkidle")
             page.wait_for_function("window.__projectPlateau?.ready === true")
+            page.wait_for_function(HY3D_ASSETS_READY, timeout=120_000)
             page.get_by_role("button", name="Enter the basin").click()
-            page.evaluate("window.__projectPlateau.loadHy3dVisualsForTest()")
             page.get_by_role("button", name="Begin field work").click()
             page.wait_for_timeout(500)
             canvas = page.locator("#game-canvas")
@@ -135,8 +145,8 @@ def run() -> dict[str, object]:
             page = context.new_page()
             page.goto(f"{BASE_URL}/?qa=motion-live", wait_until="networkidle")
             page.wait_for_function("window.__projectPlateau?.ready === true")
+            page.wait_for_function(HY3D_ASSETS_READY, timeout=120_000)
             page.get_by_role("button", name="Enter the basin").click()
-            page.evaluate("window.__projectPlateau.loadHy3dVisualsForTest()")
             page.get_by_role("button", name="Begin field work").click()
             page.wait_for_timeout(500)
             canvas = page.locator("#game-canvas")
