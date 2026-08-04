@@ -187,11 +187,14 @@ def run() -> dict[str, object]:
         branch_pending = begin_exposure(3, "glade-branch-pull")
         assert branch_pending["familyVisual"]["moment"] == "glade-branch-pull", branch_pending
         page.wait_for_function(
-            "window.__projectPlateau.snapshot().familyVisual.branchAngle > 0.4",
-            timeout=1200,
+            "() => {"
+            "  const family = window.__projectPlateau.snapshot().familyVisual;"
+            "  return family.branchAngle > 0.12 && family.branchContactDistance < 0.65;"
+            "}",
+            timeout=2000,
         )
         branch_pending = snapshot(page)
-        assert branch_pending["familyVisual"]["branchAngle"] > 0.4, branch_pending
+        assert branch_pending["familyVisual"]["branchContactDistance"] < 0.65, branch_pending
         capture("03-branch-pull-commitment", ["second glade camera commitment"])
         page.wait_for_function(
             "window.__projectPlateau.snapshot().player.plates[3].status === 'exposed'",

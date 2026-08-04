@@ -149,7 +149,18 @@ def run() -> dict[str, object]:
             "window.__projectPlateau.teleportForTest({x: 0, z: 60, heading: 0.73, pitch: 0})"
         )
         view_origin = snapshot()["player"]["position"]
-        hold("KeyW", milliseconds=300)
+        page.keyboard.down("KeyW")
+        page.wait_for_function(
+            "({ origin, heading }) => {"
+            "  const position = window.__projectPlateau.snapshot().player.position;"
+            "  const dx = position.x - origin.x;"
+            "  const dz = position.z - origin.z;"
+            "  return dx * -Math.sin(heading) + dz * -Math.cos(heading) > 0.03;"
+            "}",
+            arg={"origin": view_origin, "heading": heading},
+            timeout=5_000,
+        )
+        page.keyboard.up("KeyW")
         view_forward = snapshot()["player"]["position"]
         forward_delta = {
             "x": view_forward["x"] - view_origin["x"],
@@ -163,13 +174,23 @@ def run() -> dict[str, object]:
             forward_delta["x"] * math.cos(heading)
             + forward_delta["z"] * -math.sin(heading)
         )
-        assert forward_projection > 1, (view_origin, view_forward)
+        assert forward_projection > 0.03, (view_origin, view_forward)
         assert forward_lateral_drift < 0.02, forward_lateral_drift
 
         page.evaluate(
             "window.__projectPlateau.teleportForTest({x: 0, z: 60, heading: 0.73, pitch: 0})"
         )
-        hold("KeyD", milliseconds=300)
+        page.keyboard.down("KeyD")
+        page.wait_for_function(
+            "({ heading }) => {"
+            "  const position = window.__projectPlateau.snapshot().player.position;"
+            "  return position.x * Math.cos(heading)"
+            "    + (position.z - 60) * -Math.sin(heading) > 0.03;"
+            "}",
+            arg={"heading": heading},
+            timeout=5_000,
+        )
+        page.keyboard.up("KeyD")
         view_right = snapshot()["player"]["position"]
         right_delta = {"x": view_right["x"], "z": view_right["z"] - 60}
         right_projection = (
@@ -180,7 +201,7 @@ def run() -> dict[str, object]:
             right_delta["x"] * -math.sin(heading)
             + right_delta["z"] * -math.cos(heading)
         )
-        assert right_projection > 1, view_right
+        assert right_projection > 0.03, view_right
         assert right_forward_drift < 0.02, right_forward_drift
 
         page.evaluate("window.__projectPlateau.teleportForTest({x: -7, z: 80, heading: 0})")

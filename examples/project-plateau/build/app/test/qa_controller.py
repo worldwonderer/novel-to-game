@@ -200,6 +200,29 @@ def run() -> dict[str, object]:
             assert overlaps is False, hud_layout
             page.mouse.up(button="right")
             page.set_viewport_size({"width": 1440, "height": 900})
+
+            # Freeze authored animation time, then move only the player. The
+            # pterodactyl and planted family must stay in world space instead
+            # of inheriting the camera/player translation.
+            world_locked_before = page.evaluate("window.__projectPlateau.snapshot()")
+            locked_player = world_locked_before["player"]["position"]
+            page.keyboard.down("KeyW")
+            page.wait_for_function(
+                "({ x, z }) => {"
+                "  const position = window.__projectPlateau.snapshot().player.position;"
+                "  return Math.hypot(position.x - x, position.z - z) > 0.05;"
+                "}",
+                arg=locked_player,
+                timeout=3000,
+            )
+            page.keyboard.up("KeyW")
+            world_locked_after = page.evaluate("window.__projectPlateau.snapshot()")
+            assert world_locked_after["threatVisual"]["position"] == world_locked_before["threatVisual"]["position"], {
+                "before": world_locked_before["threatVisual"],
+                "after": world_locked_after["threatVisual"],
+            }
+            assert world_locked_after["threatVisual"]["scale"] == world_locked_before["threatVisual"]["scale"]
+            assert world_locked_after["familyVisual"]["positions"] == world_locked_before["familyVisual"]["positions"]
             page.evaluate("window.__projectPlateau.setThreatVisualForTest(null, null)")
 
             page.keyboard.down("KeyF")
@@ -269,6 +292,7 @@ def run() -> dict[str, object]:
                 "camera-relative W projection",
                 "spacebar ballistic jump and grounded landing",
                 "camera raise preserves pterodactyl position, scale and flight state",
+                "player movement preserves world-space pterodactyl and planted family transforms",
                 "compact desktop captions preserve the plate-rail safe area",
                 "focus-loss transient tool reset",
                 "non-blocking shutter capture",

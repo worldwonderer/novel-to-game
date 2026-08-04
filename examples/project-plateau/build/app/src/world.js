@@ -672,6 +672,8 @@ export function pterodactylWingBeat(elapsed, phase = 0, awareness = 0, reducedMo
 
 const PTERODACTYL_LOCAL_FORWARD = new THREE.Vector3(0, 0, -1);
 const PTERODACTYL_WORLD_UP = new THREE.Vector3(0, 1, 0);
+const PTERODACTYL_ORBIT_CENTER = Object.freeze({ x: 0, z: -9 });
+const THREAT_TRANSITION_SECONDS = 0.55;
 
 function alignPterodactylToTravel(mesh, velocity, roll = 0) {
   if (velocity.lengthSq() <= 1e-10) return;
@@ -712,6 +714,7 @@ function cubicBezierPoint(start, controlA, controlB, end, progress) {
 
 export function pterodactylAttackFlightState({
   attackClock,
+  attackOrigin,
   playerPosition,
   reducedMotion,
 }) {
@@ -738,13 +741,17 @@ export function pterodactylAttackFlightState({
     recoveryProgress,
   );
   const authoredPosition = divePosition.lerp(recoveryPosition, recoveryProgress);
+  // `playerPosition` remains as a compatibility alias for authored/test
+  // callers. The live world passes a position latched once when the attack
+  // begins; it must never pass the player's continuously changing position.
+  const origin = attackOrigin ?? playerPosition ?? { x: 0, z: 0 };
   return {
     pose,
     approach,
     position: authoredPosition.add(new THREE.Vector3(
-      playerPosition.x,
+      origin.x,
       0,
-      playerPosition.z,
+      origin.z,
     )),
   };
 }
@@ -2154,6 +2161,7 @@ function makeFeedingBranch(scene) {
   );
   group.name = 'subject.iguanodon_family.feeding_branch';
   group.userData.branchPivot = branchPivot;
+  group.userData.contactPoint = new THREE.Vector3(-5.35, -0.08, 0.12);
   group.userData.leafClusters = branchPivot.children.slice(3);
   group.userData.leafRestRotations = group.userData.leafClusters.map((cluster) => (
     cluster.rotation.clone()
@@ -2790,6 +2798,16 @@ export function createWorld(scene) {
   let renderedFamilyMoment = 'glade-young-play';
   let observedShotCount = 0;
   let flashSeconds = 0;
+  let previousThreatAwareness = null;
+  let visualOrbitAwareness = 0;
+  let hasRenderedThreatFrame = false;
+  const attackAnchor = new THREE.Vector3();
+  let attackEntryPosition = null;
+  let attackEntryScale = null;
+  let attackEntryElapsed = 0;
+  let attackExitPosition = null;
+  let attackExitScale = null;
+  let attackExitElapsed = 0;
   let familyVisualStatus = 'procedural-fallback';
   let familyVisualError = null;
   let pterodactylVisualStatus = 'procedural-fallback';
@@ -2889,6 +2907,32 @@ export function createWorld(scene) {
       renderedThreatState = ['distant', 'watch', 'search', 'attack'][awareness];
       renderedThreatResponse = awareness === 3 && runtime.inCover ? 'cover-pull-up' : 'orbit';
       const playerPosition = runtime.playerPosition ?? { x: 0, z: 0 };
+      const deltaSeconds = Math.max(0, Number(runtime.deltaSeconds) || 0);
+      const enteringAttack = awareness === 3 && previousThreatAwareness !== 3;
+      const leavingAttack = awareness !== 3 && previousThreatAwareness === 3;
+      if (enteringAttack) {
+        attackAnchor.set(playerPosition.x, 0, playerPosition.z);
+        attackEntryPosition = hasRenderedThreatFrame ? pterodactyls[0].position.clone() : null;
+        attackEntryScale = hasRenderedThreatFrame ? pterodactyls[0].scale.x : null;
+        attackEntryElapsed = elapsed;
+        attackExitPosition = null;
+        attackExitScale = null;
+      } else if (leavingAttack) {
+        attackExitPosition = pterodactyls[0].position.clone();
+        attackExitScale = pterodactyls[0].scale.x;
+        attackExitElapsed = elapsed;
+        attackEntryPosition = null;
+        attackEntryScale = null;
+      }
+      const orbitAwarenessTarget = Math.min(2, awareness);
+      const orbitBlend = deltaSeconds > 0
+        ? 1 - Math.exp(-deltaSeconds * 4.5)
+        : 1;
+      visualOrbitAwareness = THREE.MathUtils.lerp(
+        visualOrbitAwareness,
+        orbitAwarenessTarget,
+        orbitBlend,
+      );
       const requestedFamilyMoment = runtime.familyMoment;
       renderedFamilyMoment = requestedFamilyMoment === 'glade-young-play'
         || requestedFamilyMoment === 'glade-branch-pull'
@@ -2924,8 +2968,25 @@ export function createWorld(scene) {
         const { radius, height, phase } = mesh.userData;
         const isPrimary = index === 0;
         mesh.visible = isPrimary || awareness === 0;
-        const stateRadius = isPrimary ? [radius, 26, 17, 9][awareness] : radius;
-        const stateHeight = isPrimary ? [height, 9.4, 7.8, 6.7][awareness] : height;
+        const lowerAwareness = Math.floor(visualOrbitAwareness);
+        const upperAwareness = Math.ceil(visualOrbitAwareness);
+        const awarenessFraction = visualOrbitAwareness - lowerAwareness;
+        const orbitRadii = [radius, 26, 17];
+        const orbitHeights = [height, 9.4, 7.8];
+        const stateRadius = isPrimary
+          ? THREE.MathUtils.lerp(
+            orbitRadii[lowerAwareness],
+            orbitRadii[upperAwareness],
+            awarenessFraction,
+          )
+          : radius;
+        const stateHeight = isPrimary
+          ? THREE.MathUtils.lerp(
+            orbitHeights[lowerAwareness],
+            orbitHeights[upperAwareness],
+            awarenessFraction,
+          )
+          : height;
         const stateSpeed = speed * (1 + awareness * 0.42) * (1 + index * 0.08);
         const angle = phase + elapsed * stateSpeed;
         const flightVelocity = new THREE.Vector3();
@@ -2933,12 +2994,24 @@ export function createWorld(scene) {
         let attackWingFold = 0;
         let attackRecovery = 0;
         if (isPrimary && awareness === 3 && runtime.inCover) {
-          mesh.position.set(
-            playerPosition.x + Math.cos(angle) * 3,
+          const targetPosition = new THREE.Vector3(
+            attackAnchor.x + Math.cos(angle) * 3,
             stateHeight + 12 + Math.sin(angle * 1.6) * 0.7,
-            playerPosition.z - 17 + Math.sin(angle) * 3,
+            attackAnchor.z - 17 + Math.sin(angle) * 3,
           );
-          mesh.scale.setScalar(mesh.userData.baseScale);
+          const transition = attackEntryPosition
+            ? THREE.MathUtils.smoothstep(
+              elapsed - attackEntryElapsed,
+              0,
+              THREAT_TRANSITION_SECONDS,
+            )
+            : 1;
+          mesh.position.copy(attackEntryPosition ?? targetPosition).lerp(targetPosition, transition);
+          mesh.scale.setScalar(THREE.MathUtils.lerp(
+            attackEntryScale ?? mesh.userData.baseScale,
+            mesh.userData.baseScale,
+            transition,
+          ));
           flightVelocity.set(
             -Math.sin(angle) * 3 * stateSpeed,
             Math.cos(angle * 1.6) * 1.12 * stateSpeed,
@@ -2950,12 +3023,12 @@ export function createWorld(scene) {
             : elapsed % 3;
           const flight = pterodactylAttackFlightState({
             attackClock,
-            playerPosition,
+            attackOrigin: attackAnchor,
             reducedMotion,
           });
           const nextFlight = pterodactylAttackFlightState({
             attackClock: attackClock + 1 / 120,
-            playerPosition,
+            attackOrigin: attackAnchor,
             reducedMotion,
           });
           const { pose: attackPose } = flight;
@@ -2967,29 +3040,65 @@ export function createWorld(scene) {
           // Graze the creek-side route edge instead of flying into the exact
           // camera centre. Orient against this same authored curve so the
           // animal cannot slide sideways or pitch upward while descending.
-          mesh.position.copy(flight.position);
-          flightVelocity.copy(nextFlight.position).sub(flight.position);
           const attackScale = mesh.userData.baseScale
             * (0.92 + diveApproach * 0.08);
-          mesh.scale.setScalar(attackScale);
+          const transition = attackEntryPosition
+            ? THREE.MathUtils.smoothstep(
+              elapsed - attackEntryElapsed,
+              0,
+              THREAT_TRANSITION_SECONDS,
+            )
+            : 1;
+          const entryPosition = attackEntryPosition ?? flight.position;
+          const nextTransition = attackEntryPosition
+            ? THREE.MathUtils.smoothstep(
+              elapsed + 1 / 120 - attackEntryElapsed,
+              0,
+              THREAT_TRANSITION_SECONDS,
+            )
+            : 1;
+          mesh.position.copy(entryPosition).lerp(flight.position, transition);
+          flightVelocity
+            .copy(entryPosition)
+            .lerp(nextFlight.position, nextTransition)
+            .sub(mesh.position);
+          mesh.scale.setScalar(THREE.MathUtils.lerp(
+            attackEntryScale ?? attackScale,
+            attackScale,
+            transition,
+          ));
         } else {
           const xRadius = stateRadius;
           const zRadius = stateRadius * 0.35;
-          mesh.position.set(
-            playerPosition.x + Math.cos(angle) * xRadius,
+          const targetPosition = new THREE.Vector3(
+            PTERODACTYL_ORBIT_CENTER.x + Math.cos(angle) * xRadius,
             stateHeight + Math.sin(angle * 2) * 1.2,
-            playerPosition.z - (isPrimary && awareness > 0 ? 28 : 25)
-              + Math.sin(angle) * zRadius,
+            PTERODACTYL_ORBIT_CENTER.z + Math.sin(angle) * zRadius,
           );
+          const exitTransition = isPrimary && attackExitPosition
+            ? THREE.MathUtils.smoothstep(
+              elapsed - attackExitElapsed,
+              0,
+              THREAT_TRANSITION_SECONDS,
+            )
+            : 1;
+          mesh.position.copy(
+            isPrimary && attackExitPosition ? attackExitPosition : targetPosition,
+          ).lerp(targetPosition, exitTransition);
           flightVelocity.set(
             -Math.sin(angle) * xRadius * stateSpeed,
             Math.cos(angle * 2) * 2.4 * stateSpeed,
             Math.cos(angle) * zRadius * stateSpeed,
           );
-          mesh.scale.setScalar(
-            mesh.userData.baseScale
-              * (isPrimary && awareness > 0 ? 0.82 : 1),
-          );
+          const orbitScale = mesh.userData.baseScale
+            * (isPrimary
+              ? THREE.MathUtils.lerp(1, 0.82, Math.min(1, visualOrbitAwareness))
+              : 1);
+          mesh.scale.setScalar(THREE.MathUtils.lerp(
+            isPrimary && attackExitScale ? attackExitScale : orbitScale,
+            orbitScale,
+            exitTransition,
+          ));
           mesh.rotation.x = 0;
         }
         mesh.name = `threat.pterodactyl.${isPrimary ? renderedThreatState : 'distant'}`;
@@ -3064,8 +3173,11 @@ export function createWorld(scene) {
       const shadowVisible = awareness >= 2 && !runtime.inCover;
       pterodactylShadow.visible = shadowVisible;
       if (shadowVisible) {
-        const shadowX = THREE.MathUtils.lerp(primaryThreat.position.x, playerPosition.x, 0.38);
-        const shadowZ = THREE.MathUtils.lerp(primaryThreat.position.z, playerPosition.z - 3.8, 0.36);
+        const shadowTarget = awareness === 3
+          ? attackAnchor
+          : PTERODACTYL_ORBIT_CENTER;
+        const shadowX = THREE.MathUtils.lerp(primaryThreat.position.x, shadowTarget.x, 0.38);
+        const shadowZ = THREE.MathUtils.lerp(primaryThreat.position.z, shadowTarget.z - 3.8, 0.36);
         pterodactylShadow.position.set(
           shadowX,
           terrainHeight(shadowX, shadowZ) + 0.048,
@@ -3081,6 +3193,8 @@ export function createWorld(scene) {
         renderedAttackStage = 'orbit';
         renderedAttackProgress = 0;
       }
+      previousThreatAwareness = awareness;
+      hasRenderedThreatFrame = true;
       family.forEach((animal, index) => {
         const {
           baseX,
@@ -3217,9 +3331,12 @@ export function createWorld(scene) {
       });
       const branchPull = renderedFamilyMoment === 'glade-branch-pull';
       const pullCycle = (Math.sin(elapsed * 3.4) + 1) * 0.5;
+      // The bough flexes at the jaw contact instead of swinging through a
+      // large disconnected arc. The dinosaur supplies most of the action;
+      // the rooted tree only yields a few degrees under load.
       feedingBranch.userData.branchPivot.rotation.z = branchPull
-        ? 0.08 + pullCycle * (reducedMotion ? 0.16 : 0.72)
-        : 0.08;
+        ? 0.03 + pullCycle * (reducedMotion ? 0.035 : 0.12)
+        : 0.03;
       feedingBranch.userData.leafClusters.forEach((cluster, index) => {
         const rest = feedingBranch.userData.leafRestRotations[index];
         cluster.rotation.set(
@@ -3265,6 +3382,7 @@ export function createWorld(scene) {
           z: Number(primary.position.z.toFixed(2)),
         },
         scale: Number(primary.scale.x.toFixed(4)),
+        anchorModel: 'fixed-world-orbit-latched-attack-origin',
       };
     },
     brookResponseSnapshot() {
@@ -3278,11 +3396,22 @@ export function createWorld(scene) {
       };
     },
     familySnapshot() {
+      const pullingAdult = family.find((animal) => animal.userData.behaviorRole === 'branch-pull');
+      const jawPosition = pullingAdult.userData.rig.jawPivot.getWorldPosition(new THREE.Vector3());
+      const branchTip = feedingBranch.userData.branchPivot.localToWorld(
+        feedingBranch.userData.contactPoint.clone(),
+      );
       return {
         moment: renderedFamilyMoment,
         adults: family.filter((animal) => !animal.userData.young).length,
         young: family.filter((animal) => animal.userData.young).length,
         branchAngle: Number(feedingBranch.userData.branchPivot.rotation.z.toFixed(3)),
+        branchContactDistance: Number(jawPosition.distanceTo(branchTip).toFixed(3)),
+        positions: family.map((animal) => ({
+          x: Number(animal.position.x.toFixed(3)),
+          y: Number(animal.position.y.toFixed(3)),
+          z: Number(animal.position.z.toFixed(3)),
+        })),
         roles: family.map((animal) => animal.userData.behaviorRole),
       };
     },

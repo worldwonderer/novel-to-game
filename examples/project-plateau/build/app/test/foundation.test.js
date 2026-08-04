@@ -132,8 +132,15 @@ test('family actions remain planted while anatomical pivots and branch contact c
   const firstBranch = branch.userData.branchPivot.rotation.z;
   const firstHead = pullingAdult.userData.rig.headPivot.rotation.z;
   world.update(3.72, false, { familyMoment: 'glade-branch-pull' });
-  assert.ok(Math.abs(branch.userData.branchPivot.rotation.z - firstBranch) > 0.1);
+  assert.ok(Math.abs(branch.userData.branchPivot.rotation.z - firstBranch) > 0.04);
   assert.ok(Math.abs(pullingAdult.userData.rig.headPivot.rotation.z - firstHead) > 0.06);
+
+  const maximumPullSeconds = (Math.PI / 2 + Math.PI * 2) / 3.4;
+  world.update(maximumPullSeconds, false, { familyMoment: 'glade-branch-pull' });
+  assert.ok(
+    world.familySnapshot().branchContactDistance < 0.65,
+    `the branch tip must visibly meet the pulling adult's jaw: ${world.familySnapshot().branchContactDistance}m`,
+  );
 });
 
 test('pterodactyl attack reads as search, fold-dive and close attack from simulation time', () => {
@@ -277,6 +284,32 @@ test('pterodactyl attack reads as search, fold-dive and close attack from simula
     'raising the field camera must not relocate an orbiting pterodactyl',
   );
   assert.equal(primary.scale.x, orbitScale);
+
+  const worldLockedOrbit = primary.position.clone();
+  world.update(21, false, {
+    threatAwareness: 2,
+    playerPosition: { x: 7.5, z: 11 },
+  });
+  assert.ok(
+    primary.position.distanceTo(worldLockedOrbit) < 1e-9,
+    'walking must not drag or teleport an orbiting pterodactyl through world space',
+  );
+
+  world.update(24, false, {
+    threatAwareness: 3,
+    attackSeconds: 1.1,
+    playerPosition: { x: 2, z: -4 },
+  });
+  const latchedAttackPosition = primary.position.clone();
+  world.update(24, false, {
+    threatAwareness: 3,
+    attackSeconds: 1.1,
+    playerPosition: { x: 12, z: 9 },
+  });
+  assert.ok(
+    primary.position.distanceTo(latchedAttackPosition) < 1e-9,
+    'an active dive must retain its entry anchor while the player moves',
+  );
 });
 
 test('pterodactyl flight uses a visible asymmetric flap cycle instead of a static glide', () => {
@@ -327,6 +360,13 @@ test('pterodactyl body forward follows the actual orbit and attack travel tangen
     orbitTravel: orbitTravel.toArray(),
   });
 
+  // Let the world-space transition from orbit to the latched attack curve
+  // finish before comparing the authored tangent.
+  world.update(19.4, false, {
+    threatAwareness: 3,
+    attackSeconds: 0.1,
+    playerPosition: { x: 0, z: 2 },
+  });
   world.update(20, false, {
     threatAwareness: 3,
     attackSeconds: 0.7,

@@ -33,7 +33,11 @@ export const FORT_TENT_LAYOUT = Object.freeze([
 
 export const FORT_FIREPIT = Object.freeze({ id: 'fort-firepit', x: -8, z: 78 });
 export const BROOK_BOULDER = Object.freeze({ id: 'brook-boulder', x: -7.5, z: 35 });
-export const FEEDING_BRANCH = Object.freeze({ id: 'feeding-branch', x: 14.5, z: -36 });
+// The branch tip is authored to meet the branch-pulling adult's jaw at the
+// peak of the pull. Keep this placement coupled to the contact regression in
+// foundation.test.js; moving the tree independently recreates the visibly
+// disconnected "tree and dinosaur move together" failure.
+export const FEEDING_BRANCH = Object.freeze({ id: 'feeding-branch', x: 18.35, z: -39.4 });
 
 export const FAMILY_LAYOUT = Object.freeze([
   Object.freeze({ id: 'iguanodon-adult-graze', x: -8, z: -31, scale: 1.22, heading: -0.32, young: false, behaviorRole: 'graze' }),
