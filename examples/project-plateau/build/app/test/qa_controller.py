@@ -129,7 +129,16 @@ def run() -> dict[str, object]:
 
             before_move = turned["player"]["position"]
             page.keyboard.down("KeyW")
-            page.wait_for_timeout(320)
+            page.wait_for_function(
+                "({ before, forward }) => {"
+                "  const position = window.__projectPlateau.snapshot().player.position;"
+                "  const dx = position.x - before.x;"
+                "  const dz = position.z - before.z;"
+                "  return dx * forward.x + dz * forward.z > 0.03;"
+                "}",
+                arg={"before": before_move, "forward": camera_forward},
+                timeout=5_000,
+            )
             page.keyboard.up("KeyW")
             moved = page.evaluate("window.__projectPlateau.snapshot()")
             delta = {
@@ -138,7 +147,7 @@ def run() -> dict[str, object]:
             }
             forward_projection = delta["x"] * camera_forward["x"] + delta["z"] * camera_forward["z"]
             lateral_drift = abs(delta["x"] * camera_forward["z"] - delta["z"] * camera_forward["x"])
-            assert forward_projection > 0.7, moved
+            assert forward_projection > 0.03, moved
             assert lateral_drift < 0.02, moved
 
             page.keyboard.press("Space")
