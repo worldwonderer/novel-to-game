@@ -130,6 +130,7 @@ npm install
 FISH_API_KEY=... FISH_VOICE_RIGHTS_ATTESTED=1 npm run voiceover
 npm run verify:voiceover
 npm run render:frames
+npm run render:review
 npm run render
 npm run verify
 npm run compress:github
@@ -139,8 +140,12 @@ npm run verify:github
 `npm run render` starts with `verify:voiceover:release` and refuses to render
 while `voiceover-review.json` is `BLOCKED`, either review is `NOT_RUN`, the
 approval refers to different audio hashes or rights evidence is absent. Preview
-frames remain available for review without
-claiming release approval.
+frames remain available for visual review without claiming release approval.
+`npm run render:review` likewise requires the automated audio/provenance checks
+but deliberately writes `out/project-plateau-promo-36s-review.mp4`, never the
+release filename. It exists only so a human can review the exact generated take;
+it must not be uploaded, linked from the public README or renamed as a release
+until the hash-bound rights and listening record passes.
 
 The final delivery file is
 `out/project-plateau-promo-36s.mp4`. Review stills are written to `out/review/`.
