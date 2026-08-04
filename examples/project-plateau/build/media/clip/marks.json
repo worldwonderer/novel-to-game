@@ -22,10 +22,11 @@
     "bytes": 6681530,
     "sha256": "874ac49ab2ec85ae9f142a0d216ed5e995a8db149df1cbfe07b6db34e38e871a",
     "durationSeconds": 59.6,
-    "marksToSourceOffset": 0.935
+    "marksToSourceOffset": 0.0,
+    "trailingCaptureSeconds": 0.935
   },
   "demoWindow": {
-    "sourceStartSeconds": 3.54,
+    "sourceStartSeconds": 2.605,
     "sourceDurationSeconds": 56.06
   },
   "marks": [

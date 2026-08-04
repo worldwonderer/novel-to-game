@@ -261,6 +261,21 @@ test('pterodactyl attack reads as search, fold-dive and close attack from simula
     cycleBefore.position.distanceTo(cycleAfter.position) < 0.25,
     'the authored attack review cycle must close without a world-space teleport',
   );
+  const fallbackWorld = createWorld(new THREE.Scene());
+  const fallbackThreat = fallbackWorld.pterodactyls[0];
+  fallbackWorld.update(PTERODACTYL_ATTACK_CYCLE_SECONDS - 1 / 120, false, {
+    threatAwareness: 3,
+    playerPosition,
+  });
+  const fallbackCycleBefore = fallbackThreat.position.clone();
+  fallbackWorld.update(PTERODACTYL_ATTACK_CYCLE_SECONDS + 1 / 120, false, {
+    threatAwareness: 3,
+    playerPosition,
+  });
+  assert.ok(
+    fallbackThreat.position.distanceTo(fallbackCycleBefore) < 0.25,
+    'the world fallback clock must use the same closed attack cycle',
+  );
 
   const attackPositionWithRifle = primary.position.clone();
   const attackScaleWithRifle = primary.scale.x;

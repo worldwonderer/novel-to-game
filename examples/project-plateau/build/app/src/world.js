@@ -3049,7 +3049,7 @@ export function createWorld(scene) {
         } else if (isPrimary && awareness === 3) {
           const attackClock = Number.isFinite(runtime.attackSeconds)
             ? runtime.attackSeconds
-            : elapsed % 3;
+            : elapsed;
           const flight = pterodactylAttackFlightState({
             attackClock,
             attackOrigin: attackAnchor,

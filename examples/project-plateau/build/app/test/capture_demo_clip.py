@@ -139,16 +139,17 @@ def runtime_source_fingerprint(commit: str | None = None) -> str:
     return digest.hexdigest()
 
 
-def start_server() -> subprocess.Popen[str] | None:
-    parsed = urlparse(BASE_URL)
-    with socket.socket() as probe:
-        try:
-            probe.connect((parsed.hostname or "127.0.0.1", parsed.port or 4173))
-            return None
-        except OSError:
-            pass
+def start_server() -> tuple[subprocess.Popen[str], str]:
+    # Own a fresh strict port. Reusing whatever happens to answer on 4173 can
+    # capture stale bytes while the manifest still claims the current commit.
+    with socket.socket() as reservation:
+        reservation.bind(("127.0.0.1", 0))
+        port = reservation.getsockname()[1]
     process = subprocess.Popen(
-        ["npm", "run", "start", "--", "--host", "127.0.0.1", "--port", "4173"],
+        [
+            "npm", "run", "start", "--", "--host", "127.0.0.1",
+            "--port", str(port), "--strictPort",
+        ],
         cwd=APP,
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
@@ -157,8 +158,8 @@ def start_server() -> subprocess.Popen[str] | None:
     for _ in range(80):
         with socket.socket() as probe:
             try:
-                probe.connect(("127.0.0.1", 4173))
-                return process
+                probe.connect(("127.0.0.1", port))
+                return process, f"http://127.0.0.1:{port}"
             except OSError:
                 if process.poll() is not None:
                     raise RuntimeError("Vite exited before media capture")
@@ -608,6 +609,7 @@ def validate_story_segments(segments: list[dict[str, object]], raw_duration: flo
 
 
 def main() -> int:
+    global BASE_URL
     parser = argparse.ArgumentParser()
     parser.add_argument("--out-dir", type=Path, default=CLIP)
     parser.add_argument("--no-encode", action="store_true")
@@ -624,13 +626,17 @@ def main() -> int:
     else:
         capture_source_commit = git_head()
         capture_source_fingerprint = runtime_source_fingerprint(capture_source_commit)
-        server = start_server()
+        working_source_fingerprint = runtime_source_fingerprint()
+        if working_source_fingerprint != capture_source_fingerprint:
+            raise RuntimeError(
+                "Interactive runtime inputs differ from HEAD; commit them before capture"
+            )
+        server, BASE_URL = start_server()
         try:
             raw_take, take, errors, hosts = record_take(out_dir)
         finally:
-            if server:
-                server.terminate()
-                server.wait(timeout=5)
+            server.terminate()
+            server.wait(timeout=5)
 
         allowed = {"", urlparse(BASE_URL).netloc}
         external = sorted(hosts - allowed)
@@ -638,7 +644,11 @@ def main() -> int:
         assert not external, external
         raw_probe = probe(raw_take)
         raw_duration = float(raw_probe["format"]["duration"])
-        offset = round(raw_duration - take.at("demo_end"), 3)
+        # Take's monotonic origin is created immediately after Playwright opens
+        # the record_video page, so marks already use the raw stream timeline.
+        # The container may retain encoder tail after demo_end; treating that
+        # tail as a leading offset used to shift every edit past its real verb.
+        offset = 0.0
         marks = {
             "capture": "one continuous input-only Strong-result browser run with two defensive shots",
             "edit": "disclosed same-take editorial cuts and per-segment speed changes; no teleport, state fabrication or substitute render",
@@ -657,6 +667,7 @@ def main() -> int:
                 "sha256": sha256(raw_take),
                 "durationSeconds": raw_duration,
                 "marksToSourceOffset": offset,
+                "trailingCaptureSeconds": round(raw_duration - take.at("demo_end"), 3),
             },
             "demoWindow": {
                 "sourceStartSeconds": round(take.at("demo_start") + offset, 3),
