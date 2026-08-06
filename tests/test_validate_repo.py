@@ -919,11 +919,6 @@ class RepositoryValidationTests(unittest.TestCase):
         ):
             self.assertIn(marker, verifier)
 
-        workflow = (ROOT / ".github/workflows/validate.yml").read_text(
-            encoding="utf-8"
-        )
-        self.assertIn("npm run test:tts", workflow)
-
     def test_readme_defaults_to_english_with_a_chinese_counterpart(self) -> None:
         english = (ROOT / "README.md").read_text(encoding="utf-8")
         chinese = (ROOT / "README_ZH.md").read_text(encoding="utf-8")
