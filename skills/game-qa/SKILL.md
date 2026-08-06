@@ -30,8 +30,8 @@ BUILD_BRIEF、ledger、runtime/source 重新发现；自报与实物冲突即 FA
 2. 发现已有测试：检查 manifest scripts、CI、测试文件和 brief runner，记录
    `suite | discovered from | files | runner | observed in verify | result`。required suite 未被权威命令
    调用时报告 `ORPHANED_TEST_SUITE`；明确 archived/vendor/generated 项可附理由排除。
-3. 独立运行权威 verify，记录 command、exit code、duration、环境和持久 `verify.log`；不能只接受
-   实现方的绿色摘要。
+3. 独立运行权威 verify，记录 command、exit code、duration、环境、当前可发布输入 fingerprint 和
+   持久证据 SHA-256；不能只接受实现方的绿色摘要。
 4. 在 `testedRuntime` 启动真实候选，从 `clean start → 核心动作 → 设计结果 → restart` 走一条完整
    路径。证明画面非空且变化、真实输入改变状态、结果可达、重开恢复定义的初态。
 5. 对照 GAME_DESIGN 中会改变结果的不变量和三段弧结束标记；只验证设计承诺，不遍历所有代码路径。
@@ -42,6 +42,8 @@ BUILD_BRIEF、ledger、runtime/source 重新发现；自报与实物冲突即 FA
    - 多语言/无障碍：逐项切换实际采用模式，检查关键玩法信息可读可用；
    - 生成媒体：台账、请求/响应、本地文件/hash、首中尾连续性与失败行为；
    - 语音与 TTS：逐句真值、权利、字幕、解码、真实试听、静音/缺音降级和客户端密钥暴露。
+   每个 `adopted:true` capability 都写一个同名 check 并给现行、hash-bound 证据；未采用的 audition/
+   可选工具仍披露 `discoveredFrom` 和 `notAdoptedReason`，不能用空数组藏掉。
 8. `release` 才执行当前候选身份、公开部署 fingerprint、发布资产、对外文案和必要独立视觉评审。
    旧证据只能标 `HISTORICAL`，不得证明当前候选。
 9. 记录 limitation 和 blocker/major 的 product/design/art/build 归属；趣味、长期平衡、留存与商业价值
@@ -54,8 +56,8 @@ BUILD_BRIEF、ledger、runtime/source 重新发现；自报与实物冲突即 FA
 
 默认只写：
 
-- `qa/verification.json`：机器事实源，包含 `assuranceProfile`、三态 status、固定 capabilities、checks、
-  limitations 和持久证据路径；
+- `qa/verification.json`：机器事实源，包含 `assuranceProfile`、三态 status、当前 source fingerprint、
+  固定 capabilities、同名 capability checks、complete run、limitations 和 hash-bound 持久证据；
 - `qa/QA_REPORT.md`：由 verification 生成的人读摘要，说明环境、命令、结论、缺口和未测试范围；
 - `qa/PLAYTEST_PROTOCOL.md`：仅保留需要人工感受判断的试玩路径。
 

@@ -53,7 +53,7 @@ JS_TESTS = (
     "test/simulation.test.js",
     "test/terrain.test.js",
 )
-COMPLETE_RUN_QA = ("test/qa_s8.py",)
+COMPLETE_RUN_QA = ("test/qa_complete_run.py",)
 CONTROLLER_QA = ("test/qa_controller.py",)
 MOTION_QA = ("test/qa_motion.py",)
 COLLISION_QA = ("test/qa_collision.py",)
@@ -65,20 +65,15 @@ EXCLUDED_TEST_TOOLS = {
     "test/qa_assertions.py": "shared assertions imported by the current complete-run suite",
     "test/qa_visual_targets.py": "release-capture tool; current frozen manifest is checked by the repository contract",
     "test/verify.py": "authoritative suite orchestrator; registering it would recurse",
-    **{
-        f"test/qa_s{stage}.py": "historical checkpoint reproducer; not part of current assurance"
-        for stage in (*range(8), 9, 10)
-    },
 }
 EXPECTED_TEST_SCRIPTS = {
     "test": "test/*.test.js",
-    "test:browser": "test/qa_s0.py",
+    "test:complete-run": "test/qa_complete_run.py",
     "test:controller": "test/qa_controller.py",
     "test:motion": "test/qa_motion.py",
     "test:collision": "test/qa_collision.py",
     "test:entry": "test/qa_entry.py",
     "test:loading": "test/qa_loading.py",
-    **{f"test:s{stage}": f"test/qa_s{stage}.py" for stage in range(1, 11)},
 }
 
 SUITES = (
@@ -139,15 +134,28 @@ SUITES = (
 
 def app_fingerprint() -> str:
     digest = hashlib.sha256()
-    paths = [APP / "index.html", APP / "package.json", APP / "package-lock.json"]
-    paths += sorted((APP / "public").rglob("*")) + sorted((APP / "src").rglob("*"))
+    paths = [
+        path
+        for path in sorted(APP.rglob("*"))
+        if path.is_file() and is_publishable_app_path(path.relative_to(APP))
+    ]
     for path in paths:
-        if path.is_file():
-            digest.update(path.relative_to(APP).as_posix().encode())
-            digest.update(b"\0")
-            digest.update(path.read_bytes())
-            digest.update(b"\0")
+        digest.update(path.relative_to(APP).as_posix().encode())
+        digest.update(b"\0")
+        digest.update(path.read_bytes())
+        digest.update(b"\0")
     return digest.hexdigest()
+
+
+def is_publishable_app_path(relative: Path) -> bool:
+    return (
+        relative.name not in {"RUN.md", ".gitignore"}
+        and not relative.name.startswith(".env")
+        and not any(
+            part in {"test", "node_modules", "dist", ".vercel", "__pycache__"}
+            for part in relative.parts
+        )
+    )
 
 
 def command_output(command: tuple[str, ...], cwd: Path) -> tuple[int, str]:
@@ -228,18 +236,9 @@ def git_app_fingerprint(commit: str) -> str | None:
     selected: dict[str, str] = {}
     for repository_path in listed.stdout.splitlines():
         relative = Path(repository_path).relative_to(app_relative).as_posix()
-        if relative in {"index.html", "package.json", "package-lock.json"} or relative.startswith(
-            ("public/", "src/")
-        ):
+        if is_publishable_app_path(Path(relative)):
             selected[relative] = repository_path
-    ordered = [
-        relative
-        for relative in ("index.html", "package.json", "package-lock.json")
-        if relative in selected
-    ]
-    ordered += sorted(
-        relative for relative in selected if relative.startswith(("public/", "src/"))
-    )
+    ordered = sorted(selected)
     if not ordered:
         return None
     digest = hashlib.sha256()
@@ -307,19 +306,20 @@ def project_path(path: Path) -> str:
     return path.relative_to(PROJECT).as_posix()
 
 
-def load_report(stage: str) -> dict[str, object]:
-    directory = "current-run" if stage == "s8" else stage
-    return json.loads((BUILD / f"evidence/{directory}/report.json").read_text(encoding="utf-8"))
+def load_complete_run_report() -> dict[str, object]:
+    return json.loads(
+        (BUILD / "evidence/current-run/report.json").read_text(encoding="utf-8")
+    )
 
 
-def prefixed_checkpoints(stage: str, identifiers: set[str] | None = None) -> list[dict[str, object]]:
-    report = load_report(stage)
+def current_checkpoints(identifiers: set[str] | None = None) -> list[dict[str, object]]:
+    report = load_complete_run_report()
     records = []
     for checkpoint in report["checkpoints"]:
         if identifiers is not None and checkpoint["id"] not in identifiers:
             continue
         record = dict(checkpoint)
-        record["id"] = f"{stage}:{checkpoint['id']}"
+        record["id"] = f"current:{checkpoint['id']}"
         records.append(record)
     return records
 
@@ -356,12 +356,29 @@ def write_verification(
     output_path: Path = VERIFICATION,
     log_path: Path = LOG,
 ) -> None:
+    def evidence_record(path: Path) -> dict[str, str]:
+        return {
+            "path": project_path(path),
+            "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+        }
+
+    run_report = BUILD / "evidence/current-run/report.json"
+    public_host_report = QA_EVIDENCE / "public-host/report.json"
+    evidence_paths = [log_path, run_report, public_host_report]
     verification: dict[str, object] = {
-        "schemaVersion": 1,
-        "assuranceProfile": "release",
+        "schemaVersion": 2,
+        "assuranceProfile": "smoke",
+        "status": "PASS" if exit_code == 0 else "FAIL",
         "capabilities": {
             "continuous3D": {"adopted": True, "discoveredFrom": ["build/BUILD_BRIEF.md"]},
-            "tts": {"adopted": True, "discoveredFrom": ["build/asset-ledger.json"]},
+            "tts": {
+                "adopted": False,
+                "discoveredFrom": [
+                    "build/media/remotion/voiceover.json",
+                    "build/asset-ledger.json",
+                ],
+                "notAdoptedReason": "Promotional audition tooling exists, but no generated voice file or TTS call is part of the playable candidate.",
+            },
             "generatedMedia": {"adopted": True, "discoveredFrom": ["build/asset-ledger.json"]},
             "publicHost": {"adopted": True, "discoveredFrom": ["build/app/vercel.json"]},
             "multiLanguage": {"adopted": False, "discoveredFrom": []},
@@ -376,9 +393,25 @@ def write_verification(
             "logSha256": hashlib.sha256(log_path.read_bytes()).hexdigest(),
             "exitCode": exit_code,
             "durationMs": duration_ms,
+            "evidence": [
+                evidence_record(path) for path in evidence_paths if path.is_file()
+            ],
             "suites": suite_results,
             "registry": registry,
         },
+        "checks": {},
+        "limitations": [
+            {
+                "scope": "current public deployment identity",
+                "reason": "The public URL is reachable, but its deployed bytes are not bound to this local source fingerprint.",
+                "blocksProfiles": ["release"],
+            },
+            {
+                "scope": "first-time player comprehension",
+                "reason": "Automation cannot substitute for an independent first-time player record.",
+                "blocksProfiles": ["delivery", "release"],
+            },
+        ],
     }
     if exit_code == 0:
         complete_ids = {
@@ -389,60 +422,84 @@ def write_verification(
             "05-strong-input-result",
             "06-strong-clean-restart",
         }
-        checkpoints = prefixed_checkpoints("s8", complete_ids)
+        checkpoints = current_checkpoints(complete_ids)
         available = {record["id"] for record in checkpoints}
-        expected_complete = {f"s8:{identifier}" for identifier in complete_ids}
+        expected_complete = {f"current:{identifier}" for identifier in complete_ids}
         assert expected_complete <= available, sorted(expected_complete - available)
         verification["completeRun"] = {
-            "id": "s8-strong-input-only",
+            "id": "current-strong-input-only",
             "cleanContext": True,
             "speed": "normal",
+            "evidence": project_path(run_report),
             "steps": [
                 {
                     "id": "step_01",
                     "input": "Enter the basin",
                     "expected": "clean 180-second field order",
-                    "checkpoint": "s8:00-clean-field-order",
+                    "checkpoint": "current:00-clean-field-order",
                 },
                 {
                     "id": "step_02",
                     "input": "W, E, raise camera and expose the brook plate",
                     "expected": "traversal and first physical proof",
-                    "checkpoint": "s8:01-strong-brook-frame",
+                    "checkpoint": "current:01-strong-brook-frame",
                 },
                 {
                     "id": "step_03",
                     "input": "use cover, reach the glade and expose both behavior plates",
                     "expected": "seven evidence points across four plates",
-                    "checkpoint": "s8:03-strong-glade-frames",
+                    "checkpoint": "current:03-strong-glade-frames",
                 },
                 {
                     "id": "step_04",
                     "input": "retreat under cover until the dive widens",
                     "expected": "covered return route and retained body margin",
-                    "checkpoint": "s8:04-strong-covered-return",
+                    "checkpoint": "current:04-strong-covered-return",
                 },
                 {
                     "id": "step_05",
                     "input": "follow the covered return to Fort",
                     "expected": "Strong field record with all captured views",
-                    "checkpoint": "s8:05-strong-input-result",
+                    "checkpoint": "current:05-strong-input-result",
                 },
                 {
                     "id": "step_06",
                     "input": "Take the route again",
                     "expected": "clean field order with no spent resource or travelled distance",
-                    "checkpoint": "s8:06-strong-clean-restart",
+                    "checkpoint": "current:06-strong-clean-restart",
                 },
             ],
             "terminal": "strong-field-record",
             "restart": "clean-field-order",
         }
         verification["checkpoints"] = checkpoints
+        core_evidence = [project_path(run_report)]
+        verification["checks"] = {
+            name: {"status": "PASS", "evidence": core_evidence}
+            for name in (
+                "launch",
+                "render",
+                "input",
+                "coreLoop",
+                "outcome",
+                "restart",
+                "continuous3D",
+                "generatedMedia",
+            )
+        }
+        verification["checks"]["publicHost"] = {
+            "status": "PASS",
+            "evidence": [project_path(public_host_report)],
+        }
+        verification["checks"]["accessibilityModes"] = {
+            "status": "PASS",
+            "evidence": [project_path(log_path)],
+        }
         verification["claimBoundaries"] = [
             "Automated paths are not first-time human navigation or premise-comprehension evidence.",
             "Pixel and state checks do not prove subjective composition, anatomy, motion, fun or balance.",
-            "Release visuals and public-host identity are checked by the repository contract against frozen current manifests.",
+            "Retained release and visual ledgers are historical; they do not upgrade this current smoke result.",
+            "The promotional TTS workflow is not adopted into the current playable build.",
         ]
     output_path.parent.mkdir(parents=True, exist_ok=True)
     temporary = output_path.with_name(f".{output_path.name}.tmp")

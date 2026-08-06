@@ -112,7 +112,7 @@
     "accessibility.presentation"
   ],
   "unresolvedDefects": [],
-  "notes": "Current release closure: one complete input route, one generated visual manifest, two frozen independent reviews, a rights-approved voiceover record, and the public-host status. Historical iteration bundles are not release roots.",
+  "notes": "Historical release audit retained for traceability. The current repository claim uses smoke assurance; this file cannot satisfy current checks.",
   "degradableReleaseAssets": [
     "audio.core_world"
   ],
@@ -132,6 +132,6 @@
     "path": "build/source-inputs.json",
     "sha256": "90f7c45437c804a5ac3f12b1ecff52ac3fe80d99c5fed91986a13b2c26417b84"
   },
-  "evidenceRole": "CURRENT",
+  "evidenceRole": "HISTORICAL",
   "assuranceProfile": "release"
 }

@@ -40,6 +40,7 @@ from validate_repo import (  # noqa: E402
     validate_skill,
     validation_json_files,
     visible_directories,
+    _workspace_app_fingerprint,
 )
 
 
@@ -49,8 +50,25 @@ class RepositoryValidationTests(unittest.TestCase):
     ) -> Path:
         example = root / "examples/demo"
         (example / "qa/evidence").mkdir(parents=True)
+        (example / "build/app").mkdir(parents=True)
+        (example / "build/app/index.html").write_text(
+            "<!doctype html><title>fixture</title>\n", encoding="utf-8"
+        )
         evidence = example / "qa/evidence/run.json"
-        evidence.write_text("{}\n", encoding="utf-8")
+        evidence.write_text(
+            json.dumps(
+                {
+                    "command": "fixture verify",
+                    "exitCode": 0,
+                    "completeRun": {
+                        "terminal": "fixture-outcome",
+                        "restart": "fixture-initial-state",
+                    },
+                }
+            )
+            + "\n",
+            encoding="utf-8",
+        )
         checks = {
             name: {"status": "PASS", "evidence": ["qa/evidence/run.json"]}
             for name in (
@@ -89,6 +107,24 @@ class RepositoryValidationTests(unittest.TestCase):
                     "schemaVersion": 2,
                     "assuranceProfile": profile,
                     "status": "PASS",
+                    "sourceFingerprint": _workspace_app_fingerprint(example),
+                    "verify": {
+                        "command": "fixture verify",
+                        "exitCode": 0,
+                        "evidence": [
+                            {
+                                "path": "qa/evidence/run.json",
+                                "sha256": hashlib.sha256(evidence.read_bytes()).hexdigest(),
+                            }
+                        ],
+                    },
+                    "completeRun": {
+                        "id": "fixture-complete-run",
+                        "cleanContext": True,
+                        "terminal": "fixture-outcome",
+                        "restart": "fixture-initial-state",
+                        "evidence": "qa/evidence/run.json",
+                    },
                     "capabilities": capabilities,
                     "checks": checks,
                     "limitations": [],
@@ -128,6 +164,76 @@ class RepositoryValidationTests(unittest.TestCase):
             issues = validate_assurance(example, "delivery")
 
             self.assertTrue(any("checks.onboarding" in issue for issue in issues), issues)
+
+    def test_adopted_capability_adds_a_fail_closed_required_check(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            example = self.make_compact_verification_fixture(Path(temporary))
+            path = example / "qa/verification.json"
+            verification = json.loads(path.read_text(encoding="utf-8"))
+            verification["capabilities"]["tts"] = {
+                "adopted": True,
+                "discoveredFrom": ["qa/evidence/run.json"],
+            }
+            path.write_text(json.dumps(verification), encoding="utf-8")
+
+            issues = validate_assurance(example, "smoke")
+            self.assertTrue(any("checks.tts" in issue for issue in issues), issues)
+
+            verification["checks"]["tts"] = {
+                "status": "FAIL",
+                "evidence": ["qa/evidence/run.json"],
+            }
+            path.write_text(json.dumps(verification), encoding="utf-8")
+            issues = validate_assurance(example, "smoke")
+            self.assertTrue(any("checks.tts must PASS" in issue for issue in issues), issues)
+
+            verification["checks"]["tts"]["status"] = "PASS"
+            path.write_text(json.dumps(verification), encoding="utf-8")
+            self.assertEqual(validate_assurance(example, "smoke"), [])
+
+    def test_non_adopted_capability_explains_discovered_sources(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            example = self.make_compact_verification_fixture(Path(temporary))
+            path = example / "qa/verification.json"
+            verification = json.loads(path.read_text(encoding="utf-8"))
+            verification["capabilities"]["generatedMedia"]["discoveredFrom"] = [
+                "qa/evidence/run.json"
+            ]
+            path.write_text(json.dumps(verification), encoding="utf-8")
+
+            issues = validate_assurance(example, "smoke")
+
+            self.assertTrue(
+                any("needs notAdoptedReason" in issue for issue in issues),
+                issues,
+            )
+
+            verification["capabilities"]["generatedMedia"]["notAdoptedReason"] = (
+                "An audition helper exists, but no generated media is in the candidate."
+            )
+            path.write_text(json.dumps(verification), encoding="utf-8")
+            self.assertEqual(validate_assurance(example, "smoke"), [])
+
+    def test_release_assurance_requires_an_explicit_current_evidence_role(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            example = self.make_compact_verification_fixture(
+                Path(temporary), profile="release"
+            )
+            release = example / "qa/release-gates.json"
+            release.write_text(
+                json.dumps({"assuranceProfile": "release"}), encoding="utf-8"
+            )
+
+            issues = validate_assurance(example, "release")
+            self.assertTrue(any("evidenceRole" in issue for issue in issues), issues)
+
+            release.write_text(
+                json.dumps(
+                    {"assuranceProfile": "release", "evidenceRole": "CURRENT"}
+                ),
+                encoding="utf-8",
+            )
+            self.assertEqual(validate_assurance(example, "release"), [])
 
     def test_non_release_assurance_ignores_only_explicit_historical_release_data(
         self,
@@ -171,6 +277,39 @@ class RepositoryValidationTests(unittest.TestCase):
             path.write_text(json.dumps(verification), encoding="utf-8")
             issues = validate_assurance(example, "smoke")
             self.assertTrue(any("blocks current profile" in issue for issue in issues), issues)
+
+    def test_compact_assurance_binds_pass_to_current_app_and_run_evidence(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            example = self.make_compact_verification_fixture(Path(temporary))
+            path = example / "qa/verification.json"
+            verification = json.loads(path.read_text(encoding="utf-8"))
+
+            verification["status"] = "FAIL"
+            path.write_text(json.dumps(verification), encoding="utf-8")
+            issues = validate_assurance(example, "smoke")
+            self.assertTrue(any("status must PASS" in issue for issue in issues), issues)
+
+            verification["status"] = "PASS"
+            verification["sourceFingerprint"] = "0" * 64
+            path.write_text(json.dumps(verification), encoding="utf-8")
+            issues = validate_assurance(example, "smoke")
+            self.assertTrue(any("does not match build/app" in issue for issue in issues), issues)
+
+            verification["sourceFingerprint"] = _workspace_app_fingerprint(example)
+            path.write_text(json.dumps(verification), encoding="utf-8")
+            (example / "qa/evidence/run.json").write_text(
+                '{"changed": true}\n', encoding="utf-8"
+            )
+            issues = validate_assurance(example, "smoke")
+            self.assertTrue(any("sha256 does not match" in issue for issue in issues), issues)
+
+            verification["verify"]["evidence"][0]["sha256"] = hashlib.sha256(
+                (example / "qa/evidence/run.json").read_bytes()
+            ).hexdigest()
+            verification["completeRun"].pop("evidence")
+            path.write_text(json.dumps(verification), encoding="utf-8")
+            issues = validate_assurance(example, "smoke")
+            self.assertTrue(any("completeRun.evidence is required" in issue for issue in issues), issues)
 
     def make_publication_fixture(
         self, root: Path, *, tier: str = "showcase", target: str | None = None
@@ -492,6 +631,23 @@ class RepositoryValidationTests(unittest.TestCase):
                 any("current workspace app fingerprint" in issue for issue in issues),
                 issues,
             )
+
+    def test_static_app_fingerprint_covers_root_assets_even_with_package_json(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            example = Path(temporary) / "demo"
+            app = example / "build/app"
+            (app / "css").mkdir(parents=True)
+            (app / "index.html").write_text("candidate", encoding="utf-8")
+            (app / "package.json").write_text('{"scripts":{"test":"true"}}\n')
+            stylesheet = app / "css/style.css"
+            stylesheet.write_text("body { color: black; }\n", encoding="utf-8")
+            before = _workspace_app_fingerprint(example)
+            stylesheet.write_text("body { color: white; }\n", encoding="utf-8")
+            self.assertNotEqual(before, _workspace_app_fingerprint(example))
+
+            before = _workspace_app_fingerprint(example)
+            (app / "vercel.json").write_text('{"headers":[]}\n')
+            self.assertNotEqual(before, _workspace_app_fingerprint(example))
 
     def test_non_graybox_requires_recursive_source_input_manifest(self) -> None:
         mutations = {

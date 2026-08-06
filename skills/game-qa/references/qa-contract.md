@@ -26,6 +26,7 @@
   "schemaVersion": 2,
   "assuranceProfile": "smoke",
   "status": "PASS",
+  "sourceFingerprint": "<当前可发布输入的 sha256>",
   "capabilities": {
     "continuous3D": {"adopted": false, "discoveredFrom": []},
     "tts": {"adopted": false, "discoveredFrom": []},
@@ -37,6 +38,20 @@
   "checks": {
     "launch": {"status": "PASS", "evidence": ["qa/evidence/run.json"]}
   },
+  "verify": {
+    "command": "<权威命令>",
+    "exitCode": 0,
+    "evidence": [
+      {"path": "qa/evidence/run.json", "sha256": "<文件 sha256>"}
+    ]
+  },
+  "completeRun": {
+    "id": "main-path",
+    "cleanContext": true,
+    "terminal": "designed-outcome",
+    "restart": "initial-state",
+    "evidence": "qa/evidence/run.json"
+  },
   "limitations": [
     {"scope": "target device", "reason": "not available", "blocksProfiles": ["delivery", "release"]}
   ]
@@ -44,8 +59,14 @@
 ```
 
 六个 capability 键固定。QA 从 BUILD_BRIEF、asset ledger、runtime/source discovery 复算；
-`adopted:true` 无来源/现行证据，或 `adopted:false` 却发现资产、调用、配置、公开声明，均 FAIL。
-`discoveredFrom` 只接受工作区内存在路径。
+`adopted:true` 无来源/现行证据会 FAIL。发现了 audition、可选工具或历史配置但当前候选确实未采用时，
+仍须写入 `discoveredFrom` 并给 `notAdoptedReason`；不能用空数组藏掉发现结果。`discoveredFrom` 只接受
+工作区内存在路径。每个 `adopted:true` capability 必须增加一个同名 check，
+例如 `publicHost` 对应 `checks.publicHost`，不能只声明采用而不证明。
+
+所有 profile 都把 `sourceFingerprint` 与当前可发布输入复算一致；每个 PASS check 和 complete run 的
+证据都必须出现在 `verify.evidence`，并由 SHA-256 绑定。只写一个存在的空文件、旧截图目录或绿色摘要
+不能满足该契约。
 
 release 扩展只写发布事实，`evidenceRole` 只接受 `CURRENT` / `HISTORICAL`。历史文件不得满足当前
 要求；与 verification 的 profile、fingerprint 或结论冲突时 FAIL，不设覆盖顺序。
@@ -91,7 +112,8 @@ required suite 必须出现在一次真实权威 verify 的 log 中；单独补�
 
 ### 语音与 TTS
 
-存在语音台账或运行时调用即采用。逐句核对生成真值、说话人与选角、字幕键、音色权利、请求指纹、
+当前候选存在语音台账、语音文件或运行时调用即采用。明确标为 audition/not-adopted 的可选工具不触发
+运行时检查，但必须披露发现来源和未采用原因。采用后逐句核对生成真值、说话人与选角、字幕键、音色权利、请求指纹、
 本地文件 hash、解码/时长/响度和人工试听；覆盖短反馈、长段、情绪、停顿、专名、数字及实际采用
 语言。模拟损坏文件、静音和缺音，确认核心状态、结果、反馈和重开仍诚实。运行时网络必须在 brief
 获批，API 密钥只能在受信服务端，客户端源码/包/日志不得泄漏。

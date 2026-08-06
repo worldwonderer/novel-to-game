@@ -455,9 +455,9 @@
   ],
   "shareCard": {
     "path": "media/project-plateau-github.jpg",
-    "bytes": 63745,
-    "sha256": "e9ceadbf5c800d17ccf7e05321d467caeaaa5f32dbd0772ede6ec0f020d9a727",
-    "source": "evidence/s10/02-young-play-silver-frame.jpg",
+    "bytes": 70181,
+    "sha256": "16950f1453d5a10ed285584ce8a08f32bf1f684f62001809b6bd6674dbd498ef",
+    "source": "evidence/current-run/03-strong-glade-frames.jpg",
     "transform": "crop and resize only; no added text or generated imagery"
   },
   "publicPreview": {
@@ -469,7 +469,7 @@
   },
   "limitations": [
     "The delivery encodes use disclosed same-take cuts and speed changes and therefore are not timing evidence.",
-    "S8 report.json remains the authoritative input-only traversal and timing record.",
+    "build/evidence/current-run/report.json is the authoritative input-only traversal and timing record.",
     "The local MP4/WebM files are reproducible delivery artifacts and are intentionally excluded from Git history."
   ]
 }

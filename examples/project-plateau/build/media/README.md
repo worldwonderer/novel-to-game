@@ -1,14 +1,14 @@
 # Project Plateau media pack
 
 This pack is derived from the same local WebGL build and input-only Strong path
-used by the S8 traversal evidence. It contains no generated concept art and no
+used by the current complete-run evidence. It contains no generated concept art and no
 substitute render.
 
 ## Tracked artifacts
 
 | Artifact | Purpose | Evidence boundary |
 |---|---|---|
-| `project-plateau-github.jpg` | 1280×640 repository/share card | Crop and resize of the real S10 browser frame only |
+| `project-plateau-github.jpg` | 1280×640 repository/share card | Crop and resize of a retained current-run browser frame only |
 | `clip/contact-sheet.jpg` | Ten-frame review of the promoted 15-second encode | One frame every 1.5 seconds |
 | `clip/contact-sheet-30s.jpg` | Ten-frame review of the extended 30-second encode | One frame every three seconds |
 | `clip/marks.json` | Every input/state beat in the continuous source take | Includes raw hash, edit marks and console/request audit |
@@ -72,7 +72,7 @@ The Remotion project also produces a two-pass 1080p H.264 GitHub delivery under
 
 - `build/evidence/current-run/report.json` remains the uncut timing and traversal
   authority; the edited delivery clips are not timing evidence.
-- S10 proves browser states, image provenance and gross composition floors; it
+- The current-run report proves browser states, image provenance and gross composition floors; it
   does not prove subjective visual quality.
 - Public-host loading is recorded separately; independent visual review and
   protocol-level first-time player records remain open evidence gates after

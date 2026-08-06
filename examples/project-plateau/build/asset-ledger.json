@@ -234,17 +234,17 @@
     {
       "key": "media.launch_voiceover",
       "tier": "delivery-support",
-      "status": "generated",
+      "status": "not-adopted",
       "releaseGatePassed": false,
       "source": "media/remotion/voiceover.json; media/remotion/scripts/generate-voiceover.mjs",
-      "provenance": "Fish Audio s2.1-pro-free synthesis of the repository-authored English script using the public Energetic Male voice model 802e3bc2b27e49c2995d23ef70e6ac89; generated at 1.14 prosody speed and locally loudness-normalized",
-      "rights": "NOT_APPROVED: generated through the Fish Audio API; the reference is hash-recorded, but retained evidence for voice eligibility and applicable account terms is still required",
+      "provenance": "Optional promotional TTS workflow; no generated voice file is part of the current playable candidate or Git tree",
+      "rights": "NOT_CURRENT: an older hash-bound approval applies only to its exact generated take and does not authorize a future regeneration",
       "evidence": [
         "media/remotion/voiceover.json",
         "media/remotion/voiceover-review.json",
         "media/remotion/README.md"
       ],
-      "remaining": "Generated audio stays outside Git. The ignored schema-4 sidecar binds request, source and normalized hashes, but voiceover-review.json remains BLOCKED until rights evidence and a hash-bound human listening approval are recorded. No newly generated take or render may be described as release-approved before that gate passes."
+      "remaining": "Not adopted for current smoke assurance. A future release must regenerate or restore the exact take, bind its hashes, and complete the applicable rights and listening review."
     }
   ]
 }

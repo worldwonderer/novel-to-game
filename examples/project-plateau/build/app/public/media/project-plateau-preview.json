@@ -207,7 +207,7 @@
     "interactiveRuntimeLoadedInPreviewMode": false
   },
   "limitations": [
-    "The edited preview is not gameplay-timing evidence; S8 remains authoritative.",
+    "The edited preview is not gameplay-timing evidence; build/evidence/current-run/report.json remains authoritative.",
     "The preview is a conversion fallback, not a substitute for desktop WebGL2 QA."
   ]
 }

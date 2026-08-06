@@ -2,8 +2,7 @@
 
 ## Purpose and claim boundary
 
-This protocol collects the independent first-time evidence required by
-[`QA_REPORT.md`](QA_REPORT.md). It tests whether a new player can recognize and
+This optional protocol collects the independent first-time evidence required only for a future delivery or release claim; it is not part of the current smoke PASS. It tests whether a new player can recognize and
 perform the scout → proof → survive → extract loop in the current build. It
 does not turn opinions about fun, balance or commercial appeal into automated
 facts.
@@ -70,7 +69,7 @@ blocker. Ask these questions in order without correcting the answers:
 9. Would you start another run now? Why or why not? This answer is subjective
    context and does not determine PASS.
 
-## Release thresholds
+## Delivery/release thresholds
 
 The first-time gate passes only when all of the following are supported by raw
 participant records:
@@ -92,8 +91,7 @@ participant records:
   failure or unreadable supported-viewport state.
 
 A failed threshold remains a finding. Route it to product, design or build in
-`QA_REPORT.md`; do not average it away or replace it with the deterministic S8
-path.
+`QA_REPORT.md`; do not average it away or replace it with the deterministic current complete-run path.
 
 ## Evidence record
 

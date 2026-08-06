@@ -540,6 +540,7 @@ def main() -> int:
         "external_hosts": external,
         "safe_screenshots": sorted(p.name for p in SAFE.glob("*.jpg")),
         "adult_screenshots": sorted(p.name for p in ADULT.glob("*.jpg")),
+        "screenshots_retained_in_git": False,
     }
     run_evidence = SHOTS / ("evidence-normal.json" if SLOW else "evidence-fast.json")
     run_evidence.write_text(json.dumps(evidence, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

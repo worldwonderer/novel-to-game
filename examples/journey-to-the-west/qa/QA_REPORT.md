@@ -21,6 +21,7 @@
 | 标题到结局的核心循环 | PASS | 同上 |
 | 设计结果、再玩与读档 | PASS | 同上 |
 | 重开 | PASS | 同上 |
+| 公开 URL 可访问 | PASS（仅可用性） | `qa/evidence/public-host.json` |
 | 控制台/外部请求 | PASS | 同上 |
 
 ## 限制

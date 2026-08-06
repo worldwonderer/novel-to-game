@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-08-06T08:45:00-07:00",
+  "command": "HTTP GET with redirects, 30-second timeout",
+  "url": "https://xiyouji.vibecoco.ai/",
+  "httpStatus": 200,
+  "bytes": 345,
+  "bodySha256": "6ee2667623dd4e6485d0fa66538ab6412e1d0b12f23f160672f0012af092aff4",
+  "title": "西游记 · 三借芭蕉扇",
+  "availability": "PASS",
+  "candidateIdentity": "NOT_VERIFIED",
+  "claimBoundary": "This proves URL availability and the expected title only; it does not bind the deployment to the current source fingerprint."
+}

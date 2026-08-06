@@ -53,9 +53,11 @@ profile；不能通过自报未采用来绕过仓库中的实际资产、调用�
 
 ## 证据角色
 
-`qa/verification.json` 是执行事实源。schema v2 写 `assuranceProfile`、整体状态、固定 capability 清单、
-checks 和结构化 limitations。limitations 含 `scope`、`reason`、`blocksProfiles`；阻断当前 profile 时
-整体不能 PASS。
+`qa/verification.json` 是执行事实源。schema v2 写 `assuranceProfile`、整体状态、当前可发布输入
+fingerprint、固定 capability 清单、同名 capability checks、complete run、权威命令与 hash-bound
+持久证据，以及结构化 limitations。limitations 含 `scope`、`reason`、`blocksProfiles`；阻断当前
+profile 时整体不能 PASS。发现 capability 来源却自报未采用，或 PASS 证据未绑定当前 fingerprint/
+SHA-256，均失败关闭。
 
 `qa/release-gates.json` 只保存 release 事实。当前证明标 `evidenceRole: "CURRENT"`；旧记录唯一合法
 角色为 `evidenceRole: "HISTORICAL"`，不得满足当前要求。verification 与 release 对同一 profile、

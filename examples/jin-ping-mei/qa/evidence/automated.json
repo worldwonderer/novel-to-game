@@ -1,5 +1,5 @@
 {
-  "date": "2026-08-01",
+  "date": "2026-08-06",
   "status": "PASS",
   "scope": "playable_slice_with_household_short_arcs",
   "engine": {
@@ -28,18 +28,19 @@
       "1920x1080@200%-text"
     ],
     "local_load_ms": {
-      "fast": 40.1,
-      "normal": 30.9
+      "fast": 87.3,
+      "normal": 32.0
     },
     "worst_transition_to_paint_ms": {
-      "fast": 14.1,
-      "normal": 8.1
+      "fast": 13.7,
+      "normal": 7.6
     },
     "minimum_text_px": {
       "control": 13,
       "body": 14,
       "relation_reason": 12
-    }
+    },
+    "screenshots_retained_in_git": false
   },
   "app_size_mb": 6.0,
   "visual_verdict": {

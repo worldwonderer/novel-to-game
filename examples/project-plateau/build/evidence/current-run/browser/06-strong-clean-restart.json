@@ -7,11 +7,11 @@
     900
   ],
   "visionMode": "full-colour",
-  "url": "http://127.0.0.1:4173/?qa=s8",
+  "url": "http://127.0.0.1:4173/?qa=complete-run",
   "consoleErrorsAtCheckpoint": [],
   "requestHostsAtCheckpoint": [
     "",
     "127.0.0.1:4173"
   ],
-  "capturedAtUnixMs": 1786028908963
+  "capturedAtUnixMs": 1786033633125
 }

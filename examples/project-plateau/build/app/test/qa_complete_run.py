@@ -50,10 +50,10 @@ def start_server() -> subprocess.Popen[str] | None:
                 return process
             except OSError:
                 if process.poll() is not None:
-                    raise RuntimeError("Vite exited before S8 QA")
+                    raise RuntimeError("Vite exited before complete-run QA")
                 time.sleep(0.1)
     process.terminate()
-    raise RuntimeError("Vite did not become ready for S8 QA")
+    raise RuntimeError("Vite did not become ready for complete-run QA")
 
 
 def fingerprint() -> str:
@@ -107,9 +107,9 @@ def run() -> dict[str, object]:
         page.on("console", lambda message: errors.append(message.text) if message.type == "error" else None)
         page.on("pageerror", lambda error: errors.append(f"PAGEERROR: {error}"))
         page.on("request", lambda request: hosts.add(urlparse(request.url).netloc))
-        page.goto(f"{BASE_URL}/?qa=s8", wait_until="networkidle")
+        page.goto(f"{BASE_URL}/?qa=complete-run", wait_until="networkidle")
         page.wait_for_function("window.__projectPlateau?.ready === true")
-        assert page.evaluate("window.__projectPlateau.stage") in {"s8-input-paths", "s9-living-plates", "s10-glade-clarity"}
+        assert page.evaluate("window.__projectPlateau.stage") == "current-complete-run"
         vision_mode = "full-colour"
 
         def capture(identifier: str, inputs: list[str]) -> dict[str, object]:

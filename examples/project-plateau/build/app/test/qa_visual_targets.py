@@ -574,7 +574,7 @@ def run() -> dict[str, object]:
 
         manifest = {
             "schemaVersion": 1,
-            "candidate": "project-plateau-visual-sota",
+            "candidate": "project-plateau-visual-capture",
             "source": {
                 "scope": "index.html, package manifests, public assets and src",
                 "sha256": fingerprint,
@@ -624,7 +624,7 @@ def run() -> dict[str, object]:
                 "path": performance_path.relative_to(EVIDENCE).as_posix(),
                 "sha256": sha256_file(performance_path),
             },
-            "reviewStatus": "pending-independent-visual-review",
+            "reviewStatus": "capture-only-not-current-review",
         }
         manifest_path = EVIDENCE / "manifest.json"
         manifest_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")

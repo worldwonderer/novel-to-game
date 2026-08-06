@@ -882,7 +882,7 @@ test('the central helper prompt clears the protected silver-frame exposure area'
     /html\s*\{\s*font-size:\s*calc\(16px \* var\(--text-scale\)\);\s*\}/,
     'text scaling must change the rem root rather than only inherited body copy',
   );
-  assert.match(styles, /#s0-badge\s*\{\s*display:\s*none;\s*\}/);
+  assert.match(styles, /#build-badge\s*\{\s*display:\s*none;\s*\}/);
   assert.match(main, /document\.documentElement\.dataset\.textScale\s*=\s*presentationSettings\.textScale/);
   assert.match(
     main,

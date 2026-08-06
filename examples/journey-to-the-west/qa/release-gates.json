@@ -1,9 +1,0 @@
-{
-  "schemaVersion": 1,
-  "evidenceRole": "HISTORICAL",
-  "assuranceProfile": "smoke",
-  "publicationTier": "graybox",
-  "targetFinish": "playable-prototype",
-  "status": "FAIL",
-  "notes": "Archived release assessment. It does not prove the current playable candidate; qa/verification.json is authoritative."
-}

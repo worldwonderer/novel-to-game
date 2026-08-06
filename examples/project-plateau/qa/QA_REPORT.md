@@ -1,49 +1,40 @@
 # Project Plateau QA report
 
 `targetFinish: playable-prototype`
-`assuranceProfile: release`
+`assuranceProfile: smoke`
 `status: PASS`
 
 ## Decision
 
-The current browser candidate is a playable prototype. A real keyboard/mouse path starts from a clean field order,
-traverses the plateau, exposes four plates, reaches a Strong field record and restarts to the initial state. Release
-identity and visual claims are checked by the repository aggregate validator.
+The current local browser candidate passes the smallest playable-proof contract:
+it launches and renders; real keyboard/mouse input completes the core route,
+reaches a Strong field record, and restarts from a clean state. Capability checks
+cover the continuous 3D runtime, generated assets, public-URL availability, and
+exposed accessibility settings.
 
-This report does not claim subjective fun, long-term balance, cryptographic reviewer identity or first-time human
-comprehension.
-
-## Authoritative paths
+## Current evidence
 
 | Concern | Evidence |
 |---|---|
-| Actual command, environment and suites | `qa/verification.json`, `qa/evidence/verify.log` |
-| Complete run and restart | `build/evidence/current-run/report.json` and its seven semantic checkpoints |
-| Current visual candidate | `build/evidence/visual-upgrade/generated/manifest.json` |
-| Frozen independent reviews | `build/evidence/visual-upgrade/reviews-freeze.json` |
-| Release asset status | `build/asset-ledger.json` |
-| Source inputs | `build/source-inputs.json` |
-| Public host | `https://plateau.vibecoco.ai` and `qa/evidence/public-host/report.json` (`HISTORICAL`, not current proof) |
-| Voiceover rights | `qa/evidence/voiceover-approval-2026-08-04.md` |
+| Command, source fingerprint and all suites | `qa/verification.json`, `qa/evidence/verify.log` |
+| Complete run and restart | `build/evidence/current-run/report.json` and seven semantic checkpoints |
+| Adopted asset provenance/fallbacks | `build/asset-ledger.json` |
+| Public URL availability only | <https://plateau.vibecoco.ai>, `qa/evidence/public-host/report.json` |
 
-## Required checks
-
-- Launch/render/input/core loop/outcome/restart: **PASS**.
-- Target browser, desktop viewports and controller/collision contracts: **PASS**.
-- TTS/generated media rights and local asset handoff: **PASS** for the adopted launch voiceover.
-- Current visual manifest and required independent review: **PASS**.
-- Public host current fingerprint: **HISTORICAL**; the playable-prototype repository claim does not treat it as
-  current deployment proof.
-- Blocker/major defects: none open.
+The richer visual manifest, frozen reviews and `qa/release-gates.json` are
+historical records. They do not upgrade this current smoke decision.
+Promotional TTS is not adopted into the playable build; original runtime Web
+Audio and captions are unaffected.
 
 ## Limitations
 
-- Automation is not first-time human navigation or premise-comprehension evidence.
-- Pixel/state checks cannot prove anatomy, composition, motion quality, fun or balance.
-- The hosted URL must be redeployed and fingerprinted before it can be claimed as the current release candidate.
+- The hosted URL must be redeployed and fingerprinted before a release claim.
+- Independent first-time-player comprehension is not run and blocks delivery or release.
+- Automation cannot determine subjective anatomy, composition, motion quality,
+  comfort, fun, or balance.
 
 ## Re-run
 
-From `build/app/` run `npm ci && npm run verify`. Then run the repository aggregate validator from the repository
-root. Per-click captures, raw performance traces and superseded review rounds are reproducible outputs and are not
-retained in Git.
+From `build/app/`, run `npm ci && npm run verify`. The verifier regenerates the
+current route and hash-bound decision. Per-click captures, raw performance
+traces, generated dependencies, and superseded review rounds are not retained.

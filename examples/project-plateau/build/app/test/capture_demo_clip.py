@@ -5,7 +5,7 @@ The source take is one continuous Strong-result browser run with two defensive
 shots. Delivery clips disclose same-take editorial cuts so traversal can be
 compressed while camera commitment, the pterodactyl dive, rifle response and
 result remain readable. The route never teleports or advances time through a
-QA hook, and the edited demos never replace the S8 traversal report. Raw and
+QA hook, and the edited demos never replace the current complete-run report. Raw and
 encoded video stay out of Git; marks, hashes and probe data remain reproducible.
 """
 
@@ -532,7 +532,7 @@ def publish_preview(source: Path, segments: list[dict[str, object]], marks: dict
             "interactiveRuntimeLoadedInPreviewMode": False,
         },
         "limitations": [
-            "The edited preview is not gameplay-timing evidence; S8 remains authoritative.",
+            "The edited preview is not gameplay-timing evidence; build/evidence/current-run/report.json remains authoritative.",
             "The preview is a conversion fallback, not a substitute for desktop WebGL2 QA.",
         ],
     }
@@ -739,7 +739,7 @@ def main() -> int:
     card = subprocess.run(
         [
             sys.executable, str(XCLIP), "card",
-            str(BUILD / "evidence" / "s10" / "02-young-play-silver-frame.jpg"),
+            str(BUILD / "evidence" / "current-run" / "03-strong-glade-frames.jpg"),
             "--out", str(share_card), "--kind", "github", "--top", "20",
             "--bottom", "160", "--anchor", "center", "--quality", "3",
         ],
@@ -762,7 +762,7 @@ def main() -> int:
             "path": str(share_card.relative_to(BUILD)),
             "bytes": share_card.stat().st_size,
             "sha256": sha256(share_card),
-            "source": "evidence/s10/02-young-play-silver-frame.jpg",
+            "source": "evidence/current-run/03-strong-glade-frames.jpg",
             "transform": "crop and resize only; no added text or generated imagery",
         },
         "publicPreview": {
@@ -774,7 +774,7 @@ def main() -> int:
         },
         "limitations": [
             "The delivery encodes use disclosed same-take cuts and speed changes and therefore are not timing evidence.",
-            "S8 report.json remains the authoritative input-only traversal and timing record.",
+            "build/evidence/current-run/report.json remains the authoritative input-only traversal and timing record.",
             "The local MP4/WebM files are reproducible delivery artifacts and are intentionally excluded from Git history.",
         ],
     }
