@@ -1,5 +1,5 @@
 command=npm run verify
-sourceCommit=null
+sourceCommit=baa116993f126db393e1557a2c4aab5c21e90657
 sourceFingerprint=5ab7022b95bedb83903affaa326ac91446c5235effa06e13a969d5877954f580
 runtime=Node.js
 runtimeVersion=v25.9.0
@@ -15,125 +15,125 @@ command=npm test
 > project-plateau-proof-before-dark@0.1.0 test
 > node --test test/*.test.js
 
-✔ every core field cue has a concise sound caption (1.713167ms)
-✔ audio settings clamp channel volumes and expose caption state (0.172458ms)
-✔ cue history and threat transitions stay observable without Web Audio (0.430375ms)
-✔ cue history remains bounded during a long field session (0.150042ms)
-✔ collision contract is a jumping 3D capsule with authored solid/non-solid policy (2.174041ms)
-✔ every solid collider is finite, uniquely identified and tied to a visible anchor (0.193333ms)
-✔ spawn and authored route checkpoints are outside all solid geometry (5.57425ms)
-✔ circle contact follows the curved surface instead of axis-sticking (0.683417ms)
-✔ rotated tent collider preserves tangential movement along its authored canvas wall (0.901959ms)
-✔ an invalid overlap is deterministically depenetrated before movement resumes (0.591542ms)
-✔ simulation ground height follows the same heightfield used by rendering (3.351042ms)
-✔ an airborne capsule still collides with tall authored solids (0.157041ms)
-✔ gameplay keys are accepted only by an active unpaused field view (4.524375ms)
-✔ mouse deltas update heading and pitch with explicit signs and clamps (0.811583ms)
-✔ camera-relative planar axes stay orthogonal for arbitrary headings (0.214291ms)
-✔ supported desktop environments enter the interactive WebGL2 build (4.9045ms)
-✔ missing WebGL2 always routes to the local preview (0.1265ms)
-✔ touch-only and undersized devices route to the conversion preview (0.169459ms)
-✔ known social in-app browsers route to preview even at a desktop viewport (0.173208ms)
-✔ explicit preview is deterministic while interactive override still requires WebGL2 (0.101625ms)
-✔ foundation exposes the locked viewport and performance budgets (4.65225ms)
-✔ procedural placement is deterministic for a recorded seed (0.156958ms)
-✔ representative scene contains all declared subject and pressure groups (0.117167ms)
-✔ every authored solid collider stays registered to the rendered object position (323.976958ms)
-✔ the family asset exposes two adults, three young and both authored behaviors (100.485333ms)
-✔ family actions remain planted while anatomical pivots and branch contact carry motion (67.300167ms)
-✔ pterodactyl attack reads as search, fold-dive and close attack from simulation time (189.733375ms)
-✔ pterodactyl shadow crosses awareness 2 to 3 without a one-frame jump (64.388084ms)
-✔ pterodactyl flight uses a visible asymmetric flap cycle instead of a static glide (57.758542ms)
-✔ pterodactyl body forward follows the actual orbit and attack travel tangent (58.988042ms)
-✔ atmosphere exposes layered humid depth rather than a flat sky backdrop (1.314541ms)
-✔ the glade composition protects a lit family-and-basalt sightline (59.445375ms)
-✔ degradable ground accents add deterministic depth without changing collision truth (55.597708ms)
-✔ environment landmarks use authored organic and fractured silhouettes instead of stretched primitives (54.542834ms)
-✔ basalt seams inherit each tilted pillar frame instead of floating in world space (55.719667ms)
-✔ route and brook ribbons conform every feathered edge vertex to local terrain (55.652083ms)
-✔ every instanced tree keeps its authored root plane in contact with terrain (52.793542ms)
-✔ every instanced fern stays upright with its root plane touching terrain (51.742208ms)
-✔ Fort Plateau reads as pitched canvas shelters with soft camp smoke (60.06ms)
-✔ frame percentile is stable and keeps the slow tail visible (0.13975ms)
-✔ one percent low FPS averages the slowest one percent of frame times (0.091208ms)
-✔ runtime sources contain no remote asset or CDN request while navigation links may leave the app (10.549875ms)
-✔ the central helper prompt clears the protected silver-frame exposure area (0.679ms)
-✔ evidence retention never removes a release-bound resource (118.687917ms)
-✔ evidence retention defaults to a non-destructive dry run (73.458042ms)
-✔ evidence retention blocks apply when an authoritative root is missing or malformed (145.635916ms)
-✔ evidence retention blocks malformed transitive manifests (59.799542ms)
-✔ evidence retention rejects symlinks without touching their targets (53.480875ms)
-✔ authoritative verification stages recovery outside the authoritative record (55.195ms)
-✔ HY3D camera-and-hands viewmodel is the only production camera asset and stays within budget (5.391625ms)
-✔ field-camera loader caches one matte local template (2.859125ms)
-✔ camera mount receives one integrated HY3D held-camera visual without procedural hands (0.61725ms)
-✔ standalone held camera keeps the wide hand-and-forearm silhouette from the reference (0.336958ms)
-✔ held camera points its lens away from the player instead of presenting the front element (4.308042ms)
-✔ HY3D production asset stays within the approved shared package and render budget (2.134708ms)
-✔ cached loader fetches once and reuses a prepared template (4.685667ms)
-✔ shared morph targets restore behavioral posing without duplicating the source mesh (83.766833ms)
-✔ young family members reuse the adult mesh with a persistent juvenile proportion morph (23.864959ms)
-✔ HY3D instances share heavy geometry and material resources (0.475208ms)
-✔ play and reach poses move anatomy while keeping a diagonal support pair planted (0.418167ms)
-✔ adult HY3D swap hides the fallback without changing family roles or young assets (128.724708ms)
-✔ production family mode can reuse the same HY3D resource for adults and young (75.624584ms)
-✔ attaching twice is idempotent and preserves the procedural fallback meshes (7.262667ms)
-✔ HY3D pterodactyl asset stays within the approved shared delivery budget (2.271083ms)
-✔ pterodactyl loader caches one matte template with shared flight morphs (11.234834ms)
-✔ flight instances share geometry and accept independent morph poses (183.817959ms)
-✔ flock upgrade hides procedural meshes once and reuses the HY3D template (22.922417ms)
-✔ standalone visual uses the expected scale, orientation and centered source (0.23525ms)
-✔ HY3D rifle-and-hands viewmodel is the only production gun asset and stays within budget (3.555584ms)
-✔ rifle loader caches one matte local template (20.73575ms)
-✔ rifle mount receives one integrated HY3D held-rifle visual without procedural hands (21.6455ms)
-✔ standalone held-rifle instance preserves the long local-Z silhouette plus hand width (0.405375ms)
-✔ adult Iguanodon is a grounded articulated loft model rather than a primitive blob (101.92125ms)
-✔ young Iguanodon keeps the same action rig with distinct proportions and palette (17.589167ms)
-✔ pterodactyl is an articulated thick-membrane creature rather than a paper triangle (41.500375ms)
-✔ pterodactyl exposes multi-joint wings and readable anatomical anchors (62.997542ms)
-✔ pterodactyl membrane has clay skin, darker veins and restrained translucency (32.923834ms)
-✔ pterodactyl wrists carry three grasping free digits distinct from the long wing finger (43.970542ms)
-✔ pterodactyl rear feet have connected soles, pads and three tapered clawed toes (22.712416ms)
-✔ render scale caps Retina fill-rate without degrading standard displays (7.533625ms)
-✔ quality profiles expose bounded fill-rate and active cadence budgets (0.929667ms)
-✔ render cadence saves power on title and pause while preserving active play (0.10375ms)
-✔ active rendering remains near 60 FPS across standard and high-refresh displays (4.163791ms)
-✔ idle cadence remains stable on a 120 Hz display (0.540125ms)
-✔ presentation settings normalize invalid persisted values (1.697458ms)
-✔ settings round-trip through versioned storage and can be reset (0.214417ms)
-✔ blocked or malformed storage falls back without disabling controls (0.179958ms)
-✔ the measured compact route starts with a 180-second light budget (1.396291ms)
-✔ fresh and restarted player states are clean copies (0.95025ms)
-✔ walking, sprinting and crouching have ordered deterministic speeds (16.927ms)
-✔ movement accelerates, coasts briefly, and settles instead of snapping between speeds (2.117292ms)
-✔ a fast reversal must shed forward velocity before building speed backward (1.045917ms)
-✔ rotated view keeps WASD aligned with the camera horizontal axes (3.544542ms)
-✔ pause freezes both world time and movement (0.142042ms)
-✔ jump has deterministic takeoff, apex and landing without double-jump (1.912458ms)
-✔ jump is rejected while crouching, holding a tool, exposing or paused (0.683292ms)
-✔ one large delta and fixed slices produce the same ballistic landing (3.120375ms)
-✔ focus loss releases held tools while preserving an exposure already in flight (0.206208ms)
-✔ a solid obstacle blocks penetration and permits axis sliding (1.915125ms)
-✔ a long simulation step cannot tunnel through a circular obstacle (1.9835ms)
-✔ leaving the navigable world recovers the last stable position (0.14275ms)
-✔ zone topology distinguishes the observation fork and both return routes (0.052958ms)
-✔ territory, glade, open proof and cover produce four readable threat states (9.45525ms)
-✔ examining the brook makes context eligible without awarding evidence (0.275ms)
-✔ successive observed glade plates record young play and branch pull separately (0.154916ms)
-✔ camera raise slows movement and shutter commits one physical plate for two live seconds (5.489875ms)
-✔ open proof adds two awareness states and contact cracks the best intact plate (8.829333ms)
-✔ a later contact without body margin fails while the first contact remains recoverable (0.547334ms)
-✔ a timely raised-rifle shot spends one cartridge and interrupts attack (0.328709ms)
-✔ pause freezes a raised camera and live shutter commitment without spending a plate (0.215042ms)
-✔ restart clears observation, proof, damage and action history (0.295333ms)
-✔ intact evidence and all four result thresholds are deterministic (0.19775ms)
-✔ covered return commits its deterministic cost once and submits intact proof at Fort (0.567125ms)
-✔ an attack-state exposed return cracks the best plate without spending body margin (0.194416ms)
-✔ a fired-shot exposed return costs eighteen seconds and preserves its best plate (0.274917ms)
-✔ remaining light expires outside Fort with exact cause and actionable cue (0.235458ms)
-✔ terrain field is deterministic, finite and visibly multi-scale (3.346958ms)
-✔ terrain derivatives stay gentle on the playable route while preserving rolling relief (0.323291ms)
-✔ terrain renders as a bounded low-cost layer without a repeated marker-like ground-cover field (128.422042ms)
+✔ every core field cue has a concise sound caption (5.509458ms)
+✔ audio settings clamp channel volumes and expose caption state (0.200625ms)
+✔ cue history and threat transitions stay observable without Web Audio (0.26375ms)
+✔ cue history remains bounded during a long field session (0.121125ms)
+✔ collision contract is a jumping 3D capsule with authored solid/non-solid policy (4.541208ms)
+✔ every solid collider is finite, uniquely identified and tied to a visible anchor (0.637166ms)
+✔ spawn and authored route checkpoints are outside all solid geometry (16.141042ms)
+✔ circle contact follows the curved surface instead of axis-sticking (9.687542ms)
+✔ rotated tent collider preserves tangential movement along its authored canvas wall (0.550209ms)
+✔ an invalid overlap is deterministically depenetrated before movement resumes (0.483916ms)
+✔ simulation ground height follows the same heightfield used by rendering (7.613916ms)
+✔ an airborne capsule still collides with tall authored solids (0.14975ms)
+✔ gameplay keys are accepted only by an active unpaused field view (2.091458ms)
+✔ mouse deltas update heading and pitch with explicit signs and clamps (0.3025ms)
+✔ camera-relative planar axes stay orthogonal for arbitrary headings (0.097292ms)
+✔ supported desktop environments enter the interactive WebGL2 build (13.469333ms)
+✔ missing WebGL2 always routes to the local preview (0.11475ms)
+✔ touch-only and undersized devices route to the conversion preview (0.171083ms)
+✔ known social in-app browsers route to preview even at a desktop viewport (0.069625ms)
+✔ explicit preview is deterministic while interactive override still requires WebGL2 (0.066917ms)
+✔ foundation exposes the locked viewport and performance budgets (6.971125ms)
+✔ procedural placement is deterministic for a recorded seed (0.139ms)
+✔ representative scene contains all declared subject and pressure groups (2.986709ms)
+✔ every authored solid collider stays registered to the rendered object position (324.143417ms)
+✔ the family asset exposes two adults, three young and both authored behaviors (79.756417ms)
+✔ family actions remain planted while anatomical pivots and branch contact carry motion (77.321417ms)
+✔ pterodactyl attack reads as search, fold-dive and close attack from simulation time (199.701167ms)
+✔ pterodactyl shadow crosses awareness 2 to 3 without a one-frame jump (58.753167ms)
+✔ pterodactyl flight uses a visible asymmetric flap cycle instead of a static glide (55.305791ms)
+✔ pterodactyl body forward follows the actual orbit and attack travel tangent (64.636792ms)
+✔ atmosphere exposes layered humid depth rather than a flat sky backdrop (0.97625ms)
+✔ the glade composition protects a lit family-and-basalt sightline (60.528667ms)
+✔ degradable ground accents add deterministic depth without changing collision truth (67.215625ms)
+✔ environment landmarks use authored organic and fractured silhouettes instead of stretched primitives (61.429959ms)
+✔ basalt seams inherit each tilted pillar frame instead of floating in world space (55.9945ms)
+✔ route and brook ribbons conform every feathered edge vertex to local terrain (53.899917ms)
+✔ every instanced tree keeps its authored root plane in contact with terrain (53.650833ms)
+✔ every instanced fern stays upright with its root plane touching terrain (51.796209ms)
+✔ Fort Plateau reads as pitched canvas shelters with soft camp smoke (52.142166ms)
+✔ frame percentile is stable and keeps the slow tail visible (0.102458ms)
+✔ one percent low FPS averages the slowest one percent of frame times (0.08025ms)
+✔ runtime sources contain no remote asset or CDN request while navigation links may leave the app (7.014208ms)
+✔ the central helper prompt clears the protected silver-frame exposure area (0.710292ms)
+✔ evidence retention never removes a release-bound resource (57.885833ms)
+✔ evidence retention defaults to a non-destructive dry run (56.112625ms)
+✔ evidence retention blocks apply when an authoritative root is missing or malformed (112.592583ms)
+✔ evidence retention blocks malformed transitive manifests (61.709916ms)
+✔ evidence retention rejects symlinks without touching their targets (53.793333ms)
+✔ authoritative verification stages recovery outside the authoritative record (54.599375ms)
+✔ HY3D camera-and-hands viewmodel is the only production camera asset and stays within budget (6.312792ms)
+✔ field-camera loader caches one matte local template (8.1645ms)
+✔ camera mount receives one integrated HY3D held-camera visual without procedural hands (0.481667ms)
+✔ standalone held camera keeps the wide hand-and-forearm silhouette from the reference (6.162667ms)
+✔ held camera points its lens away from the player instead of presenting the front element (0.434958ms)
+✔ HY3D production asset stays within the approved shared package and render budget (2.044625ms)
+✔ cached loader fetches once and reuses a prepared template (2.793792ms)
+✔ shared morph targets restore behavioral posing without duplicating the source mesh (26.127041ms)
+✔ young family members reuse the adult mesh with a persistent juvenile proportion morph (52.005667ms)
+✔ HY3D instances share heavy geometry and material resources (0.492208ms)
+✔ play and reach poses move anatomy while keeping a diagonal support pair planted (0.439167ms)
+✔ adult HY3D swap hides the fallback without changing family roles or young assets (56.434792ms)
+✔ production family mode can reuse the same HY3D resource for adults and young (26.524791ms)
+✔ attaching twice is idempotent and preserves the procedural fallback meshes (23.807208ms)
+✔ HY3D pterodactyl asset stays within the approved shared delivery budget (3.788666ms)
+✔ pterodactyl loader caches one matte template with shared flight morphs (3.526083ms)
+✔ flight instances share geometry and accept independent morph poses (88.068709ms)
+✔ flock upgrade hides procedural meshes once and reuses the HY3D template (48.168166ms)
+✔ standalone visual uses the expected scale, orientation and centered source (0.200792ms)
+✔ HY3D rifle-and-hands viewmodel is the only production gun asset and stays within budget (6.9745ms)
+✔ rifle loader caches one matte local template (3.364417ms)
+✔ rifle mount receives one integrated HY3D held-rifle visual without procedural hands (0.538083ms)
+✔ standalone held-rifle instance preserves the long local-Z silhouette plus hand width (0.275292ms)
+✔ adult Iguanodon is a grounded articulated loft model rather than a primitive blob (93.471ms)
+✔ young Iguanodon keeps the same action rig with distinct proportions and palette (12.703ms)
+✔ pterodactyl is an articulated thick-membrane creature rather than a paper triangle (67.090459ms)
+✔ pterodactyl exposes multi-joint wings and readable anatomical anchors (24.994417ms)
+✔ pterodactyl membrane has clay skin, darker veins and restrained translucency (7.400083ms)
+✔ pterodactyl wrists carry three grasping free digits distinct from the long wing finger (19.315417ms)
+✔ pterodactyl rear feet have connected soles, pads and three tapered clawed toes (6.358542ms)
+✔ render scale caps Retina fill-rate without degrading standard displays (3.287625ms)
+✔ quality profiles expose bounded fill-rate and active cadence budgets (4.143792ms)
+✔ render cadence saves power on title and pause while preserving active play (0.111334ms)
+✔ active rendering remains near 60 FPS across standard and high-refresh displays (4.3505ms)
+✔ idle cadence remains stable on a 120 Hz display (0.148208ms)
+✔ presentation settings normalize invalid persisted values (1.644459ms)
+✔ settings round-trip through versioned storage and can be reset (0.197666ms)
+✔ blocked or malformed storage falls back without disabling controls (0.202792ms)
+✔ the measured compact route starts with a 180-second light budget (1.156833ms)
+✔ fresh and restarted player states are clean copies (0.889875ms)
+✔ walking, sprinting and crouching have ordered deterministic speeds (11.887333ms)
+✔ movement accelerates, coasts briefly, and settles instead of snapping between speeds (1.73675ms)
+✔ a fast reversal must shed forward velocity before building speed backward (2.190875ms)
+✔ rotated view keeps WASD aligned with the camera horizontal axes (0.711166ms)
+✔ pause freezes both world time and movement (0.109209ms)
+✔ jump has deterministic takeoff, apex and landing without double-jump (1.794416ms)
+✔ jump is rejected while crouching, holding a tool, exposing or paused (0.902958ms)
+✔ one large delta and fixed slices produce the same ballistic landing (3.036125ms)
+✔ focus loss releases held tools while preserving an exposure already in flight (0.193916ms)
+✔ a solid obstacle blocks penetration and permits axis sliding (1.16ms)
+✔ a long simulation step cannot tunnel through a circular obstacle (3.036042ms)
+✔ leaving the navigable world recovers the last stable position (0.116084ms)
+✔ zone topology distinguishes the observation fork and both return routes (0.056583ms)
+✔ territory, glade, open proof and cover produce four readable threat states (7.652083ms)
+✔ examining the brook makes context eligible without awarding evidence (0.336583ms)
+✔ successive observed glade plates record young play and branch pull separately (0.176417ms)
+✔ camera raise slows movement and shutter commits one physical plate for two live seconds (4.296333ms)
+✔ open proof adds two awareness states and contact cracks the best intact plate (4.705ms)
+✔ a later contact without body margin fails while the first contact remains recoverable (0.092125ms)
+✔ a timely raised-rifle shot spends one cartridge and interrupts attack (0.123333ms)
+✔ pause freezes a raised camera and live shutter commitment without spending a plate (0.175209ms)
+✔ restart clears observation, proof, damage and action history (0.116ms)
+✔ intact evidence and all four result thresholds are deterministic (0.111375ms)
+✔ covered return commits its deterministic cost once and submits intact proof at Fort (1.493625ms)
+✔ an attack-state exposed return cracks the best plate without spending body margin (0.237917ms)
+✔ a fired-shot exposed return costs eighteen seconds and preserves its best plate (0.280583ms)
+✔ remaining light expires outside Fort with exact cause and actionable cue (0.686792ms)
+✔ terrain field is deterministic, finite and visibly multi-scale (3.636666ms)
+✔ terrain derivatives stay gentle on the playable route while preserving rolling relief (0.325167ms)
+✔ terrain renders as a bounded low-cost layer without a repeated marker-like ground-cover field (115.135292ms)
 ℹ tests 119
 ℹ suites 0
 ℹ pass 119
@@ -141,9 +141,9 @@ command=npm test
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 2335.629584
+ℹ duration_ms 2045.36475
 exitCode=0
-durationMs=2605
+durationMs=2293
 suite=build:production
 cwd=examples/project-plateau/build/app
 command=npm run build
@@ -163,7 +163,7 @@ dist/assets/GLTFLoader-DB8oIB9H.js            43.28 kB │ gzip:  12.86 kB
 dist/assets/BufferGeometryUtils-qQM6QJN6.js  253.24 kB │ gzip:  67.91 kB
 dist/assets/main-C3cKfeXB.js                 616.59 kB │ gzip: 189.13 kB
 
-✓ built in 675ms
+✓ built in 561ms
 
 [plugin builtin:vite-reporter]
 (!) Some chunks are larger than 500 kB after minification. Consider:
@@ -171,7 +171,7 @@ dist/assets/main-C3cKfeXB.js                 616.59 kB │ gzip: 189.13 kB
 - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
 - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
 exitCode=0
-durationMs=2556
+durationMs=2270
 suite=browser:complete-run
 cwd=examples/project-plateau/build/app
 command=python3 test/qa_complete_run.py
@@ -184,6 +184,7 @@ command=python3 test/qa_complete_run.py
     "strongDistinctBehaviorFrames": true,
     "strongRemainingLightWithinReferenceWindow": true,
     "cleanRestartAfterStrongResult": true,
+    "accessibilityModesAppliedAndReset": true,
     "noThreatMeter": true,
     "consoleErrors": [],
     "requestHosts": [
@@ -194,10 +195,10 @@ command=python3 test/qa_complete_run.py
   },
   "pathMetrics": {
     "Strong": {
-      "wallSeconds": 59.37,
-      "simulationSeconds": 59.513,
-      "distanceTravelled": 133.84,
-      "remainingLight": 92.487,
+      "wallSeconds": 59.22,
+      "simulationSeconds": 59.343,
+      "distanceTravelled": 133.799,
+      "remainingLight": 92.657,
       "returnCostSeconds": 28,
       "route": "covered",
       "result": {
@@ -209,7 +210,7 @@ command=python3 test/qa_complete_run.py
         "survivingPlates": 4,
         "route": "covered",
         "brookResponse": null,
-        "remainingLight": 92.5,
+        "remainingLight": 92.7,
         "gunshotCallback": null
       },
       "visionMode": "full-colour"
@@ -219,17 +220,17 @@ command=python3 test/qa_complete_run.py
     "samples": 240,
     "medianFrameMs": 16.7,
     "medianFps": 59.9,
-    "onePercentLowFps": 39.5,
+    "onePercentLowFps": 39.4,
     "worstFrameMs": 25.4
   },
   "source": {
-    "scope": "index.html, package manifests, public assets and src",
+    "scope": "publishable app inputs excluding tests, local secrets and generated output",
     "sha256": "af531936bf53193b1ea72a0228a427dbd230d43d2848c2a11440bfba052f5add"
   }
 }
 CURRENT RUN PASS: build/evidence/current-run/report.json
 exitCode=0
-durationMs=69068
+durationMs=68485
 suite=browser:controller-contract
 cwd=examples/project-plateau/build/app
 command=python3 test/qa_controller.py
@@ -256,7 +257,7 @@ command=python3 test/qa_controller.py
   ]
 }
 exitCode=0
-durationMs=8046
+durationMs=7452
 suite=browser:motion-visual
 cwd=examples/project-plateau/build/app
 command=python3 test/qa_motion.py
@@ -268,13 +269,13 @@ command=python3 test/qa_motion.py
     0.0
   ],
   "motionNormalizedDiffs": [
-    0.012698,
-    0.01371,
-    0.013795,
-    0.014234,
-    0.014001,
-    0.015497,
-    0.013673
+    0.013325,
+    0.013546,
+    0.013117,
+    0.013527,
+    0.013757,
+    0.016433,
+    0.013649
   ],
   "webglRenderer": {
     "vendor": "Google Inc. (Apple)",
@@ -285,23 +286,23 @@ command=python3 test/qa_motion.py
     "samples": 120,
     "medianFrameMs": 16.7,
     "medianFps": 59.9,
-    "onePercentLowFps": 39.6,
-    "worstFrameMs": 25.3
+    "onePercentLowFps": 39.8,
+    "worstFrameMs": 25.2
   },
   "performanceGate": {
     "status": "PASS"
   },
   "finalHeading": -0.332,
   "finalPosition": {
-    "x": 7.852,
-    "z": 55.514
+    "x": 7.843,
+    "z": 55.539
   },
   "evidence": [
     "build/evidence/motion/motion-contact-sheet.jpg"
   ]
 }
 exitCode=0
-durationMs=10949
+durationMs=10815
 suite=browser:collision-contract
 cwd=examples/project-plateau/build/app
 command=python3 test/qa_collision.py
@@ -313,11 +314,11 @@ command=python3 test/qa_collision.py
       "id": "01-visible-brook-boulder",
       "expectedCollision": "brook-boulder",
       "visual": "evidence/collision/01-visible-brook-boulder.jpg",
-      "visualSha256": "0e3408f07d20e5b52b1b9049084eb5b52ac096242ca866f77c0e83ad3e25c200",
+      "visualSha256": "6dc21cf03cc96d5ea2cefe8a873b836ce5267ec6870ee77150f81de1f5c0ce63",
       "state": "evidence/collision/state/01-visible-brook-boulder.json",
-      "stateSha256": "6a4afc9a3722cf575bfb780bc5b8a65d5c17688e085695a1682c59e6cced75b1",
+      "stateSha256": "5da5b2b6962aafe11a39475fd787f576b9e9248b3d187375eb2bb17599e327c7",
       "browser": "evidence/collision/browser/01-visible-brook-boulder.json",
-      "browserSha256": "735ea0fd714ba177c084483fb7e832dffb1af3705e34d178abef22ca078f07c3",
+      "browserSha256": "2b04fba49bdd6ce2a9a8ad6a26fa3d8ae9947fa9f024caa396c25238b15063dd",
       "finalPosition": {
         "x": -7.5,
         "z": 37.45
@@ -328,11 +329,11 @@ command=python3 test/qa_collision.py
       "id": "02-rotated-fort-tent",
       "expectedCollision": "fort-tent-west",
       "visual": "evidence/collision/02-rotated-fort-tent.jpg",
-      "visualSha256": "fd48e1f5b31ddd4f3106a1a5e8b1340b054e9a5b5f1bc327fbf9d9fc6fbe027f",
+      "visualSha256": "dae8a08e7b4f63bc4d93e9f03bd5a1b1f1f0380df3c695174ddab0d534c870fe",
       "state": "evidence/collision/state/02-rotated-fort-tent.json",
-      "stateSha256": "bc4e5f91814323a02c85f4d17b290ef10bab0bf8608aecba645f99c357b25dfc",
+      "stateSha256": "cb4fb21e1300c621f808edde259ae0e6261c7fa6ec4b0e0a3a306271ad9ead02",
       "browser": "evidence/collision/browser/02-rotated-fort-tent.json",
-      "browserSha256": "5993b924a1d4a4c1f1fad4d1975a428993e6a5dcb7436fb760b2fe5ebcb146b9",
+      "browserSha256": "47c4d76034bbe4e1377fd38dc43580f5276776a89a9d416fb1763bc0f783c430",
       "finalPosition": {
         "x": -5.687,
         "z": 77.313
@@ -343,11 +344,11 @@ command=python3 test/qa_collision.py
       "id": "03-cover-arch-trunk",
       "expectedCollision": "cover-arch-1-right-trunk",
       "visual": "evidence/collision/03-cover-arch-trunk.jpg",
-      "visualSha256": "f7ddac2ab59607d371d1e639e25727696af1e6e5d6c48102677e2683c0770d6d",
+      "visualSha256": "3185ce67ea6478d86a3475eebe0834da3a15c0f05a82cb7f210da64804a76c57",
       "state": "evidence/collision/state/03-cover-arch-trunk.json",
-      "stateSha256": "88ca53e67fa8d08c01218259a94ae75ab4f8ace14f46a8a29949428907f8e5d8",
+      "stateSha256": "b635f5c6334b6cb4af633ff0b9445ad921ec6f4356ba73bb5b4a17a17529edfe",
       "browser": "evidence/collision/browser/03-cover-arch-trunk.json",
-      "browserSha256": "7795b6b3c07bea61fe48856f44044b20f0f1aa9573f7c2064460262905496d1a",
+      "browserSha256": "852fddbd38a879c5e0f0b11b3808cd0f20510b3401f5f54dc2420615811d1264",
       "finalPosition": {
         "x": -4.82,
         "z": 28
@@ -358,11 +359,11 @@ command=python3 test/qa_collision.py
       "id": "04-living-subject-space",
       "expectedCollision": "iguanodon-adult-graze",
       "visual": "evidence/collision/04-living-subject-space.jpg",
-      "visualSha256": "338d343c5caff3b80c3bbd104f16f0d8e3e7ce07c1db7ba177ade40242688d34",
+      "visualSha256": "e91fa2f0d4e873688bf6641a837d67a4e3d5614324ff50de6e86bdef76ef1bea",
       "state": "evidence/collision/state/04-living-subject-space.json",
-      "stateSha256": "0babf025f8553519f2bd614f29e6deef38815965c5e88badf7e7188e343ddd75",
+      "stateSha256": "5538a8412aad664a18e85391c8f8fa5c07c2a47bafe2eca17b34c8b1f4374035",
       "browser": "evidence/collision/browser/04-living-subject-space.json",
-      "browserSha256": "d4195e8dcfdc9815a50b671f5ee88bcd17cab06033e5846340f2eddcb0df44a6",
+      "browserSha256": "477e1fd3573bfe538ce3c5e661669747b7aed1002ae1c02cdf6e8a0f30b7ff00",
       "finalPosition": {
         "x": -8.505,
         "z": -29.211
@@ -381,7 +382,7 @@ command=python3 test/qa_collision.py
   ]
 }
 exitCode=0
-durationMs=8682
+durationMs=8156
 suite=browser:entry-conversion
 cwd=examples/project-plateau/build/app
 command=python3 test/qa_entry.py
@@ -459,7 +460,7 @@ command=python3 test/qa_entry.py
   }
 }
 exitCode=0
-durationMs=5459
+durationMs=5216
 suite=browser:loading-state
 cwd=examples/project-plateau/build/app
 command=python3 test/qa_loading.py
@@ -481,13 +482,13 @@ command=python3 test/qa_loading.py
   ]
 }
 exitCode=0
-durationMs=4636
+durationMs=4342
 suite=repo:contract
 cwd=.
 command=python3 scripts/validate_repo.py --verification-candidate examples/project-plateau/qa/.verification-candidate.json
 Validation passed: 7 skills checked.
 exitCode=0
-durationMs=371
+durationMs=307
 suite=repo:contract
 cwd=.
 command=python3 -m unittest discover -s tests -v
@@ -582,10 +583,10 @@ test_voiceover_release_is_hash_bound_and_fail_closed (test_validate_repo.Reposit
 test_web_verification_registry_must_match_actual_test_files (test_validate_repo.RepositoryValidationTests.test_web_verification_registry_must_match_actual_test_files) ... ok
 
 ----------------------------------------------------------------------
-Ran 88 tests in 7.772s
+Ran 88 tests in 6.643s
 
 OK
 exitCode=0
-durationMs=7847
+durationMs=6713
 authoritativeExitCode=0
-authoritativeDurationMs=122260
+authoritativeDurationMs=118038

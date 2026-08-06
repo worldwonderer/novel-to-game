@@ -110,6 +110,32 @@ def run() -> dict[str, object]:
         page.goto(f"{BASE_URL}/?qa=complete-run", wait_until="networkidle")
         page.wait_for_function("window.__projectPlateau?.ready === true")
         assert page.evaluate("window.__projectPlateau.stage") == "current-complete-run"
+        page.get_by_role("button", name="Settings").click()
+        page.locator("#reduced-motion").check()
+        page.locator("#captions-enabled").uncheck()
+        page.locator("#text-scale").select_option("1.5")
+        accessibility = page.evaluate(
+            """
+            () => ({
+              settings: window.__projectPlateau.snapshot().presentationSettings,
+              reducedMotionClass: document.body.classList.contains('reduced-motion'),
+              textScale: document.documentElement.dataset.textScale,
+              horizontalOverflow: document.documentElement.scrollWidth > window.innerWidth,
+            })
+            """
+        )
+        assert accessibility["settings"]["reducedMotion"] is True, accessibility
+        assert accessibility["settings"]["captionsEnabled"] is False, accessibility
+        assert accessibility["textScale"] == "1.5", accessibility
+        assert accessibility["reducedMotionClass"] is True, accessibility
+        assert accessibility["horizontalOverflow"] is False, accessibility
+        page.locator("#settings-reset").click()
+        reset_settings = page.evaluate(
+            "window.__projectPlateau.snapshot().presentationSettings"
+        )
+        assert reset_settings["textScale"] == "1", reset_settings
+        assert reset_settings["captionsEnabled"] is True, reset_settings
+        page.get_by_role("button", name="Close settings").click()
         vision_mode = "full-colour"
 
         def capture(identifier: str, inputs: list[str]) -> dict[str, object]:
@@ -373,7 +399,7 @@ def run() -> dict[str, object]:
     assert not external, external
     return {
         "stage": "current-complete-run",
-        "source": {"scope": "index.html, package manifests, public assets and src", "sha256": fingerprint()},
+        "source": {"scope": "publishable app inputs excluding tests, local secrets and generated output", "sha256": fingerprint()},
         "environment": {
             "browser": "Google Chrome 150.0.7871.187" if CHROME.exists() else "Playwright Chromium",
             "viewport": [1440, 900],
@@ -386,6 +412,7 @@ def run() -> dict[str, object]:
             "strongDistinctBehaviorFrames": True,
             "strongRemainingLightWithinReferenceWindow": True,
             "cleanRestartAfterStrongResult": True,
+            "accessibilityModesAppliedAndReset": True,
             "noThreatMeter": no_threat_meter,
             "consoleErrors": errors,
             "requestHosts": sorted(hosts),
@@ -399,6 +426,7 @@ def run() -> dict[str, object]:
             "reachRelativeSafety": "05-strong-input-result",
         },
         "pathMetrics": path_metrics,
+        "accessibility": accessibility,
         "inputTrace": input_trace,
         "performance": performance,
         "checkpoints": checkpoints,

@@ -1,7 +1,7 @@
 {
   "stage": "current-complete-run",
   "source": {
-    "scope": "index.html, package manifests, public assets and src",
+    "scope": "publishable app inputs excluding tests, local secrets and generated output",
     "sha256": "af531936bf53193b1ea72a0228a427dbd230d43d2848c2a11440bfba052f5add"
   },
   "environment": {
@@ -19,6 +19,7 @@
     "strongDistinctBehaviorFrames": true,
     "strongRemainingLightWithinReferenceWindow": true,
     "cleanRestartAfterStrongResult": true,
+    "accessibilityModesAppliedAndReset": true,
     "noThreatMeter": true,
     "consoleErrors": [],
     "requestHosts": [
@@ -36,10 +37,10 @@
   },
   "pathMetrics": {
     "Strong": {
-      "wallSeconds": 59.37,
-      "simulationSeconds": 59.513,
-      "distanceTravelled": 133.84,
-      "remainingLight": 92.487,
+      "wallSeconds": 59.22,
+      "simulationSeconds": 59.343,
+      "distanceTravelled": 133.799,
+      "remainingLight": 92.657,
       "returnCostSeconds": 28,
       "route": "covered",
       "result": {
@@ -51,11 +52,29 @@
         "survivingPlates": 4,
         "route": "covered",
         "brookResponse": null,
-        "remainingLight": 92.5,
+        "remainingLight": 92.7,
         "gunshotCallback": null
       },
       "visionMode": "full-colour"
     }
+  },
+  "accessibility": {
+    "settings": {
+      "reducedMotion": true,
+      "captionsEnabled": false,
+      "textScale": "1.5",
+      "quality": "balanced",
+      "lookSensitivity": 1,
+      "volumes": {
+        "ambience": 0.34,
+        "effects": 0.72,
+        "music": 0.2
+      },
+      "storageKey": "project-plateau:presentation:v2"
+    },
+    "reducedMotionClass": true,
+    "textScale": "1.5",
+    "horizontalOverflow": false
   },
   "inputTrace": [
     {
@@ -69,9 +88,9 @@
       },
       "end": {
         "x": 3,
-        "z": 44.216
+        "z": 44.225
       },
-      "distanceAfter": 25.784,
+      "distanceAfter": 25.775,
       "concurrentInput": "KeyC",
       "continuationMs": 250,
       "continuousInput": true,
@@ -81,7 +100,7 @@
       "path": "Strong",
       "input": "Right Mouse + Left Mouse",
       "purpose": "partial tutorial frame",
-      "wallSeconds": 2.168,
+      "wallSeconds": 2.169,
       "plate": 1,
       "frame": "brook-partial",
       "points": 1
@@ -90,22 +109,22 @@
       "path": "Strong",
       "input": "KeyW",
       "purpose": "brook to basalt",
-      "wallSeconds": 6.468,
+      "wallSeconds": 6.434,
       "start": {
         "x": 3,
-        "z": 44.201
+        "z": 44.202
       },
       "end": {
         "x": 3,
-        "z": 17.677
+        "z": 17.748
       },
-      "distanceAfter": 52.323
+      "distanceAfter": 52.252
     },
     {
       "path": "Strong",
       "input": "Right Mouse + Left Mouse",
       "purpose": "basalt scale frame",
-      "wallSeconds": 2.164,
+      "wallSeconds": 2.169,
       "plate": 2,
       "frame": "basalt-scale",
       "points": 2
@@ -114,22 +133,22 @@
       "path": "Strong",
       "input": "KeyA",
       "purpose": "enter canopy",
-      "wallSeconds": 0.262,
+      "wallSeconds": 0.251,
       "start": {
         "x": 3,
-        "z": 17.539
+        "z": 17.568
       },
       "end": {
-        "x": 2.509,
-        "z": 17.539
+        "x": 2.508,
+        "z": 17.568
       },
-      "distanceAfter": 52.952
+      "distanceAfter": 52.924
     },
     {
       "path": "Strong",
       "input": "hold position under cover",
       "purpose": "widen the attack before glade",
-      "wallSeconds": 5.769,
+      "wallSeconds": 5.742,
       "awarenessBefore": 3,
       "awarenessAfter": 2
     },
@@ -137,22 +156,22 @@
       "path": "Strong",
       "input": "KeyW",
       "purpose": "canopy to glade",
-      "wallSeconds": 3.882,
+      "wallSeconds": 3.9,
       "start": {
-        "x": 2.398,
-        "z": 17.539
+        "x": 2.397,
+        "z": 17.568
       },
       "end": {
-        "x": 2.398,
-        "z": 1.742
+        "x": 2.397,
+        "z": 1.702
       },
-      "distanceAfter": 68.86
+      "distanceAfter": 68.9
     },
     {
       "path": "Strong",
       "input": "Right Mouse + Left Mouse",
       "purpose": "young-at-play frame",
-      "wallSeconds": 2.177,
+      "wallSeconds": 2.163,
       "plate": 3,
       "frame": "glade-young-play",
       "points": 2
@@ -161,22 +180,22 @@
       "path": "Strong",
       "input": "KeyS",
       "purpose": "protect first behavior plate",
-      "wallSeconds": 0.597,
+      "wallSeconds": 0.598,
       "start": {
-        "x": 2.398,
-        "z": 1.563
+        "x": 2.397,
+        "z": 1.525
       },
       "end": {
-        "x": 2.398,
-        "z": 3.5
+        "x": 2.397,
+        "z": 3.457
       },
-      "distanceAfter": 70.977
+      "distanceAfter": 71.01
     },
     {
       "path": "Strong",
       "input": "hold position under cover",
       "purpose": "break the dive between behavior frames",
-      "wallSeconds": 5.883,
+      "wallSeconds": 5.868,
       "awarenessBefore": 3,
       "awarenessAfter": 2
     },
@@ -184,22 +203,22 @@
       "path": "Strong",
       "input": "KeyW",
       "purpose": "return for second behavior frame",
-      "wallSeconds": 0.608,
+      "wallSeconds": 0.6,
       "start": {
-        "x": 2.398,
-        "z": 3.733
+        "x": 2.397,
+        "z": 3.69
       },
       "end": {
-        "x": 2.398,
-        "z": 1.725
+        "x": 2.397,
+        "z": 1.753
       },
-      "distanceAfter": 73.218
+      "distanceAfter": 73.18
     },
     {
       "path": "Strong",
       "input": "Right Mouse + Left Mouse",
       "purpose": "branch-pull frame",
-      "wallSeconds": 2.143,
+      "wallSeconds": 2.165,
       "plate": 4,
       "frame": "glade-branch-pull",
       "points": 2
@@ -208,22 +227,22 @@
       "path": "Strong",
       "input": "KeyS",
       "purpose": "retreat into cover",
-      "wallSeconds": 0.574,
+      "wallSeconds": 0.57,
       "start": {
-        "x": 2.398,
-        "z": 1.571
+        "x": 2.397,
+        "z": 1.573
       },
       "end": {
-        "x": 2.398,
-        "z": 3.461
+        "x": 2.397,
+        "z": 3.445
       },
-      "distanceAfter": 75.262
+      "distanceAfter": 75.232
     },
     {
       "path": "Strong",
       "input": "hold position under cover",
       "purpose": "break the final dive",
-      "wallSeconds": 5.892,
+      "wallSeconds": 5.885,
       "awarenessBefore": 3,
       "awarenessAfter": 2
     },
@@ -231,23 +250,23 @@
       "path": "Strong",
       "input": "KeyS",
       "purpose": "covered return through the Fort gate",
-      "wallSeconds": 14.085,
+      "wallSeconds": 14.077,
       "start": {
-        "x": 2.398,
-        "z": 3.669
+        "x": 2.397,
+        "z": 3.676
       },
       "end": {
-        "x": 2.398,
-        "z": 62.038
+        "x": 2.397,
+        "z": 62.012
       },
-      "distanceAfter": 133.84
+      "distanceAfter": 133.799
     }
   ],
   "performance": {
     "samples": 240,
     "medianFrameMs": 16.7,
     "medianFps": 59.9,
-    "onePercentLowFps": 39.5,
+    "onePercentLowFps": 39.4,
     "worstFrameMs": 25.4
   },
   "checkpoints": [

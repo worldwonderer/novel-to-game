@@ -17,12 +17,12 @@
   "renderer": "WebGL2",
   "player": {
     "position": {
-      "x": 2.398,
-      "z": 1.571
+      "x": 2.397,
+      "z": 1.573
     },
     "lastStablePosition": {
-      "x": 2.398,
-      "z": 1.571
+      "x": 2.397,
+      "z": 1.573
     },
     "groundY": -2.189,
     "verticalOffset": 0,
@@ -35,8 +35,8 @@
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 38.921,
-    "distanceTravelled": 73.372,
+    "elapsedSeconds": 38.81,
+    "distanceTravelled": 73.36,
     "paused": false,
     "pauseReason": null,
     "boundaryRecoveries": 0,
@@ -60,14 +60,14 @@
     "threatAwareness": 3,
     "threatState": "attack",
     "lastThreatEvent": "plate-exposure:+2",
-    "attackSeconds": 0.092,
+    "attackSeconds": 0.08319999980926514,
     "examinedTrack": true,
     "observedBehavior": true,
     "lastObservation": "The young keep close while the adults feed.",
     "cameraRaised": false,
     "plateRailRevealed": true,
     "pendingExposure": null,
-    "previewSeconds": 3.925,
+    "previewSeconds": 3.9334999999999996,
     "lastProofEvent": {
       "plateIndex": 3,
       "frameKey": "glade-branch-pull",
@@ -119,7 +119,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 113.079,
+    "remainingLight": 113.19,
     "returnRoute": "covered",
     "returnCostSeconds": 28,
     "returnStrike": false,
@@ -132,22 +132,22 @@
     "attackStage": "search",
     "attackProgress": 0,
     "flightPose": {
-      "wingBeat": -0.3013,
-      "wingFold": 0.0601,
-      "mode": "downstroke",
-      "bank": 0.0515,
+      "wingBeat": 0.1001,
+      "wingFold": 0.0565,
+      "mode": "upstroke",
+      "bank": 0.0518,
       "direction": [
-        -0.089,
-        0.3023,
-        -0.9491
+        0.0266,
+        0.2875,
+        -0.9574
       ]
     },
     "position": {
-      "x": -1.53,
-      "y": 8.13,
-      "z": -15.31
+      "x": -2.4,
+      "y": 8.23,
+      "z": -15.19
     },
-    "scale": 0.7233,
+    "scale": 0.7229,
     "anchorModel": "fixed-world-orbit-latched-attack-origin"
   },
   "familyVisual": {
@@ -155,31 +155,31 @@
     "adults": 2,
     "young": 3,
     "branchAngle": 0.03,
-    "branchContactDistance": 0.92,
+    "branchContactDistance": 0.925,
     "positions": [
       {
         "x": -8,
-        "y": -0.593,
+        "y": -0.592,
         "z": -31
       },
       {
         "x": 10.5,
-        "y": -0.279,
+        "y": -0.28,
         "z": -39
       },
       {
         "x": -2.2,
-        "y": -1.056,
+        "y": -1.063,
         "z": -24.8
       },
       {
         "x": 3.4,
-        "y": -0.704,
+        "y": -0.751,
         "z": -27.2
       },
       {
         "x": 2.5,
-        "y": -0.323,
+        "y": -0.325,
         "z": -35
       }
     ],
@@ -367,82 +367,82 @@
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 15.259
+        "at": 15.168
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 15.328
+        "at": 15.232
       },
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 17.317
+        "at": 17.248
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 17.317
+        "at": 17.248
       },
       {
         "cue": "search",
         "caption": "[a near call circles overhead]",
-        "at": 23.483
+        "at": 23.365
       },
       {
         "cue": "examine",
         "caption": "[fern brushes aside; pencil marks the field card]",
-        "at": 27.403
+        "at": 27.28
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 27.413
+        "at": 27.291
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 27.477
+        "at": 27.355
       },
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 29.493
+        "at": 29.365
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 29.493
+        "at": 29.365
       },
       {
         "cue": "cover",
         "caption": "[branches scrape the camera; wingbeats widen]",
-        "at": 30.048
+        "at": 29.915
       },
       {
         "cue": "search",
         "caption": "[a near call circles overhead]",
-        "at": 36.059
+        "at": 35.915
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 36.683
+        "at": 36.539
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 36.747
+        "at": 36.603
       },
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 38.741
+        "at": 38.613
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 38.741
+        "at": 38.613
       }
     ]
   },
@@ -480,7 +480,7 @@
   },
   "plateCapture": {
     "status": "ready",
-    "durationMs": 42.1,
+    "durationMs": 32.6,
     "error": null
   },
   "sceneChildren": 64,
@@ -497,8 +497,8 @@
     "maxPixelRatio": 1.25,
     "quality": "balanced",
     "activeFpsCap": 60,
-    "renderedFrames": 2370,
-    "skippedFrames": 2394,
+    "renderedFrames": 2360,
+    "skippedFrames": 2389,
     "activeFpsPolicy": "60fps-cap-across-refresh-rates",
     "idleFpsCap": 30,
     "pausedFpsCap": 15,
@@ -508,6 +508,6 @@
     "gtaoSamples": 4,
     "antialiasing": "single-pass-fxaa"
   },
-  "firstRenderedAt": 617.2000002861023,
+  "firstRenderedAt": 488,
   "recentMedianFrameMs": 16.7
 }

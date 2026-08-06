@@ -18,13 +18,13 @@
   "player": {
     "position": {
       "x": 3,
-      "z": 17.539
+      "z": 17.568
     },
     "lastStablePosition": {
       "x": 3,
-      "z": 17.539
+      "z": 17.568
     },
-    "groundY": -1.767,
+    "groundY": -1.766,
     "verticalOffset": 0,
     "verticalVelocity": 0,
     "grounded": true,
@@ -35,8 +35,8 @@
     "heading": 0,
     "pitch": 0,
     "stance": "walk",
-    "elapsedSeconds": 17.506,
-    "distanceTravelled": 52.461,
+    "elapsedSeconds": 17.46,
+    "distanceTravelled": 52.432,
     "paused": false,
     "pauseReason": null,
     "boundaryRecoveries": 0,
@@ -56,14 +56,14 @@
     "threatAwareness": 3,
     "threatState": "attack",
     "lastThreatEvent": "plate-exposure:+2",
-    "attackSeconds": 0.1007999997138977,
+    "attackSeconds": 0.09959999990463257,
     "examinedTrack": true,
     "observedBehavior": false,
     "lastObservation": "Three toes. Fresh. The brook runs back to camp.",
     "cameraRaised": false,
     "plateRailRevealed": true,
     "pendingExposure": null,
-    "previewSeconds": 3.915800000190735,
+    "previewSeconds": 3.9171999998092644,
     "lastProofEvent": {
       "plateIndex": 1,
       "frameKey": "basalt-scale",
@@ -115,7 +115,7 @@
     "failed": false,
     "failureCause": null,
     "contactCount": 0,
-    "remainingLight": 162.494,
+    "remainingLight": 162.54,
     "returnRoute": null,
     "returnCostSeconds": 0,
     "returnStrike": false,
@@ -128,39 +128,39 @@
     "attackStage": "search",
     "attackProgress": 0,
     "flightPose": {
-      "wingBeat": -0.2478,
-      "wingFold": 0.0635,
-      "mode": "downstroke",
-      "bank": -0.016,
+      "wingBeat": 0.0073,
+      "wingFold": 0.0631,
+      "mode": "upstroke",
+      "bank": -0.0097,
       "direction": [
-        0.8927,
-        -0.0104,
-        0.4506
+        0.9029,
+        -0.0098,
+        0.4298
       ]
     },
     "position": {
-      "x": -17.87,
-      "y": 10.59,
-      "z": -14.67
+      "x": -18.48,
+      "y": 10.58,
+      "z": -14.47
     },
-    "scale": 0.724,
+    "scale": 0.7239,
     "anchorModel": "fixed-world-orbit-latched-attack-origin"
   },
   "familyVisual": {
     "moment": "glade-branch-pull",
     "adults": 2,
     "young": 3,
-    "branchAngle": 0.107,
-    "branchContactDistance": 0.372,
+    "branchAngle": 0.076,
+    "branchContactDistance": 0.577,
     "positions": [
       {
         "x": -8,
-        "y": -0.608,
+        "y": -0.607,
         "z": -31
       },
       {
         "x": 10.5,
-        "y": -0.282,
+        "y": -0.281,
         "z": -39
       },
       {
@@ -170,12 +170,12 @@
       },
       {
         "x": 3.4,
-        "y": -0.772,
+        "y": -0.771,
         "z": -27.2
       },
       {
         "x": 2.5,
-        "y": -0.309,
+        "y": -0.31,
         "z": -35
       }
     ],
@@ -368,47 +368,47 @@
       {
         "cue": "examine",
         "caption": "[fern brushes aside; pencil marks the field card]",
-        "at": 6.565
+        "at": 6.512
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 6.581
+        "at": 6.517
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 6.645
+        "at": 6.581
       },
       {
         "cue": "watch",
         "caption": "[one wing call answers at a distance]",
-        "at": 8.651
+        "at": 8.603
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 8.651
+        "at": 8.603
       },
       {
         "cue": "camera-raise",
         "caption": "[wood frame lifts; bellows opens]",
-        "at": 15.259
+        "at": 15.168
       },
       {
         "cue": "shutter",
         "caption": "[shutter releases]",
-        "at": 15.328
+        "at": 15.232
       },
       {
         "cue": "attack",
         "caption": "[wingbeats tighten into a dive]",
-        "at": 17.317
+        "at": 17.248
       },
       {
         "cue": "plate-slide",
         "caption": "[glass plate seats in its case]",
-        "at": 17.317
+        "at": 17.248
       }
     ]
   },
@@ -446,7 +446,7 @@
   },
   "plateCapture": {
     "status": "ready",
-    "durationMs": 36.7,
+    "durationMs": 34.1,
     "error": null
   },
   "sceneChildren": 64,
@@ -463,8 +463,8 @@
     "maxPixelRatio": 1.25,
     "quality": "balanced",
     "activeFpsCap": 60,
-    "renderedFrames": 1085,
-    "skippedFrames": 1112,
+    "renderedFrames": 1079,
+    "skippedFrames": 1107,
     "activeFpsPolicy": "60fps-cap-across-refresh-rates",
     "idleFpsCap": 30,
     "pausedFpsCap": 15,
@@ -474,6 +474,6 @@
     "gtaoSamples": 4,
     "antialiasing": "single-pass-fxaa"
   },
-  "firstRenderedAt": 617.2000002861023,
+  "firstRenderedAt": 488,
   "recentMedianFrameMs": 16.7
 }

@@ -493,7 +493,7 @@ def write_verification(
         }
         verification["checks"]["accessibilityModes"] = {
             "status": "PASS",
-            "evidence": [project_path(log_path)],
+            "evidence": [project_path(run_report)],
         }
         verification["claimBoundaries"] = [
             "Automated paths are not first-time human navigation or premise-comprehension evidence.",
