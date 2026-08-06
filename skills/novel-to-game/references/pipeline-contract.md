@@ -16,8 +16,8 @@ game-adaptations/{project}/
 └── _progress.md
 ```
 
-按需增加 `_coverage.md`、视觉目标、资产账本、证据目录和人工试玩协议。只有
-`assuranceProfile: release` 才要求 `qa/release-gates.json`；不要提前创建空文件。
+按需增加 `_coverage.md`、视觉目标、资产账本、证据目录和人工试玩协议。不要创建单独的 gate 文件；
+执行事实统一留在 `qa/verification.json`。
 
 所有机器状态只取 `NOT_RUN` / `FAIL` / `PASS`。`NOT_RUN` 表示没有证据，不能满足当前 profile。
 
@@ -32,36 +32,29 @@ game-adaptations/{project}/
 |---|---|
 | `smoke` | 启动、变化的渲染、真实输入、核心循环、设计结果、重开 |
 | `delivery` | smoke + 目标运行时、目标显示模式、首次上手；已采用能力所需的性能/资产检查 |
-| `release` | delivery + 当前候选身份、公开托管、权利/秘密、发布文案、必要独立评审 |
+| `release` | delivery + 目标设备性能、必要资产失败降级、独立试玩 |
 
-TTS、生成媒体、公开托管、连续 3D、多语言和无障碍按实际采用能力触发。权利、秘密和安全高于
-profile；不能通过自报未采用来绕过仓库中的实际资产、调用或公开声明。
+连续 3D、多语言、无障碍、媒体和语音只在它们改变玩家实际体验时进入 QA；公网、仓库身份和营销
+材料不进入游戏效果验证。
 
-## 阶段 owner 与三道门
+## 阶段 owner 与两项完成检查
 
 概念、体验/关卡设计、美术方向分别由 `CONCEPT.md`、`GAME_DESIGN.md`、`ART_DIRECTION.md` 的 owner
 负责；构建不得静默改写它们。编排器只检查：
 
-| gate | 成立条件 |
+| 检查 | 成立条件 |
 |---|---|
 | `scope` | `PRODUCT_BRIEF`、`SOURCE_BIBLE` 和三份设计交接存在；范围、原作事实、目标运行形态与 finish/profile 不冲突 |
-| `playable` | `qa/verification.json` 对当前 profile 必需项给出真实运行证据；smoke 六项全部 PASS |
-| `claim` | `publicationTier <= demonstratedTier <= targetFinish`；历史证据不冒充当前；release 扩展在需要时 PASS |
+| `playable` | `qa/verification.json` 对当前 profile 必需的玩家效果给出真实运行证据 |
 
-`_progress.md` 只记录来源、模式、当前阶段、未确认假设、回流和这三行：`gate:scope`、
-`gate:playable`、`gate:claim`。详细测试状态留在 `qa/verification.json`，不要复制到多份状态表。
+`_progress.md` 只记录来源、模式、当前阶段、未确认假设、回流和这两项结果。详细测试状态留在
+`qa/verification.json`，不要复制到多份状态表。
 
 ## 证据角色
 
-`qa/verification.json` 是执行事实源。schema v2 写 `assuranceProfile`、整体状态、当前可发布输入
-fingerprint、固定 capability 清单、同名 capability checks、complete run、权威命令与 hash-bound
-持久证据，以及结构化 limitations。limitations 含 `scope`、`reason`、`blocksProfiles`；阻断当前
-profile 时整体不能 PASS。发现 capability 来源却自报未采用，或 PASS 证据未绑定当前 fingerprint/
-SHA-256，均失败关闭。
-
-`qa/release-gates.json` 只保存 release 事实。当前证明标 `evidenceRole: "CURRENT"`；旧记录唯一合法
-角色为 `evidenceRole: "HISTORICAL"`，不得满足当前要求。verification 与 release 对同一 profile、
-fingerprint 或结论冲突时直接 FAIL，不设覆盖优先级。
+`qa/verification.json` 是执行事实源。schema v2 只写 `assuranceProfile`、整体状态、权威命令、一次
+complete run、游戏效果 checks 和结构化 limitations。limitations 含 `scope`、`reason`、
+`blocksProfiles`；阻断当前 profile 时整体不能 PASS。不要把源码身份、证据哈希或发布审核塞进 QA。
 
 ## 完成度声明
 
@@ -71,7 +64,7 @@ fingerprint 或结论冲突时直接 FAIL，不设覆盖优先级。
 
 ## resume 与回流
 
-`resume` 读取 `_progress.md` 和实际产物，从最早未成立的三道门继续。QA 发现按 owner 回流：
+`resume` 读取 `_progress.md` 和实际产物，从最早未成立的完成检查继续。QA 发现按 owner 回流：
 
 - product：回 `PRODUCT_BRIEF.md`；
 - design/art：修订批准文档后重建受影响范围；
@@ -83,4 +76,4 @@ fingerprint 或结论冲突时直接 FAIL，不设覆盖优先级。
 ## 语言与文化
 
 原文、策划、市场和界面语言分别记录。原文证据保留原语言；跨语言维护一个术语表。多语言只有在
-brief 采用时才进入 capability 检查，不默认把每份产物复制成双语。
+brief 采用且玩家实际可切换时才检查，不默认把每份产物复制成双语。

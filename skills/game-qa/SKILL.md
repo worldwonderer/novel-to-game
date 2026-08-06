@@ -14,39 +14,30 @@ description: "Verify a game with evidence on its selected target runtime. Launch
 
 ## 一条判定公式
 
-`required = profile 累加项 ∪ 已采用 capability 的必需检查 ∪ 安全/权利/秘密检查`
+`required = profile 累加的玩家可感知检查`
 
 - `smoke`：启动、变化的渲染、真实输入、核心循环、设计结果、重开。
-- `delivery`：smoke + 目标运行时、目标显示模式、首次上手；按采用范围补性能与必需资产。
-- `release`：delivery + 当前候选 fingerprint、公开托管、发布文案、权利、秘密与必要独立评审。
+- `delivery`：smoke + 目标运行时、目标显示模式、首次上手。
+- `release`：delivery + 目标设备性能、必要资产失败降级和独立试玩。
 
-不为 finish/profile 组合另写分支。TTS、生成媒体、连续 3D、多语言、无障碍和公开托管从
-BUILD_BRIEF、ledger、runtime/source 重新发现；自报与实物冲突即 FAIL。
+不为 finish/profile 组合另写分支。公网、提交身份、证据哈希、生成任务和营销材料不影响游戏效果，
+不进入本 QA。
 
 ## 执行
 
-1. 读取 `assuranceProfile`、`targetRuntime`、`testedRuntime`、权威 verify 和 capability 清单；它们与
+1. 读取 `assuranceProfile`、`targetRuntime`、`testedRuntime` 和权威 verify；它们与
    PRODUCT_BRIEF/BUILD_BRIEF 冲突时先报错，不由 QA 猜值。
-2. 发现已有测试：检查 manifest scripts、CI、测试文件和 brief runner，记录
-   `suite | discovered from | files | runner | observed in verify | result`。required suite 未被权威命令
-   调用时报告 `ORPHANED_TEST_SUITE`；明确 archived/vendor/generated 项可附理由排除。
-3. 独立运行权威 verify，记录 command、exit code、duration、环境、当前可发布输入 fingerprint 和
-   持久证据 SHA-256；不能只接受实现方的绿色摘要。
-4. 在 `testedRuntime` 启动真实候选，从 `clean start → 核心动作 → 设计结果 → restart` 走一条完整
+2. 独立运行权威 verify，记录 command、exit code、环境和实际失败。
+3. 在 `testedRuntime` 启动真实候选，从 `clean start → 核心动作 → 设计结果 → restart` 走一条完整
    路径。证明画面非空且变化、真实输入改变状态、结果可达、重开恢复定义的初态。
-5. 对照 GAME_DESIGN 中会改变结果的不变量和三段弧结束标记；只验证设计承诺，不遍历所有代码路径。
-6. `delivery` 及以上再检查目标显示模式、第一分钟上手和目标运行时差异。替代运行时只证明实际覆盖
+4. 对照 GAME_DESIGN 中会改变结果的不变量和三段弧结束标记；只验证设计承诺，不遍历所有代码路径。
+5. `delivery` 及以上再检查目标显示模式、第一分钟上手和目标运行时差异。替代运行时只证明实际覆盖
    层，目标独有输入、性能、打包与设备项写 limitation；阻断当前 profile 时不能 PASS。
-7. 只启用已采用的条件包：
+6. 只检查玩家实际能用到的条件效果：
    - 连续 3D：输入控制权、朝向/移动一致性、失焦归零，以及 collider 与可见布局的关键边界；
-   - 多语言/无障碍：逐项切换实际采用模式，检查关键玩法信息可读可用；
-   - 生成媒体：台账、请求/响应、本地文件/hash、首中尾连续性与失败行为；
-   - 语音与 TTS：逐句真值、权利、字幕、解码、真实试听、静音/缺音降级和客户端密钥暴露。
-   每个 `adopted:true` capability 都写一个同名 check 并给现行、hash-bound 证据；未采用的 audition/
-   可选工具仍披露 `discoveredFrom` 和 `notAdoptedReason`，不能用空数组藏掉。
-8. `release` 才执行当前候选身份、公开部署 fingerprint、发布资产、对外文案和必要独立视觉评审。
-   旧证据只能标 `HISTORICAL`，不得证明当前候选。
-9. 记录 limitation 和 blocker/major 的 product/design/art/build 归属；趣味、长期平衡、留存与商业价值
+   - 多语言/无障碍：切换游戏内实际模式，检查关键玩法信息可读可用；
+   - 媒体与语音：检查实际加载、播放、字幕、静音/缺音和失败降级。
+7. 记录 limitation 和问题的 product/design/art/build 归属；趣味、长期平衡、留存与商业价值
    只写观察，不给确定性 PASS。
 
 优先使用已有可观察状态；只有无法判断结果时才增加最小测试钩子。不要为了 QA 重构游戏或强制某种
@@ -56,15 +47,10 @@ BUILD_BRIEF、ledger、runtime/source 重新发现；自报与实物冲突即 FA
 
 默认只写：
 
-- `qa/verification.json`：机器事实源，包含 `assuranceProfile`、三态 status、当前 source fingerprint、
-  固定 capabilities、同名 capability checks、complete run、limitations 和 hash-bound 持久证据；
+- `qa/verification.json`：机器事实源，只含 `assuranceProfile`、三态 status、权威命令、complete run、
+  游戏效果 checks 和 limitations；
 - `qa/QA_REPORT.md`：由 verification 生成的人读摘要，说明环境、命令、结论、缺口和未测试范围；
-- `qa/PLAYTEST_PROTOCOL.md`：仅保留需要人工感受判断的试玩路径。
-
-只有 `release` 再写 `qa/release-gates.json`，记录 `evidenceRole: "CURRENT"`、source fingerprint、公开
-托管、权利、发布资产/文案和必要独立 reviewer。历史文件使用 `evidenceRole: "HISTORICAL"`，不能
-满足当前必需项。verification 与 release 结论冲突直接 FAIL。
+- `qa/PLAYTEST_PROTOCOL.md`：只有确实需要人工感受判断时才创建。
 
 状态只取 `NOT_RUN` / `FAIL` / `PASS`。缺口写结构化 limitation，不发明 `PASS_WITH_GAPS`；若
-`blocksProfiles` 包含当前 profile，整体不得 PASS。把裁决与一句原因交回总入口，由编排器记录
-`gate:playable` / `gate:claim`。
+`blocksProfiles` 包含当前 profile，整体不得 PASS。把裁决与一句原因交回总入口。

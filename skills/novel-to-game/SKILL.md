@@ -17,10 +17,11 @@ description: "Turn a novel into a fully playable game on the selected target pla
 
 - `targetFinish`：`graybox` / `playable-prototype` / `polished-vertical-slice` / `showcase`，表示想做到什么成色。
 - `assuranceProfile`：`smoke` / `delivery` / `release`，表示要证明到什么强度。
-- `quick` 默认 `smoke`；用户要交给他人或指定设备验收时推荐 `delivery`；只有明确发布、公开声明或要求正式审计时用 `release`。
+- `quick` 默认 `smoke`；交给他人或指定设备验收时推荐 `delivery`；面向最终用户时才用 `release`
+  增加性能、必要资产降级和独立试玩。
 
-三个 profile 单调累加，不与四档 finish 组合成十二套流程。真实采用的语音、生成媒体、公开托管、
-权利和秘密检查按能力触发，低 profile 不能绕过安全问题。
+三个 profile 单调累加，不与四档 finish 组合成十二套流程。真实采用的语音、生成媒体、多语言、
+无障碍和连续 3D 只在改变玩家体验时增加检查；权利和秘密属于产品安全，不塞进游戏 QA。
 
 `PRODUCT_BRIEF.md` 与 `SOURCE_BIBLE.md` 是上游事实，下游不得静默改写。brief 必须锁定目标运行
 形态：平台、生产引擎、实际交付物、目标运行时和实际验收设备或运行器。工具链不可用时，只能使用
@@ -43,11 +44,10 @@ brief 已批准的替代运行时；替代结果不证明目标平台已通过�
 7. 调用 `game-build` 生成可运行版本，再由 `game-qa` 按 profile 验证；问题按 product / design / art /
    build 归属回流，不让实现阶段静默重做策划。
 
-编排器只记录三类 gate：
+编排器只记录两项完成结果：
 
-- `gate:scope`：上游范围和阶段 owner 齐全且不冲突；
-- `gate:playable`：启动、渲染、输入、核心循环、结果、重开均有真实证据；
-- `gate:claim`：对外声明不高于当前证据，release 扩展在需要时通过。
+- `scope`：上游范围和阶段 owner 齐全且不冲突；
+- `playable`：当前 profile 要求的玩家效果均有真实运行证据。
 
 中间产物仍由各自阶段 owner 负责，但不再把每个内部交接都包装成用户验收会。
 
@@ -66,5 +66,5 @@ brief 已批准的替代运行时；替代结果不证明目标平台已通过�
 - 完成以运行、画面、真实输入、结果和重开证据为准；AI 不能客观证明趣味、长期平衡或商业价值。
 
 只有当前 `assuranceProfile` 的必需项全部 `PASS` 才报告该档验证完成。`NOT_RUN` 可以诚实结束本次
-执行，但不能满足当前声明。普通 smoke/delivery 以 `qa/verification.json` 为事实源；release 才要求
-`qa/release-gates.json` 和发布身份、权利及公开声明证明。
+执行，但不能满足当前声明。所有 profile 都以 `qa/verification.json` 为唯一游戏效果事实源；不要为
+QA 另建发布 gate 文件。

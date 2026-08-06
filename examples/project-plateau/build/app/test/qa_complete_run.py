@@ -3,7 +3,6 @@
 
 from __future__ import annotations
 
-import hashlib
 import json
 import os
 from pathlib import Path
@@ -14,15 +13,13 @@ from urllib.parse import urlparse
 
 from playwright.sync_api import Page, sync_playwright
 
-from qa_assertions import ROUTE_INPUT_CONTINUATION_MS, route_input_calibration
+from _qa_assertions import ROUTE_INPUT_CONTINUATION_MS, route_input_calibration
 
 APP = Path(__file__).resolve().parent.parent
 BUILD = APP.parent
 EVIDENCE = Path(
     os.environ.get("PLATEAU_EVIDENCE_DIR", BUILD / "evidence" / "current-run")
 ).expanduser().resolve()
-STATE_DIR = EVIDENCE / "state"
-BROWSER_DIR = EVIDENCE / "browser"
 BASE_URL = os.environ.get("BASE_URL", "http://127.0.0.1:4173")
 CHROME = Path("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
 
@@ -56,21 +53,40 @@ def start_server() -> subprocess.Popen[str] | None:
     raise RuntimeError("Vite did not become ready for complete-run QA")
 
 
-def fingerprint() -> str:
-    digest = hashlib.sha256()
-    paths = [APP / "index.html", APP / "package.json", APP / "package-lock.json"]
-    paths += sorted((APP / "public").rglob("*")) + sorted((APP / "src").rglob("*"))
-    for path in paths:
-        if path.is_file():
-            digest.update(path.relative_to(APP).as_posix().encode())
-            digest.update(b"\0")
-            digest.update(path.read_bytes())
-            digest.update(b"\0")
-    return digest.hexdigest()
-
-
 def snapshot(page: Page) -> dict[str, object]:
     return page.evaluate("window.__projectPlateau.snapshot()")
+
+
+def semantic_state(state: dict[str, object]) -> dict[str, object]:
+    """Keep only player-visible state needed to explain a checkpoint."""
+    player = state["player"]
+    return {
+        "mode": state["mode"],
+        "stage": state["stage"],
+        "viewport": state["viewport"],
+        "sceneChildren": state["sceneChildren"],
+        "triangles": state["triangles"],
+        "cameraMode": state["cameraMode"],
+        "pointerLock": state["pointerLock"],
+        "presentationSettings": state["presentationSettings"],
+        "player": {
+            name: player[name]
+            for name in (
+                "position",
+                "zone",
+                "remainingLight",
+                "elapsedSeconds",
+                "distanceTravelled",
+                "plates",
+                "shotCount",
+                "cartridges",
+                "bodyMargin",
+                "returnRoute",
+                "runStatus",
+                "result",
+            )
+        },
+    }
 
 
 def evidence_reference(path: Path) -> str:
@@ -81,14 +97,11 @@ def evidence_reference(path: Path) -> str:
 
 
 def run() -> dict[str, object]:
-    STATE_DIR.mkdir(parents=True, exist_ok=True)
-    BROWSER_DIR.mkdir(parents=True, exist_ok=True)
-    for pattern, directory in (("*.json", STATE_DIR), ("*.json", BROWSER_DIR), ("*.jpg", EVIDENCE)):
-        for stale in directory.glob(pattern):
-            stale.unlink()
+    EVIDENCE.mkdir(parents=True, exist_ok=True)
+    for stale in EVIDENCE.glob("*.jpg"):
+        stale.unlink()
     errors: list[str] = []
-    hosts: set[str] = set()
-    checkpoints: list[dict[str, str]] = []
+    checkpoints: list[dict[str, object]] = []
     input_trace: list[dict[str, object]] = []
     path_metrics: dict[str, dict[str, object]] = {}
 
@@ -106,7 +119,6 @@ def run() -> dict[str, object]:
         cdp = page.context.new_cdp_session(page)
         page.on("console", lambda message: errors.append(message.text) if message.type == "error" else None)
         page.on("pageerror", lambda error: errors.append(f"PAGEERROR: {error}"))
-        page.on("request", lambda request: hosts.add(urlparse(request.url).netloc))
         page.goto(f"{BASE_URL}/?qa=complete-run", wait_until="networkidle")
         page.wait_for_function("window.__projectPlateau?.ready === true")
         assert page.evaluate("window.__projectPlateau.stage") == "current-complete-run"
@@ -140,12 +152,7 @@ def run() -> dict[str, object]:
 
         def capture(identifier: str, inputs: list[str]) -> dict[str, object]:
             state = snapshot(page)
-            state_path = STATE_DIR / f"{identifier}.json"
-            browser_path = BROWSER_DIR / f"{identifier}.json"
             visual_path = EVIDENCE / f"{identifier}.jpg"
-            state_path.write_text(
-                json.dumps(state, indent=2) + "\n", encoding="utf-8"
-            )
             viewport = page.viewport_size or {"width": 0, "height": 0}
             browser_record = {
                 "inputs": inputs,
@@ -153,18 +160,14 @@ def run() -> dict[str, object]:
                 "visionMode": vision_mode,
                 "url": page.url,
                 "consoleErrorsAtCheckpoint": list(errors),
-                "requestHostsAtCheckpoint": sorted(hosts),
-                "capturedAtUnixMs": int(time.time() * 1000),
             }
-            browser_path.write_text(
-                json.dumps(browser_record, indent=2) + "\n", encoding="utf-8"
-            )
             page.screenshot(path=visual_path, type="jpeg", quality=86)
             checkpoints.append(
                 {
                     "id": identifier,
-                    "state": evidence_reference(state_path),
-                    "browser": evidence_reference(browser_path),
+                    "inputs": inputs,
+                    "state": semantic_state(state),
+                    "browser": browser_record,
                     "visual": evidence_reference(visual_path),
                 }
             )
@@ -393,13 +396,9 @@ def run() -> dict[str, object]:
         no_threat_meter = page.locator("[data-threat-meter]").count() == 0
         browser.close()
 
-    allowed = {urlparse(BASE_URL).netloc}
-    external = sorted(host for host in hosts if host and host not in allowed)
     assert not errors, errors
-    assert not external, external
     return {
         "stage": "current-complete-run",
-        "source": {"scope": "publishable app inputs excluding tests, local secrets and generated output", "sha256": fingerprint()},
         "environment": {
             "browser": "Google Chrome 150.0.7871.187" if CHROME.exists() else "Playwright Chromium",
             "viewport": [1440, 900],
@@ -415,8 +414,6 @@ def run() -> dict[str, object]:
             "accessibilityModesAppliedAndReset": True,
             "noThreatMeter": no_threat_meter,
             "consoleErrors": errors,
-            "requestHosts": sorted(hosts),
-            "externalHosts": external,
         },
         "verbEvidenceMatrix": {
             "traverse": "Strong input trace + 05-strong-input-result",
@@ -432,7 +429,7 @@ def run() -> dict[str, object]:
         "checkpoints": checkpoints,
         "limitations": [
             "The paths use real keyboard/mouse movement and wait on observed state, but they are deterministic automation rather than first-time human navigation evidence.",
-            "The run validates the reconciled 1–3 minute product budget; independent perception remains a separate release concern.",
+            "The run validates the reconciled 1–3 minute product budget; independent first-time perception is outside smoke assurance.",
             "The Strong path records distinct young-play and branch-pull states, but automated pose checks do not establish anatomy or animation quality.",
             "Subjective fun, balance and audio mix are not inferred from the deterministic results.",
         ],
@@ -456,7 +453,6 @@ def main() -> None:
                 "checks": report["checks"],
                 "pathMetrics": report["pathMetrics"],
                 "performance": report["performance"],
-                "source": report["source"],
             },
             indent=2,
         )

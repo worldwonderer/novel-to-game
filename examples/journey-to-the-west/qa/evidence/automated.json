@@ -7,14 +7,14 @@
   "frame_ms": {
     "battle3_whitebull": {
       "p50": 8.3,
-      "p95": 9.1,
-      "max": 25.1,
+      "p95": 10.3,
+      "max": 17.1,
       "n": 90
     },
     "battle3_godassist": {
       "p50": 8.4,
       "p95": 16.8,
-      "max": 25,
+      "max": 17.9,
       "n": 90
     }
   },

@@ -40,7 +40,6 @@ commands:
   verify: [一条权威验证命令]
 verification:
   completeRun: qa/verification.json#completeRun
-  evidenceIndex: qa/verification.json#checkpoints
 
 # 当前限制
 [scope / reason / blocksProfiles；testedRuntime 与 targetRuntime 不同时列目标独有未测试项]
@@ -60,9 +59,8 @@ verification:
 用一条完整路径和最少语义 checkpoint 证明，不保存逐点击截图。状态、runtime、visual 各证明自己的
 层，证据在工作区相对路径，不能只留临时目录。
 
-`delivery` 再记录目标运行时、目标显示模式、首次上手和按采用能力需要的性能/必需资产。
-`release` 再生成 sourceFingerprint、发布输入清单、公开托管、权利/秘密、发布文案与必要独立评审
-所需证据。普通 smoke 不为未来可能发布而预先生产这些包。
+`delivery` 再记录目标运行时、目标显示模式和首次上手；`release` 再检查目标设备性能、必要资产失败
+降级和独立试玩。源码身份、公网投递和营销材料不进入游戏构建 QA。
 
 ## 条件台账
 
@@ -92,9 +90,8 @@ verification:
 
 ## 权威验证
 
-verify 可以组合现有脚本，但必须一次真实运行覆盖发现的 required suites；完整输出保存
-`qa/evidence/verify.log`。单独补跑不能拼成权威 PASS。构建完成后回写实际 command、exit code、
-duration、environment 和仍未覆盖的目标平台项。
+verify 可以组合现有游戏效果脚本，但必须一次真实运行；在 `qa/verification.json` 回写实际 command、
+exit code 和仍未覆盖的目标平台项。失败输出用于修复，默认不长期提交冗长日志或 suite registry。
 
 预算、时间或调用上限只会留下 NOT_RUN/FAIL、延期或降低 publication tier，不会替代证据。构建阶段
 不得假装完成 QA 的独立评审，也不得用降低公开措辞反向抬高实际 finish。

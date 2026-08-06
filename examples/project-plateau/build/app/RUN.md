@@ -38,10 +38,9 @@ preview instead of a renderer error.
 npm run verify
 ```
 
-The command discovers and runs nine current suites: unit, production build, one
-complete browser run, controller, motion, collision, entry, loading, and the
-repository contract. It writes `../../qa/verification.json`,
-`../../qa/evidence/verify.log`, and the semantic current-run evidence under
+The command runs eight current suites: unit, production build, one complete browser
+run, controller, motion, collision, entry, and loading. It writes `../../qa/verification.json`
+and the semantic current-run evidence under
 `../evidence/current-run/`.
 
 Historical numbered checkpoint scripts are intentionally not part of the active

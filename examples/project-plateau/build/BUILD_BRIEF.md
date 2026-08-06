@@ -6,19 +6,15 @@
 `assuranceProfile: smoke`
 `publicationTier: playable-prototype`
 `demonstratedTier: playable-prototype`
-`grayboxReady: PASS`
 
-Evidence: `qa/verification.json` retains the complete input paths, results and clean restart evidence.
-
-`visualPromotion: PASS`
+Evidence: `qa/verification.json` points to the complete input path, result and clean restart evidence.
 
 The current claim is deliberately small: one real-input Strong route launches, renders, exercises the core loop, reaches its designed outcome and restarts cleanly. Rich visual and release records are retained as historical context, not as current smoke evidence.
 
 The approved visual target index is `../design/VISUAL_TARGETS.md`. The
-representative promotion scene is the glade family view under approaching
-pterodactyl pressure. Release-gate asset keys remain authoritative in
-`asset-ledger.json`; a working or improved asset is not a passed release gate
-until its evidence and independent disposition exist.
+representative scene is the glade family view under approaching pterodactyl
+pressure. Required runtime assets and their playable fallbacks are listed once
+in `asset-ledger.json`.
 
 Build a free, anonymous, single-player desktop web vertical slice for English-
 speaking players who already understand first-person controls. One compact run
@@ -149,12 +145,11 @@ in `ART_DIRECTION.md` and are screenshot gates, not optional inspiration.
 - Modern adaptation imagery, glossy theme-park jungle, stock-photoreal collage,
   neon survival HUD, trophy framing, gore and conquest language are failures.
 
-### Required asset keys and transition ledger
+### Required runtime assets and fallbacks
 
-Every key below is a release gate. A functional graybox may temporarily occupy
-the key during early graybox work, but the key cannot pass final build completion until its
-declared states, real-view evidence and rights entry exist in
-`asset-ledger.json`.
+Each key below changes what the player can see, hear, or do. During graybox work it may use the listed transition
+state; the playable prototype must keep the same required states and functions. Production details live once in
+`asset-ledger.json`, not in a second QA gate file.
 
 | Asset key | Required states / functions | Allowed transition state |
 |---|---|---|
@@ -338,45 +333,36 @@ verification:
     - browser:collision-contract
     - browser:entry-conversion
     - browser:loading-state
-    - repo:contract
   completeRun: ../qa/verification.json#completeRun
-  evidenceIndex: ../qa/verification.json#checkpoints
 ```
 
-`npm run verify` is the single authoritative command. It must discover runnable
-test suites before invoking all registered suite IDs and fail with
-`ORPHANED_TEST_SUITE major` if an authored suite is not registered. Manually
-running green suites separately is diagnostic only and cannot satisfy the
-handoff.
+`npm run verify` is the single authoritative command. It runs the listed game-effect
+checks in order; manually running green suites separately is diagnostic only.
 
 ## Completion evidence
 
 `npm run verify` is the only current acceptance command. From a clean install it
-must run the nine registered suites, bind the result to the publishable app
-fingerprint, and write:
+must run the eight listed suites and write:
 
 - `../qa/verification.json` — current schema-v2 smoke decision;
-- `../qa/evidence/verify.log` — command and suite log;
 - `evidence/current-run/report.json` — one clean Strong route with semantic
   state, browser and rendered checkpoints.
 
 A smoke PASS proves only launch, render, input, core loop, designed outcome,
-restart, and the capabilities actually adopted by this build. It does not imply
-first-time comprehension, subjective visual quality, public-deployment identity,
-rights clearance for optional promotional media, fun, or balance.
+restart, plus any player-facing modes explicitly exercised by the run. It does
+not imply first-time comprehension, subjective visual quality, rights clearance
+for optional promotional media, fun, or balance.
 
 ## Final scope reconciliation
 
 | Approved scope | Current result | Current evidence or boundary |
 |---|---|---|
-| Desktop WebGL2 playable prototype | PASS locally | `../qa/verification.json`, `../qa/evidence/verify.log` |
+| Desktop WebGL2 playable prototype | PASS locally | `../qa/verification.json` |
 | Continuous first-person route, physical plates, threat response, Strong result and clean restart | PASS | `evidence/current-run/report.json` and its seven semantic checkpoints |
-| Controller, collision, motion, entry and loading contracts | PASS | Nine-suite registry in `../qa/verification.json` |
-| Local generated 3D assets and accessibility settings used by the build | PASS in the current run/unit checks | `evidence/current-run/report.json`, verification log and `asset-ledger.json` |
-| Public URL availability | PASS for reachability only | `../qa/evidence/public-host/report.json`; deployed bytes are not bound to the current fingerprint |
+| Controller, collision, motion, entry and loading effects | PASS | `../qa/verification.json` authoritative command |
+| Local generated 3D assets and accessibility settings used by the build | PASS in the current run/unit checks | `evidence/current-run/report.json` and `asset-ledger.json` |
 | First-time premise and route comprehension | NOT_RUN | Optional delivery/release playtest; automation cannot substitute |
 | Promotional voiceover | Not adopted | The generated-audio workflow remains optional and outside the playable candidate |
-| Historical visual/release audit | Retained, non-authoritative | `evidence/visual-upgrade/` and `../qa/release-gates.json` are explicitly historical |
 
 The earlier 5–8 minute paper target was revised to the implemented 1–3 minute
 loop. Explicit non-goals remain excluded: full open world, arena shooter,

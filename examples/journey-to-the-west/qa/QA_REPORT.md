@@ -21,13 +21,12 @@
 | 标题到结局的核心循环 | PASS | 同上 |
 | 设计结果、再玩与读档 | PASS | 同上 |
 | 重开 | PASS | 同上 |
-| 公开 URL 可访问 | PASS（仅可用性） | `qa/evidence/public-host.json` |
 | 控制台/外部请求 | PASS | 同上 |
 
 ## 限制
 
 - `publicationTier` 仍为 `graybox`；历史视觉复审发现的招牌帧与遮挡问题没有被 smoke 结论掩盖。
-- 公开托管记录未绑定当前 release fingerprint，因此阻断 `release`。
+- 本报告只判断当前游戏效果，不承担发布审计。
 - 首次真人理解、趣味、节奏与长期平衡未由自动化证明。
 
 ## 复跑

@@ -25,10 +25,8 @@ from urllib.parse import urlparse
 
 from playwright.sync_api import Page, sync_playwright
 
-from verify import git_head
-
-APP = Path(__file__).resolve().parent.parent
-BUILD = APP.parent
+BUILD = Path(__file__).resolve().parents[2]
+APP = BUILD / "app"
 REPO = BUILD.parents[2]
 MEDIA = BUILD / "media"
 CLIP = MEDIA / "clip"
@@ -81,6 +79,17 @@ POINTER_LOCK_SHIM = """
   };
 })();
 """
+
+
+def git_head() -> str:
+    """Read media provenance without coupling the recorder to the QA verifier."""
+    return subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=REPO,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
 
 
 def need(tool: str) -> str:
@@ -536,10 +545,6 @@ def publish_preview(source: Path, segments: list[dict[str, object]], marks: dict
             "The preview is a conversion fallback, not a substitute for desktop WebGL2 QA.",
         ],
     }
-    (PUBLIC_MEDIA / "project-plateau-preview.json").write_text(
-        json.dumps(preview, indent=2) + "\n",
-        encoding="utf-8",
-    )
     return preview
 
 

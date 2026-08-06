@@ -40,14 +40,14 @@ BUILD_BRIEF 只压缩：玩家承诺、核心循环、会改变结果的不变�
 1. 先实现一个最小但完整的核心循环：启动、真实输入、状态变化、结果和重开。范围不足时修范围，
    不先堆视觉审计。
 2. 回写实际工具链、install/build/start 命令和版本；未知值写 `NOT_AVAILABLE: 原因`，不猜。
-3. 定义并运行一条**权威验证命令**，完整输出落 `qa/evidence/verify.log`。发现的 required suite 必须
-   在同一次 log 中出现，并在 verification 记录 `executed: true`；不能拼接零散绿色结果。
+3. 定义并运行一条**权威验证命令**，在 `qa/verification.json` 记录 command 和 exit code。完整运行
+   路径的结果证据比保存冗长测试日志更重要；失败输出只用于修复，不默认长期提交。
 4. 从 `clean start → 核心动作 → 设计结果 → restart` 跑一条完整路径，用最少语义 checkpoint 记录
    状态、runtime 和必要画面。取不到写 limitation，不用截图证明隐藏状态。
 5. 在 `testedRuntime` 启动真实游戏，修复构建失败、阻断日志、资源失败和崩溃；替代运行时未覆盖的
    目标平台输入/性能/打包项保持 NOT_RUN。
 6. 达到 brief 的 `targetFinish`：graybox 允许明确视觉缺口；更高 finish 只处理批准的焦点资产和招牌
-   时刻。仅当 release profile 要求时才制作 fingerprint、公开托管、独立评审所需扩展证据。
+   时刻。不要在构建交接里额外制造源码指纹、公网投递或评审证据。
 7. 复跑权威命令和完整路径，更新当前限制。时间、预算或生成调用用尽只会留下 FAIL/NOT_RUN 或
    降低公开声明，不会生成 PASS。
 
@@ -61,5 +61,5 @@ fallback 才能继续。
 截图、录制与 raw trace 只保留当前声明引用的最小集合，可重建中间产物不长期提交。BUILD_BRIEF
 完成后回写实际命令、验证结果、limitations 与最终范围差异；范围变化回设计确认。
 
-`smoke` 只要求六项可玩闭环；`delivery` 累加目标运行时/显示/上手；`release` 才累加当前候选与发布
-证明。构建阶段不自行写最终 QA 或过门结论，只把候选和事实交给 `game-qa`。
+`smoke` 只要求六项可玩闭环；`delivery` 累加目标运行时/显示/上手；`release` 累加目标设备性能、
+必要资产失败降级和独立试玩。构建阶段不自行写最终 QA 结论，只把候选和事实交给 `game-qa`。

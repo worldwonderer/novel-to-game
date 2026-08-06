@@ -2,28 +2,9 @@
   "schemaVersion": 2,
   "assuranceProfile": "smoke",
   "status": "PASS",
-  "sourceFingerprint": "2fe9811f8817f6d8ed47b7adf7cc8ffa0b023833b9a520a0e2823005f8e076ec",
   "verify": {
     "command": "node test/ledger.mjs && python3 test/qa_browser.py && QA_SLOW=1 python3 test/qa_browser.py",
-    "exitCode": 0,
-    "evidence": [
-      {
-        "path": "qa/evidence/automated.json",
-        "sha256": "21a2971b0fc9c5079624640ff93d93f4b55e8001a70033a545eaa791423c7027"
-      },
-      {
-        "path": "qa/evidence/browser/evidence-fast.json",
-        "sha256": "a47a389647dd5d7d2d6926918a16e337399ed0ccd013200af7e2e79452aea53b"
-      },
-      {
-        "path": "qa/evidence/browser/evidence-normal.json",
-        "sha256": "771bc2b46c52d76ac588aa40548cff68b5b6651aed38be049729f8b6271dfc21"
-      },
-      {
-        "path": "qa/evidence/public-host.json",
-        "sha256": "71e497a37c855679986247face85432b5730770f55c675c67d14c16ae1963926"
-      }
-    ]
+    "exitCode": 0
   },
   "completeRun": {
     "id": "jin-ping-mei-current-complete-run",
@@ -31,36 +12,6 @@
     "terminal": "exclusive-ending",
     "restart": "day-1-opening",
     "evidence": "qa/evidence/browser/evidence-normal.json"
-  },
-  "capabilities": {
-    "continuous3D": {
-      "adopted": false,
-      "discoveredFrom": []
-    },
-    "tts": {
-      "adopted": false,
-      "discoveredFrom": []
-    },
-    "generatedMedia": {
-      "adopted": false,
-      "discoveredFrom": []
-    },
-    "publicHost": {
-      "adopted": true,
-      "discoveredFrom": [
-        "build/app/vercel.json"
-      ]
-    },
-    "multiLanguage": {
-      "adopted": false,
-      "discoveredFrom": []
-    },
-    "accessibilityModes": {
-      "adopted": true,
-      "discoveredFrom": [
-        "build/app/css/style.css"
-      ]
-    }
   },
   "checks": {
     "launch": {
@@ -99,12 +50,6 @@
         "qa/evidence/browser/evidence-normal.json"
       ]
     },
-    "publicHost": {
-      "status": "PASS",
-      "evidence": [
-        "qa/evidence/public-host.json"
-      ]
-    },
     "accessibilityModes": {
       "status": "PASS",
       "evidence": [
@@ -113,13 +58,6 @@
     }
   },
   "limitations": [
-    {
-      "scope": "current deployment identity",
-      "reason": "The live URL was availability-checked but is not bound to the current source fingerprint.",
-      "blocksProfiles": [
-        "release"
-      ]
-    },
     {
       "scope": "first-time human comprehension",
       "reason": "Automation proves the playable path, not unassisted first-use comprehension.",

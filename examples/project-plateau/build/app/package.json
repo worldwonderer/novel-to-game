@@ -21,7 +21,6 @@
     "verify:entry": "npm test && npm run build && npm run test:entry",
     "test:loading": "python3 test/qa_loading.py",
     "verify:loading": "npm test && npm run build && npm run test:loading",
-    "capture:visual": "python3 test/capture_visual_upgrade.py",
     "verify": "python3 test/verify.py"
   },
   "dependencies": {

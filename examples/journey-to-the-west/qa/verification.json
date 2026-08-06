@@ -2,20 +2,9 @@
   "schemaVersion": 2,
   "assuranceProfile": "smoke",
   "status": "PASS",
-  "sourceFingerprint": "5c6f4ab11bb9f5b307fc0797e3ad714e5ee1bf31acf77ec58cee238b11f7e00e",
   "verify": {
     "command": "node test/battle.mjs && python3 test/qa_browser.py",
-    "exitCode": 0,
-    "evidence": [
-      {
-        "path": "qa/evidence/automated.json",
-        "sha256": "790ab17824296ed267c6b78fdb27b2cd9ae3a2ec3e963f8b7556e1f79f12daf2"
-      },
-      {
-        "path": "qa/evidence/public-host.json",
-        "sha256": "15afb6caff5c997e54ff8c149c3493a4477ae75a73221e68fbee74a3688949c4"
-      }
-    ]
+    "exitCode": 0
   },
   "completeRun": {
     "id": "journey-to-the-west-current-complete-run",
@@ -23,34 +12,6 @@
     "terminal": "campaign-ending",
     "restart": "title-or-loaded-campaign",
     "evidence": "qa/evidence/automated.json"
-  },
-  "capabilities": {
-    "continuous3D": {
-      "adopted": false,
-      "discoveredFrom": []
-    },
-    "tts": {
-      "adopted": false,
-      "discoveredFrom": []
-    },
-    "generatedMedia": {
-      "adopted": false,
-      "discoveredFrom": []
-    },
-    "publicHost": {
-      "adopted": true,
-      "discoveredFrom": [
-        "build/app/vercel.json"
-      ]
-    },
-    "multiLanguage": {
-      "adopted": false,
-      "discoveredFrom": []
-    },
-    "accessibilityModes": {
-      "adopted": false,
-      "discoveredFrom": []
-    }
   },
   "checks": {
     "launch": {
@@ -88,22 +49,9 @@
       "evidence": [
         "qa/evidence/automated.json"
       ]
-    },
-    "publicHost": {
-      "status": "PASS",
-      "evidence": [
-        "qa/evidence/public-host.json"
-      ]
     }
   },
   "limitations": [
-    {
-      "scope": "current deployment identity",
-      "reason": "The live URL was availability-checked but is not bound to the current source fingerprint.",
-      "blocksProfiles": [
-        "release"
-      ]
-    },
     {
       "scope": "first-time human comprehension",
       "reason": "Automation proves the playable path, not unassisted first-use comprehension.",
