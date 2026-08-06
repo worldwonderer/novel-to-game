@@ -277,7 +277,7 @@ def start_fresh(page, opening: str) -> None:
 
 def main() -> int:
     global errors, network_errors, http_errors
-    # 只清截图子目录：qa/evidence/ 下还有手写的 design-invariants.md 等独立验证证据，
+    # 只清本次截图子目录；qa/evidence/ 下的机器汇总由各自生成器维护，
     # 不能被复跑抹掉。
     shutil.rmtree(SAFE, ignore_errors=True)
     shutil.rmtree(ADULT, ignore_errors=True)

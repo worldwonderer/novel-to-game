@@ -1,0 +1,19 @@
+{
+  "inputs": [
+    "W to glade",
+    "E",
+    "two camera commitments"
+  ],
+  "viewport": [
+    1440,
+    900
+  ],
+  "visionMode": "full-colour",
+  "url": "http://127.0.0.1:4173/?qa=s8",
+  "consoleErrorsAtCheckpoint": [],
+  "requestHostsAtCheckpoint": [
+    "",
+    "127.0.0.1:4173"
+  ],
+  "capturedAtUnixMs": 1786028888232
+}

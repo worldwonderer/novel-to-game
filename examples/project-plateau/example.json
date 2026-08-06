@@ -8,5 +8,6 @@
     "numeral": "roman"
   },
   "coverageHeading": "Full-book coverage",
-  "citationPattern": "Chapter (\\d{1,2})(?:\\s*(?:[-–—]|to)\\s*(\\d{1,2}))?"
+  "citationPattern": "Chapter (\\d{1,2})(?:\\s*(?:[-–—]|to)\\s*(\\d{1,2}))?",
+  "assuranceProfile": "release"
 }

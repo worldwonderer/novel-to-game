@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 2,
+  "assuranceProfile": "smoke",
+  "status": "PASS",
+  "capabilities": {
+    "continuous3D": {
+      "adopted": false,
+      "discoveredFrom": []
+    },
+    "tts": {
+      "adopted": false,
+      "discoveredFrom": []
+    },
+    "generatedMedia": {
+      "adopted": false,
+      "discoveredFrom": []
+    },
+    "publicHost": {
+      "adopted": true,
+      "discoveredFrom": [
+        "build/app/vercel.json"
+      ]
+    },
+    "multiLanguage": {
+      "adopted": false,
+      "discoveredFrom": []
+    },
+    "accessibilityModes": {
+      "adopted": false,
+      "discoveredFrom": []
+    }
+  },
+  "checks": {
+    "launch": {
+      "status": "PASS",
+      "evidence": [
+        "qa/evidence/automated.json"
+      ]
+    },
+    "render": {
+      "status": "PASS",
+      "evidence": [
+        "qa/evidence/automated.json"
+      ]
+    },
+    "input": {
+      "status": "PASS",
+      "evidence": [
+        "qa/evidence/automated.json"
+      ]
+    },
+    "coreLoop": {
+      "status": "PASS",
+      "evidence": [
+        "qa/evidence/automated.json"
+      ]
+    },
+    "outcome": {
+      "status": "PASS",
+      "evidence": [
+        "qa/evidence/automated.json"
+      ]
+    },
+    "restart": {
+      "status": "PASS",
+      "evidence": [
+        "qa/evidence/automated.json"
+      ]
+    }
+  },
+  "limitations": [
+    {
+      "scope": "public release identity",
+      "reason": "The hosted graybox is useful for playtesting but is not bound to a current release fingerprint.",
+      "blocksProfiles": [
+        "release"
+      ]
+    }
+  ]
+}

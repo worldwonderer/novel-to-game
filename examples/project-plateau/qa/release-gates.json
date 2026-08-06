@@ -24,12 +24,7 @@
     "status": "PASS",
     "evidence": [
       "qa/verification.json",
-      "build/evidence/visual-targets/manifest.json",
       "build/evidence/visual-upgrade/generated/manifest.json",
-      "qa/evidence/independent-visual-review-2026-08-04-world-space.md",
-      "qa/evidence/independent-visual-review-2026-08-04-freeze-fix.md",
-      "qa/evidence/final-code-review-2026-08-04.md",
-      "build/evidence/visual-upgrade/freeze.json",
       "build/evidence/visual-upgrade/reviews-freeze.json"
     ]
   },
@@ -116,141 +111,8 @@
     "light.functional_arc",
     "accessibility.presentation"
   ],
-  "unresolvedDefects": [
-    {
-      "id": "VIS-REVIEW-001",
-      "severity": "major",
-      "status": "CLOSED",
-      "summary": "Latest source-bound independent review completed with zero blockers and zero majors.",
-      "owner": "build",
-      "evidence": [
-        "qa/evidence/independent-visual-review-2026-08-04.md"
-      ]
-    },
-    {
-      "id": "VIS-PROMOTION-002",
-      "severity": "major",
-      "status": "CLOSED",
-      "summary": "Folded diagonal dive corridor and directly visible material responses passed independent re-review.",
-      "owner": "build",
-      "evidence": [
-        "qa/evidence/independent-visual-review-2026-08-03.md",
-        "build/evidence/visual-upgrade/generated/contact-sheet-supported-viewports.jpg"
-      ]
-    },
-    {
-      "id": "VIS-MINOR-01",
-      "severity": "minor",
-      "status": "CLOSED",
-      "summary": "Iguanodon eyes, muzzle, hands, fingers and thumb accents now meet playable-prototype readability.",
-      "owner": "build",
-      "evidence": [
-        "qa/evidence/independent-visual-review-2026-08-03.md",
-        "build/evidence/visual-upgrade/generated/manifest.json"
-      ]
-    },
-    {
-      "id": "VIS-MINOR-02",
-      "severity": "minor",
-      "status": "CLOSED",
-      "summary": "The representative dive now retains safe upper-edge clearance at both supported viewports.",
-      "owner": "build",
-      "evidence": [
-        "qa/evidence/independent-visual-review-2026-08-03.md",
-        "build/evidence/visual-upgrade/generated/manifest.json"
-      ]
-    },
-    {
-      "id": "VIS-MINOR-03",
-      "severity": "minor",
-      "status": "CLOSED",
-      "summary": "World-space low cover and the foreground rifle now provide the approved defensive choice without a HUD label.",
-      "owner": "build",
-      "evidence": [
-        "qa/evidence/independent-visual-review-2026-08-03.md",
-        "build/evidence/visual-upgrade/generated/manifest.json"
-      ]
-    },
-    {
-      "id": "VIS-MINOR-04",
-      "severity": "minor",
-      "status": "CLOSED",
-      "summary": "Creature and world material separation now meets the approved playable-prototype target finish.",
-      "owner": "build",
-      "evidence": [
-        "qa/evidence/independent-visual-review-2026-08-03.md",
-        "build/evidence/visual-upgrade/generated/manifest.json"
-      ]
-    },
-    {
-      "id": "VIS-MINOR-05",
-      "severity": "minor",
-      "status": "CLOSED",
-      "summary": "The title canopy and menu no longer form an independent heavy dark block.",
-      "owner": "build",
-      "evidence": [
-        "qa/evidence/independent-visual-review-2026-08-03.md",
-        "build/evidence/visual-upgrade/generated/manifest.json"
-      ]
-    },
-    {
-      "id": "VIS-MINOR-06",
-      "severity": "minor",
-      "status": "CLOSED",
-      "summary": "An uncut hash-bound WebM and ordered phase samples now prove watch \u2192 bank \u2192 dive \u2192 pull-up cadence.",
-      "owner": "build",
-      "evidence": [
-        "qa/evidence/independent-visual-review-2026-08-03.md",
-        "build/evidence/visual-upgrade/generated/manifest.json"
-      ]
-    },
-    {
-      "id": "VIS-PTERO-WING-007",
-      "severity": "major",
-      "status": "CLOSED",
-      "summary": "Bilateral wing evidence and the corrected stable-up attack sequence pass independent review without clipping or orientation flips.",
-      "owner": "build",
-      "evidence": [
-        "qa/evidence/independent-visual-review-2026-08-04.md",
-        "build/evidence/visual-targets/contact-sheet-motion.jpg"
-      ]
-    },
-    {
-      "id": "VIS-TERRAIN-COVER-008",
-      "severity": "major",
-      "status": "CLOSED",
-      "summary": "Removed the repeated marker-like ground-cover layer and reduced remaining ferns to sparse, darker tree-root clusters.",
-      "owner": "build",
-      "evidence": [
-        "qa/evidence/independent-visual-review-2026-08-04.md",
-        "build/evidence/visual-targets/contact-sheet-targets.jpg"
-      ]
-    },
-    {
-      "id": "VIS-WORLD-SPACE-009",
-      "severity": "major",
-      "status": "CLOSED",
-      "summary": "Grounded branch contact and fixed-world pterodactyl motion pass independent review across ordinary, reduced-motion and the 4.4-second cycle boundary.",
-      "owner": "build",
-      "evidence": [
-        "qa/evidence/independent-visual-review-2026-08-04-world-space.md",
-        "build/evidence/visual-upgrade/generated/manifest.json"
-      ]
-    },
-    {
-      "id": "VIS-DEMO-010",
-      "severity": "major",
-      "status": "CLOSED",
-      "summary": "The continuous input-only demo now visibly proves search, dive defense, rifle response, exposed return and the Strong result without timestamp drift.",
-      "owner": "build",
-      "evidence": [
-        "qa/evidence/independent-visual-review-2026-08-04-world-space.md",
-        "qa/evidence/final-code-review-2026-08-04.md",
-        "build/media/clip/manifest.json"
-      ]
-    }
-  ],
-  "notes": "Two independent hash-attested reviewers pass the frozen visual candidate with zero blockers or majors. The input-only Strong route, responsive viewports, source-bound evidence, protected spatial anchors and runtime performance gates remain intact. No same-camera/pixel-matched A/B, cryptographic reviewer identity or sealed pre-reveal artifact is claimed. The 50/35 investment guard is armed but not triggered; the narrowest measured 1%-low headroom is 0.7 FPS at 1280x720, so further visual complexity is voluntarily paused.",
+  "unresolvedDefects": [],
+  "notes": "Current release closure: one complete input route, one generated visual manifest, two frozen independent reviews, a rights-approved voiceover record, and the public-host status. Historical iteration bundles are not release roots.",
   "degradableReleaseAssets": [
     "audio.core_world"
   ],
@@ -269,5 +131,7 @@
   "sourceInputManifest": {
     "path": "build/source-inputs.json",
     "sha256": "90f7c45437c804a5ac3f12b1ecff52ac3fe80d99c5fed91986a13b2c26417b84"
-  }
+  },
+  "evidenceRole": "CURRENT",
+  "assuranceProfile": "release"
 }

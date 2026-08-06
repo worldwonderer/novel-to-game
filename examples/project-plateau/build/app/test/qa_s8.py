@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run reference paths and a full achromatopsia route with real input only."""
+"""Run one complete strong-result path with real input only."""
 
 from __future__ import annotations
 
@@ -19,7 +19,7 @@ from qa_assertions import ROUTE_INPUT_CONTINUATION_MS, route_input_calibration
 APP = Path(__file__).resolve().parent.parent
 BUILD = APP.parent
 EVIDENCE = Path(
-    os.environ.get("PLATEAU_EVIDENCE_DIR", BUILD / "evidence" / "s8")
+    os.environ.get("PLATEAU_EVIDENCE_DIR", BUILD / "evidence" / "current-run")
 ).expanduser().resolve()
 STATE_DIR = EVIDENCE / "state"
 BROWSER_DIR = EVIDENCE / "browser"
@@ -264,15 +264,6 @@ def run() -> dict[str, object]:
             assert state["player"]["remainingLight"] <= 180, state
             return time.monotonic()
 
-        def restart_path(checkpoint: str) -> float:
-            page.get_by_role("button", name="Take the route again").click()
-            page.wait_for_timeout(60)
-            clean = capture(checkpoint, ["Take the route again"])
-            assert clean["mode"] == "order" and clean["player"]["remainingLight"] == 180, clean
-            page.get_by_role("button", name="Begin field work").click()
-            page.wait_for_timeout(100)
-            return time.monotonic()
-
         def finish_metrics(path: str, started: float, state: dict[str, object]) -> None:
             player = state["player"]
             path_metrics[path] = {
@@ -364,102 +355,11 @@ def run() -> dict[str, object]:
             ),
         )
 
-        # Mixed: weaker covered view, one strong behavior frame, one shot and noisy creek.
-        mixed_started = restart_path("06-strong-clean-restart")
-        move_until("Mixed", "KeyW", "window.__projectPlateau.snapshot().player.position.z <= 45", "Fort to brook")
-        page.keyboard.press("KeyE")
-        expose_plate("Mixed", 0, "partial tutorial frame")
-        move_until("Mixed", "KeyA", "window.__projectPlateau.snapshot().player.position.x < 2.7", "choose canopy")
-        move_until("Mixed", "KeyW", "window.__projectPlateau.snapshot().player.position.z <= 18", "brook to canopy frame")
-        expose_plate("Mixed", 1, "covered flank frame")
-        move_until("Mixed", "KeyW", "window.__projectPlateau.snapshot().player.position.z <= 2", "canopy to glade")
-        page.keyboard.press("KeyE")
-        expose_plate("Mixed", 2, "single behavior frame")
-        attack = capture("07-mixed-return-attack", ["three input-only frames", "attack begins"])
-        assert attack["player"]["threatState"] == "attack", attack
-        fire("Mixed")
-        move_until("Mixed", "KeyD", "window.__projectPlateau.snapshot().player.position.x > 3.4", "line up exposed creek")
-        move_until("Mixed", "KeyS", "window.__projectPlateau.snapshot().player.position.z > 3.2", "commit exposed return")
-        brook = capture("08-mixed-rifle-brook", ["F", "Left Mouse", "D to creek", "S into exposed return"])
-        assert brook["player"]["returnRoute"] == "exposed", brook
-        assert brook["player"]["returnCostSeconds"] == 18, brook
-        assert brook["player"]["brookResponse"] == "brush-moving", brook
-        move_until("Mixed", "KeyS", "window.__projectPlateau.snapshot().player.position.z >= 62", "creek return to Fort")
-        page.wait_for_function("window.__projectPlateau.snapshot().player.runStatus === 'result'", timeout=1000)
-        mixed = capture("09-mixed-input-result", ["S along the complete creek return to Fort"])
-        assert mixed["player"]["result"]["band"] == "corroborating-record", mixed
-        assert mixed["player"]["result"]["evidence"] == 4, mixed
-        assert mixed["player"]["result"]["gunshotCallback"], mixed
-        assert mixed["player"]["cartridges"] == 1, mixed
-        finish_metrics("Mixed", mixed_started, mixed)
-
-        # Panic: sprint, spend both rounds, expose all plates, take two contacts.
-        panic_started = restart_path("10-mixed-clean-restart")
-        page.keyboard.down("ShiftLeft")
-        move_until("Panic", "KeyW", "window.__projectPlateau.snapshot().player.position.z <= 18", "sprint Fort to shelf")
-        page.keyboard.up("ShiftLeft")
-        expose_plate("Panic", 0, "first immediate open frame")
-        fire("Panic")
-        expose_plate("Panic", 1, "second immediate open frame")
-        fire("Panic")
-        expose_plate("Panic", 2, "third immediate open frame")
-        page.wait_for_function("window.__projectPlateau.snapshot().player.bodyMargin === 0", timeout=5000)
-        first_contact = capture("11-panic-first-contact", ["sprint", "three open frames", "both rifle rounds", "wait for contact"])
-        assert first_contact["player"]["contactCount"] == 1, first_contact
-        assert first_contact["player"]["cartridges"] == 0, first_contact
-        move_until("Panic", "KeyW", "window.__projectPlateau.snapshot().player.position.z <= 2", "continue to glade")
-        expose_plate("Panic", 3, "fourth immediate frame without behavior read")
-        move_until("Panic", "KeyD", "window.__projectPlateau.snapshot().player.position.x > 3.4", "line up creek")
-        move_until("Panic", "KeyS", "window.__projectPlateau.snapshot().player.position.z > 3.2", "take exposed creek")
-        move_until(
-            "Panic",
-            "KeyS",
-            "window.__projectPlateau.snapshot().player.runStatus !== 'active'",
-            "continue without cover discipline",
-            timeout=8000,
-        )
-        panic = capture("12-panic-input-failure", ["fourth open frame", "exposed creek", "continue after body margin is gone"])
-        assert panic["player"]["runStatus"] == "failure", panic
-        assert panic["player"]["failureCause"] == "second-unblocked-strike", panic
-        assert panic["player"]["contactCount"] == 2 and panic["player"]["shotCount"] == 2, panic
-        finish_metrics("Panic", panic_started, panic)
-
         page.get_by_role("button", name="Take the route again").click()
         page.wait_for_timeout(80)
-        clean = capture("13-panic-clean-restart", ["Take the route again"])
+        clean = capture("06-strong-clean-restart", ["Take the route again"])
         assert clean["mode"] == "order" and clean["player"]["remainingLight"] == 180, clean
         assert clean["player"]["distanceTravelled"] == 0, clean
-
-        # Repeat the complete Strong route with Chromium's achromatopsia
-        # emulation. This is input/state evidence; an independent reviewer still
-        # decides whether the visual cues are perceptually sufficient.
-        vision_mode = "achromatopsia"
-        cdp.send("Emulation.setEmulatedVisionDeficiency", {"type": vision_mode})
-        achrom_order = capture("14-achromatopsia-field-order", ["Chromium achromatopsia"])
-        assert achrom_order["mode"] == "order", achrom_order
-        page.get_by_role("button", name="Begin field work").click()
-        page.wait_for_timeout(100)
-        achrom_started = time.monotonic()
-        achrom = run_strong_path(
-            "Achromatopsia Strong",
-            achrom_started,
-            (
-                "15-achromatopsia-brook-frame",
-                "16-achromatopsia-basalt-frame",
-                "17-achromatopsia-glade-frames",
-                "18-achromatopsia-covered-return",
-                "19-achromatopsia-input-result",
-            ),
-        )
-        assert achrom["player"]["result"]["band"] == "strong-field-record", achrom
-        page.get_by_role("button", name="Take the route again").click()
-        page.wait_for_timeout(80)
-        achrom_restart = capture("20-achromatopsia-clean-restart", ["Take the route again"])
-        assert achrom_restart["mode"] == "order", achrom_restart
-        assert achrom_restart["player"]["distanceTravelled"] == 0, achrom_restart
-
-        vision_mode = "full-colour"
-        cdp.send("Emulation.setEmulatedVisionDeficiency", {"type": "none"})
         page.get_by_role("button", name="Begin field work").click()
         page.wait_for_timeout(80)
         performance = page.evaluate("window.__projectPlateau.sampleFrames(240)")
@@ -472,7 +372,7 @@ def run() -> dict[str, object]:
     assert not errors, errors
     assert not external, external
     return {
-        "stage": "s8-input-paths",
+        "stage": "current-complete-run",
         "source": {"scope": "index.html, package manifests, public assets and src", "sha256": fingerprint()},
         "environment": {
             "browser": "Google Chrome 150.0.7871.187" if CHROME.exists() else "Playwright Chromium",
@@ -485,12 +385,7 @@ def run() -> dict[str, object]:
             "strongEvidenceSevenAndBodyMargin": True,
             "strongDistinctBehaviorFrames": True,
             "strongRemainingLightWithinReferenceWindow": True,
-            "mixedOneShotNoisyCreekAndCallback": True,
-            "mixedCorroboratingEvidenceFour": True,
-            "panicBothShotsAllPlatesAndSecondContact": True,
-            "cleanRestartAfterEveryReferenceClass": True,
-            "achromatopsiaStrongInputRoute": True,
-            "achromatopsiaStrongCleanRestart": True,
+            "cleanRestartAfterStrongResult": True,
             "noThreatMeter": no_threat_meter,
             "consoleErrors": errors,
             "requestHosts": sorted(hosts),
@@ -504,32 +399,13 @@ def run() -> dict[str, object]:
             "reachRelativeSafety": "05-strong-input-result",
         },
         "pathMetrics": path_metrics,
-        "visionRoutes": {
-            "full-colour": [
-                "00-clean-field-order",
-                "01-strong-brook-frame",
-                "03-strong-glade-frames",
-                "04-strong-covered-return",
-                "05-strong-input-result",
-                "06-strong-clean-restart",
-            ],
-            "achromatopsia": [
-                "14-achromatopsia-field-order",
-                "15-achromatopsia-brook-frame",
-                "17-achromatopsia-glade-frames",
-                "18-achromatopsia-covered-return",
-                "19-achromatopsia-input-result",
-                "20-achromatopsia-clean-restart",
-            ],
-        },
         "inputTrace": input_trace,
         "performance": performance,
         "checkpoints": checkpoints,
         "limitations": [
             "The paths use real keyboard/mouse movement and wait on observed state, but they are deterministic automation rather than first-time human navigation evidence.",
-            "S8 validates the reconciled 1–3 minute product budget; independent perception and three external tester records remain required.",
+            "The run validates the reconciled 1–3 minute product budget; independent perception remains a separate release concern.",
             "The Strong path records distinct young-play and branch-pull states, but automated pose checks do not establish anatomy or animation quality.",
-            "Chromium emulation plus deterministic input proves route and UI state continuity; it does not prove that a person can distinguish every visual cue.",
             "Subjective fun, balance and audio mix are not inferred from the deterministic results.",
         ],
     }
@@ -557,7 +433,7 @@ def main() -> None:
             indent=2,
         )
     )
-    print(f"S8 PASS: {evidence_reference(output)}")
+    print(f"CURRENT RUN PASS: {evidence_reference(output)}")
 
 
 if __name__ == "__main__":

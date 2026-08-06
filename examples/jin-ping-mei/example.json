@@ -8,5 +8,6 @@
     "numeral": "chinese"
   },
   "coverageHeading": "全书覆盖",
-  "citationPattern": "第(\\d{1,3})(?:\\s*[-–—至]\\s*(\\d{1,3}))?回"
+  "citationPattern": "第(\\d{1,3})(?:\\s*[-–—至]\\s*(\\d{1,3}))?回",
+  "assuranceProfile": "smoke"
 }

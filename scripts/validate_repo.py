@@ -30,6 +30,7 @@ EXAMPLE_MANIFEST = "example.json"
 # 不能写死在校验器里，否则仓库结构上只容得下中文章回体原著。
 # 每个示例用 example.json 自述这些取值，校验器只校验「自述得对不对」。
 MANIFEST_REQUIRED = {
+    "assuranceProfile",
     "language",
     "source",
     "coverageHeading",
@@ -43,6 +44,28 @@ PUBLICATION_TIERS = {
     "playable-prototype",
     "polished-vertical-slice",
     "showcase",
+}
+ASSURANCE_PROFILES = {"smoke", "delivery", "release"}
+CORE_ASSURANCE_CHECKS = {
+    "launch",
+    "render",
+    "input",
+    "coreLoop",
+    "outcome",
+    "restart",
+}
+DELIVERY_ASSURANCE_CHECKS = {
+    "targetRuntime",
+    "targetDisplay",
+    "onboarding",
+}
+ASSURANCE_CAPABILITIES = {
+    "continuous3D",
+    "tts",
+    "generatedMedia",
+    "publicHost",
+    "multiLanguage",
+    "accessibilityModes",
 }
 GATE_STATUSES = {"NOT_RUN", "FAIL", "PASS"}
 VISUAL_RUBRIC_FIELDS = {
@@ -368,6 +391,11 @@ def read_manifest(example_dir: Path) -> tuple[dict[str, object] | None, list[str
             f"{example_dir.name}/{EXAMPLE_MANIFEST}: publicationTier must be one of "
             f"{sorted(PUBLICATION_TIERS)}"
         )
+    if manifest.get("assuranceProfile") not in ASSURANCE_PROFILES:
+        issues.append(
+            f"{example_dir.name}/{EXAMPLE_MANIFEST}: assuranceProfile must be one of "
+            f"{sorted(ASSURANCE_PROFILES)}"
+        )
     source = manifest.get("source")
     if not isinstance(source, dict):
         issues.append(f"{example_dir.name}/{EXAMPLE_MANIFEST}: source must be an object")
@@ -409,6 +437,191 @@ def _read_json_object(path: Path, label: str) -> tuple[dict[str, object] | None,
     if not isinstance(value, dict):
         return None, [f"{label}: must be an object"]
     return value, []
+
+
+def _compact_evidence_issue(
+    example_dir: Path, raw: object, field: str
+) -> str | None:
+    label = f"{example_dir.name}/qa/verification.json"
+    if not isinstance(raw, str) or not raw.strip():
+        return f"{label}: {field} must be a non-empty workspace path"
+    candidate = Path(raw)
+    if candidate.is_absolute() or "://" in raw:
+        return f"{label}: {field} must be workspace-local: {raw}"
+    resolved = (example_dir / candidate).resolve()
+    try:
+        resolved.relative_to(example_dir.resolve())
+    except ValueError:
+        return f"{label}: {field} leaves the example workspace: {raw}"
+    if not resolved.is_file():
+        return f"{label}: {field} does not exist: {raw}"
+    return None
+
+
+def validate_assurance(
+    example_dir: Path,
+    profile: str,
+    verification_candidate: Path | None = None,
+) -> list[str]:
+    """Validate the small playable-proof contract before optional release audit.
+
+    Smoke and delivery use schema v2. Release examples may still carry the richer
+    schema v1 while migrating; their full proof is checked by validate_publication.
+    """
+    label = f"{example_dir.name}/qa/verification.json"
+    issues: list[str] = []
+    if profile not in ASSURANCE_PROFILES:
+        return [f"{example_dir.name}: unknown assurance profile {profile!r}"]
+
+    release_path = example_dir / "qa/release-gates.json"
+    if release_path.is_file():
+        release, release_issues = _read_json_object(
+            release_path, f"{example_dir.name}/qa/release-gates.json"
+        )
+        issues.extend(release_issues)
+        if release is not None:
+            role = release.get("evidenceRole")
+            if profile != "release" and role != "HISTORICAL":
+                issues.append(
+                    f"{example_dir.name}/qa/release-gates.json: non-release examples "
+                    'must use evidenceRole "HISTORICAL" or remove the file'
+                )
+            if role not in {None, "CURRENT", "HISTORICAL"}:
+                issues.append(
+                    f"{example_dir.name}/qa/release-gates.json: evidenceRole must be "
+                    '"CURRENT" or "HISTORICAL"'
+                )
+            if profile == "release" and role == "HISTORICAL":
+                issues.append(
+                    f"{example_dir.name}/qa/release-gates.json: release profile "
+                    "requires current evidence"
+                )
+            declared_profile = release.get("assuranceProfile")
+            if (
+                profile == "release"
+                and declared_profile is not None
+                and declared_profile != profile
+            ):
+                issues.append(
+                    f"{example_dir.name}/qa/release-gates.json: assuranceProfile "
+                    "conflicts with example.json"
+                )
+    elif profile == "release":
+        issues.append(f"{example_dir.name}/qa/release-gates.json: missing file")
+
+    verification_path = verification_candidate or example_dir / "qa/verification.json"
+    verification, verification_issues = _read_json_object(verification_path, label)
+    issues.extend(verification_issues)
+    if verification is None:
+        return issues
+
+    schema_version = verification.get("schemaVersion")
+    if schema_version != 2:
+        if profile == "release":
+            declared_profile = verification.get("assuranceProfile")
+            if declared_profile is not None and declared_profile != profile:
+                issues.append(f"{label}: assuranceProfile conflicts with example.json")
+            return issues
+        issues.append(f"{label}: smoke/delivery assurance requires schemaVersion 2")
+        return issues
+
+    if verification.get("assuranceProfile") != profile:
+        issues.append(f"{label}: assuranceProfile must match example.json")
+    status = verification.get("status")
+    if status not in GATE_STATUSES:
+        issues.append(f"{label}: status must be one of {sorted(GATE_STATUSES)}")
+
+    checks = verification.get("checks")
+    if not isinstance(checks, dict):
+        issues.append(f"{label}: checks must be an object")
+        checks = {}
+    required = set(CORE_ASSURANCE_CHECKS)
+    if profile in {"delivery", "release"}:
+        required.update(DELIVERY_ASSURANCE_CHECKS)
+    for name in sorted(required):
+        check = checks.get(name)
+        if not isinstance(check, dict):
+            issues.append(f"{label}: checks.{name} must be an object")
+            continue
+        check_status = check.get("status")
+        if check_status not in GATE_STATUSES:
+            issues.append(
+                f"{label}: checks.{name}.status must be one of {sorted(GATE_STATUSES)}"
+            )
+        if status == "PASS" and check_status != "PASS":
+            issues.append(f"{label}: checks.{name} must PASS for overall PASS")
+        evidence = check.get("evidence")
+        if check_status == "PASS" and (
+            not isinstance(evidence, list) or not evidence
+        ):
+            issues.append(f"{label}: checks.{name}.evidence must not be empty")
+        elif isinstance(evidence, list):
+            for index, raw in enumerate(evidence):
+                issue = _compact_evidence_issue(
+                    example_dir, raw, f"checks.{name}.evidence[{index}]"
+                )
+                if issue:
+                    issues.append(issue)
+
+    limitations = verification.get("limitations")
+    if not isinstance(limitations, list):
+        issues.append(f"{label}: limitations must be a list")
+    else:
+        for index, limitation in enumerate(limitations):
+            field = f"limitations[{index}]"
+            if not isinstance(limitation, dict):
+                issues.append(f"{label}: {field} must be an object")
+                continue
+            for key in ("scope", "reason"):
+                if not isinstance(limitation.get(key), str) or not limitation[key].strip():
+                    issues.append(f"{label}: {field}.{key} must be non-empty")
+            blocks = limitation.get("blocksProfiles")
+            if not isinstance(blocks, list) or any(
+                value not in ASSURANCE_PROFILES for value in blocks
+            ):
+                issues.append(
+                    f"{label}: {field}.blocksProfiles must contain assurance profiles"
+                )
+            elif status == "PASS" and profile in blocks:
+                issues.append(f"{label}: {field} blocks current profile {profile}")
+
+    capabilities = verification.get("capabilities")
+    if not isinstance(capabilities, dict):
+        issues.append(f"{label}: capabilities must be an object")
+    else:
+        actual = set(capabilities)
+        if actual != ASSURANCE_CAPABILITIES:
+            issues.append(
+                f"{label}: capabilities mismatch; "
+                f"missing={sorted(ASSURANCE_CAPABILITIES - actual)} "
+                f"extra={sorted(actual - ASSURANCE_CAPABILITIES)}"
+            )
+        for name in sorted(ASSURANCE_CAPABILITIES & actual):
+            capability = capabilities[name]
+            if not isinstance(capability, dict):
+                issues.append(f"{label}: capabilities.{name} must be an object")
+                continue
+            if not isinstance(capability.get("adopted"), bool):
+                issues.append(f"{label}: capabilities.{name}.adopted must be boolean")
+            discovered = capability.get("discoveredFrom")
+            if not isinstance(discovered, list):
+                issues.append(
+                    f"{label}: capabilities.{name}.discoveredFrom must be a list"
+                )
+                continue
+            if capability.get("adopted") is True and not discovered:
+                issues.append(
+                    f"{label}: adopted capability {name} needs discoveredFrom"
+                )
+            for index, raw in enumerate(discovered):
+                issue = _compact_evidence_issue(
+                    example_dir,
+                    raw,
+                    f"capabilities.{name}.discoveredFrom[{index}]",
+                )
+                if issue:
+                    issues.append(issue)
+    return issues
 
 
 def _workspace_evidence_issue(
@@ -2348,11 +2561,16 @@ def validate_example(
     manifest, issues = read_manifest(example_dir)
     if manifest is None:
         return issues
+    assurance_profile = str(manifest["assuranceProfile"])
     issues.extend(
-        validate_publication(
-            example_dir, str(manifest["publicationTier"]), verification_candidate
-        )
+        validate_assurance(example_dir, assurance_profile, verification_candidate)
     )
+    if assurance_profile == "release":
+        issues.extend(
+            validate_publication(
+                example_dir, str(manifest["publicationTier"]), verification_candidate
+            )
+        )
     actual_planning_files = {
         path.relative_to(example_dir).as_posix()
         for directory in ("analysis", "concepts", "design", "build")

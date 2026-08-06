@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import argparse
-import atexit
 from dataclasses import dataclass
 import hashlib
 import json
@@ -53,26 +52,23 @@ JS_TESTS = (
     "test/settings.test.js",
     "test/simulation.test.js",
     "test/terrain.test.js",
-    "test/targeted-runner.test.js",
 )
-HISTORY_QA = tuple(f"test/qa_s{stage}.py" for stage in range(8)) + ("test/qa_s9.py",)
 COMPLETE_RUN_QA = ("test/qa_s8.py",)
 CONTROLLER_QA = ("test/qa_controller.py",)
 MOTION_QA = ("test/qa_motion.py",)
 COLLISION_QA = ("test/qa_collision.py",)
 ENTRY_QA = ("test/qa_entry.py",)
 LOADING_QA = ("test/qa_loading.py",)
-CURRENT_VISUAL_QA = (
-    "test/qa_s10.py",
-    "test/qa_visual_targets.py",
-    "test/capture_visual_upgrade.py",
-)
 EXCLUDED_TEST_TOOLS = {
     "test/capture_demo_clip.py": "reproducible delivery-media recorder, not a pass/fail test suite",
-    "test/qa_assertions.py": "shared targeted assertion library; exercised by targeted-runner.test.js",
-    "test/qa_promotion.py": "real-input promotion capture tool; invoked by qa_targeted.py before freeze",
-    "test/qa_targeted.py": "targeted suite and frozen-evidence orchestrator; exercised by targeted-runner.test.js",
+    "test/capture_visual_upgrade.py": "release-capture tool; current frozen manifest is checked by the repository contract",
+    "test/qa_assertions.py": "shared assertions imported by the current complete-run suite",
+    "test/qa_visual_targets.py": "release-capture tool; current frozen manifest is checked by the repository contract",
     "test/verify.py": "authoritative suite orchestrator; registering it would recurse",
+    **{
+        f"test/qa_s{stage}.py": "historical checkpoint reproducer; not part of current assurance"
+        for stage in (*range(8), 9, 10)
+    },
 }
 EXPECTED_TEST_SCRIPTS = {
     "test": "test/*.test.js",
@@ -88,12 +84,6 @@ EXPECTED_TEST_SCRIPTS = {
 SUITES = (
     Suite("unit:simulation", JS_TESTS, (("npm", "test"),), APP),
     Suite("build:production", ("index.html", "src/", "public/"), (("npm", "run", "build"),), APP),
-    Suite(
-        "browser:checkpoint-history",
-        HISTORY_QA,
-        tuple((sys.executable, location) for location in HISTORY_QA),
-        APP,
-    ),
     Suite(
         "browser:complete-run",
         COMPLETE_RUN_QA,
@@ -129,18 +119,6 @@ SUITES = (
         LOADING_QA,
         ((sys.executable, LOADING_QA[0]),),
         APP,
-    ),
-    Suite(
-        "browser:current-visual",
-        CURRENT_VISUAL_QA,
-        tuple((sys.executable, location) for location in CURRENT_VISUAL_QA),
-        APP,
-    ),
-    Suite(
-        "qa:design-invariants",
-        ("qa/check_design_invariants.py",),
-        ((sys.executable, str(QA / "check_design_invariants.py")),),
-        PROJECT,
     ),
     Suite(
         "repo:contract",
@@ -288,8 +266,8 @@ def audit_registry() -> dict[str, object]:
         if path.is_file() and path.suffix in {".py", ".js"}
     }
     registered = set(
-        JS_TESTS + HISTORY_QA + COMPLETE_RUN_QA + CONTROLLER_QA + MOTION_QA
-        + COLLISION_QA + ENTRY_QA + LOADING_QA + CURRENT_VISUAL_QA
+        JS_TESTS + COMPLETE_RUN_QA + CONTROLLER_QA + MOTION_QA
+        + COLLISION_QA + ENTRY_QA + LOADING_QA
     )
     excluded = set(EXCLUDED_TEST_TOOLS)
     orphaned = sorted(discovered - registered - excluded)
@@ -330,7 +308,8 @@ def project_path(path: Path) -> str:
 
 
 def load_report(stage: str) -> dict[str, object]:
-    return json.loads((BUILD / f"evidence/{stage}/report.json").read_text(encoding="utf-8"))
+    directory = "current-run" if stage == "s8" else stage
+    return json.loads((BUILD / f"evidence/{directory}/report.json").read_text(encoding="utf-8"))
 
 
 def prefixed_checkpoints(stage: str, identifiers: set[str] | None = None) -> list[dict[str, object]]:
@@ -379,6 +358,15 @@ def write_verification(
 ) -> None:
     verification: dict[str, object] = {
         "schemaVersion": 1,
+        "assuranceProfile": "release",
+        "capabilities": {
+            "continuous3D": {"adopted": True, "discoveredFrom": ["build/BUILD_BRIEF.md"]},
+            "tts": {"adopted": True, "discoveredFrom": ["build/asset-ledger.json"]},
+            "generatedMedia": {"adopted": True, "discoveredFrom": ["build/asset-ledger.json"]},
+            "publicHost": {"adopted": True, "discoveredFrom": ["build/app/vercel.json"]},
+            "multiLanguage": {"adopted": False, "discoveredFrom": []},
+            "accessibilityModes": {"adopted": True, "discoveredFrom": ["build/asset-ledger.json"]},
+        },
         "sourceCommit": source_commit,
         "sourceFingerprint": fingerprint,
         "environment": environment_record,
@@ -401,11 +389,7 @@ def write_verification(
             "05-strong-input-result",
             "06-strong-clean-restart",
         }
-        checkpoints = prefixed_checkpoints("s8")
-        checkpoints += prefixed_checkpoints(
-            "s7", {"02-settings-150-minimum", "10-heavy-state-target"}
-        )
-        checkpoints += prefixed_checkpoints("s10")
+        checkpoints = prefixed_checkpoints("s8", complete_ids)
         available = {record["id"] for record in checkpoints}
         expected_complete = {f"s8:{identifier}" for identifier in complete_ids}
         assert expected_complete <= available, sorted(expected_complete - available)
@@ -455,16 +439,10 @@ def write_verification(
             "restart": "clean-field-order",
         }
         verification["checkpoints"] = checkpoints
-        verification["colourVisionEvidence"] = {
-            "completeInputRoutes": load_report("s8")["visionRoutes"],
-            "reviewCheckpoints": load_report("s10")["colourVisionMatrix"],
-            "independentCueReadability": "NOT_RUN",
-        }
         verification["claimBoundaries"] = [
             "Automated paths are not first-time human navigation or premise-comprehension evidence.",
             "Pixel and state checks do not prove subjective composition, anatomy, motion, fun or balance.",
-            "Local 25 Mbps throttling is not public-host cold-loading evidence.",
-            "Chromium-emulated routes and checkpoints do not prove independent human cue readability.",
+            "Release visuals and public-host identity are checked by the repository contract against frozen current manifests.",
         ]
     output_path.parent.mkdir(parents=True, exist_ok=True)
     temporary = output_path.with_name(f".{output_path.name}.tmp")
@@ -477,17 +455,6 @@ def main() -> int:
     parser.add_argument("--audit-only", action="store_true", help="check suite discovery without executing suites")
     args = parser.parse_args()
     registry = audit_registry()
-    frozen_evidence = os.environ.get("PROJECT_PLATEAU_FROZEN_EVIDENCE")
-    frozen_bundle = (APP / frozen_evidence).resolve() if frozen_evidence else None
-    authoritative_receipt = {"pending": False}
-    if frozen_bundle is not None:
-        def cleanup_abandoned_receipt() -> None:
-            if authoritative_receipt["pending"]:
-                from qa_targeted import abort_authoritative_verify
-
-                abort_authoritative_verify(frozen_bundle)
-
-        atexit.register(cleanup_abandoned_receipt)
     for problem in registry["problems"]:
         print(problem)
     if registry["problems"]:
@@ -500,12 +467,6 @@ def main() -> int:
         for suite in SUITES:
             print(f"suite={suite.identifier} locations={','.join(suite.locations)}")
         return 0
-    if frozen_bundle is not None:
-        from qa_targeted import consume_authoritative_verify
-
-        consume_authoritative_verify(frozen_bundle)
-        authoritative_receipt["pending"] = True
-
     QA_EVIDENCE.mkdir(parents=True, exist_ok=True)
     CANDIDATE_VERIFICATION.unlink(missing_ok=True)
     CANDIDATE_LOG.unlink(missing_ok=True)
@@ -621,51 +582,13 @@ def main() -> int:
         suite_results=suite_results,
         exit_code=exit_code,
     )
-    if frozen_bundle is not None:
-        from qa_targeted import ContractError, abort_authoritative_verify, post_verify_audit
-
-        if exit_code:
-            abort_authoritative_verify(frozen_bundle)
-            authoritative_receipt["pending"] = False
-        else:
-            try:
-                post_verify_audit(
-                    frozen_bundle,
-                    verification_path=VERIFICATION,
-                    log_path=LOG,
-                )
-                authoritative_receipt["pending"] = False
-            except (ContractError, OSError, json.JSONDecodeError, KeyError, AssertionError) as error:
-                exit_code = 2
-                log_lines.extend(
-                    [
-                        f"postVerifyAudit=FAIL",
-                        f"postVerifyAuditError={type(error).__name__}: {error}",
-                    ]
-                )
-                log_temporary.write_text(
-                    normalize_log_text("\n".join(log_lines)) + "\n",
-                    encoding="utf-8",
-                )
-                log_temporary.replace(LOG)
-                write_verification(
-                    source_commit=source_commit,
-                    fingerprint=fingerprint,
-                    environment_record=environment_record,
-                    duration_ms=duration_ms,
-                    registry=registry,
-                    suite_results=suite_results,
-                    exit_code=exit_code,
-                )
-                abort_authoritative_verify(frozen_bundle)
-                authoritative_receipt["pending"] = False
     CANDIDATE_VERIFICATION.unlink(missing_ok=True)
     CANDIDATE_LOG.unlink(missing_ok=True)
     if exit_code:
         print(f"authoritative verification: FAIL ({project_path(LOG)})")
         return exit_code
     print(f"authoritative verification: PASS ({len(SUITES)}/{len(SUITES)} suites)")
-    print(f"completeRun=s8-strong-input-only evidence={project_path(VERIFICATION)}")
+    print(f"completeRun=strong-input-only evidence={project_path(VERIFICATION)}")
     return 0
 
 

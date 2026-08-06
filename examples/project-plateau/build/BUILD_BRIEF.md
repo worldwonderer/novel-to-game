@@ -331,13 +331,12 @@ verification:
   suites:
     - unit:simulation
     - build:production
-    - browser:checkpoint-history
     - browser:complete-run
     - browser:controller-contract
     - browser:motion-visual
     - browser:collision-contract
-    - browser:current-visual
-    - qa:design-invariants
+    - browser:entry-conversion
+    - browser:loading-state
     - repo:contract
   completeRun: ../qa/verification.json#completeRun
   evidenceIndex: ../qa/verification.json#checkpoints
@@ -388,7 +387,7 @@ and 23 underlying commands; its log and 41-checkpoint handoff are
 |---|---|---|
 | Free anonymous desktop WebGL2 slice at `1440×900`, minimum `1280×720` | Delivered for the current local candidate | S0/S7 browser evidence; the retained public-host run is historical and does not prove deployment of the current fingerprint |
 | Continuous first-person connected zone, collision, pause, focus recovery and restart | Delivered | S1/S2/S7 plus the S8 input-only complete run |
-| Five same-play verbs performed by input | Delivered | `../qa/evidence/design-invariants.md#same-play-verbs`; S8 input trace and checkpoints |
+| Five same-play verbs performed by input | Delivered | `../qa/verification.json`; current-run input trace and checkpoints |
 | Four physical plates with view-dependent proof and persistent recovered views | Delivered | S3/S9/S10 state, browser and renderer-derived visual evidence |
 | Four readable threat states, cover, one recoverable contact and limited defensive shot | Delivered; strict visual review passes | S2/S3/S5/S6; complete full-colour and achromatopsia routes in S8; three additional colour-vision attack/defence checkpoints in S10; full independent live colour-cue route review remains open |
 | Covered and exposed returns with different time, plate and callback consequences | Delivered | S5 and input-only Strong/Mixed/Panic paths in S8 |

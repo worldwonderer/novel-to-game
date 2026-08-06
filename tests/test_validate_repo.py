@@ -36,6 +36,7 @@ from validate_repo import (  # noqa: E402
     validate_publication,
     validate_readme_publication_claims,
     validate_repository,
+    validate_assurance,
     validate_skill,
     validation_json_files,
     visible_directories,
@@ -43,6 +44,134 @@ from validate_repo import (  # noqa: E402
 
 
 class RepositoryValidationTests(unittest.TestCase):
+    def make_compact_verification_fixture(
+        self, root: Path, *, profile: str = "smoke"
+    ) -> Path:
+        example = root / "examples/demo"
+        (example / "qa/evidence").mkdir(parents=True)
+        evidence = example / "qa/evidence/run.json"
+        evidence.write_text("{}\n", encoding="utf-8")
+        checks = {
+            name: {"status": "PASS", "evidence": ["qa/evidence/run.json"]}
+            for name in (
+                "launch",
+                "render",
+                "input",
+                "coreLoop",
+                "outcome",
+                "restart",
+            )
+        }
+        if profile in {"delivery", "release"}:
+            checks.update(
+                {
+                    name: {
+                        "status": "PASS",
+                        "evidence": ["qa/evidence/run.json"],
+                    }
+                    for name in ("targetRuntime", "targetDisplay", "onboarding")
+                }
+            )
+        capabilities = {
+            name: {"adopted": False, "discoveredFrom": []}
+            for name in (
+                "continuous3D",
+                "tts",
+                "generatedMedia",
+                "publicHost",
+                "multiLanguage",
+                "accessibilityModes",
+            )
+        }
+        (example / "qa/verification.json").write_text(
+            json.dumps(
+                {
+                    "schemaVersion": 2,
+                    "assuranceProfile": profile,
+                    "status": "PASS",
+                    "capabilities": capabilities,
+                    "checks": checks,
+                    "limitations": [],
+                }
+            ),
+            encoding="utf-8",
+        )
+        return example
+
+    def test_smoke_assurance_accepts_only_the_six_playable_checks(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            example = self.make_compact_verification_fixture(Path(temporary))
+            self.assertEqual(validate_assurance(example, "smoke"), [])
+
+    def test_smoke_assurance_rejects_a_missing_playable_check(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            example = self.make_compact_verification_fixture(Path(temporary))
+            path = example / "qa/verification.json"
+            verification = json.loads(path.read_text(encoding="utf-8"))
+            del verification["checks"]["restart"]
+            path.write_text(json.dumps(verification), encoding="utf-8")
+
+            issues = validate_assurance(example, "smoke")
+
+            self.assertTrue(any("checks.restart" in issue for issue in issues), issues)
+
+    def test_delivery_assurance_monotonically_adds_handoff_checks(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            example = self.make_compact_verification_fixture(
+                Path(temporary), profile="delivery"
+            )
+            path = example / "qa/verification.json"
+            verification = json.loads(path.read_text(encoding="utf-8"))
+            del verification["checks"]["onboarding"]
+            path.write_text(json.dumps(verification), encoding="utf-8")
+
+            issues = validate_assurance(example, "delivery")
+
+            self.assertTrue(any("checks.onboarding" in issue for issue in issues), issues)
+
+    def test_non_release_assurance_ignores_only_explicit_historical_release_data(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            example = self.make_compact_verification_fixture(Path(temporary))
+            release = example / "qa/release-gates.json"
+            release.write_text(
+                json.dumps({"evidenceRole": "CURRENT"}), encoding="utf-8"
+            )
+            issues = validate_assurance(example, "smoke")
+            self.assertTrue(any("evidenceRole" in issue for issue in issues), issues)
+
+            release.write_text(
+                json.dumps({"evidenceRole": "HISTORICAL"}), encoding="utf-8"
+            )
+            self.assertEqual(validate_assurance(example, "smoke"), [])
+
+    def test_compact_assurance_rejects_blocking_limitations_and_fake_statuses(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            example = self.make_compact_verification_fixture(Path(temporary))
+            path = example / "qa/verification.json"
+            verification = json.loads(path.read_text(encoding="utf-8"))
+            verification["status"] = "PASS_WITH_GAPS"
+            verification["limitations"] = [
+                {
+                    "scope": "restart",
+                    "reason": "not exercised",
+                    "blocksProfiles": ["smoke"],
+                }
+            ]
+            path.write_text(json.dumps(verification), encoding="utf-8")
+
+            issues = validate_assurance(example, "smoke")
+
+            self.assertTrue(any("status" in issue for issue in issues), issues)
+
+            verification["status"] = "PASS"
+            path.write_text(json.dumps(verification), encoding="utf-8")
+            issues = validate_assurance(example, "smoke")
+            self.assertTrue(any("blocks current profile" in issue for issue in issues), issues)
+
     def make_publication_fixture(
         self, root: Path, *, tier: str = "showcase", target: str | None = None
     ) -> Path:

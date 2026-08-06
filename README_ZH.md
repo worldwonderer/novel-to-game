@@ -75,7 +75,7 @@ npx skills add worldwonderer/novel-to-game -g -y -s '*' \
 玩家以原创角色的身份进入世界，不要逐段复演原作剧情。
 ```
 
-`quick` 适合直接交给 Agent 完成：确认需求后，它会比较三种把小说做成游戏的方案，选出最值得实现的一种，再继续完成设计、构建和 QA。想先看过这三种方案并亲自决定做哪一种，就用 `director`。
+`quick` 是低门槛默认模式：Agent 先给出合理草案，只追问会改变产品方向或涉及安全的选择，再比较三个概念并继续设计、构建和 QA。它默认使用 **smoke 验收**——真实启动、渲染、输入、完整循环、一个结果和重开。想自己选择概念用 `director`；交给他人或指定设备验收用 `delivery`；正式发布、权利、秘密、托管和公开声明审计用 `release`。
 
 <details>
 <summary><strong>使用原生插件安装</strong></summary>
@@ -107,13 +107,13 @@ codex plugin add novel-to-game@novel-to-game-skills
 
 ## 工作流
 
-总入口先锁定 `PRODUCT_BRIEF.md`，再让改编任务依次进入六个职责独立的阶段。QA 未通过时返回构建阶段继续修复，直到运行证据满足门槛。
+总入口先锁定 `PRODUCT_BRIEF.md`，再让改编任务依次进入六个职责独立的阶段。概念、体验/关卡与美术方向继续分别负责，验收只保留范围、可玩闭环和声明诚实三道简单门。
 
 ```text
 小说 → 游戏化拆解 → 游戏概念 → 世界设计 → 美术方向 → 构建 ⇄ QA → 可玩游戏
 ```
 
-游戏概念、体验与关卡设计、美术方向分别接受独立评审。构建面向选定的运行环境，QA 也在同一环境中用实际运行证据完成验证。美术方向选用语音时，构建期 TTS 仍是可选且不绑定供应商的能力；发布前须有逐句权利、请求指纹、本地音频、字幕、失败降级、解码与响度证据，以及人工试听记录。
+构建面向选定的运行环境，QA 也在同一环境中用实际运行证据完成验证。smoke、delivery、release 是单调累加的预设，不是三套流程；只有实际采用的能力才启用对应检查，但语音/媒体权利和秘密处理仍然从严失败。
 
 ## Skills
 
@@ -140,6 +140,7 @@ game-adaptations/<project>/
   design/ART_DIRECTION.md
   build/BUILD_BRIEF.md
   build/app/
+  qa/verification.json
   qa/QA_REPORT.md
   _progress.md
 ```

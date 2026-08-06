@@ -70,7 +70,7 @@ The Remotion project also produces a two-pass 1080p H.264 GitHub delivery under
 
 ## Claim boundary
 
-- `build/evidence/s8/report.json` remains the uncut timing and traversal
+- `build/evidence/current-run/report.json` remains the uncut timing and traversal
   authority; the edited delivery clips are not timing evidence.
 - S10 proves browser states, image provenance and gross composition floors; it
   does not prove subjective visual quality.
