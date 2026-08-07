@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "note": "生成式美术资产的来源记录。此文件不是 build/asset-ledger.json（那份有严格 schema，只在 graybox 以上要求）；这里只诚实记录三张夜间立绘是怎么来的、由什么条件出来的、以及可否复现。",
+  "note": "生成式美术资产的来源记录。此文件不是 build/asset-ledger.json（那份有严格 schema，只在 graybox 以上要求）；这里只诚实记录三张夜间立绘与一张标题群像是怎么来的、由什么条件出来的、以及可否复现。",
   "generatedAt": "2026-08-06",
   "generator": {
     "tool": "codex-cli built-in image_gen skill",
@@ -45,7 +45,6 @@
       "place": "正堂",
       "prop": "摊开的账簿，一串铜钥匙压在她手下",
       "robe": "靛蓝团花",
-      "sha256": "6692dc38c8a9298dfeadb630b678acdb117baeea26b80794baa1ceafb94f6e5b",
       "bytes": 163128
     },
     {
@@ -54,7 +53,6 @@
       "place": "花园角门",
       "prop": "已经斟满的酒盏朝观众微倾，团扇搁在桌上；半开的槅扇外是月下庭院",
       "robe": "朱红折枝",
-      "sha256": "e7d56f607f5b941127f36ac7f9c2b6d45645231f018544f50b294e369e475d99",
       "bytes": 169430
     },
     {
@@ -63,7 +61,6 @@
       "place": "瓶儿私院",
       "prop": "描金箱笼合着，她捏着一把铜钥匙半缩在袖里，像在斟酌要不要交出去",
       "robe": "淡青缠枝",
-      "sha256": "60ec95dab6c9f0a4f28eb2237ba56da2f8cfa6f928c5f9196d2bb1589ad85836",
       "bytes": 133612
     },
     {
@@ -77,26 +74,25 @@
         "ref_wu_yueniang（同上）",
         "ref_li_pinger（同上）"
       ],
-      "sha256": "2dfb42fe0b2f44e8d65f5353485016958668b2fed3a8baf9f886650c4c288a4e",
       "bytes": 286184,
       "size": [1536, 1024]
     }
   ],
   "postProcessing": {
-    "from": "PNG 1536×1024（模型原始输出）",
-    "to": "WebP 1280×853，quality 88，method 6",
-    "totalBytes": 466170,
-    "ration": "与 examples/journey-to-the-west 的 q88 压缩约定一致。q88 与原图在面部、金饰线脚与纸纹上逐像素目视对照无可见劣化；原始 PNG 合计 7.5MB，不入库。",
-    "bundleImpact": "包体 5.96MB → 约 6.4MB"
+    "nightImages": "三张夜间立绘由 PNG 1536×1024 转为 WebP 1280×853，quality 88，method 6",
+    "titleImage": "标题群像保留 1536×1024，转为 WebP，未缩放",
+    "totalBytes": 752354,
+    "rationale": "夜间立绘沿用 examples/journey-to-the-west 的 q88 压缩约定。与原图逐张目视对照面部、金饰线脚与纸纹，无可见劣化；原始 PNG 不入库。",
+    "bundleImpact": "四张新增 WebP 合计 752354 bytes；实测运行目录 6244598 → 7012282 bytes（代码与资产合计 +767684 bytes）"
   },
-  "humanReview": {
-    "status": "PASS",
+  "executionReview": {
+    "status": "observed",
     "reviewer": "本次改动的执行方逐张开图目视核对",
     "checked": [
-      "三张与 banquet_conflict.webp 中对应人物面孔一致",
-      "三张彼此光照、构图、谱系一致",
-      "均着装完整，可用于非 18+ 界面与公开截图"
+      "三张夜间立绘与 banquet_conflict.webp 中对应人物面孔一致",
+      "三张夜间立绘彼此光照、构图、谱系一致，且着装完整，可用于非 18+ 界面与公开截图",
+      "标题群像包含三名对应人物，视线集中到玩家位置，右侧留有题字暗区，无分栏硬边、文字、水印或奖励 CG 复用"
     ],
-    "notChecked": "未做第三方独立美术复核；本记录不构成 qa/release-gates.json 的 visualReview 判定。"
+    "notChecked": "未做第三方独立美术复核；本记录只说明本次逐图检查，不冒充独立美术结论。"
   }
 }

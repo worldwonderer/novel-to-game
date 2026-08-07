@@ -1,4 +1,4 @@
-// 视觉键表：发布模式对 7 张关键 CG 采用 fail-closed，不静默回退。
+// 视觉键表：发布模式对所有首屏、人物近景与奖励 CG 采用 fail-closed，不静默回退。
 
 export const ASSET_PATHS = Object.freeze({
   // cover 与宴席群像解绑:三人同框的册页只属于「按下那个按钮之后」。
@@ -29,6 +29,7 @@ export const ASSET_PATHS = Object.freeze({
 });
 
 export const CRITICAL_CG_KEYS = Object.freeze([
+  'cover', 'heroine/yue/close', 'heroine/pan/close', 'heroine/pinger/close',
   'cg/yue/prelude', 'cg/yue/explicit', 'cg/pan/prelude', 'cg/pan/explicit',
   'cg/pinger/prelude', 'cg/pinger/explicit', 'cg/group/banquet_conflict',
 ]);

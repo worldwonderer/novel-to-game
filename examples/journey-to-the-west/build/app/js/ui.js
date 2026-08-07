@@ -25,15 +25,26 @@ export function addCorners(panel) {
 // ---------- 遮罩计数:模态/对话在场时,战斗底部指令台随之一并压暗(简报 T8) ----------
 let modalDepth = 0;
 let dlgDepth = 0;
+let shadeGeneration = 0;
 function shadeOn(kind) {
   if (kind === 'modal') modalDepth += 1; else dlgDepth += 1;
   document.body.classList.add(kind === 'modal' ? 'modal-open' : 'dlg-open');
+  return shadeGeneration;
 }
-function shadeOff(kind) {
+function shadeOff(kind, ownerGeneration) {
+  if (ownerGeneration !== shadeGeneration) return;
   if (kind === 'modal') modalDepth = Math.max(0, modalDepth - 1);
   else dlgDepth = Math.max(0, dlgDepth - 1);
   const cls = kind === 'modal' ? 'modal-open' : 'dlg-open';
   if ((kind === 'modal' ? modalDepth : dlgDepth) === 0) document.body.classList.remove(cls);
+}
+
+// 切场会直接回收旧 screen；同时归零计数，避免被回收的遮罩把后续指令台永久压暗。
+export function resetOverlayShading() {
+  shadeGeneration += 1;
+  modalDepth = 0;
+  dlgDepth = 0;
+  document.body.classList.remove('modal-open', 'dlg-open');
 }
 
 // ---------- 剧情对话框 ----------
@@ -53,7 +64,7 @@ export function showDialog(root, lines) {
     right.append(name, text, next);
     box.append(portrait, right);
     root.appendChild(box);
-    shadeOn('dlg');
+    const ownerGeneration = shadeOn('dlg');
 
     function render() {
       const line = lines[idx];
@@ -72,7 +83,7 @@ export function showDialog(root, lines) {
     }
     function cleanup() {
       window.removeEventListener('keydown', onKey);
-      shadeOff('dlg');
+      shadeOff('dlg', ownerGeneration);
     }
     function advance() {
       audio.sfx('click');
@@ -113,7 +124,7 @@ export function showModal(root, { id, title, bodyNodes, buttons }) {
   const close = () => {
     if (closed) return;
     closed = true;
-    shadeOff('modal');
+    shadeOff('modal', ownerGeneration);
     mask.remove();
     window.removeEventListener('keydown', onKey);
   };
@@ -154,7 +165,7 @@ export function showModal(root, { id, title, bodyNodes, buttons }) {
   panel.append(head, body, foot);
   mask.appendChild(panel);
   root.appendChild(mask);
-  shadeOn('modal');
+  const ownerGeneration = shadeOn('modal');
   return close;
 }
 
@@ -173,7 +184,7 @@ export function showPanel(root, { id, title, bodyNodes, onClose }) {
   const close = () => {
     if (closed) return;
     closed = true;
-    shadeOff('modal');
+    shadeOff('modal', ownerGeneration);
     mask.remove();
     window.removeEventListener('keydown', onKey);
     if (onClose) onClose();
@@ -194,7 +205,7 @@ export function showPanel(root, { id, title, bodyNodes, onClose }) {
   panel.append(head, closeBtn, body);
   mask.appendChild(panel);
   root.appendChild(mask);
-  shadeOn('modal');
+  const ownerGeneration = shadeOn('modal');
   return close;
 }
 

@@ -17,7 +17,7 @@ import { getSpeed, setSpeed, getSkipFx, setSkipFx, getShake, setShake } from './
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 export async function runBattleScreen(ctx) {
-  // ctx: {root, battleId, partyLevels, petJoined, formation, items, seed, fast, showTutorial}
+  // ctx: {root, battleId, partyLevels, petJoined, formation, items, seed, fast, showTutorial, systemControlsHost}
   const { root, battleId, fast } = ctx;
   root.querySelectorAll('.toast').forEach((n) => n.remove()); // 清掉上一场残留提示
   const state = createBattle({
@@ -82,7 +82,7 @@ export async function runBattleScreen(ctx) {
   shakeBtn.id = 'btn-shake';
   toggles.append(speedBtn, skipBtn, shakeBtn);
   // 节奏开关收进顶栏「设」齿轮下拉(简报 T7):不再挂在舞台右上角每张截图里
-  const sysDrop = root.querySelector('#topbar .topbar-dropdown');
+  const sysDrop = ctx.systemControlsHost;
   field.append(orderBar, roundTag, banner, formBtn);
   if (sysDrop) sysDrop.appendChild(toggles);
   else field.appendChild(toggles); // 无顶栏的独立挂载场景兜底
@@ -1422,4 +1422,3 @@ export async function runBattleScreen(ctx) {
     });
   }
 }
-

@@ -3,14 +3,14 @@
 标题 → 序幕(土地对话/阵型/存档) → 战斗1(教学/法术/变化/化虫入腹)
 → 战斗2(携宠/假扇反噬) → BOSS(阵型切换/真扇三段/白牛真身) → 结局 → 读档。
 断言:关键 DOM 存在、控制台 0 报错、帧时分布、无外部请求域;
-截图存示例工作区内 qa/evidence/browser/。
+截图在运行期间存于示例工作区内 qa/evidence/browser/，只保留聚合结果；
+面向仓库的精选画面位于 examples/journey-to-the-west/screenshots/。
 
 用法: python3 test/qa_browser.py
 环境变量: BASE_URL(默认 http://127.0.0.1:5173), QA_SLOW=1 关闭加速,
           QA_SHOTS 覆盖截图目录。
 
-截图默认落在工作区内的持久路径而非系统临时目录:qa 契约把临时目录路径视为无证据,
-对应检查项不得记通过。
+截图不落系统临时目录，便于失败时诊断；成功后的逐步截图可删除，不作为当前 PASS 的唯一依据。
 """
 import json, os, shutil, socket, subprocess, sys, time
 from urllib.parse import urlparse
@@ -240,8 +240,8 @@ def main():
         "frame_budget_ms": None, "stall_gate_ms": STALL_MS,
         "request_hosts": sorted(request_hosts), "external_hosts": external,
         "build_bytes": size_bytes,
-        "shots_dir": os.path.relpath(SHOTS, EXAMPLE_ROOT),
-        "shots": QA_static_n(),
+        "generated_screenshots": QA_static_n(),
+        "screenshots_retained_in_git": False,
     }
     with open(os.path.join(EVIDENCE, "automated.json"), "w", encoding="utf-8") as f:
         json.dump(summary, f, ensure_ascii=False, indent=2)
@@ -281,12 +281,24 @@ def run():
         page.click("#btn-howto")
         page.wait_for_selector("#modal-help")
         qa.shot("help")
-        page.click("#btn-help-close")
+        ok(page.locator("body.modal-open").count() == 1, "帮助弹窗会压暗底层指令区")
 
         # ---------- 序幕 ----------
         section("序幕 · 火焰山脚")
-        page.click("#btn-start")
-        qa.wait_dialog_then_clear()  # 序幕旁白
+        # 程序化触发底层开始键，覆盖异步切场直接回收旧 modal 的 teardown 路径。
+        page.evaluate("document.querySelector('#btn-start').click()")
+        page.wait_for_selector("#dialog")
+        page.evaluate("document.querySelector('#dialog').dataset.forcedOld = '1'")
+        # 读档会强制回收仍在播放的旧对话并立刻创建新对话；旧 handler 不得清掉新遮罩。
+        page.evaluate("document.querySelector('#btn-load').click()")
+        page.wait_for_selector("#dialog:not([data-forced-old])")
+        page.keyboard.press("Enter")
+        ok(
+            page.locator("#dialog").count() == 1 and page.locator("body.dlg-open").count() == 1,
+            "旧对话 cleanup 不会误清新对话遮罩",
+        )
+        qa.wait_dialog_then_clear()  # 清完重建后的序幕旁白
+        ok(page.locator("body.modal-open, body.dlg-open").count() == 0, "切场后遮罩状态完全清理")
         page.wait_for_selector("#overworld-canvas", timeout=5000)
         page.wait_for_timeout(600)
         ok(page.evaluate("__game.phase()") == "overworld", "phase=overworld")

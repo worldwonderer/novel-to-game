@@ -12,7 +12,7 @@ NovelToGame 是一套面向 Claude Code、Codex 和 Kimi Code 的开源 Agent Sk
 
 ## 在线试玩
 
-三款已完成的改编，都可以直接在浏览器里打开，每一款都链到它完整的改编案例：原文依据、概念取舍、游戏与美术方向、可运行源码，以及 QA 证据——包括尚未通过的门。
+三款可玩的改编，都可以直接在浏览器里打开，每一款都链到对应的改编案例：原文依据、概念取舍、游戏与美术方向、可运行源码，以及来自实际游玩流程的证据。
 
 ### 西游记 · 三借芭蕉扇
 
@@ -22,7 +22,7 @@ NovelToGame 是一套面向 Claude Code、Codex 和 Kimi Code 的开源 Agent Sk
 
 你指挥孙悟空一行三借芭蕉扇：算五行、排阵型、变形取巧硬闯不进的地方，把一个正面打不过的牛魔王，打成落在火焰山上的一场雨。
 
-**[浏览器试玩](https://xiyouji.vibecoco.ai)** · [查看改编案例](examples/journey-to-the-west/) · 45–90 分钟战役 · 全年龄 · 灰盒
+**[浏览器试玩](https://xiyouji.vibecoco.ai)** · [查看改编案例](examples/journey-to-the-west/) · 设计估时 45–90 分钟 · 全年龄 · 灰盒
 
 ### 金瓶梅 · 风月总账
 
@@ -32,7 +32,7 @@ NovelToGame 是一套面向 Claude Code、Codex 和 Kimi Code 的开源 Agent Sk
 
 六个夜晚，三处院门。白日把银子、势力和秘密换成今夜的选择权；天一亮，没被选中的那两位会连本带利地讨回去。
 
-**[浏览器试玩](https://jinpingmei.vibecoco.ai)** · [查看改编案例](examples/jin-ping-mei/) · 20–30 分钟一局 · 18+ · 灰盒
+**[浏览器试玩](https://jinpingmei.vibecoco.ai)** · [查看改编案例](examples/jin-ping-mei/) · 设计估时 20–30 分钟 · 18+ · 灰盒
 
 ### Project Plateau · 失落的世界 · 3D
 
@@ -42,7 +42,7 @@ NovelToGame 是一套面向 Claude Code、Codex 和 Kimi Code 的开源 Agent Sk
 
 #### 36 秒 Remotion 宣发片
 
-宣发片采用[已经验证的同场实机路线](examples/project-plateau/qa/evidence/remotion-launch-trailer-2026-08-04.md)与获准使用的 Fish Audio 合成旁白；静音播放时也可通过字幕看完整流程。
+宣发片采用[已经验证的同场实机路线](examples/project-plateau/build/media/remotion/LAUNCH_TRAILER.md)与获准使用的 Fish Audio 合成旁白；静音播放时也可通过字幕看完整流程。
 
 https://github.com/user-attachments/assets/edde9933-c932-4bd9-9b4c-4587bbc516f7
 
@@ -87,7 +87,7 @@ npx skills add worldwonderer/novel-to-game -g -y -s '*' \
 玩家以原创角色的身份进入世界，不要逐段复演原作剧情。
 ```
 
-`quick` 适合直接交给 Agent 完成：确认需求后，它会比较三种把小说做成游戏的方案，选出最值得实现的一种，再继续完成设计、构建和 QA。想先看过这三种方案并亲自决定做哪一种，就用 `director`。
+`quick` 是低门槛默认模式：Agent 先给出合理草案，只追问会改变产品方向或涉及安全的选择，再比较三个概念并继续设计、构建和 QA。它默认使用 **smoke 验收**——真实启动、渲染、输入、完整循环、一个结果和重开。想自己选择概念用 `director`；交给他人或指定设备验收用 `delivery`；面向最终用户时用 `release` 增加目标设备性能、必要资产失败降级和独立试玩。
 
 <details>
 <summary><strong>使用原生插件安装</strong></summary>
@@ -119,13 +119,13 @@ codex plugin add novel-to-game@novel-to-game-skills
 
 ## 工作流
 
-总入口先锁定 `PRODUCT_BRIEF.md`，再让改编任务依次进入六个职责独立的阶段。QA 未通过时返回构建阶段继续修复，直到运行证据满足门槛。
+总入口先锁定 `PRODUCT_BRIEF.md`，再让改编任务依次进入六个职责独立的阶段。概念、体验/关卡与美术方向继续分别负责，验收只检查范围一致性和当前 profile 要求的可玩体验。
 
 ```text
 小说 → 游戏化拆解 → 游戏概念 → 世界设计 → 美术方向 → 构建 ⇄ QA → 可玩游戏
 ```
 
-游戏概念、体验与关卡设计、美术方向分别接受独立评审。构建面向选定的运行环境，QA 也在同一环境中用实际运行证据完成验证。美术方向选用语音时，构建期 TTS 仍是可选且不绑定供应商的能力；发布前须有逐句权利、请求指纹、本地音频、字幕、失败降级、解码与响度证据，以及人工试听记录。
+构建面向选定的运行环境，QA 只在同一环境中用实际运行证据验证玩家能看到、听到或操作到的效果。smoke、delivery、release 是单调累加的预设，不是三套流程；只有实际采用的能力才启用对应检查，源码身份、公网托管、营销、权利和秘密审核都不是游戏效果 QA 门禁。
 
 ## Skills
 
@@ -152,6 +152,7 @@ game-adaptations/<project>/
   design/ART_DIRECTION.md
   build/BUILD_BRIEF.md
   build/app/
+  qa/verification.json
   qa/QA_REPORT.md
   _progress.md
 ```

@@ -748,13 +748,14 @@ export function deserialize(raw) {
         if (state.flags?.[flag]) state.publicOverrides[heroine] = 1;
       }
     }
-    // v5 → v6:路线索引从日历天改为拜访次数。旧档按 history 里的 visit_start
-    // 回填各门次数,取不到就置 0——从第 1 拍重入,不许崩。
+    // v5 → v6:路线索引从日历天改为已结算的拜访次数。旧档按 history 里的
+    // visit_choice 回填；只有 visit_start 的中途存档不计次，继续显示当前一拍。
+    // 取不到历史就置 0——从第 1 拍重入,不许崩。
     if (state.version === 5) {
       state.version = 6;
       state.visits = Object.fromEntries(HEROINE_IDS.map((id) => [id, 0]));
       for (const entry of state.history ?? []) {
-        if (entry?.type === 'visit_start' && HEROINE_IDS.includes(entry.heroine)) {
+        if (entry?.type === 'visit_choice' && HEROINE_IDS.includes(entry.heroine)) {
           state.visits[entry.heroine] += 1;
         }
       }

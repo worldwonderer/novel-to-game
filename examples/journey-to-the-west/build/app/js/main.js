@@ -4,7 +4,7 @@ import { TEXT } from './text.js';
 import { FORMATIONS, BATTLES, PARTY, ITEMS, SKILLS, EQUIPS, TREASURES } from './data.js';
 import { audio } from './audio.js';
 import { loadAssets, coverURL, bgURL, unitURL, bgStyle } from './assets.js';
-import { el, showDialog, showModal, showPanel, toast, buildTopbar, showFormationModal, iconBadge, chapterCard } from './ui.js';
+import { el, showDialog, showModal, showPanel, toast, buildTopbar, showFormationModal, iconBadge, chapterCard, resetOverlayShading } from './ui.js';
 import { unitLevelStats, skillsAtLevel } from './engine.js';
 import { settleLevelUp, allocatePoint, applyRecommend } from './growth.js';
 import { runBattleScreen } from './battle_ui.js';
@@ -360,6 +360,7 @@ function showTitle() {
 
 function clearScreens() {
   app.querySelectorAll('.screen, .battle-root, .overworld-root, .ending-root, .dlg-box, .modal-mask, .story-bg').forEach((n) => n.remove());
+  resetOverlayShading();
   overworldCtl = null;
 }
 
@@ -420,6 +421,7 @@ async function runBattle(battleId, seedOffset, opts = {}) {
       fast: FAST,
       showTutorial,
       onceCards: opts.onceCards ?? [],
+      systemControlsHost: app.querySelector('#topbar .topbar-dropdown'),
     });
     if (showTutorial) localStorage.setItem(TUT_KEY, '1');
     if (result.winner === 'party') return result;
