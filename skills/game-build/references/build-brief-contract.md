@@ -15,7 +15,7 @@ publicationTier: [当前准备对外声明的等级]
 
 # 必须保真
 - 玩家承诺与核心幻想
-- experienceProfile: [system-led / narrative-led / hybrid，逐字继承 CONCEPT]
+- experienceProfile: [system-led / narrative-led / hybrid，逐字继承 GAME_DESIGN 第 1 节]
 - 3–5 个核心动词及各自输入、可观察状态变化
 - 会改变结果的规则、三段弧结束标记
 - 每个界面/模式的招牌时刻

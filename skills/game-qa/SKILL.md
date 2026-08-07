@@ -20,7 +20,9 @@ description: "Verify a game with evidence on its selected target runtime. Launch
 - `delivery`：smoke + 目标运行时、目标显示模式、首次上手。
 - `release`：delivery + 目标设备性能、必要资产失败降级和独立试玩。
 
-不为 finish/profile 组合另写分支。公网、提交身份、证据哈希、生成任务和营销材料不影响游戏效果，
+不为 finish/`assuranceProfile` 组合另写分支——那说的是**证据强度**。`experienceProfile`
+（体验承载）是另一个字段，它不改变必需检查的档位，只决定在必需项之外还要追踪哪些设计
+承诺，见下文同名小节。公网、提交身份、证据哈希、生成任务和营销材料不影响游戏效果，
 不进入本 QA。
 
 ## 执行
@@ -45,7 +47,8 @@ description: "Verify a game with evidence on its selected target runtime. Launch
 
 ## 按 experienceProfile 追踪
 
-读取 `CONCEPT.md` 的 `experienceProfile`。`narrative-led` 或 `hybrid` 时，除核心六项外还要
+从 `BUILD_BRIEF` 读取 `experienceProfile`（它逐字继承 `GAME_DESIGN` 第 1 节）；与 GAME_DESIGN
+冲突时按第 1 步的规则先报错，不由 QA 猜值。`narrative-led` 或 `hybrid` 时，除核心六项外还要
 按 qa-contract.md「按 experienceProfile 增加断言」验证：分支可达、旗标被消费、未选事实
 不串线、人物知识边界、回响存在、结局区分。关键分支走正向与反向两条路径取证。
 

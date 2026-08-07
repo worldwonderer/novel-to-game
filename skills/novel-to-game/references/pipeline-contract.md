@@ -44,7 +44,7 @@ game-adaptations/{project}/
 
 | 检查 | 成立条件 |
 |---|---|
-| `scope` | `PRODUCT_BRIEF`、`SOURCE_BIBLE` 和三份设计交接存在；范围、原作事实、目标运行形态与 finish/profile 不冲突；`experienceProfile` 在 brief、概念、设计、构建说明中一致 |
+| `scope` | `PRODUCT_BRIEF`、`SOURCE_BIBLE` 和三份设计交接存在；范围、原作事实、目标运行形态与 finish/profile 不冲突；选定方向的 `experienceProfile` 从 `CONCEPT` 起在设计、构建说明与 QA 中一致（brief 的起草值不同时，`CONCEPT` 写明修订理由即成立） |
 | `playable` | `qa/verification.json` 对当前 profile 必需的玩家效果给出真实运行证据 |
 
 `_progress.md` 只记录来源、模式、当前阶段、未确认假设、回流和这两项结果。详细测试状态留在

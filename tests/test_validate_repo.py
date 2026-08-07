@@ -32,6 +32,7 @@ from validate_repo import (  # noqa: E402
     validate_example,
     validate_minimal_evidence_contract,
     validate_readme_publication_claims,
+    validate_rule_shape,
     validate_repository,
     validate_assurance,
     validate_skill,
@@ -1146,12 +1147,144 @@ class NarrativeTrackTests(unittest.TestCase):
             ROOT / "skills/novel-to-game/references/intake-benchmark-reference.md"
         ).read_text(encoding="utf-8")
         self.assertIn("互动叙事", benchmark)
-        self.assertIn("已核实", benchmark)
+        # Assert the tag form, not the bare word: the file's own disclaimer sentence
+        # ("这张表凭通用知识整理，不是已核实的定论") satisfies a substring check forever,
+        # so `assertIn("已核实", ...)` cannot fail and proves nothing.
+        self.assertGreaterEqual(benchmark.count("·**已核实**"), 5)
         for precedent in ("隐形守护者", "山河旅探", "逆转裁判"):
             with self.subTest(precedent=precedent):
                 self.assertIn(precedent, benchmark)
         # Unverified figures must stay explicitly unusable as evidence.
         self.assertIn("未能核实", benchmark)
+
+
+class RuleShapeTests(unittest.TestCase):
+    """Marker strings catch `rm`; these catch `sed`.
+
+    A refactor can keep every heading and marker while hollowing the body -- e.g.
+    "narrative-led projects may skip this section". That is the same regression as
+    deletion and must fail the same way.
+    """
+
+    def _hollow(
+        self, relative_path: str, old: str, new: str, *, count: int = 1
+    ) -> list[str]:
+        """Copy the skills tree, degrade one rule, and report what the guard says."""
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            shutil.copytree(ROOT / "skills", root / "skills")
+            target = root / relative_path
+            text = target.read_text(encoding="utf-8")
+            self.assertIn(old, text, f"anchor missing in {relative_path}")
+            target.write_text(text.replace(old, new, count), encoding="utf-8")
+            return validate_rule_shape(root)
+
+    def test_current_tree_has_no_hollowed_rules(self) -> None:
+        self.assertEqual(validate_rule_shape(ROOT), [])
+
+    def test_exempting_a_hard_veto_is_rejected(self) -> None:
+        issues = self._hollow(
+            "skills/game-concept/references/concept-method.md",
+            "- **无弧线**：",
+            "- **无弧线**：叙事主导豁免本条，只要文本量在增加即可。",
+        )
+        self.assertTrue(
+            any("硬否决" in issue and "豁免本条" in issue for issue in issues), issues
+        )
+
+    def test_denying_an_exemption_is_not_flagged(self) -> None:
+        """`文学契合度不构成豁免` denies an exemption and must stay legal."""
+        method = (
+            ROOT / "skills/game-concept/references/concept-method.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn("不构成豁免", method)
+        self.assertEqual(validate_rule_shape(ROOT), [])
+
+    def test_narrative_switch_must_name_its_replacement(self) -> None:
+        issues = self._hollow(
+            "skills/game-world-design/SKILL.md",
+            "**叙事主导取**：换成隐藏状态预算表",
+            "**叙事主导取**：叙事主导可跳过。",
+        )
+        self.assertTrue(any("叙事主导取" in issue for issue in issues), issues)
+
+    def test_verified_figures_need_the_tag_form_not_the_bare_word(self) -> None:
+        benchmark_path = (
+            "skills/novel-to-game/references/intake-benchmark-reference.md"
+        )
+        # Strip every tag, the way a lazy refactor would -- the bare-word check the
+        # reviewer defeated could not see this at all.
+        issues = self._hollow(benchmark_path, "·**已核实**", "·凭记忆", count=-1)
+        self.assertTrue(any("已核实" in issue for issue in issues), issues)
+
+
+class DeclaredCheckBindingTests(unittest.TestCase):
+    """A check a project declares must bind, or declaring it is theatre.
+
+    Narrative-led builds record extra assertions (branch reachability, flag
+    consumption, ...). Before this, only the profile's required set was inspected,
+    so one of those could sit at FAIL under an overall PASS.
+    """
+
+    def _fixture(self, root: Path, extra: dict) -> Path:
+        helper = RepositoryValidationTests()
+        example = helper.make_compact_verification_fixture(root)
+        path = example / "qa/verification.json"
+        verification = json.loads(path.read_text(encoding="utf-8"))
+        verification["checks"].update(extra)
+        path.write_text(json.dumps(verification), encoding="utf-8")
+        return example
+
+    def test_failing_narrative_assertion_blocks_overall_pass(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            example = self._fixture(
+                Path(tmp),
+                {"branchReachability": {"status": "FAIL", "evidence": []}},
+            )
+            issues = validate_assurance(example, "smoke")
+            self.assertTrue(
+                any("branchReachability" in issue and "FAIL" in issue for issue in issues),
+                issues,
+            )
+
+    def test_passing_narrative_assertion_still_needs_evidence(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            example = self._fixture(
+                Path(tmp), {"flagConsumption": {"status": "PASS", "evidence": []}}
+            )
+            issues = validate_assurance(example, "smoke")
+            self.assertTrue(
+                any("flagConsumption" in issue and "evidence" in issue for issue in issues),
+                issues,
+            )
+
+    def test_well_formed_narrative_assertions_are_accepted(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            example = self._fixture(
+                Path(tmp),
+                {
+                    "branchIsolation": {
+                        "status": "PASS",
+                        "evidence": ["qa/evidence/run.json"],
+                    }
+                },
+            )
+            self.assertEqual(validate_assurance(example, "smoke"), [])
+
+    def test_contract_documents_the_machine_key_names(self) -> None:
+        contract = (ROOT / "skills/game-qa/references/qa-contract.md").read_text(
+            encoding="utf-8"
+        )
+        for key in (
+            "branchReachability",
+            "flagConsumption",
+            "branchIsolation",
+            "characterKnowledge",
+            "delayedEcho",
+            "endingDistinction",
+        ):
+            with self.subTest(key=key):
+                self.assertIn(key, contract)
 
 
 if __name__ == "__main__":

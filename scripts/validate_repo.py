@@ -161,6 +161,7 @@ MINIMAL_EVIDENCE_REQUIREMENTS = {
         "旗标被消费",
         "未选事实不串线",
         "人物知识边界",
+        "回响存在",
         "结局区分",
     ),
     # --- Cross-genre rigor and the narrative track ------------------------------
@@ -667,6 +668,35 @@ def validate_assurance(
                 if issue:
                     issues.append(issue)
 
+    # Checks beyond the required set are how a project records its own concept promises
+    # (narrative-led builds add branch reachability, flag consumption, and so on). They
+    # were previously ignored entirely, so a declared check could sit at FAIL while the
+    # file still claimed an overall PASS. Anything declared has to bind.
+    for name in sorted(set(checks) - required):
+        check = checks.get(name)
+        if not isinstance(check, dict):
+            issues.append(f"{label}: checks.{name} must be an object")
+            continue
+        check_status = check.get("status")
+        if check_status not in GATE_STATUSES:
+            issues.append(
+                f"{label}: checks.{name}.status must be one of {sorted(GATE_STATUSES)}"
+            )
+        elif check_status == "FAIL" and status == "PASS":
+            issues.append(
+                f"{label}: checks.{name} is FAIL, so the overall status cannot PASS"
+            )
+        evidence = check.get("evidence")
+        if check_status == "PASS" and (not isinstance(evidence, list) or not evidence):
+            issues.append(f"{label}: checks.{name}.evidence must not be empty")
+        elif isinstance(evidence, list):
+            for index, raw in enumerate(evidence):
+                issue = _compact_evidence_issue(
+                    example_dir, raw, f"checks.{name}.evidence[{index}]"
+                )
+                if issue:
+                    issues.append(issue)
+
     limitations = verification.get("limitations")
     if not isinstance(limitations, list):
         issues.append(f"{label}: limitations must be a list")
@@ -1068,6 +1098,87 @@ def validate_minimal_evidence_contract(root: Path) -> list[str]:
     return issues
 
 
+# A marker string proves a rule was not deleted. It does not prove the rule still bites:
+# a refactor can keep every heading and hollow out the body. These checks assert on the
+# *shape* of the highest-value rules, so "narrative projects may skip this" fails the build
+# the same way deleting the section does.
+# Phrases that GRANT an exemption. Deliberately not the bare word 豁免 — the rules
+# legitimately use it to deny one ("文学契合度不构成豁免"), and a substring check cannot
+# tell the two apart.
+ESCAPE_HATCH_PHRASES = (
+    "豁免本条",
+    "可以豁免",
+    "本条豁免",
+    "可跳过",
+    "可略过",
+    "不适用本条",
+    "无需提供",
+    "自行判断",
+    "不强制取证",
+    "写个大概",
+)
+# The narrative track is an alternative judging criterion, never an exemption. Every place
+# that introduces one must say what replaces the system-track criterion.
+NARRATIVE_SWITCH_MARKER = "**叙事主导取**"
+NARRATIVE_SWITCH_REQUIRED = ("换成", "改取", "同判", "同样", "同一")
+# A switch clause wraps across lines, so judge the text following the marker, not the line.
+NARRATIVE_SWITCH_WINDOW = 220
+
+
+def validate_rule_shape(root: Path) -> list[str]:
+    """Reject hollowed-out rules that still contain their marker strings.
+
+    A marker proves a rule was not deleted; it does not prove the rule still bites.
+    """
+    issues: list[str] = []
+
+    design_path = "skills/game-world-design/SKILL.md"
+    design = root / design_path
+    if design.is_file():
+        text = design.read_text(encoding="utf-8")
+        start = 0
+        while (index := text.find(NARRATIVE_SWITCH_MARKER, start)) != -1:
+            start = index + len(NARRATIVE_SWITCH_MARKER)
+            window = text[start : start + NARRATIVE_SWITCH_WINDOW]
+            if not any(word in window for word in NARRATIVE_SWITCH_REQUIRED):
+                issues.append(
+                    f"{design_path}: {NARRATIVE_SWITCH_MARKER} must name the "
+                    "replacing criterion, not merely announce a switch"
+                )
+            for phrase in ESCAPE_HATCH_PHRASES:
+                if phrase in window:
+                    issues.append(
+                        f"{design_path}: {NARRATIVE_SWITCH_MARKER} must not grant an "
+                        f"exemption ({phrase!r})"
+                    )
+
+    # Hard vetoes are the concept gate. An exempted veto is a deleted veto.
+    method_path = "skills/game-concept/references/concept-method.md"
+    method = root / method_path
+    if method.is_file():
+        veto_section = markdown_section(method.read_text(encoding="utf-8"), "硬否决")
+        if veto_section is None:
+            issues.append(f"{method_path}: missing 硬否决 section")
+        else:
+            for phrase in ESCAPE_HATCH_PHRASES:
+                if phrase in veto_section:
+                    issues.append(
+                        f"{method_path}: 硬否决 must not grant an exemption ({phrase!r})"
+                    )
+
+    # The precedent table exists to supply citable evidence. A bare 已核实 substring is
+    # satisfied forever by the file's own disclaimer sentence, so assert the tag form.
+    benchmark = root / "skills/novel-to-game/references/intake-benchmark-reference.md"
+    if benchmark.is_file():
+        tagged = benchmark.read_text(encoding="utf-8").count("·**已核实**")
+        if tagged < 5:
+            issues.append(
+                "skills/novel-to-game/references/intake-benchmark-reference.md: "
+                f"expected at least 5 '·**已核实**' tagged figures, found {tagged}"
+            )
+    return issues
+
+
 def validate_repository(root: Path) -> list[str]:
     issues: list[str] = []
     for required in ("README.md", "README_ZH.md", "LICENSE", "AGENTS.md", "VERSION"):
@@ -1102,6 +1213,7 @@ def validate_repository(root: Path) -> list[str]:
     version = (root / "VERSION").read_text(encoding="utf-8").strip()
     issues.extend(validate_agent_adapters(root, version))
     issues.extend(validate_minimal_evidence_contract(root))
+    issues.extend(validate_rule_shape(root))
     return issues
 
 

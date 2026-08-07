@@ -56,7 +56,8 @@ description: "Direct game art and creative vision. Turn GAME_DESIGN into a produ
     批准 paint-over 锁定逐帧量表与失败例。参照只控制 intake 已声明的维度，不复制他作角色、UI、
     世界设定或资产。
 
-11. `experienceProfile` 为 `narrative-led` 或 `hybrid` 时，上述各条照做，并补三项：
+11. `GAME_DESIGN.md` 第 1 节的 `experienceProfile` 为 `narrative-led` 或 `hybrid` 时，上述各条
+    照做，并补三项：
     **人物在场规格**（同一人物在不同关系阶段与压力下的构图占比、朝向、遮挡、与镜头的距离，
     以及态度变化如何在画面上看得出来）；**文本承载规格**（对白区的字号地板、行宽、每屏最大
     字数、说话人标识、历史回看入口、可跳过与可加速的规则——文本是核心体验面，排版是玩法
