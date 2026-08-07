@@ -50,6 +50,10 @@ game-adaptations/{project}/
 `_progress.md` 只记录来源、模式、当前阶段、未确认假设、回流和这两项结果。详细测试状态留在
 `qa/verification.json`，不要复制到多份状态表。
 
+早于 `experienceProfile` 的工作区没有这个字段。`resume` 时由总入口按已存在的 `CONCEPT.md`
+补记一次（承载主要体验的是动作规则就记 `system-led`，是连续场景与对白就记 `narrative-led`，
+两者分层就记 `hybrid`），记完继续，**不因缺字段判 scope 不成立，也不据此重做已批准的概念**。
+
 ## 证据角色
 
 `qa/verification.json` 是执行事实源。schema v2 只写 `assuranceProfile`、整体状态、权威命令、一次
