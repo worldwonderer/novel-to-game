@@ -1,6 +1,6 @@
 ---
 name: game-qa
-description: "Verify a game with evidence on its selected target runtime. Launch the actual build and check logs, real rendering, input and state changes, the core loop, designed outcomes, restart, target display modes, interface language, first-time onboarding, and whether the core fantasy is actually performed — without dressing subjective fun up as a certain verdict. Use for test a generated game, QA a game build, check whether the game is fully playable, verify the build. 游戏证据化质量验证。在选定的目标运行环境中启动实际构建，检查日志、真实画面、输入与状态变化、核心循环、设计要求的结果、重开、目标显示模式、界面语言、首次上手与核心幻想是否真正出现，不把主观趣味包装成确定性结论。用于测试生成游戏、检查游戏能否完整游玩等需求。"
+description: "Verify a game with evidence on its selected target runtime. Launch the actual build and check logs, real rendering, input and state changes, the core loop, designed outcomes, restart, target display modes, interface language, first-time onboarding, and whether the core fantasy is actually performed — without dressing subjective fun up as a certain verdict. Use for test a generated game, QA a game build, check whether the game is fully playable, verify the build, check that story branches are reachable and choices are consumed. 游戏证据化质量验证。在选定的目标运行环境中启动实际构建，检查日志、真实画面、输入与状态变化、核心循环、设计要求的结果、重开、目标显示模式、界面语言、首次上手与核心幻想是否真正出现，不把主观趣味包装成确定性结论。用于测试生成游戏、检查游戏能否完整游玩、验证叙事分支与选择后果等需求。"
 ---
 # 游戏质量验证
 
