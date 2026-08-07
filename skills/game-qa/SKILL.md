@@ -43,6 +43,18 @@ description: "Verify a game with evidence on its selected target runtime. Launch
 优先使用已有可观察状态；只有无法判断结果时才增加最小测试钩子。不要为了 QA 重构游戏或强制某种
 框架、测试库或调试接口。
 
+## 按 experienceProfile 追踪
+
+读取 `CONCEPT.md` 的 `experienceProfile`。`narrative-led` 或 `hybrid` 时，除核心六项外还要
+按 qa-contract.md「按 experienceProfile 增加断言」验证：分支可达、旗标被消费、未选事实
+不串线、人物知识边界、回响存在、结局区分。关键分支走正向与反向两条路径取证。
+
+`coreLoop` 的机器键名与 schema 不变；叙事主导时它指"场景 → 介入 → 人物与世界回应 →
+下一场"这个闭环，同样要求完整跑通并到达设计结果。
+
+台词自然度、人物魅力、沉浸与选择重量不由这些断言证明，写入 `PLAYTEST_PROTOCOL.md`
+交给独立审查或目标玩家；所有者自检只标 provisional。
+
 ## 输出
 
 默认只写：

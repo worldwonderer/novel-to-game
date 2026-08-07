@@ -1022,5 +1022,137 @@ class RepositoryValidationTests(unittest.TestCase):
         self.assertEqual(violations, [])
 
 
+class NarrativeTrackTests(unittest.TestCase):
+    """The narrative track must be additive.
+
+    Discussion #17 reported that interactive-fiction targets degenerate into card,
+    round and resource gameplay. The fix is a second track with its own equally hard
+    judging criteria -- not a softer bar for everyone. These tests pin both halves of
+    that bargain: the cross-genre rigor stays, and the narrative track exists.
+    """
+
+    def test_cross_genre_rigor_survives_in_concept_and_design(self) -> None:
+        """Rules that a previous narrative-first refactor deleted for every genre."""
+        concept_skill = (ROOT / "skills/game-concept/SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        concept_method = (
+            ROOT / "skills/game-concept/references/concept-method.md"
+        ).read_text(encoding="utf-8")
+        design_skill = (ROOT / "skills/game-world-design/SKILL.md").read_text(
+            encoding="utf-8"
+        )
+
+        for marker in ("同玩法", "三段弧"):
+            self.assertIn(marker, concept_skill)
+        for marker in ("硬否决", "无先例", "无弧线"):
+            self.assertIn(marker, concept_method)
+        for marker in (
+            "三段弧",
+            "只写不读",
+            "数值预算表",
+            "决策深度示例",
+            "品类保真",
+        ):
+            self.assertIn(marker, design_skill)
+
+    def test_interactive_fiction_is_not_vetoed_for_being_text(self) -> None:
+        """The old veto #1 rejected any concept whose player mainly reads dialogue.
+
+        That single line forced every novel adaptation to bolt on cards or resources
+        to survive concept selection. The veto must target consequence-free choice,
+        not the presentation medium.
+        """
+        concept_method = (
+            ROOT / "skills/game-concept/references/concept-method.md"
+        ).read_text(encoding="utf-8")
+        self.assertNotIn("玩家主要阅读对白或沿固定剧情点击", concept_method)
+        self.assertIn("不是承载媒介", concept_method)
+        self.assertIn("都不是本条的判据", concept_method)
+
+    def test_agency_contract_is_stated_across_the_pipeline(self) -> None:
+        """Causal rights + settlement rights: the gate against 'agency == a resource UI'."""
+        for relative_path in (
+            "skills/novel-to-game/SKILL.md",
+            "skills/game-concept/references/concept-method.md",
+            "skills/game-world-design/references/narrative-design-method.md",
+        ):
+            with self.subTest(path=relative_path):
+                content = (ROOT / relative_path).read_text(encoding="utf-8")
+                self.assertIn("因果权", content)
+                self.assertIn("结算权", content)
+
+    def test_narrative_methods_are_reachable_from_the_design_skill(self) -> None:
+        """A craft file nothing links to is a craft file nothing reads."""
+        design_skill = (ROOT / "skills/game-world-design/SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        references = ROOT / "skills/game-world-design/references"
+        for name in (
+            "narrative-design-method.md",
+            "dialogue-design-method.md",
+            "game-writing-craft.md",
+            "numeric-design-method.md",
+            "world-design-method.md",
+        ):
+            with self.subTest(reference=name):
+                self.assertTrue((references / name).is_file())
+                self.assertIn(name, design_skill)
+
+    def test_hidden_state_rules_prefer_consequence_over_locked_content(self) -> None:
+        """Discussion #17 asked for variables as hidden causal tags, not stat panels."""
+        numeric = (
+            ROOT / "skills/game-world-design/references/numeric-design-method.md"
+        ).read_text(encoding="utf-8")
+        narrative = (
+            ROOT / "skills/game-world-design/references/narrative-design-method.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn("隐藏旗标", numeric)
+        self.assertIn("限制行动广度", numeric)
+        self.assertIn("写入 → 第一次读取 → 延迟读取 → 玩家感知", narrative)
+
+    def test_qa_asserts_branch_reachability_and_no_crossover(self) -> None:
+        """Complaint #5 in Discussion #17 was characters bleeding across branches."""
+        contract = (ROOT / "skills/game-qa/references/qa-contract.md").read_text(
+            encoding="utf-8"
+        )
+        for marker in (
+            "分支可达",
+            "旗标被消费",
+            "未选事实不串线",
+            "人物知识边界",
+            "结局区分",
+        ):
+            self.assertIn(marker, contract)
+
+    def test_qa_keeps_the_schema_v2_core_check_names(self) -> None:
+        """Renaming coreLoop without touching the validator breaks every example."""
+        contract = (ROOT / "skills/game-qa/references/qa-contract.md").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("coreLoop", contract)
+        self.assertIn("schema v2", contract)
+        # validate_repo.py hard-requires schemaVersion 2; the prose must not tell
+        # generated projects to emit a version the repository validator rejects.
+        self.assertNotIn("schemaVersion: 3", contract)
+        self.assertNotIn("schema v3", contract)
+        self.assertIn("coreLoop", (ROOT / "skills/game-qa/SKILL.md").read_text(
+            encoding="utf-8"
+        ))
+
+    def test_interactive_fiction_precedents_carry_sourced_figures(self) -> None:
+        """Same-gameplay precedents need a sourced number, narrative track included."""
+        benchmark = (
+            ROOT / "skills/novel-to-game/references/intake-benchmark-reference.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn("互动叙事", benchmark)
+        self.assertIn("已核实", benchmark)
+        for precedent in ("隐形守护者", "山河旅探", "逆转裁判"):
+            with self.subTest(precedent=precedent):
+                self.assertIn(precedent, benchmark)
+        # Unverified figures must stay explicitly unusable as evidence.
+        self.assertIn("未能核实", benchmark)
+
+
 if __name__ == "__main__":
     unittest.main()

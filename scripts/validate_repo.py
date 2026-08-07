@@ -155,6 +155,85 @@ MINIMAL_EVIDENCE_REQUIREMENTS = {
         "玩家实际体验",
         "损坏文件",
         "静音和缺音",
+        # Narrative-track assertions. Without these, a text-driven build can pass QA
+        # while its branches are unreachable and its flags are never read.
+        "分支可达",
+        "旗标被消费",
+        "未选事实不串线",
+        "人物知识边界",
+        "结局区分",
+    ),
+    # --- Cross-genre rigor and the narrative track ------------------------------
+    # Everything below has been deleted wholesale at least once by a refactor that
+    # meant to help interactive fiction and instead removed the standards for every
+    # genre. These markers make that class of regression fail the build instead of
+    # passing silently. Each rule must keep BOTH its system-track form and its
+    # narrative-track form: the fix for a text game is never to lower the bar for an
+    # RPG, and never to exempt a text game from a bar an RPG has to clear.
+    "skills/game-concept/references/concept-method.md": (
+        "硬否决",
+        "无先例",
+        "无弧线",
+        "因果权",
+        "结算权",
+        "能动性造假",
+        "互动叙事这条线",
+        "主干加瓶颈",
+    ),
+    "skills/game-concept/SKILL.md": (
+        "同玩法",
+        "三段弧",
+        "experienceProfile",
+        "成熟打法包含互动叙事",
+        "能动性合同",
+    ),
+    "skills/game-world-design/SKILL.md": (
+        "三段弧",
+        "只写不读",
+        "数值预算表",
+        "决策深度示例",
+        "品类保真",
+        "能动性合同",
+        "叙事承载附件",
+        "narrative-design-method.md",
+        "dialogue-design-method.md",
+        "game-writing-craft.md",
+    ),
+    "skills/game-world-design/references/narrative-design-method.md": (
+        "因果权",
+        "结算权",
+        "可跟随性四问",
+        "巧合有方向性",
+        "写入 → 第一次读取 → 延迟读取 → 玩家感知",
+        "前提装置",
+    ),
+    "skills/game-world-design/references/dialogue-design-method.md": (
+        "交换说话者测试",
+        "世界事实",
+        "未决推断",
+        "禁科普嘴",
+    ),
+    "skills/game-world-design/references/numeric-design-method.md": (
+        "只写不读",
+        "隐藏旗标",
+        "限制行动广度",
+    ),
+    "skills/game-world-design/references/world-design-method.md": (
+        "血墙",
+        "叙事承载时的对应说法",
+    ),
+    "skills/game-world-design/references/game-writing-craft.md": (
+        "深度限知",
+        "系统腔",
+    ),
+    "skills/novel-to-game/references/intake-benchmark-reference.md": (
+        "互动叙事",
+        "已核实",
+        "主干加瓶颈",
+    ),
+    "skills/novel-game-analyze/references/gameability-protocol.md": (
+        "知识权限图",
+        "铺垫与回收表",
     ),
 }
 EXAMPLE_PLANNING_FILES = {
