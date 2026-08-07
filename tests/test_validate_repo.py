@@ -1206,7 +1206,59 @@ class RuleShapeTests(unittest.TestCase):
             "**叙事主导取**：换成隐藏状态预算表",
             "**叙事主导取**：叙事主导可跳过。",
         )
-        self.assertTrue(any("叙事主导取" in issue for issue in issues), issues)
+        self.assertTrue(any("数值预算表" in issue for issue in issues), issues)
+
+    def test_deleting_a_narrative_clause_fails_like_deleting_the_rule(self) -> None:
+        """Positional evasion: drop the clause and put the exemption far from any marker.
+
+        The earlier window-based guard missed this, which defeated its own stated goal
+        of treating hollowing the same way as deletion.
+        """
+        design = (ROOT / "skills/game-world-design/SKILL.md").read_text(encoding="utf-8")
+        start = design.index("9. 数值预算表——")
+        end = design.index("10. 决策深度示例")
+        padding = "备注：本节的目的是让门槛可演算，避免出现无法达成的档位。" * 4
+        issues = self._hollow(
+            "skills/game-world-design/SKILL.md",
+            design[start:end],
+            "9. 数值预算表——凡被门槛引用的数值，写出起始值并演算一条及格线路径。"
+            + padding
+            + "\n   叙事主导时这一节不必产出任何表格。\n",
+        )
+        self.assertTrue(
+            any("数值预算表" in issue and "narrative-track" in issue for issue in issues),
+            issues,
+        )
+
+    def test_paraphrasing_a_veto_into_self_attestation_is_rejected(self) -> None:
+        """A phrase list is evadable; the veto's falsifiable predicate is not."""
+        method = (
+            ROOT / "skills/game-concept/references/concept-method.md"
+        ).read_text(encoding="utf-8")
+        start = method.index("- **无弧线**：")
+        end = method.index("- **能动性造假**：")
+        issues = self._hollow(
+            "skills/game-concept/references/concept-method.md",
+            method[start:end],
+            "- **无弧线**：叙事主导只要方向文档写明确认存在成长弧线并给出一句理由，"
+            "即视为成立；\n",
+        )
+        self.assertTrue(
+            any("无弧线" in issue and "falsifiable" in issue for issue in issues), issues
+        )
+
+    def test_decoy_required_word_does_not_satisfy_the_switch(self) -> None:
+        """`同样` used as "equally important" must not pass as "judged the same way"."""
+        design = (ROOT / "skills/game-world-design/SKILL.md").read_text(encoding="utf-8")
+        start = design.index("13. 关卡节拍——")
+        end = design.index("14. 首屏焦点")
+        issues = self._hollow(
+            "skills/game-world-design/SKILL.md",
+            design[start:end],
+            "13. 关卡节拍——五拍齐全。**叙事主导取**：同样重要的是节奏感，"
+            "具体安排团队自己把握就好，不必照搬上面五拍的结构。\n",
+        )
+        self.assertTrue(any("关卡节拍" in issue for issue in issues), issues)
 
     def test_verified_figures_need_the_tag_form_not_the_bare_word(self) -> None:
         benchmark_path = (

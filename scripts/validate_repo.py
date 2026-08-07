@@ -1116,41 +1116,99 @@ ESCAPE_HATCH_PHRASES = (
     "自行判断",
     "不强制取证",
     "写个大概",
+    # Self-attestation: the rule survives as a sentence but stops being falsifiable.
+    "自己把握",
+    "自行把握",
+    "团队自己",
+    "就满足本条",
+    "不必照搬",
 )
+# Blocklists are enumerable and therefore evadable. Where a rule's whole value is one
+# falsifiable predicate, assert that the predicate itself is still there: a paraphrase
+# into "the team confirms an arc exists" has to delete these words to succeed, whereas
+# it can dodge any phrase list. Keyed by veto name -> words the test cannot lose.
+VETO_FALSIFIABLE_PREDICATES = {
+    "无弧线": ("可达空间", ("从头到尾不变", "与第一拍相同")),
+    "无先例": ("已发行", ("≥2", ">=2")),
+}
 # The narrative track is an alternative judging criterion, never an exemption. Every place
 # that introduces one must say what replaces the system-track criterion.
-NARRATIVE_SWITCH_MARKER = "**叙事主导取**"
-NARRATIVE_SWITCH_REQUIRED = ("换成", "改取", "同判", "同样", "同一")
-# A switch clause wraps across lines, so judge the text following the marker, not the line.
-NARRATIVE_SWITCH_WINDOW = 220
+NARRATIVE_SWITCH_MARKERS = ("**叙事主导取**", "叙事主导形态")
+NARRATIVE_SWITCH_REQUIRED = ("换成", "改取", "同判", "同样", "同一", "取其一")
+# GAME_DESIGN checklist items whose criterion differs by track. Binding the check to the
+# item — rather than to a character window after a marker — is what stops an exemption from
+# hiding a few sentences away, and makes deleting the narrative clause fail like any other
+# deleted rule. Keyed by the item's leading text so renumbering does not silently disarm it.
+TRACK_SPLIT_CHECKLIST_ITEMS = (
+    "三段弧",
+    "世界规则与状态",
+    "数值预算表",
+    "决策深度示例",
+    "品类保真",
+    "关卡节拍",
+)
+NUMBERED_ITEM_RE = re.compile(r"^(\d+)\.\s", re.MULTILINE)
+
+
+def _numbered_items(section: str) -> list[str]:
+    """Split a markdown ordered list into one string per item, continuations included."""
+    boundaries = [match.start() for match in NUMBERED_ITEM_RE.finditer(section)]
+    if not boundaries:
+        return []
+    boundaries.append(len(section))
+    return [
+        section[boundaries[index] : boundaries[index + 1]]
+        for index in range(len(boundaries) - 1)
+    ]
 
 
 def validate_rule_shape(root: Path) -> list[str]:
     """Reject hollowed-out rules that still contain their marker strings.
 
     A marker proves a rule was not deleted; it does not prove the rule still bites.
+
+    Scope, stated honestly so nobody over-trusts this: these checks catch the shapes a
+    hollowing regression has actually taken here — granting an exemption in recognizable
+    words, and dropping a track's clause from a checklist item. They cannot catch a
+    paraphrase that keeps the marker while turning a falsifiable test into a
+    self-attestation ("团队确认弧线成立即可"), because that needs a reader, not a
+    substring. A determined author can always evade a phrase list. Treat this as a floor
+    against silent drift; the real gate is the design-stage acceptance checklist and human
+    review of the diff.
     """
     issues: list[str] = []
 
     design_path = "skills/game-world-design/SKILL.md"
     design = root / design_path
     if design.is_file():
-        text = design.read_text(encoding="utf-8")
-        start = 0
-        while (index := text.find(NARRATIVE_SWITCH_MARKER, start)) != -1:
-            start = index + len(NARRATIVE_SWITCH_MARKER)
-            window = text[start : start + NARRATIVE_SWITCH_WINDOW]
-            if not any(word in window for word in NARRATIVE_SWITCH_REQUIRED):
-                issues.append(
-                    f"{design_path}: {NARRATIVE_SWITCH_MARKER} must name the "
-                    "replacing criterion, not merely announce a switch"
-                )
-            for phrase in ESCAPE_HATCH_PHRASES:
-                if phrase in window:
+        output_section = markdown_section(design.read_text(encoding="utf-8"), "输出")
+        if output_section is None:
+            issues.append(f"{design_path}: missing 输出 checklist")
+        else:
+            items = _numbered_items(output_section)
+            for name in TRACK_SPLIT_CHECKLIST_ITEMS:
+                body = next((item for item in items if name in item[:40]), None)
+                if body is None:
                     issues.append(
-                        f"{design_path}: {NARRATIVE_SWITCH_MARKER} must not grant an "
-                        f"exemption ({phrase!r})"
+                        f"{design_path}: 输出 checklist is missing the {name!r} item"
                     )
+                    continue
+                if not any(marker in body for marker in NARRATIVE_SWITCH_MARKERS):
+                    issues.append(
+                        f"{design_path}: checklist item {name!r} must state its "
+                        "narrative-track form, not only the system-track one"
+                    )
+                elif not any(word in body for word in NARRATIVE_SWITCH_REQUIRED):
+                    issues.append(
+                        f"{design_path}: checklist item {name!r} must name the "
+                        "replacing criterion, not merely announce a switch"
+                    )
+                for phrase in ESCAPE_HATCH_PHRASES:
+                    if phrase in body:
+                        issues.append(
+                            f"{design_path}: checklist item {name!r} must not grant "
+                            f"an exemption ({phrase!r})"
+                        )
 
     # Hard vetoes are the concept gate. An exempted veto is a deleted veto.
     method_path = "skills/game-concept/references/concept-method.md"
@@ -1164,6 +1222,25 @@ def validate_rule_shape(root: Path) -> list[str]:
                 if phrase in veto_section:
                     issues.append(
                         f"{method_path}: 硬否决 must not grant an exemption ({phrase!r})"
+                    )
+            for veto, (required, alternatives) in VETO_FALSIFIABLE_PREDICATES.items():
+                bullet = next(
+                    (
+                        item
+                        for item in veto_section.split("\n- ")
+                        if item.strip().removeprefix("- ").startswith(f"**{veto}**")
+                    ),
+                    None,
+                )
+                if bullet is None:
+                    issues.append(f"{method_path}: 硬否决 is missing the {veto!r} veto")
+                    continue
+                if required not in bullet or not any(
+                    alternative in bullet for alternative in alternatives
+                ):
+                    issues.append(
+                        f"{method_path}: the {veto!r} veto lost its falsifiable test "
+                        f"(needs {required!r} plus one of {alternatives!r})"
                     )
 
     # The precedent table exists to supply citable evidence. A bare 已核实 substring is
