@@ -1,65 +1,66 @@
 ---
 name: game-build
-description: "Build the game for its approved target runtime. Compress GAME_DESIGN and ART_DIRECTION into a minimal BUILD_BRIEF, hand it to the current coding agent or another strong model to implement a fully playable build, and iterate against real runs and captured evidence. Use for implement the approved game design, build the game prototype, turn this design into a running game. 游戏构建执行。把批准后的 GAME_DESIGN 与 ART_DIRECTION 压缩成最小 BUILD_BRIEF，交给当前编码智能体或其他强模型，在选定的目标运行环境中实现可完整游玩的版本，并通过真实运行和证据迭代。用于把批准的游戏方案实现成可运行游戏。"
+description: "Build an approved novel adaptation for its selected target runtime. Compress GAME_DESIGN and ART_DIRECTION into a focused BUILD_BRIEF, implement the selected experience profile and a complete experience flow, and iterate from real runs and evidence. Use for implement the approved interactive story or game design, build the playable prototype, turn this design into a running adaptation. 小说改编构建执行。把 GAME_DESIGN 与 ART_DIRECTION 压缩成聚焦的 BUILD_BRIEF，在目标运行环境实现选定体验档案和完整 experience flow，并通过真实运行迭代。"
 ---
-# 游戏构建执行
+# 游戏与互动叙事构建
 
-保护已批准的体验和美术边界，驱动实现模型完成真实可玩的候选；不规定它已经掌握的框架知识，也
-不在构建阶段重新做概念、关卡或美术方向。
-
-读取 [build-brief-contract.md](references/build-brief-contract.md)。必须已有 `GAME_DESIGN.md` 与
-`ART_DIRECTION.md`；缺产品决定时回对应 owner，不在 BUILD_BRIEF 就地发明。
+实现已经批准的体验与美术方向。读取
+[build-brief-contract.md](references/build-brief-contract.md)、`GAME_DESIGN.md` 与 `ART_DIRECTION.md`。
 
 产物语言由 `PRODUCT_BRIEF.md` 锁定；未锁定时跟随对话语言，不默认产出中文。
 
-## 目标与自由
+## 构建目标
 
-按 PRODUCT_BRIEF 锁定的平台、生产引擎、目标运行时、显示/输入、范围、分级和联网边界交付。
-目标工具链不可用时，不得自动改做网页；只有 brief 已批准替代运行时才可使用，并分开记录
-`targetRuntime` / `testedRuntime` 和未覆盖项。
+按 PRODUCT_BRIEF 锁定的平台、引擎、目标运行时、显示、输入、范围、分级和联网边界交付。
+BUILD_BRIEF 压缩以下内容：
 
-BUILD_BRIEF 只压缩：玩家承诺、核心循环、会改变结果的不变量、招牌时刻、范围/非目标、运行方式、
-`targetFinish`、`assuranceProfile` 和完成证据。架构、文件拆分、渲染技术与资产管线由实现模型决定。
+- 体验档案与玩家承诺；
+- 一条完整 experience flow；
+- 会改变场景、人物、规则或结果的状态因果；
+- 第一场景、关键节点、招牌时刻和设计结果；
+- 界面语言、人物声口和反馈；
+- 运行方式、完成度、验证强度和当前限制。
 
-当前会话能编码时直接实现；外部模型不可用时只交付构建说明，不声称游戏已生成。不要发送与原型
-无关的完整受版权保护原文。
+实现模型根据当前技术栈决定架构、文件拆分、渲染方式和资产管线。
 
-## 按能力读取可选合同
+## 实现体验档案
 
-- 语音策略不是 `none` 时读取 [tts-production-contract.md](references/tts-production-contract.md)。TTS
-  优先构建期生成成本地资产；运行时远程合成须在 brief 批准，密钥只留受信服务端。
-- 有动态媒体台账时读取 [generative-media-pipeline.md](references/generative-media-pipeline.md)。已有批准
-  参考图时以图约束，不把供应商写成跨项目默认。
-- 批准实时生成式 3D 生物时读取
-  [generated-3d-creature-pipeline.md](references/generated-3d-creature-pipeline.md)，先做一个代表资产 spike。
-- 常规生产技法按需读取 [production-techniques.md](references/production-techniques.md)，不要全部变成
-  当前项目门禁。
+- 把场景、说话者、逐字文案、选项、隐藏状态名、写入/读取点与结果文案维护在单一内容源，界面、
+  状态机与测试读取同一份定义，不复制易漂移的台词；
+- 用场景数据组织时间、地点、在场人物、对白、玩家介入和离场状态；
+- 用人物状态保存目标、知识、态度与具体记忆；
+- 用事实记录承诺、证词、物件、公开立场和关键行动；
+- 为 GAME_DESIGN 声明的关键事实实现后续读取点；
+- 让每次选择先触发可见即时反应，再由后续对白、物件、人物站位、可达内容或结果形成延迟回响；
+- 让场景、对白、人物行动、可达信息、规则和结局呈现因果；
+- 实现体验档案声明的核心动作、目标、空间、反馈和失败恢复；
+- 在同一状态模型中保存需要互相影响的剧情事实与系统状态；
+- 存档保存恢复当前体验所需的场景、事实、人物记忆和系统状态。
+
+## 可选生产合同
+
+- 采用语音时读取 [tts-production-contract.md](references/tts-production-contract.md)；优先构建期生成本地
+  资产，运行时远程合成必须获 brief 批准，密钥只保存在受信服务端；
+- 采用动态媒体时读取 [generative-media-pipeline.md](references/generative-media-pipeline.md)；
+- 采用实时生成式 3D 生物时读取
+  [generated-3d-creature-pipeline.md](references/generated-3d-creature-pipeline.md)；
+- 常规生产技巧按需读取 [production-techniques.md](references/production-techniques.md)。
 
 ## 最小完成循环
 
-1. 先实现一个最小但完整的核心循环：启动、真实输入、状态变化、结果和重开。范围不足时修范围，
-   不先堆视觉审计。
-2. 回写实际工具链、install/build/start 命令和版本；未知值写 `NOT_AVAILABLE: 原因`，不猜。
-3. 定义并运行一条**权威验证命令**，在 `qa/verification.json` 记录 command 和 exit code。完整运行
-   路径的结果证据比保存冗长测试日志更重要；失败输出只用于修复，不默认长期提交。
-4. 从 `clean start → 核心动作 → 设计结果 → restart` 跑一条完整路径，用最少语义 checkpoint 记录
-   状态、runtime 和必要画面。取不到写 limitation，不用截图证明隐藏状态。
-5. 在 `testedRuntime` 启动真实游戏，修复构建失败、阻断日志、资源失败和崩溃；替代运行时未覆盖的
-   目标平台输入/性能/打包项保持 NOT_RUN。
-6. 达到 brief 的 `targetFinish`：graybox 允许明确视觉缺口；更高 finish 只处理批准的焦点资产和招牌
-   时刻。不要在构建交接里额外制造源码指纹、公网投递或评审证据。
-7. 复跑权威命令和完整路径，更新当前限制。时间、预算或生成调用用尽只会留下 FAIL/NOT_RUN 或
-   降低公开声明，不会生成 PASS。
-
-连续 3D、语音、生成媒体、多语言与无障碍仅在实际采用时增加相应检查。必需异步资产加载/解码
-失败不得静默换灰盒仍宣称通过；只有 ledger 预先批准且保持核心动作、状态、结果、可读反馈与重开的
-fallback 才能继续。
+1. 先实现从 clean start 到一个设计结果再回到初态的完整 experience flow；
+2. 回写实际 toolchain、install、build/export、start 与 verify 命令和版本；
+3. 运行一条权威验证命令；
+4. 在 `testedRuntime` 使用真实输入走完整路径；
+5. 用最少 checkpoint 记录场景或关卡、关键状态、玩家画面、结果与重开；
+6. 根据真实运行修复阻断错误、资源失败、状态错读和连续性问题；
+7. 达到 `targetFinish` 对应的焦点资产与演出；
+8. 复跑权威命令并更新构建期运行记录与 limitations。
 
 ## 输出
 
-生成 `build/BUILD_BRIEF.md`、实际游戏和紧凑 `qa/verification.json`。证据必须在工作区持久路径；
-截图、录制与 raw trace 只保留当前声明引用的最小集合，可重建中间产物不长期提交。BUILD_BRIEF
-完成后回写实际命令、验证结果、limitations 与最终范围差异；范围变化回设计确认。
+生成 `build/BUILD_BRIEF.md`、实际候选和 `build/verification-candidate.json`。证据保存在工作区持久路径。
+BUILD_BRIEF 在完成后记录实际命令、最终范围、验证结果和当前限制。
 
-`smoke` 只要求六项可玩闭环；`delivery` 累加目标运行时/显示/上手；`release` 累加目标设备性能、
-必要资产失败降级和独立试玩。构建阶段不自行写最终 QA 结论，只把候选和事实交给 `game-qa`。
+构建阶段提供候选与执行事实；`game-qa` 独立运行同一候选，并负责最终的 `qa/verification.json` 与
+验证结论。

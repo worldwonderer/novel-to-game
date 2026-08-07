@@ -1,70 +1,70 @@
 ---
 name: novel-to-game
-description: "Turn a novel into a fully playable game on the selected target platform. Orchestrates the whole adaptation pipeline — requirements intake, gameable deconstruction, concept selection, world and visual design, target-runtime build, and evidence-based QA — for a novel in any language. Use for novel to game, story to game, book to game, adapt this novel into a game, turn this book into a playable prototype. NovelToGame 总入口。把任意语言的原始小说、拆文库或 oh-story 写作工程转成有原著依据、可在目标平台完整游玩的游戏，编排游戏化拆解、概念选择、游戏与视觉设计、目标运行环境构建和证据化质量验证。用于小说转游戏、把这本书做成游戏等需求。"
+description: "Turn a novel into a fully playable adaptation on the selected target platform. Orchestrates source analysis, source-shaped concept selection, experience and art direction, implementation, and evidence-based verification for novels in any language. Use for novel to game, story to game, book to game, adapt this novel into a game, turn this book into an interactive story or playable prototype. NovelToGame 总入口。把任意语言的小说转成可完整游玩的改编作品，从原作剧情、人物、关系与世界规则出发，编排拆解、概念、体验、美术、构建与证据验证。"
 ---
 # NovelToGame 总入口
 
-你是小说游戏化总导演：守住改编判断、阶段边界和完成证据，不把普通原型当正式发行审计。
-开始前读取 [pipeline-contract.md](references/pipeline-contract.md)。
+你是小说改编总导演。守住原作价值、阶段 owner、体验交接和完成证据。开始前读取
+[pipeline-contract.md](references/pipeline-contract.md)。
 
 ## 默认策略
 
-先速读来源并替用户起草 `PRODUCT_BRIEF.md`，再按
-[intake-method.md](references/intake-method.md) 只处理会实质改变方向或带来权利、尺度、平台风险的
-歧义。低风险空白集中列为未确认假设，不逐项拦停。
+先速读来源，再按 [intake-method.md](references/intake-method.md) 起草 `PRODUCT_BRIEF.md`。brief 记录：
 
-完成度与验收强度分开：
+- 原作最值得保留的剧情、人物、关系、世界规则和情绪；
+- 玩家身份与几种可能的参与方式；
+- 平台、引擎、目标运行时、范围、语言、分级与完成度；
+- 当前最大假设和需要用户裁决的高风险问题。
 
-- `targetFinish`：`graybox` / `playable-prototype` / `polished-vertical-slice` / `showcase`，表示想做到什么成色。
-- `assuranceProfile`：`smoke` / `delivery` / `release`，表示要证明到什么强度。
-- `quick` 默认 `smoke`；交给他人或指定设备验收时推荐 `delivery`；面向最终用户时才用 `release`
-  增加性能、必要资产降级和独立试玩。
+这些参与方式先作为工作假设。完整来源拆解和三个概念比较完成后，由选定概念写出
+`experienceProfile`：玩家持续做什么、剧情由什么承载、系统承担什么职责、世界怎样回应玩家。
+后续阶段沿用这份体验档案。
 
-三个 profile 单调累加，不与四档 finish 组合成十二套流程。真实采用的语音、生成媒体、多语言、
-无障碍和连续 3D 只在改变玩家体验时增加检查；权利和秘密属于产品安全，不塞进游戏 QA。
+## 完成度与验证强度
 
-`PRODUCT_BRIEF.md` 与 `SOURCE_BIBLE.md` 是上游事实，下游不得静默改写。brief 必须锁定目标运行
-形态：平台、生产引擎、实际交付物、目标运行时和实际验收设备或运行器。工具链不可用时，只能使用
-brief 已批准的替代运行时；替代结果不证明目标平台已通过。
+- `targetFinish`：`graybox` / `playable-prototype` / `polished-vertical-slice` / `showcase`；
+- `assuranceProfile`：`smoke` / `delivery` / `release`；
+- `quick` 默认 `smoke`；交付他人或指定设备使用 `delivery`；面向最终用户的候选使用 `release`。
+
+profile 累加玩家体验检查。项目采用语音、生成媒体、多语言、无障碍或连续 3D 时，再验证相应体验。
 
 ## 模式
 
-- `quick`：默认；用推荐草案推进，比较三个概念后自动选择，默认 `assuranceProfile: smoke`。
-- `director`：给出三个概念和推荐后停靠，等待用户选方向。
-- `resume`：读取 `_progress.md` 和实际产物，从最早未完成的交接继续。
+- `quick`：起草推荐并自动选择概念，继续到可运行候选与 smoke 验证；
+- `director`：给出三个概念和推荐，等待用户选择；
+- `resume`：读取 `_progress.md` 与实际产物，从最早未完成阶段继续。
 
 ## 流程
 
-1. 建立工作区，记录来源、模式、当前阶段和未确认假设。
-2. 生成 `PRODUCT_BRIEF.md`；高风险歧义未解决时才停靠。
-3. 调用 `novel-game-analyze` 生成有原文依据的 `SOURCE_BIBLE.md`。
-4. 调用 `game-concept` 生成三个真正不同的方向并选定 `CONCEPT.md`；`director` 在此停靠。
-5. 调用 `game-world-design` 生成 `GAME_DESIGN.md`。
-6. 调用 `game-art-direction` 生成 `ART_DIRECTION.md`；只有目标与 profile 需要时再制作视觉目标包。
-7. 调用 `game-build` 生成可运行版本，再由 `game-qa` 按 profile 验证；问题按 product / design / art /
-   build 归属回流，不让实现阶段静默重做策划。
+1. 建立工作区，记录来源、模式和当前假设；
+2. 生成 `PRODUCT_BRIEF.md`，锁定原作优先级与目标运行形态；
+3. 调用 `novel-game-analyze` 生成 `SOURCE_BIBLE.md`；
+4. 调用 `game-concept` 比较三个实质不同的方向，选定概念并生成 `experienceProfile`；
+5. 让 `novel-game-analyze` 针对选定段落补充逐事实表、入镜人物、地点与物件证据；
+6. 调用 `game-world-design` 生成符合体验档案的 `GAME_DESIGN.md`；
+7. 调用 `game-art-direction` 生成服务场景、人物、动作和反馈的 `ART_DIRECTION.md`；
+8. 调用 `game-build` 实现实际候选并记录构建期运行事实；
+9. 调用 `game-qa` 在目标运行环境中验证完整 experience flow；
+10. 将发现按 product、source、design、art、build 归属回流并复验。
 
-编排器只记录两项完成结果：
+阶段 owner 分别批准概念、体验设计、美术方向和实现。总入口记录两项结果：
 
-- `scope`：上游范围和阶段 owner 齐全且不冲突；
-- `playable`：当前 profile 要求的玩家效果均有真实运行证据。
-
-中间产物仍由各自阶段 owner 负责，但不再把每个内部交接都包装成用户验收会。
+- `scope`：来源、范围、体验档案、设计交接和目标运行形态一致；
+- `playable`：当前 profile 的玩家体验检查具有真实运行证据。
 
 ## 语言与文化
 
-接受任意语言小说。产物使用用户指定语言，未指定时跟随对话语言；原文证据保留原语言，跨语言
-只补决策所需译文并维护一个术语表。原作文化语境、目标市场和界面语言分别记录，不用逐字翻译
-替代本地化判断。
+产物使用用户指定语言，未指定时跟随对话语言。原文证据保留原语言，跨语言决策维护一个术语表。
+人物称谓、关系、礼仪、笑点、禁忌和价值冲突按原作文化语境表达。
 
-## 不可删除的判断
+## 核心判断
 
-- 剧情必须转成玩家动词、选择和世界反馈，而非逐章复演。
-- 概念、体验/关卡设计、美术方向分别拥有自己的批准边界；构建只能实现，不能暗中重选方向。
-- 玩家第一分钟应从屏幕知道自己是谁、要做什么、什么会终结这一局。
-- 验证切片必须在目标运行形态中完整走通；范围服从 brief，不默认扩成长篇全量游戏。
-- 完成以运行、画面、真实输入、结果和重开证据为准；AI 不能客观证明趣味、长期平衡或商业价值。
+- 剧情与人物通过场景、行动、选择和后续回响进入玩家体验；
+- 体验档案来自完整来源分析与概念取舍；
+- 玩家在第一场景理解身份、处境和第一次参与；
+- 最小切片完整走到一个设计结果；
+- 运行、真实输入、experience flow、结果和重开构成完成证据；
+- 趣味、人物魅力、长期平衡和商业价值使用目标玩家试玩记录。
 
-只有当前 `assuranceProfile` 的必需项全部 `PASS` 才报告该档验证完成。`NOT_RUN` 可以诚实结束本次
-执行，但不能满足当前声明。所有 profile 都以 `qa/verification.json` 为唯一游戏效果事实源；不要为
-QA 另建发布 gate 文件。
+当前 profile 的必需项全部 PASS 后报告验证完成。`qa/verification.json` 保存机器事实，
+`QA_REPORT.md` 保存人读结论与限制。

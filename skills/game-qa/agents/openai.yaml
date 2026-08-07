@@ -1,4 +1,4 @@
 interface:
   display_name: "Game QA"
-  short_description: "Verify the game runs and can be completed · 验证生成游戏能否完整运行和游玩"
-  default_prompt: "Use $game-qa to test this generated game on its selected target runtime and report blocking issues."
+  short_description: "Verify complete narrative or gameplay paths · 验证完整叙事或玩法路径"
+  default_prompt: "Use $game-qa to run this adaptation on its selected target runtime and verify a complete experience flow, outcome, and restart."

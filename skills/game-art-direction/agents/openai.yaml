@@ -1,4 +1,4 @@
 interface:
   display_name: "Game Art Direction"
-  short_description: "Define visual style and on-screen readability · 定义游戏的视觉风格与画面可读性"
-  default_prompt: "Use $game-art-direction to define this game's visual style, art direction, and signature frames."
+  short_description: "Direct characters, scenes, visuals, and sound · 指导人物、场景、视觉与声音"
+  default_prompt: "Use $game-art-direction to define how players see, hear, and read this adaptation's characters, scenes, actions, choices, and consequences."

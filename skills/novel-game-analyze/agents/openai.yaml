@@ -1,4 +1,4 @@
 interface:
-  display_name: "Gameable Book Analysis"
-  short_description: "Extract gameable canon from a novel · 从小说中提取可玩的原作事实"
-  default_prompt: "Use $novel-game-analyze to extract a source bible this novel's game design can build on."
+  display_name: "Novel Adaptation Analysis"
+  short_description: "Extract plot, characters, and adaptable canon · 提取剧情、人物与改编事实"
+  default_prompt: "Use $novel-game-analyze to build a cited source bible covering this novel's plot, characters, relationships, knowledge, world rules, and adaptation opportunities."

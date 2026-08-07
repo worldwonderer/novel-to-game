@@ -16,64 +16,74 @@ game-adaptations/{project}/
 └── _progress.md
 ```
 
-按需增加 `_coverage.md`、视觉目标、资产账本、证据目录和人工试玩协议。不要创建单独的 gate 文件；
-执行事实统一留在 `qa/verification.json`。
-
-所有机器状态只取 `NOT_RUN` / `FAIL` / `PASS`。`NOT_RUN` 表示没有证据，不能满足当前 profile。
+覆盖记录、场景表、视觉目标、资产台账、证据目录和试玩协议按项目需要增加。
 
 ## 两个正交字段
 
-- `targetFinish`：`graybox < playable-prototype < polished-vertical-slice < showcase`，表示成色目标。
-- `assuranceProfile`：`smoke < delivery < release`，表示证据强度。
+- `targetFinish`：`graybox < playable-prototype < polished-vertical-slice < showcase`；
+- `assuranceProfile`：`smoke < delivery < release`。
 
-`quick` 默认 smoke。三档使用同一个累加公式：
+三档 profile 使用同一个累加公式：
 
 | profile | 必须证明 |
 |---|---|
-| `smoke` | 启动、变化的渲染、真实输入、核心循环、设计结果、重开 |
-| `delivery` | smoke + 目标运行时、目标显示模式、首次上手；已采用能力所需的性能/资产检查 |
-| `release` | delivery + 目标设备性能、必要资产失败降级、独立试玩 |
+| smoke | launch、render、input、experienceFlow、outcome、restart |
+| delivery | smoke + targetRuntime、targetDisplay、onboarding |
+| release | delivery + performance、requiredAssets、independentPlaytest |
 
-连续 3D、多语言、无障碍、媒体和语音只在它们改变玩家实际体验时进入 QA；公网、仓库身份和营销
-材料不进入游戏效果验证。
+项目采用的语音、多语言、无障碍、媒体和连续 3D 进入相应条件检查。
 
-## 阶段 owner 与两项完成检查
+## 体验交接
 
-概念、体验/关卡设计、美术方向分别由 `CONCEPT.md`、`GAME_DESIGN.md`、`ART_DIRECTION.md` 的 owner
-负责；构建不得静默改写它们。编排器只检查：
+`PRODUCT_BRIEF.md` 记录原作优先级和玩家参与假设。`SOURCE_BIBLE.md` 完成后，概念阶段比较三个实质
+不同的方向，并在选定方向中声明 `experienceProfile`：
+
+```text
+primaryExperience: 玩家持续经历什么
+playerParticipation: 玩家持续理解、表达、选择或执行什么
+storyCarrier: 场景、人物、知识、物件和情节怎样推进
+systemRole: 规则、资源、空间与反馈承担什么职责
+worldResponse: 玩家影响怎样被后续体验读取
+```
+
+后续产物沿用这份档案：
+
+- `GAME_DESIGN.md` 展开场景、人物、系统、因果、节奏与结果；
+- `ART_DIRECTION.md` 定义玩家如何看见、听见和读懂当前体验；
+- `BUILD_BRIEF.md` 压缩实现范围与运行方式；
+- `verification.json` 证明一条符合已声明承诺的完整 experience flow。
+
+证据促成方向变化时，回到概念产物更新体验档案，再更新受影响的下游交接。
+
+## 阶段 owner 与完成检查
+
+概念、体验设计、美术方向、构建和 QA 分别维护自己的产物。source owner 在概念选定后补充目标段落
+的事实证据。build 记录候选运行事实，QA 独立写最终 `qa/verification.json`。
+
+总入口检查：
 
 | 检查 | 成立条件 |
 |---|---|
-| `scope` | `PRODUCT_BRIEF`、`SOURCE_BIBLE` 和三份设计交接存在；范围、原作事实、目标运行形态与 finish/profile 不冲突 |
-| `playable` | `qa/verification.json` 对当前 profile 必需的玩家效果给出真实运行证据 |
+| scope | 来源、体验档案、范围、目标运行形态和阶段交接一致 |
+| playable | 当前 profile 的玩家体验检查具有实际运行证据 |
 
-`_progress.md` 只记录来源、模式、当前阶段、未确认假设、回流和这两项结果。详细测试状态留在
-`qa/verification.json`，不要复制到多份状态表。
+`_progress.md` 记录当前阶段、工作假设、回流和两项结果。
 
-## 证据角色
+## 证据与回流
 
-`qa/verification.json` 是执行事实源。schema v2 只写 `assuranceProfile`、整体状态、权威命令、一次
-complete run、游戏效果 checks 和结构化 limitations。limitations 含 `scope`、`reason`、
-`blocksProfiles`；阻断当前 profile 时整体不能 PASS。不要把源码身份、证据哈希或发布审核塞进 QA。
+新产物使用 `qa/verification.json` schema v3，记录 profile、状态、权威命令、complete run、checks 和
+limitations。每项必需检查通过 `runId` 关联 complete run。resume 可以读取 schema v2：旧键
+`coreLoop` 映射为 `experienceFlow`，下一次 QA 后写回 v3。
+
+状态使用 `NOT_RUN`、`FAIL`、`PASS`。问题按 owner 回流：产品方向回 PRODUCT_BRIEF，来源事实回
+SOURCE_BIBLE，体验和美术回批准文档，实现问题回 build。修订后重建受影响范围并复跑完整路径。
 
 ## 完成度声明
 
-`graybox` 可以诚实保留视觉缺口；更高 finish 需要相应焦点资产、目标视图和未关闭缺陷事实。
-这些事实不应让 smoke 自动升级为 release，也不能让 release 把 graybox 包装成成片。预算或工具耗尽
-只会留下 `NOT_RUN` / `FAIL`、降低公开声明或延期，不会生成 PASS。
-
-## resume 与回流
-
-`resume` 读取 `_progress.md` 和实际产物，从最早未成立的完成检查继续。QA 发现按 owner 回流：
-
-- product：回 `PRODUCT_BRIEF.md`；
-- design/art：修订批准文档后重建受影响范围；
-- build：修实现并复跑同一验证路径。
-
-品类认不出、体验弧不存在、核心前提未上屏不是小缺陷；停止打磨并请求产品裁决。趣味、长期平衡、
-留存和商业价值只能作为试玩观察，不得写成确定性 PASS。
+`graybox` 允许明确的视觉缺口。更高 finish 逐步增加批准的焦点资产、演出和目标设备表现。目标
+玩家试玩记录趣味、人物感受、节奏、手感、长期平衡和商业判断。
 
 ## 语言与文化
 
-原文、策划、市场和界面语言分别记录。原文证据保留原语言；跨语言维护一个术语表。多语言只有在
-brief 采用且玩家实际可切换时才检查，不默认把每份产物复制成双语。
+原文、策划、市场和界面语言分别记录。原文证据保留原语言，跨语言维护术语表。人物关系、称谓、
+礼仪和价值冲突按原作文化语境进入设计与文案。

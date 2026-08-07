@@ -1,97 +1,97 @@
 # 构建说明契约
 
-构建说明只约束产品边界、实际运行方式和证明方式；不要规定实现模型能从环境正确决定的类、着色器、
-框架或文件拆分。
+BUILD_BRIEF 让实现模型快速理解体验边界、运行方式和完成证据。
 
 ```text
 # 成品目标
+experienceProfile:
+  primaryExperience: [玩家持续经历什么]
+  playerParticipation: [玩家持续理解、表达、选择或执行什么]
+  storyCarrier: [场景、人物、知识、物件和情节怎样推进]
+  systemRole: [规则、资源、空间与反馈承担什么职责]
+  worldResponse: [玩家影响怎样被读取]
 targetFinish: [逐字继承 PRODUCT_BRIEF]
-assuranceProfile: [smoke / delivery / release，逐字继承]
-publicationTier: [当前准备对外声明的等级]
-[目标平台、目标交付物、受众、切片时长、视口/朝向/输入、分级、联网边界]
+assuranceProfile: [smoke / delivery / release]
+publicationTier: [当前对外声明]
+[平台、交付物、受众、切片时长、视口、输入、分级、联网边界]
+
+# 玩家承诺
+[玩家是谁、如何持续参与、人物或世界如何回应、目标感受]
+
+# 完整体验流程
+[clean start → 第一场景/关卡 → 关键输入 → 因果变化 → 设计结果 → restart]
 
 # 必读设计
 [GAME_DESIGN.md, ART_DIRECTION.md]
 
-# 必须保真
-- 玩家承诺与核心幻想
-- 3–5 个核心动词及各自输入、可观察状态变化
-- 会改变结果的规则、三段弧结束标记
-- 每个界面/模式的招牌时刻
-- 第一故事分钟上屏文本：我是谁、要什么、什么会终结这一局
-- 界面语言、人物声口和禁用句式
-
 # 范围
-[必须包含；明确排除；最终范围差异]
+[场景/关卡、人物、关键选择或核心动作、结果、焦点资产]
+
+# 叙事内容源（采用对白/选择时）
+[单一内容源路径；scene_id / line_id；说话者；逐字文案；选项行动；隐藏状态名；写入/读取点；
+即时反应；延迟回响；结果文案；证据物件与可见状态]
 
 # 运行与验证
 toolchain:
   targetPlatform: [批准平台]
-  targetRuntime: [计划交付和发布的运行环境]
-  testedRuntime: [本次实际启动的运行环境]
+  targetRuntime: [计划交付环境]
+  testedRuntime: [本次实际启动环境]
   engine: [实际引擎/框架]
-  engineVersion: [实际版本或 NOT_AVAILABLE: 原因]
-  runtimeVersion: [实际版本或 NOT_AVAILABLE: 原因]
-  packageManager: [name@version；无则 none]
+  engineVersion: [实际版本]
+  runtimeVersion: [实际版本]
+  packageManager: [name@version 或 none]
 commands:
-  install: [命令；无需安装写 NONE]
-  buildOrExport: [命令；无需单独构建写 NONE]
+  install: [命令或 NONE]
+  buildOrExport: [命令或 NONE]
   start: [命令]
-  verify: [一条权威验证命令]
+  verify: [权威验证命令]
+verificationCandidate: build/verification-candidate.json
 verification:
   completeRun: qa/verification.json#completeRun
 
 # 当前限制
-[scope / reason / blocksProfiles；testedRuntime 与 targetRuntime 不同时列目标独有未测试项]
+[scope / reason / blocksProfiles]
 ```
+
+## 按体验档案补充
+
+从 GAME_DESIGN 提取当前项目实际使用的内容：
+
+- 场景脊柱与转场条件；
+- 核心人物的目标、知识、声口和主动行动；
+- 关键介入、写入事实、即时反应、后续回响与结局影响；
+- 证词、物件和关键事实的知识边界；
+- 核心动作、目标、输入、规则、关卡推进、反馈、状态、结果和恢复；
+- 剧情事实与系统状态之间已声明的连接；
+- 存档恢复体验所需的场景、事实、人物记忆和系统状态。
+
+实现完成时走一条符合 GAME_DESIGN 承诺的完整路径。
+
+对白、字幕、界面、状态机和验证从同一内容定义投影。测试可以按稳定 ID 与隐藏状态名断言因果；
+必须确认逐字文案时，直接读取该内容源，不在测试里维护第二份结果文案。
 
 ## 默认完成证据
 
-所有 profile 共用：
+所有 profile 共用六项：launch、render、input、experienceFlow、outcome、restart。使用一条完整路径
+和最少语义 checkpoint 证明。
 
-- 启动成功；
-- 非空且变化的真实渲染；
-- 真实输入改变状态；
-- 核心循环完成；
-- 一个设计结果可达；
-- restart 回到定义初态。
-
-用一条完整路径和最少语义 checkpoint 证明，不保存逐点击截图。状态、runtime、visual 各证明自己的
-层，证据在工作区相对路径，不能只留临时目录。
-
-`delivery` 再记录目标运行时、目标显示模式和首次上手；`release` 再检查目标设备性能、必要资产失败
-降级和独立试玩。源码身份、公网投递和营销材料不进入游戏构建 QA。
+`delivery` 增加 targetRuntime、targetDisplay、onboarding；`release` 增加 performance、
+requiredAssets、independentPlaytest。
 
 ## 条件台账
 
-### 视觉与必需资产
-
-高于 graybox 时，只列批准的焦点资产与招牌时刻：资产键、生产状态、工作区证据、剩余问题。必需
-运行期资产失败必须阻断或进入明确非发布错误界面；不得静默切程序化/灰盒替身后继续宣称通过。
-可降级项须预先写 fallback behavior，并证明 coreAction/state/result/readableFeedback/restart 五项保持。
-
-### 连续 3D
-
-仅采用连续 3D 时写：输入控制权、相机/移动前向、失焦归零；会改变路线的
-`visibleAnchor / colliderShape / sourceOfTruth / solidPolicy`；固定子步或 swept 策略、滑动和解穿透。
-不要把渲染帧率或一条成功路线当碰撞证明。
-
-### 动态媒体
-
-仅含视频、关键帧演出或生成资产时写动态媒体台账：每镜边界、参考职责、请求/响应、任务 ID、本地
-输出与 hash。可重建 raw trace/中间编码不作为长期证据。
+高于 graybox 时记录批准的焦点资产、生产状态、工作区证据与剩余问题。连续 3D 记录输入、相机、
+移动和空间碰撞合同。动态媒体记录镜头边界与本地输出。语音记录台词、角色选角、字幕、权利、
+静音体验与最终文件。
 
 ### 语音资产台账
 
-语音策略非 `none` 时逐句记录：`line_id`、角色/旁白、`casting_id`、语言、台词、字幕键、音色权利、
-发布门禁/可降级、静音/缺音 fallback。构建完成回写供应商类别、模型/音色来源、去密钥
-`request_sha256`、最终文件与 SHA256、时长/格式和真实生成状态。未合成写 `NOT_RUN: 原因`；每个
-角色独立选角，不得只按语言复用通用音色。
+语音策略非 `none` 时逐句记录 `line_id`、角色/旁白、`casting_id`、逐字台词、字幕键、音色权利、
+静音/缺音降级、最终文件与 hash。远程生成只保存去密钥的 `request_sha256` 与必要响应事实；未生成
+写 `NOT_RUN: 原因`，不把计划中的语音冒充可用资产。
 
 ## 权威验证
 
-verify 可以组合现有游戏效果脚本，但必须一次真实运行；在 `qa/verification.json` 回写实际 command、
-exit code 和仍未覆盖的目标平台项。失败输出用于修复，默认不长期提交冗长日志或 suite registry。
-
-预算、时间或调用上限只会留下 NOT_RUN/FAIL、延期或降低 publication tier，不会替代证据。构建阶段
-不得假装完成 QA 的独立评审，也不得用降低公开措辞反向抬高实际 finish。
+verify 组合当前项目需要的状态、集成与运行时检查，并实际执行一次完整路径。构建阶段将命令、退出
+码、路径与限制写入 `build/verification-candidate.json`。QA 独立复跑并写入最终
+`qa/verification.json`。
