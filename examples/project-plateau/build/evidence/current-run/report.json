@@ -1,7 +1,7 @@
 {
   "stage": "current-complete-run",
   "runtimeSource": {
-    "sha256": "f2003ba8277fe73274347b3b82e2d9c22d70532aa6554c2883e5a8c02e9acccd",
+    "sha256": "5b1656e7cfff3237e262052702b842f1587ff84b6ab2a921fc64988e7979b33c",
     "scope": "interactive inputs: index/package manifests, src and public assets; generated conversion-preview outputs excluded"
   },
   "environment": {
@@ -13,10 +13,10 @@
     "baseUrl": "http://127.0.0.1:4173"
   },
   "loading": {
-    "timeToFirstFrameMs": 1592.2,
-    "domInteractiveMs": 22,
-    "loadEventMs": 55,
-    "resourceCount": 65,
+    "timeToFirstFrameMs": 1489.3,
+    "domInteractiveMs": 19.9,
+    "loadEventMs": 47,
+    "resourceCount": 56,
     "ui": {
       "visible": false,
       "phase": "runtime",
@@ -27,7 +27,7 @@
     "samples": 180,
     "medianFrameMs": 16.7,
     "medianFps": 59.9,
-    "onePercentLowFps": 39.1,
+    "onePercentLowFps": 39.2,
     "worstFrameMs": 25.6
   },
   "assetEvidence": {
@@ -2675,10 +2675,10 @@
   },
   "pathMetrics": {
     "Strong": {
-      "wallSeconds": 62.432,
-      "simulationSeconds": 62.492,
-      "distanceTravelled": 133.82,
-      "remainingLight": 89.508,
+      "wallSeconds": 62.551,
+      "simulationSeconds": 62.594,
+      "distanceTravelled": 133.861,
+      "remainingLight": 89.406,
       "returnCostSeconds": 28,
       "route": "covered",
       "result": {
@@ -2690,7 +2690,7 @@
         "survivingPlates": 4,
         "route": "covered",
         "brookResponse": null,
-        "remainingLight": 89.5,
+        "remainingLight": 89.4,
         "gunshotCallback": null
       },
       "visionMode": "full-colour"
@@ -2701,16 +2701,16 @@
       "path": "Strong",
       "input": "KeyW",
       "purpose": "Fort to brook",
-      "wallSeconds": 6.394,
+      "wallSeconds": 6.4,
       "start": {
         "x": 3,
         "z": 70
       },
       "end": {
         "x": 3,
-        "z": 44.155
+        "z": 44.215
       },
-      "distanceAfter": 25.845,
+      "distanceAfter": 25.785,
       "concurrentInput": "KeyC",
       "continuationMs": 250,
       "continuousInput": true,
@@ -2720,7 +2720,7 @@
       "path": "Strong",
       "input": "Right Mouse + Left Mouse",
       "purpose": "partial tutorial frame",
-      "wallSeconds": 2.173,
+      "wallSeconds": 2.189,
       "plate": 1,
       "frame": "brook-partial",
       "points": 1
@@ -2729,22 +2729,22 @@
       "path": "Strong",
       "input": "KeyW",
       "purpose": "brook to basalt",
-      "wallSeconds": 6.408,
+      "wallSeconds": 6.445,
       "start": {
         "x": 3,
-        "z": 44.119
+        "z": 44.2
       },
       "end": {
         "x": 3,
-        "z": 17.732
+        "z": 17.702
       },
-      "distanceAfter": 52.268
+      "distanceAfter": 52.298
     },
     {
       "path": "Strong",
       "input": "Right Mouse + Left Mouse",
       "purpose": "basalt scale frame",
-      "wallSeconds": 2.168,
+      "wallSeconds": 2.16,
       "plate": 2,
       "frame": "basalt-scale",
       "points": 2
@@ -2753,22 +2753,22 @@
       "path": "Strong",
       "input": "KeyA",
       "purpose": "enter canopy",
-      "wallSeconds": 0.263,
+      "wallSeconds": 0.275,
       "start": {
         "x": 3,
-        "z": 17.544
+        "z": 17.559
       },
       "end": {
-        "x": 2.446,
-        "z": 17.544
+        "x": 2.505,
+        "z": 17.559
       },
-      "distanceAfter": 53.009
+      "distanceAfter": 52.936
     },
     {
       "path": "Strong",
       "input": "hold position under cover",
       "purpose": "widen the attack before glade",
-      "wallSeconds": 5.745,
+      "wallSeconds": 5.741,
       "awarenessBefore": 3,
       "awarenessAfter": 2
     },
@@ -2776,22 +2776,22 @@
       "path": "Strong",
       "input": "KeyW",
       "purpose": "canopy to glade",
-      "wallSeconds": 3.886,
+      "wallSeconds": 3.904,
       "start": {
-        "x": 2.335,
-        "z": 17.544
+        "x": 2.394,
+        "z": 17.559
       },
       "end": {
-        "x": 2.335,
-        "z": 1.739
+        "x": 2.394,
+        "z": 1.712
       },
-      "distanceAfter": 68.925
+      "distanceAfter": 68.894
     },
     {
       "path": "Strong",
       "input": "Right Mouse + Left Mouse",
       "purpose": "young-at-play frame",
-      "wallSeconds": 2.156,
+      "wallSeconds": 2.157,
       "plate": 3,
       "frame": "glade-young-play",
       "points": 2
@@ -2800,22 +2800,22 @@
       "path": "Strong",
       "input": "KeyS",
       "purpose": "protect first behavior plate",
-      "wallSeconds": 0.597,
+      "wallSeconds": 0.603,
       "start": {
-        "x": 2.335,
-        "z": 1.559
+        "x": 2.394,
+        "z": 1.546
       },
       "end": {
-        "x": 2.335,
-        "z": 3.469
+        "x": 2.394,
+        "z": 3.506
       },
-      "distanceAfter": 71.015
+      "distanceAfter": 71.02
     },
     {
       "path": "Strong",
       "input": "hold position under cover",
       "purpose": "break the dive between behavior frames",
-      "wallSeconds": 5.863,
+      "wallSeconds": 5.867,
       "awarenessBefore": 3,
       "awarenessAfter": 2
     },
@@ -2823,22 +2823,22 @@
       "path": "Strong",
       "input": "KeyW",
       "purpose": "return for second behavior frame",
-      "wallSeconds": 0.602,
+      "wallSeconds": 0.615,
       "start": {
-        "x": 2.335,
-        "z": 3.677
+        "x": 2.394,
+        "z": 3.716
       },
       "end": {
-        "x": 2.335,
-        "z": 1.765
+        "x": 2.394,
+        "z": 1.72
       },
-      "distanceAfter": 73.136
+      "distanceAfter": 73.225
     },
     {
       "path": "Strong",
       "input": "Right Mouse + Left Mouse",
       "purpose": "branch-pull frame",
-      "wallSeconds": 2.159,
+      "wallSeconds": 2.158,
       "plate": 4,
       "frame": "glade-branch-pull",
       "points": 2
@@ -2847,22 +2847,22 @@
       "path": "Strong",
       "input": "KeyS",
       "purpose": "retreat into cover",
-      "wallSeconds": 0.611,
+      "wallSeconds": 0.602,
       "start": {
-        "x": 2.335,
-        "z": 1.551
+        "x": 2.394,
+        "z": 1.553
       },
       "end": {
-        "x": 2.335,
-        "z": 3.499
+        "x": 2.394,
+        "z": 3.489
       },
-      "distanceAfter": 75.299
+      "distanceAfter": 75.328
     },
     {
       "path": "Strong",
       "input": "hold position under cover",
       "purpose": "break the final dive",
-      "wallSeconds": 5.855,
+      "wallSeconds": 5.866,
       "awarenessBefore": 3,
       "awarenessAfter": 2
     },
@@ -2870,16 +2870,16 @@
       "path": "Strong",
       "input": "KeyS",
       "purpose": "covered return through the Fort gate",
-      "wallSeconds": 14.078,
+      "wallSeconds": 14.089,
       "start": {
-        "x": 2.335,
-        "z": 3.758
+        "x": 2.394,
+        "z": 3.722
       },
       "end": {
-        "x": 2.335,
-        "z": 62.021
+        "x": 2.394,
+        "z": 62.022
       },
-      "distanceAfter": 133.82
+      "distanceAfter": 133.861
     }
   ],
   "minimalChecks": {
@@ -2899,7 +2899,7 @@
         0.84,
         0.8
       ],
-      "meanLuma": 109.25,
+      "meanLuma": 109.24,
       "p05": 62,
       "p95": 156,
       "dynamicRange": 94,
@@ -2915,7 +2915,7 @@
         0.84,
         0.8
       ],
-      "meanLuma": 109.95,
+      "meanLuma": 109.97,
       "p05": 69,
       "p95": 155,
       "dynamicRange": 86,
@@ -2931,7 +2931,7 @@
         0.84,
         0.8
       ],
-      "meanLuma": 111.61,
+      "meanLuma": 111.51,
       "p05": 73,
       "p95": 157,
       "dynamicRange": 84,
@@ -2963,7 +2963,7 @@
         0.84,
         0.8
       ],
-      "meanLuma": 112.33,
+      "meanLuma": 112.34,
       "p05": 74,
       "p95": 157,
       "dynamicRange": 83,
@@ -3081,12 +3081,12 @@
             0.84,
             0.8
           ],
-          "meanLuma": 110.87,
-          "p05": 64,
-          "p95": 160,
-          "dynamicRange": 96,
-          "deepShadowRatio": 0.0009,
-          "clippedHighlightRatio": 0,
+          "meanLuma": 120.09,
+          "p05": 69,
+          "p95": 195,
+          "dynamicRange": 126,
+          "deepShadowRatio": 6e-05,
+          "clippedHighlightRatio": 0.00758,
           "scope": "mechanical framebuffer exposure/readability guard; not a subjective quality score"
         }
       },
@@ -3254,12 +3254,12 @@
         "player": {
           "position": {
             "x": 3,
-            "z": 44.119
+            "z": 44.2
           },
           "zone": "brook-blind",
-          "remainingLight": 171.242,
-          "elapsedSeconds": 8.758,
-          "distanceTravelled": 25.881,
+          "remainingLight": 171.214,
+          "elapsedSeconds": 8.786,
+          "distanceTravelled": 25.8,
           "plates": [
             {
               "index": 0,
@@ -3323,7 +3323,7 @@
             0.84,
             0.8
           ],
-          "meanLuma": 109.25,
+          "meanLuma": 109.24,
           "p05": 62,
           "p95": 156,
           "dynamicRange": 94,
@@ -3376,12 +3376,12 @@
         "player": {
           "position": {
             "x": 3,
-            "z": 17.544
+            "z": 17.559
           },
           "zone": "basalt-shelf",
-          "remainingLight": 162.572,
-          "elapsedSeconds": 17.428,
-          "distanceTravelled": 52.456,
+          "remainingLight": 162.531,
+          "elapsedSeconds": 17.469,
+          "distanceTravelled": 52.441,
           "plates": [
             {
               "index": 0,
@@ -3444,7 +3444,7 @@
             0.84,
             0.8
           ],
-          "meanLuma": 109.95,
+          "meanLuma": 109.97,
           "p05": 69,
           "p95": 155,
           "dynamicRange": 86,
@@ -3497,13 +3497,13 @@
         },
         "player": {
           "position": {
-            "x": 2.335,
-            "z": 1.551
+            "x": 2.394,
+            "z": 1.553
           },
           "zone": "iguanodon-glade",
-          "remainingLight": 113.158,
-          "elapsedSeconds": 38.842,
-          "distanceTravelled": 73.35,
+          "remainingLight": 113.081,
+          "elapsedSeconds": 38.919,
+          "distanceTravelled": 73.392,
           "plates": [
             {
               "index": 0,
@@ -3567,7 +3567,7 @@
             0.84,
             0.8
           ],
-          "meanLuma": 111.61,
+          "meanLuma": 111.51,
           "p05": 73,
           "p95": 157,
           "dynamicRange": 84,
@@ -3619,13 +3619,13 @@
         },
         "player": {
           "position": {
-            "x": 2.335,
-            "z": 3.758
+            "x": 2.394,
+            "z": 3.722
           },
           "zone": "covered-return",
-          "remainingLight": 106.592,
-          "elapsedSeconds": 45.408,
-          "distanceTravelled": 75.558,
+          "remainingLight": 106.497,
+          "elapsedSeconds": 45.503,
+          "distanceTravelled": 75.561,
           "plates": [
             {
               "index": 0,
@@ -3739,13 +3739,13 @@
         },
         "player": {
           "position": {
-            "x": 2.335,
-            "z": 62.021
+            "x": 2.394,
+            "z": 62.022
           },
           "zone": "fort",
-          "remainingLight": 89.508,
-          "elapsedSeconds": 62.492,
-          "distanceTravelled": 133.82,
+          "remainingLight": 89.406,
+          "elapsedSeconds": 62.594,
+          "distanceTravelled": 133.861,
           "plates": [
             {
               "index": 0,
@@ -3794,7 +3794,7 @@
             "survivingPlates": 4,
             "route": "covered",
             "brookResponse": null,
-            "remainingLight": 89.5,
+            "remainingLight": 89.4,
             "gunshotCallback": null
           }
         }
@@ -3818,7 +3818,7 @@
             0.84,
             0.8
           ],
-          "meanLuma": 111.09,
+          "meanLuma": 111.07,
           "p05": 73,
           "p95": 156,
           "dynamicRange": 83,
@@ -3937,7 +3937,7 @@
             0.84,
             0.8
           ],
-          "meanLuma": 111.9,
+          "meanLuma": 111.89,
           "p05": 74,
           "p95": 156,
           "dynamicRange": 82,
@@ -3991,12 +3991,12 @@
         "player": {
           "position": {
             "x": 3,
-            "z": 67.995
+            "z": 67.949
           },
           "zone": "fort",
-          "remainingLight": 179.392,
-          "elapsedSeconds": 0.608,
-          "distanceTravelled": 2.005,
+          "remainingLight": 179.384,
+          "elapsedSeconds": 0.617,
+          "distanceTravelled": 2.051,
           "plates": [
             {
               "index": 0,
@@ -4060,7 +4060,7 @@
             0.84,
             0.8
           ],
-          "meanLuma": 112.33,
+          "meanLuma": 112.34,
           "p05": 74,
           "p95": 157,
           "dynamicRange": 83,
@@ -4112,12 +4112,12 @@
         "player": {
           "position": {
             "x": 3,
-            "z": 67.83
+            "z": 67.762
           },
           "zone": "fort",
-          "remainingLight": 179.2,
-          "elapsedSeconds": 0.8,
-          "distanceTravelled": 2.17,
+          "remainingLight": 179.183,
+          "elapsedSeconds": 0.817,
+          "distanceTravelled": 2.238,
           "plates": [
             {
               "index": 0,
@@ -4179,7 +4179,7 @@
             0.84,
             0.8
           ],
-          "meanLuma": 112.26,
+          "meanLuma": 112.27,
           "p05": 66,
           "p95": 165,
           "dynamicRange": 99,
@@ -4231,12 +4231,12 @@
         "player": {
           "position": {
             "x": 3,
-            "z": 67.83
+            "z": 67.762
           },
           "zone": "fort",
-          "remainingLight": 179.017,
-          "elapsedSeconds": 0.983,
-          "distanceTravelled": 2.17,
+          "remainingLight": 178.992,
+          "elapsedSeconds": 1.008,
+          "distanceTravelled": 2.238,
           "plates": [
             {
               "index": 0,
@@ -4350,12 +4350,12 @@
         "player": {
           "position": {
             "x": 3,
-            "z": 67.83
+            "z": 67.762
           },
           "zone": "fort",
           "remainingLight": 178.817,
           "elapsedSeconds": 1.183,
-          "distanceTravelled": 2.17,
+          "distanceTravelled": 2.238,
           "plates": [
             {
               "index": 0,
@@ -4417,7 +4417,7 @@
             0.84,
             0.8
           ],
-          "meanLuma": 114.18,
+          "meanLuma": 114.19,
           "p05": 74,
           "p95": 162,
           "dynamicRange": 88,
@@ -4469,12 +4469,12 @@
         "player": {
           "position": {
             "x": 3,
-            "z": 67.83
+            "z": 67.762
           },
           "zone": "fort",
-          "remainingLight": 178.633,
-          "elapsedSeconds": 1.367,
-          "distanceTravelled": 2.17,
+          "remainingLight": 178.6,
+          "elapsedSeconds": 1.4,
+          "distanceTravelled": 2.238,
           "plates": [
             {
               "index": 0,
@@ -4536,7 +4536,7 @@
             0.84,
             0.8
           ],
-          "meanLuma": 103.28,
+          "meanLuma": 103.23,
           "p05": 47,
           "p95": 166,
           "dynamicRange": 119,
@@ -4588,12 +4588,12 @@
         "player": {
           "position": {
             "x": 3,
-            "z": 67.83
+            "z": 67.762
           },
           "zone": "fort",
-          "remainingLight": 178.45,
-          "elapsedSeconds": 1.55,
-          "distanceTravelled": 2.17,
+          "remainingLight": 178.417,
+          "elapsedSeconds": 1.583,
+          "distanceTravelled": 2.238,
           "plates": [
             {
               "index": 0,
@@ -4707,12 +4707,12 @@
         "player": {
           "position": {
             "x": 3,
-            "z": 67.83
+            "z": 67.762
           },
           "zone": "fort",
-          "remainingLight": 178.267,
-          "elapsedSeconds": 1.733,
-          "distanceTravelled": 2.17,
+          "remainingLight": 178.234,
+          "elapsedSeconds": 1.767,
+          "distanceTravelled": 2.238,
           "plates": [
             {
               "index": 0,
@@ -4826,12 +4826,12 @@
         "player": {
           "position": {
             "x": 3,
-            "z": 67.83
+            "z": 67.762
           },
           "zone": "fort",
-          "remainingLight": 178.083,
-          "elapsedSeconds": 1.917,
-          "distanceTravelled": 2.17,
+          "remainingLight": 178.05,
+          "elapsedSeconds": 1.95,
+          "distanceTravelled": 2.238,
           "plates": [
             {
               "index": 0,
@@ -4945,12 +4945,12 @@
         "player": {
           "position": {
             "x": 3,
-            "z": 67.83
+            "z": 67.762
           },
           "zone": "fort",
-          "remainingLight": 177.9,
-          "elapsedSeconds": 2.1,
-          "distanceTravelled": 2.17,
+          "remainingLight": 177.842,
+          "elapsedSeconds": 2.158,
+          "distanceTravelled": 2.238,
           "plates": [
             {
               "index": 0,
@@ -5064,12 +5064,12 @@
         "player": {
           "position": {
             "x": 3,
-            "z": 67.83
+            "z": 67.762
           },
           "zone": "fort",
-          "remainingLight": 177.708,
-          "elapsedSeconds": 2.292,
-          "distanceTravelled": 2.17,
+          "remainingLight": 177.65,
+          "elapsedSeconds": 2.35,
+          "distanceTravelled": 2.238,
           "plates": [
             {
               "index": 0,
@@ -5131,7 +5131,7 @@
             0.84,
             0.8
           ],
-          "meanLuma": 114.75,
+          "meanLuma": 114.74,
           "p05": 62,
           "p95": 167,
           "dynamicRange": 105,
@@ -5183,12 +5183,12 @@
         "player": {
           "position": {
             "x": 3,
-            "z": 67.83
+            "z": 67.762
           },
           "zone": "fort",
-          "remainingLight": 177.534,
-          "elapsedSeconds": 2.466,
-          "distanceTravelled": 2.17,
+          "remainingLight": 177.434,
+          "elapsedSeconds": 2.566,
+          "distanceTravelled": 2.238,
           "plates": [
             {
               "index": 0,
@@ -5281,9 +5281,9 @@
           "status": "unavailable",
           "error": "The browser denied pointer lock. Click Resume field work to retry.",
           "cameraForward": {
-            "x": 0.6638,
-            "y": -0.275,
-            "z": -0.6955
+            "x": 0.6862,
+            "y": -0.1111,
+            "z": -0.7189
           }
         },
         "presentationSettings": {
@@ -5302,12 +5302,12 @@
         "player": {
           "position": {
             "x": 3,
-            "z": 67.83
+            "z": 67.762
           },
           "zone": "fort",
-          "remainingLight": 177.35,
-          "elapsedSeconds": 2.65,
-          "distanceTravelled": 2.17,
+          "remainingLight": 177.234,
+          "elapsedSeconds": 2.766,
+          "distanceTravelled": 2.238,
           "plates": [
             {
               "index": 0,
@@ -5362,17 +5362,17 @@
         "url": "http://127.0.0.1:4173/?qa=complete-run",
         "consoleErrorsAtCheckpoint": [],
         "mechanicalVisualHealth": {
-          "passed": false,
+          "passed": true,
           "crop": [
             0.04,
             0.04,
             0.84,
             0.8
           ],
-          "meanLuma": 84.9,
-          "p05": 68,
-          "p95": 107,
-          "dynamicRange": 39,
+          "meanLuma": 97.88,
+          "p05": 60,
+          "p95": 153,
+          "dynamicRange": 93,
           "deepShadowRatio": 0,
           "clippedHighlightRatio": 0,
           "scope": "mechanical framebuffer exposure/readability guard; not a subjective quality score"
@@ -5421,12 +5421,12 @@
         "player": {
           "position": {
             "x": 3,
-            "z": 67.83
+            "z": 67.762
           },
           "zone": "fort",
-          "remainingLight": 177.158,
-          "elapsedSeconds": 2.842,
-          "distanceTravelled": 2.17,
+          "remainingLight": 177.05,
+          "elapsedSeconds": 2.95,
+          "distanceTravelled": 2.238,
           "plates": [
             {
               "index": 0,
@@ -5540,12 +5540,12 @@
         "player": {
           "position": {
             "x": 3,
-            "z": 67.83
+            "z": 67.762
           },
           "zone": "fort",
-          "remainingLight": 176.967,
-          "elapsedSeconds": 3.033,
-          "distanceTravelled": 2.17,
+          "remainingLight": 176.867,
+          "elapsedSeconds": 3.133,
+          "distanceTravelled": 2.238,
           "plates": [
             {
               "index": 0,
@@ -5659,12 +5659,12 @@
         "player": {
           "position": {
             "x": 3,
-            "z": 67.83
+            "z": 67.762
           },
           "zone": "fort",
-          "remainingLight": 176.8,
-          "elapsedSeconds": 3.2,
-          "distanceTravelled": 2.17,
+          "remainingLight": 176.684,
+          "elapsedSeconds": 3.316,
+          "distanceTravelled": 2.238,
           "plates": [
             {
               "index": 0,
@@ -5726,7 +5726,7 @@
             0.84,
             0.8
           ],
-          "meanLuma": 91.4,
+          "meanLuma": 91.6,
           "p05": 35,
           "p95": 168,
           "dynamicRange": 133,
@@ -5778,12 +5778,12 @@
         "player": {
           "position": {
             "x": 3,
-            "z": 67.83
+            "z": 67.762
           },
           "zone": "fort",
-          "remainingLight": 176.617,
-          "elapsedSeconds": 3.383,
-          "distanceTravelled": 2.17,
+          "remainingLight": 176.484,
+          "elapsedSeconds": 3.516,
+          "distanceTravelled": 2.238,
           "plates": [
             {
               "index": 0,
@@ -5897,12 +5897,12 @@
         "player": {
           "position": {
             "x": 3,
-            "z": 67.83
+            "z": 67.762
           },
           "zone": "fort",
-          "remainingLight": 176.433,
-          "elapsedSeconds": 3.567,
-          "distanceTravelled": 2.17,
+          "remainingLight": 176.3,
+          "elapsedSeconds": 3.7,
+          "distanceTravelled": 2.238,
           "plates": [
             {
               "index": 0,
@@ -5964,10 +5964,10 @@
             0.84,
             0.8
           ],
-          "meanLuma": 85.67,
+          "meanLuma": 84.69,
           "p05": 56,
-          "p95": 152,
-          "dynamicRange": 96,
+          "p95": 140,
+          "dynamicRange": 84,
           "deepShadowRatio": 0,
           "clippedHighlightRatio": 0,
           "scope": "mechanical framebuffer exposure/readability guard; not a subjective quality score"
@@ -6016,12 +6016,12 @@
         "player": {
           "position": {
             "x": 3,
-            "z": 67.83
+            "z": 67.762
           },
           "zone": "fort",
-          "remainingLight": 176.25,
-          "elapsedSeconds": 3.75,
-          "distanceTravelled": 2.17,
+          "remainingLight": 176.1,
+          "elapsedSeconds": 3.9,
+          "distanceTravelled": 2.238,
           "plates": [
             {
               "index": 0,
@@ -6135,12 +6135,12 @@
         "player": {
           "position": {
             "x": 3,
-            "z": 67.83
+            "z": 67.762
           },
           "zone": "fort",
-          "remainingLight": 176.05,
-          "elapsedSeconds": 3.95,
-          "distanceTravelled": 2.17,
+          "remainingLight": 175.917,
+          "elapsedSeconds": 4.083,
+          "distanceTravelled": 2.238,
           "plates": [
             {
               "index": 0,
@@ -6206,7 +6206,7 @@
           "p05": 38,
           "p95": 165,
           "dynamicRange": 127,
-          "deepShadowRatio": 0.00265,
+          "deepShadowRatio": 0.00264,
           "clippedHighlightRatio": 0,
           "scope": "mechanical framebuffer exposure/readability guard; not a subjective quality score"
         }
@@ -6254,12 +6254,12 @@
         "player": {
           "position": {
             "x": 3,
-            "z": 67.83
+            "z": 67.762
           },
           "zone": "fort",
-          "remainingLight": 175.817,
-          "elapsedSeconds": 4.183,
-          "distanceTravelled": 2.17,
+          "remainingLight": 175.7,
+          "elapsedSeconds": 4.3,
+          "distanceTravelled": 2.238,
           "plates": [
             {
               "index": 0,
@@ -6373,12 +6373,12 @@
         "player": {
           "position": {
             "x": 3,
-            "z": 67.83
+            "z": 67.762
           },
           "zone": "fort",
-          "remainingLight": 175.633,
-          "elapsedSeconds": 4.367,
-          "distanceTravelled": 2.17,
+          "remainingLight": 175.508,
+          "elapsedSeconds": 4.492,
+          "distanceTravelled": 2.238,
           "plates": [
             {
               "index": 0,
@@ -6492,12 +6492,12 @@
         "player": {
           "position": {
             "x": 3,
-            "z": 67.83
+            "z": 67.762
           },
           "zone": "fort",
-          "remainingLight": 175.45,
-          "elapsedSeconds": 4.55,
-          "distanceTravelled": 2.17,
+          "remainingLight": 175.325,
+          "elapsedSeconds": 4.675,
+          "distanceTravelled": 2.238,
           "plates": [
             {
               "index": 0,
@@ -6611,12 +6611,12 @@
         "player": {
           "position": {
             "x": 3,
-            "z": 67.83
+            "z": 67.762
           },
           "zone": "fort",
-          "remainingLight": 175.25,
-          "elapsedSeconds": 4.75,
-          "distanceTravelled": 2.17,
+          "remainingLight": 175.134,
+          "elapsedSeconds": 4.866,
+          "distanceTravelled": 2.238,
           "plates": [
             {
               "index": 0,
@@ -6678,7 +6678,7 @@
             0.84,
             0.8
           ],
-          "meanLuma": 109.61,
+          "meanLuma": 109.6,
           "p05": 60,
           "p95": 157,
           "dynamicRange": 97,
@@ -6730,12 +6730,12 @@
         "player": {
           "position": {
             "x": 3,
-            "z": 67.83
+            "z": 67.762
           },
           "zone": "fort",
-          "remainingLight": 175.067,
-          "elapsedSeconds": 4.933,
-          "distanceTravelled": 2.17,
+          "remainingLight": 174.95,
+          "elapsedSeconds": 5.05,
+          "distanceTravelled": 2.238,
           "plates": [
             {
               "index": 0,
@@ -6801,7 +6801,7 @@
           "p05": 20,
           "p95": 167,
           "dynamicRange": 147,
-          "deepShadowRatio": 0.03106,
+          "deepShadowRatio": 0.03104,
           "clippedHighlightRatio": 0,
           "scope": "mechanical framebuffer exposure/readability guard; not a subjective quality score"
         }
@@ -6849,12 +6849,12 @@
         "player": {
           "position": {
             "x": 3,
-            "z": 67.83
+            "z": 67.762
           },
           "zone": "fort",
-          "remainingLight": 174.867,
-          "elapsedSeconds": 5.133,
-          "distanceTravelled": 2.17,
+          "remainingLight": 174.767,
+          "elapsedSeconds": 5.233,
+          "distanceTravelled": 2.238,
           "plates": [
             {
               "index": 0,
@@ -6916,11 +6916,11 @@
             0.84,
             0.8
           ],
-          "meanLuma": 111.72,
+          "meanLuma": 111.83,
           "p05": 40,
           "p95": 164,
           "dynamicRange": 124,
-          "deepShadowRatio": 0.00099,
+          "deepShadowRatio": 0.00098,
           "clippedHighlightRatio": 0,
           "scope": "mechanical framebuffer exposure/readability guard; not a subjective quality score"
         }

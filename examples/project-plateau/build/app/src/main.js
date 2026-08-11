@@ -441,8 +441,8 @@ const ENVIRONMENT_REVIEW_SHOTS = Object.freeze({
   }),
   terrainDetail: Object.freeze({
     position: Object.freeze([13, 4.2, 8]),
-    target: Object.freeze([23.5, -0.15, -3]),
-    fov: 40,
+    target: Object.freeze([23.5, 2.5, -3]),
+    fov: 48,
   }),
   escarpmentDetail: Object.freeze({
     position: Object.freeze([19, 1.2, 8]),

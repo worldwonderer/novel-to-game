@@ -1060,6 +1060,8 @@ def run() -> dict[str, object]:
         assert (
             terrain_detail_state["environmentReviewShot"] == "terrainDetail"
         ), terrain_detail_state
+        terrain_detail_health = checkpoints[-1]["browser"]["mechanicalVisualHealth"]
+        assert terrain_detail_health["passed"], terrain_detail_health
         escarpment_detail_review = page.evaluate(
             "window.__projectPlateau.setEnvironmentReviewForTest({ shot: 'escarpmentDetail' })"
         )
