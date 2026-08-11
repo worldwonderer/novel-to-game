@@ -44,6 +44,10 @@ EDIT_DESCRIPTION = (
     "disclosed same-take editorial cuts at natural 1x playback; no speed ramps, "
     "teleport, state fabrication or substitute render"
 )
+CAPTURE_DESCRIPTION = (
+    "one continuous input-only Strong-result browser run with multi-axis traversal, "
+    "eased mouse look and two defensive shots"
+)
 
 
 def edit_segment(
@@ -135,6 +139,19 @@ POINTER_LOCK_SHIM = """
   };
 })();
 """
+
+FORWARD_WEAVE = (
+    (("KeyW", "KeyD"), -0.10, -0.015, 540),
+    (("KeyW",), 0.08, 0.02, 650),
+    (("KeyW", "KeyA"), 0.13, -0.01, 540),
+    (("KeyW",), -0.05, 0.0, 650),
+)
+BACKWARD_WEAVE = (
+    (("KeyS",), 0.12, -0.015, 650),
+    (("KeyS",), -0.10, 0.02, 650),
+    (("KeyS",), -0.08, -0.01, 650),
+    (("KeyS",), 0.10, 0.0, 650),
+)
 
 
 def git_head() -> str:
@@ -268,17 +285,63 @@ def aim_with_mouse(take: Take, heading: float, pitch: float) -> None:
         raise RuntimeError(f"Pointer aim missed target: {aimed}")
 
 
-def move_until(take: Take, key: str, predicate: str, label: str, timeout: int = 30000) -> None:
-    take.mark(f"{label}:start", input=key, position=snapshot(take.page)["player"]["position"])
-    take.page.keyboard.down(key)
+def smooth_aim(take: Take, heading: float, pitch: float, duration_ms: int = 420) -> None:
+    """Turn with a short eased mouse gesture instead of snapping the view."""
+    player = snapshot(take.page)["player"]
+    start_heading = float(player["heading"])
+    start_pitch = float(player["pitch"])
+    steps = max(4, duration_ms // 45)
+    for step in range(1, steps + 1):
+        progress = step / steps
+        eased = progress * progress * (3 - 2 * progress)
+        aim_with_mouse(
+            take,
+            start_heading + (heading - start_heading) * eased,
+            start_pitch + (pitch - start_pitch) * eased,
+        )
+        take.page.wait_for_timeout(duration_ms / steps)
+
+
+def move_leg(
+    take: Take,
+    keys: tuple[str, ...],
+    heading: float,
+    pitch: float,
+    duration_ms: int,
+) -> None:
+    for key in keys:
+        take.page.keyboard.down(key)
     try:
-        take.page.wait_for_function(predicate, timeout=timeout)
-    except Exception:
-        print("  route timeout snapshot:", json.dumps(snapshot(take.page)["player"], sort_keys=True))
-        raise
+        smooth_aim(take, heading, pitch, duration_ms)
     finally:
-        take.page.keyboard.up(key)
-    take.page.wait_for_timeout(70)
+        for key in reversed(keys):
+            take.page.keyboard.up(key)
+
+
+def move_naturally_until(
+    take: Take,
+    predicate: str,
+    label: str,
+    choreography: tuple[tuple[tuple[str, ...], float, float, int], ...],
+    timeout: int = 30000,
+) -> None:
+    """Traverse with diagonal inputs and an eased changing view until the route gate is met."""
+    take.mark(
+        f"{label}:start",
+        input=" + ".join(sorted({key for leg in choreography for key in leg[0]})),
+        position=snapshot(take.page)["player"]["position"],
+    )
+    deadline = time.monotonic() + timeout / 1000
+    leg = 0
+    while not take.page.evaluate(predicate):
+        if time.monotonic() > deadline:
+            print("  route timeout snapshot:", json.dumps(snapshot(take.page)["player"], sort_keys=True))
+            raise RuntimeError(f"Natural route timed out: {label}")
+        move_leg(take, *choreography[leg % len(choreography)])
+        leg += 1
+    if snapshot(take.page)["player"]["runStatus"] == "active":
+        smooth_aim(take, 0, 0, 320)
+    take.page.wait_for_timeout(160)
     take.mark(f"{label}:end", position=snapshot(take.page)["player"]["position"])
 
 
@@ -393,15 +456,46 @@ def record_take(out_dir: Path) -> tuple[Path, Take, list[str], set[str]]:
         page.mouse.move(*take.pointer)
         aim_with_mouse(take, 0, 0)
 
-        move_until(take, "KeyW", "window.__projectPlateau.snapshot().player.position.z <= 45", "fort_to_brook")
+        move_naturally_until(
+            take,
+            "window.__projectPlateau.snapshot().player.position.z <= 45",
+            "fort_to_brook",
+            FORWARD_WEAVE,
+        )
         page.keyboard.press("KeyE")
         expose_plate(take, 0, "brook_plate")
-        move_until(take, "KeyD", "window.__projectPlateau.snapshot().player.position.x > -4.2", "clear_brook_boulder")
-        move_until(take, "KeyW", "window.__projectPlateau.snapshot().player.position.z <= 18", "brook_to_basalt")
+        move_naturally_until(
+            take,
+            "window.__projectPlateau.snapshot().player.position.x >= 4.8",
+            "clear_brook_boulder",
+            (
+                (("KeyW", "KeyD"), -0.14, -0.01, 520),
+                (("KeyD",), 0.08, 0.01, 420),
+            ),
+        )
+        move_naturally_until(
+            take,
+            "window.__projectPlateau.snapshot().player.position.z <= 18",
+            "brook_to_basalt",
+            FORWARD_WEAVE,
+        )
         expose_plate(take, 1, "basalt_plate")
-        move_until(take, "KeyA", "window.__projectPlateau.snapshot().player.position.x < 2.7", "enter_canopy")
+        move_naturally_until(
+            take,
+            "window.__projectPlateau.snapshot().player.position.x < 2.7",
+            "enter_canopy",
+            (
+                (("KeyW", "KeyA"), 0.14, -0.01, 520),
+                (("KeyA",), -0.08, 0.01, 420),
+            ),
+        )
         wait_for_cover(take, "first_cover_read")
-        move_until(take, "KeyW", "window.__projectPlateau.snapshot().player.position.z <= 2", "canopy_to_glade")
+        move_naturally_until(
+            take,
+            "window.__projectPlateau.snapshot().player.position.z <= 2",
+            "canopy_to_glade",
+            FORWARD_WEAVE,
+        )
         page.keyboard.press("KeyE")
         expose_plate(take, 2, "young_play_plate")
         page.wait_for_function(
@@ -415,13 +509,29 @@ def record_take(out_dir: Path) -> tuple[Path, Take, list[str], set[str]]:
             timeout=2500,
         )
         interrupt_dive(take, "branch_")
-        move_until(take, "KeyD", "window.__projectPlateau.snapshot().player.position.x > 3.4", "line_up_exposed_creek")
-        move_until(take, "KeyS", "window.__projectPlateau.snapshot().player.position.z > 3.2", "commit_exposed_return")
-        move_until(
+        move_naturally_until(
             take,
-            "KeyS",
+            "window.__projectPlateau.snapshot().player.position.x > 3.8",
+            "line_up_exposed_creek",
+            (
+                (("KeyS", "KeyD"), 0.14, -0.01, 520),
+                (("KeyD",), -0.08, 0.01, 420),
+            ),
+        )
+        move_naturally_until(
+            take,
+            "window.__projectPlateau.snapshot().player.position.z > 3.2",
+            "commit_exposed_return",
+            (
+                (("KeyS",), -0.08, -0.01, 520),
+                (("KeyS",), 0.08, 0.01, 520),
+            ),
+        )
+        move_naturally_until(
+            take,
             "window.__projectPlateau.snapshot().player.runStatus === 'result'",
             "exposed_return",
+            BACKWARD_WEAVE,
         )
         result = snapshot(page)
         assert result["player"]["result"]["band"] == "strong-field-record", result
@@ -699,6 +809,7 @@ def main() -> int:
         raw_take = out_dir / "raw_take.webm"
         marks = json.loads(marks_path.read_text())
         raw_duration = validate_raw_provenance(raw_take, marks)
+        marks["capture"] = CAPTURE_DESCRIPTION
         marks["edit"] = EDIT_DESCRIPTION
         marks_path.write_text(json.dumps(marks, indent=2) + "\n")
         print(f"Reusing raw take: {raw_take}")
@@ -729,7 +840,7 @@ def main() -> int:
         # tail as a leading offset used to shift every edit past its real verb.
         offset = 0.0
         marks = {
-            "capture": "one continuous input-only Strong-result browser run with two defensive shots",
+            "capture": CAPTURE_DESCRIPTION,
             "edit": EDIT_DESCRIPTION,
             "viewport": VIEW,
             "url": f"{BASE_URL}/?media=core-loop",

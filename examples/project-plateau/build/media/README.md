@@ -41,6 +41,10 @@ They use no teleport, direct time advance, fabricated state, substitute render o
 30 FPS, square-pixel, fast-start MP4s with exact 30/15-second durations, a
 non-black first frame and no audio track.
 
+The recorded route uses multi-axis key combinations, eased mouse turns and
+brief observation pauses. Its visible path crosses laterally as well as forward
+and backward instead of replaying a fixed-axis automation line.
+
 To render the captioned 1920×1080 launch version:
 
 ```bash
