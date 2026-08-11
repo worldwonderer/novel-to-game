@@ -1,1 +1,0 @@
-Rejected: distant broad crowns still read as detached round lollipops/cauliflower clusters after aerial perspective. Physical failure is crown mass distribution: insufficient dominant leader/main crown, satellites too symmetric and horizontally exposed, under-canopy negative space too uniform.

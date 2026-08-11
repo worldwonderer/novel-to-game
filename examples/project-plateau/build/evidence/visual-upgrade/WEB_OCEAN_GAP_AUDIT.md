@@ -2,8 +2,8 @@
 
 ## Compared evidence
 
-- Project Plateau: the fixed review captures in `fluvial-cobble-nonoverlapping-support-pass/after/`, plus the
-  input-only Strong path at 1440×900, the 1280×720 minimum viewport, and the additional
+- Project Plateau: the authoritative final captures in [`../current-run/`](../current-run/),
+  including the input-only Strong path at 1440×900, the 1280×720 minimum viewport, and the additional
   `11-review-brook-detail.jpg`, `12-review-basalt-detail.jpg` and
   `13-review-ridge-volume.jpg` physical-structure inspections. `14-review-gingko.jpg` and
   `15-review-gingko-root.jpg` separately expose the new landmark's complete support chain and soil
@@ -76,7 +76,7 @@ art-direction constraints, and the current automated PASS is not a subjective pa
    condensation base, buoyant lobes and multiscale erosion; Beer–Lambert extinction is integrated in
    world metres; and two sun-direction samples provide correlated self-shadow. Geometry puffs remain
    only as the low-quality fallback. A rejected five-card stack and an over-bright solid-foam trial
-   are retained in the pass notes rather than being presented as progress.
+   were rejected during iteration and are not retained as final evidence.
 5. **Low-poly foliage read:** broad-canopy trees now expose a trunk → five primary branches → eight
    secondary branches → leaf-cluster load path. Two original 128×128 atlases separate elliptic-waxy
    sprays from continuous-rachis compound lanceolate sprays, and two trunk families separate wet
@@ -101,7 +101,7 @@ art-direction constraints, and the current automated PASS is not a subjective pa
    object-space triplanar albedo, roughness and relief. Reversed caps, crater-like top fans,
    UV-banded shells, white/silver response, floating placement, oversized colliders, a smooth
    axisymmetric capsule and the opposite failure of treating every render triangle as a fracture
-   were rejected.
+   were rejected during iteration; the superseded raw frames are not retained as final evidence.
 8. **Unrepeatable visual review:** fixed `brook`, `basalt` and `glade` review cameras freeze the
    environment clock and hide tools/UI, so visual changes can be compared independently from the
    gameplay proof captures. `brookDetail`, `basaltDetail` and the elevated `ridgeVolume` view expose
@@ -198,8 +198,8 @@ art-direction constraints, and the current automated PASS is not a subjective pa
     cluster in the glade came from the separate legacy `foreground-depth-fronds`, not the new library.
     Those twelve placements now reuse the supported original fern library at mature scales, bringing
     it to 132 instances and 1,716/1,716 supported rhizome vertices while hiding the bad fallback.
-    The first 1,124-triangle broadleaf revision and the unreplaced foreground cluster were preserved
-    as rejected evidence; neither was masked by lighting or colour grading.
+    The first 1,124-triangle broadleaf revision and the unreplaced foreground cluster were rejected;
+    neither issue was masked by lighting or colour grading in the accepted result.
 20. **Remaining procedural tree-fern skirts and wetland/margin triangle accents:** source isolation
     after the ground-cover pass still found 24 skirt and 64 degradable accent instances using the old
     procedural fern geometry. They now reuse the same project-original fern GLB in a second
@@ -387,7 +387,7 @@ art-direction constraints, and the current automated PASS is not a subjective pa
     without introducing ocean-scale displacement; aeration exists only where local downstream grade
     or bank contact can support it. All 48 non-advecting torus ripple overlays are retired with zero
     replacement draw calls. A physically shallow but visually flat version, a periodic parallel-
-    stripe version and an everywhere-overenergized white-sparkle version remain as rejected evidence.
+    stripe version and an everywhere-overenergized white-sparkle version were rejected during iteration.
     Water geometry, hydrology, sun, exposure, fog, bloom and emission remain unchanged, and the
     grade-only flow-energy term still does not claim exact discharge, velocity or wave spectrum.
 35. **Pale glazed-clay hero animals despite an authored source texture:** the generated Iguanodon
@@ -742,8 +742,8 @@ art-direction constraints, and the current automated PASS is not a subjective pa
     bryophyte and geological source masks suppress incompatible detail. Only source-gated mineral
     inclusions perturb the normal, bounded to **2.5 mm** optical relief; the shared collision
     heightfield, texture-object count and terrain draw count do not change. Two mechanically passing
-    but visually invalid attempts remain archived as `rejected-v1-dotted-carpet` and
-    `rejected-v2-residual-pinholes`. The accepted fixed frames change **9.80–20.79%** of pixels above
+    but visually invalid attempts were rejected before the final capture. The accepted fixed frames
+    change **9.80–20.79%** of pixels above
     3/255 with only **0.01–0.15%** above 12/255, showing a broad low-amplitude material response rather
     than a new overlay. The authoritative browser run retains **59.9 FPS median, 39.3 FPS 1% low, 25.5 ms
     worst frame** and completes all six required checks.

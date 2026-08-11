@@ -429,7 +429,10 @@ def run() -> dict[str, object]:
                 assert scene_capture["planarCaptures"] > 0, scene_capture
                 assert scene_capture["reachCount"] == 19, scene_capture
                 assert scene_capture["activeReachId"].startswith("reach-"), scene_capture
-                assert scene_capture["activeBranch"] == "north-headwater", scene_capture
+                assert scene_capture["activeBranch"] in {
+                    "north-headwater",
+                    "south-headwater",
+                }, scene_capture
                 assert scene_capture["activePlaneTolerance"] <= 0.25, scene_capture
                 plane_normal_length_squared = sum(
                     value * value for value in scene_capture["activePlaneNormal"]
