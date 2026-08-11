@@ -2,11 +2,12 @@
 """Record one input-only core-loop run and derive legible 30s/15s demos.
 
 The source take is one continuous Strong-result browser run with two defensive
-shots. Delivery clips disclose same-take editorial cuts so traversal can be
-compressed while camera commitment, the pterodactyl dive, rifle response and
-result remain readable. The route never teleports or advances time through a
-QA hook, and the edited demos never replace the current complete-run report. Raw and
-encoded video stay out of Git; marks, hashes and probe data remain reproducible.
+shots. Delivery clips use same-take editorial cuts at natural 1x playback so
+camera commitment, the pterodactyl dive, rifle response and result remain
+readable without distorting player motion. The route never teleports or advances
+time through a QA hook, and the edited demos never replace the current
+complete-run report. Raw and encoded video stay out of Git; marks, hashes and
+probe data remain reproducible.
 """
 
 from __future__ import annotations
@@ -39,26 +40,81 @@ RUNTIME_FINGERPRINT_SCOPE = (
     "interactive inputs: index/package manifests, src and public assets; "
     "generated conversion-preview outputs excluded"
 )
+EDIT_DESCRIPTION = (
+    "disclosed same-take editorial cuts at natural 1x playback; no speed ramps, "
+    "teleport, state fabrication or substitute render"
+)
+
+
+def edit_segment(
+    name: str,
+    start: str,
+    end: str,
+    duration: float,
+    core_verb: str,
+    *,
+    offset: float = 0,
+    anchor: str = "start",
+) -> dict[str, object]:
+    return {
+        "name": name,
+        "start": start,
+        "end": end,
+        "duration": duration,
+        "coreVerb": core_verb,
+        "offset": offset,
+        "anchor": anchor,
+    }
+
+
 EDIT_STORIES = {
     15: [
-        ("field-order", "field_order:start", "field_order:end", 1.2, "accept the field order"),
-        ("brook-camera", "brook_plate:start", "brook_plate:end", 1.8, "commit a brook plate"),
-        ("young-camera", "young_play_plate:start", "young_play_plate:end", 1.8, "record young behavior"),
-        ("dive-defense", "attack_ready", "rifle_response", 3.0, "interrupt one dive"),
-        ("branch-camera", "branch_pull_plate:start", "branch_pull_plate:end", 1.8, "record branch pulling"),
-        ("exposed-return", "exposed_return:start", "exposed_return:end", 2.0, "extract by the exposed creek"),
-        ("strong-result", "result:start", "demo_end", 3.4, "deliver a Strong field record"),
+        edit_segment("field-order", "field_order:start", "field_order:end", 0.8,
+                     "accept the field order", anchor="end"),
+        edit_segment("route-to-brook", "fort_to_brook:start", "fort_to_brook:end", 1.0,
+                     "traverse the plateau", offset=2.0),
+        edit_segment("brook-camera", "brook_plate:start", "brook_plate:end", 1.5,
+                     "commit a brook plate", anchor="end"),
+        edit_segment("basalt-camera", "basalt_plate:start", "basalt_plate:end", 1.5,
+                     "record geological scale", anchor="end"),
+        edit_segment("cover-observation", "first_cover_read:start", "first_cover_read:end", 1.0,
+                     "read the threat from cover", offset=2.0),
+        edit_segment("young-camera", "young_play_plate:start", "young_play_plate:end", 1.5,
+                     "record young behavior", anchor="end"),
+        edit_segment("dive-defense", "attack_ready", "rifle_response", 1.7,
+                     "interrupt one dive"),
+        edit_segment("branch-camera", "branch_pull_plate:start", "branch_pull_plate:end", 1.5,
+                     "record branch pulling", anchor="end"),
+        edit_segment("exposed-return", "exposed_return:start", "exposed_return:end", 1.5,
+                     "extract by the exposed creek", offset=5.0),
+        edit_segment("strong-result", "result:start", "demo_end", 3.0,
+                     "deliver a Strong field record"),
     ],
     30: [
-        ("field-order", "field_order:start", "field_order:end", 2.5, "accept the field order"),
-        ("route-to-brook", "fort_to_brook:start", "fort_to_brook:end", 3.0, "traverse the plateau"),
-        ("brook-camera", "brook_plate:start", "brook_plate:end", 3.5, "commit a brook plate"),
-        ("basalt-camera", "basalt_plate:start", "basalt_plate:end", 3.0, "record geological scale"),
-        ("young-camera", "young_play_plate:start", "young_play_plate:end", 3.5, "record young behavior"),
-        ("dive-defense", "attack_ready", "rifle_response", 4.5, "interrupt one dive"),
-        ("branch-camera", "branch_pull_plate:start", "branch_pull_plate:end", 3.5, "record branch pulling"),
-        ("exposed-return", "exposed_return:start", "exposed_return:end", 3.0, "extract by the exposed creek"),
-        ("strong-result", "result:start", "demo_end", 3.5, "deliver a Strong field record"),
+        edit_segment("field-order", "field_order:start", "field_order:end", 1.5,
+                     "accept the field order", anchor="end"),
+        edit_segment("route-to-brook", "fort_to_brook:start", "fort_to_brook:end", 3.0,
+                     "traverse the plateau"),
+        edit_segment("brook-camera", "brook_plate:start", "brook_plate:end", 2.1,
+                     "commit a brook plate", anchor="end"),
+        edit_segment("route-to-basalt", "brook_to_basalt:start", "brook_to_basalt:end", 2.5,
+                     "follow the brook inland", offset=2.0),
+        edit_segment("basalt-camera", "basalt_plate:start", "basalt_plate:end", 2.1,
+                     "record geological scale", anchor="end"),
+        edit_segment("cover-observation", "first_cover_read:start", "first_cover_read:end", 3.6,
+                     "read the threat from cover", offset=1.0),
+        edit_segment("route-to-glade", "canopy_to_glade:start", "canopy_to_glade:end", 2.5,
+                     "enter the family glade"),
+        edit_segment("young-camera", "young_play_plate:start", "young_play_plate:end", 2.1,
+                     "record young behavior", anchor="end"),
+        edit_segment("dive-defense", "attack_ready", "rifle_response", 1.7,
+                     "interrupt one dive"),
+        edit_segment("branch-camera", "branch_pull_plate:start", "branch_pull_plate:end", 2.1,
+                     "record branch pulling", anchor="end"),
+        edit_segment("exposed-return", "exposed_return:start", "exposed_return:end", 3.0,
+                     "extract by the exposed creek", offset=3.0),
+        edit_segment("strong-result", "result:start", "demo_end", 3.8,
+                     "deliver a Strong field record"),
     ],
 }
 POINTER_LOCK_SHIM = """
@@ -425,26 +481,41 @@ def mark_seconds(marks: dict[str, object], label: str) -> float:
 def story_segments(marks: dict[str, object], target_seconds: int) -> list[dict[str, object]]:
     output_cursor = 0.0
     segments: list[dict[str, object]] = []
-    for name, start_label, end_label, target_duration, core_verb in EDIT_STORIES[target_seconds]:
+    for story in EDIT_STORIES[target_seconds]:
+        name = story["name"]
+        start_label = story["start"]
+        end_label = story["end"]
+        duration = float(story["duration"])
         source_start = mark_seconds(marks, start_label)
         source_end = mark_seconds(marks, end_label)
-        source_duration = source_end - source_start
-        if source_duration <= 0:
-            raise RuntimeError(f"Invalid source segment {name}: {source_duration:.3f}s")
+        if story.get("anchor", "start") == "end":
+            source_end -= float(story.get("offset", 0))
+            source_start = source_end - duration
+        else:
+            source_start += float(story.get("offset", 0))
+            source_end = source_start + duration
+        window_start = mark_seconds(marks, start_label)
+        window_end = mark_seconds(marks, end_label)
+        if source_start < window_start - 0.001 or source_end > window_end + 0.001:
+            raise RuntimeError(
+                f"Natural-speed slice {name} exceeds its marked window: "
+                f"{source_start:.3f}..{source_end:.3f} outside "
+                f"{window_start:.3f}..{window_end:.3f}"
+            )
         segments.append({
             "name": name,
-            "coreVerb": core_verb,
+            "coreVerb": story["coreVerb"],
             "sourceStartLabel": start_label,
             "sourceEndLabel": end_label,
             "sourceStartSeconds": round(source_start, 3),
             "sourceEndSeconds": round(source_end, 3),
-            "sourceDurationSeconds": round(source_duration, 3),
+            "sourceDurationSeconds": duration,
             "outputStartSeconds": round(output_cursor, 3),
-            "outputEndSeconds": round(output_cursor + target_duration, 3),
-            "outputDurationSeconds": target_duration,
-            "playbackRate": round(source_duration / target_duration, 5),
+            "outputEndSeconds": round(output_cursor + duration, 3),
+            "outputDurationSeconds": duration,
+            "playbackRate": 1.0,
         })
-        output_cursor += target_duration
+        output_cursor += duration
     if abs(output_cursor - target_seconds) > 1e-6:
         raise RuntimeError(f"{target_seconds}s story totals {output_cursor:.3f}s")
     return segments
@@ -454,12 +525,9 @@ def encode_story(source: Path, output: Path, segments: list[dict[str, object]]) 
     filters: list[str] = []
     inputs: list[str] = []
     for index, segment in enumerate(segments):
-        source_duration = float(segment["sourceDurationSeconds"])
-        output_duration = float(segment["outputDurationSeconds"])
-        factor = output_duration / source_duration
         filters.append(
             f"[0:v]trim=start={segment['sourceStartSeconds']}:end={segment['sourceEndSeconds']},"
-            f"setpts=(PTS-STARTPTS)*{factor:.10f}[v{index}]"
+            f"setpts=PTS-STARTPTS[v{index}]"
         )
         inputs.append(f"[v{index}]")
     target = sum(float(segment["outputDurationSeconds"]) for segment in segments)
@@ -513,7 +581,7 @@ def publish_preview(source: Path, segments: list[dict[str, object]], marks: dict
         "schemaVersion": 2,
         "purpose": "mobile, social in-app browser and WebGL2-unavailable conversion preview",
         "capture": marks["capture"],
-        "edit": "disclosed same-take editorial cuts and per-segment speed changes; no teleport, state fabrication or substitute render",
+        "edit": EDIT_DESCRIPTION,
         "interactiveSourceCommit": marks["sourceCommit"],
         "interactiveSourceFingerprint": marks["sourceFingerprint"],
         "interactiveSourceFingerprintScope": marks["sourceFingerprintScope"],
@@ -611,6 +679,10 @@ def validate_story_segments(segments: list[dict[str, object]], raw_duration: flo
                 f"Story segment {segment['name']} lies outside the raw take: "
                 f"{start:.3f}..{end:.3f}s"
             )
+        source_duration = float(segment["sourceDurationSeconds"])
+        output_duration = float(segment["outputDurationSeconds"])
+        if abs(source_duration - output_duration) > 0.001 or segment["playbackRate"] != 1.0:
+            raise RuntimeError(f"Story segment {segment['name']} is not natural 1x playback")
 
 
 def main() -> int:
@@ -627,6 +699,8 @@ def main() -> int:
         raw_take = out_dir / "raw_take.webm"
         marks = json.loads(marks_path.read_text())
         raw_duration = validate_raw_provenance(raw_take, marks)
+        marks["edit"] = EDIT_DESCRIPTION
+        marks_path.write_text(json.dumps(marks, indent=2) + "\n")
         print(f"Reusing raw take: {raw_take}")
     else:
         capture_source_commit = git_head()
@@ -656,7 +730,7 @@ def main() -> int:
         offset = 0.0
         marks = {
             "capture": "one continuous input-only Strong-result browser run with two defensive shots",
-            "edit": "disclosed same-take editorial cuts and per-segment speed changes; no teleport, state fabrication or substitute render",
+            "edit": EDIT_DESCRIPTION,
             "viewport": VIEW,
             "url": f"{BASE_URL}/?media=core-loop",
             "pointerLockMode": "deterministic-browser-shim",
@@ -778,7 +852,7 @@ def main() -> int:
             "posterSha256": preview["poster"]["sha256"],
         },
         "limitations": [
-            "The delivery encodes use disclosed same-take cuts and speed changes and therefore are not timing evidence.",
+            "The delivery encodes use disclosed same-take cuts at natural 1x playback and therefore are not continuous traversal-timing evidence.",
             "build/evidence/current-run/report.json remains the authoritative input-only traversal and timing record.",
             "The local MP4/WebM files are reproducible delivery artifacts and are intentionally excluded from Git history.",
         ],
