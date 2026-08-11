@@ -1,0 +1,1 @@
+Rejected: shared world-space density and sun projection were mechanically correct and performance-safe, but the visible deck used one mid-layer density sample with a wide edge ramp. At upward field views it read as a low-frequency translucent dome mask without separate base/body/top structure.

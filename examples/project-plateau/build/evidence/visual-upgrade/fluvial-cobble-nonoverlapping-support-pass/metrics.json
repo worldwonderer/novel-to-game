@@ -1,0 +1,220 @@
+{
+  "pass": "fluvial-cobble-nonoverlapping-support",
+  "editorialParityEstimate": {
+    "beforePercent": 95,
+    "afterPercent": 96,
+    "uncertaintyPercent": 3,
+    "boundary": "visual-direction estimate against pinned Web Ocean commit 6496c77d37c12e803108c8f932680a7710a62c1c, not a deterministic QA score"
+  },
+  "fixedFrameDelta": {
+    "11-review-brook-detail": {
+      "meanAbsoluteRgb": 0.302,
+      "pixelsAbove3Percent": 2.5,
+      "pixelsAbove12Percent": 0.29
+    },
+    "19-review-brook-boulder-detail": {
+      "meanAbsoluteRgb": 0.565,
+      "pixelsAbove3Percent": 3.48,
+      "pixelsAbove12Percent": 0.95
+    },
+    "30-review-brook-obstacle-flow-detail": {
+      "meanAbsoluteRgb": 0.61,
+      "pixelsAbove3Percent": 3.94,
+      "pixelsAbove12Percent": 1.24
+    },
+    "31-review-brook-free-surface-profile": {
+      "meanAbsoluteRgb": 1.473,
+      "pixelsAbove3Percent": 7.11,
+      "pixelsAbove12Percent": 3.32
+    }
+  },
+  "nonColumnarRocks": {
+    "profile": "three-geology-specific-non-columnar-rock-families",
+    "placementCount": 18,
+    "collisionPolicy": "solid-inside-route-distant-nonsolid-outside-boundary",
+    "fluvialTransport": {
+      "model": "active-bedload-historical-flood-lag-and-residual-bank-erratic",
+      "brookWidthMeters": 3.4,
+      "presentMobileLongAxisMeters": [
+        0.16,
+        0.55
+      ],
+      "historicalLagLongAxisMeters": [
+        1.06,
+        1.32
+      ],
+      "historicalLagMaximumBrookWidthFraction": 0.39,
+      "residualErraticLongAxisMeters": 2.48,
+      "mobilityContract": "only-non-solid-sub-step-clasts-move-with-present-flow",
+      "hydraulicEvidenceBoundary": "grade-only-water-model-does-not-prove-exact-transport-competence"
+    },
+    "families": [
+      {
+        "family": "fluvial-cobble",
+        "instances": 6,
+        "geometry": "historical-high-flow-rounded-lag-clast",
+        "silhouetteModel": "single-abraded-ellipsoid-with-broad-load-bearing-footprint",
+        "topology": "single-support-ring-to-rounded-crown-with-non-overlapping-bottom-cap",
+        "supportRingCount": 1,
+        "collapsedSupportRingCount": 0,
+        "supportNormalBoundary": "split-side-course-and-downward-cap-vertices",
+        "minimumTriangleArea": 0.012756,
+        "beddingLedgeCount": 0,
+        "normalProfile": "continuous-abraded-surface-normals",
+        "localDimensionsMeters": [
+          2.1209,
+          0.84,
+          1.3504
+        ],
+        "material": "fluvial-cobble-separated-albedo-roughness-relief",
+        "mapping": "seam-free-object-space-triplanar",
+        "collisionRole": "static-solid-historical-lag-clasts",
+        "distribution": "historical-high-flow-lag-now-immobile-under-present-brook",
+        "transportClasses": [
+          "historical-high-flow-rounded-lag"
+        ],
+        "presentFlowMobilities": [
+          "immobile"
+        ],
+        "longAxisRangeMeters": [
+          1.06,
+          1.315
+        ],
+        "maximumBrookWidthFraction": 0.387,
+        "minimumSupportClearance": -0.08,
+        "maximumSupportClearance": -0.0471,
+        "minimumContactVertexCount": 29
+      },
+      {
+        "family": "bedded-slab",
+        "instances": 6,
+        "geometry": "joint-bounded-tabular-plateau-slab",
+        "silhouetteModel": "joint-bounded-broken-rectangle-not-sphere-derived",
+        "topology": "closed-irregular-ring-stack-with-coplanar-support-cap",
+        "supportRingCount": null,
+        "collapsedSupportRingCount": null,
+        "supportNormalBoundary": null,
+        "minimumTriangleArea": null,
+        "beddingLedgeCount": 2,
+        "normalProfile": "thirty-one-degree-creased-bedding-and-joint-normals",
+        "localDimensionsMeters": [
+          2.1064,
+          0.6265,
+          1.599
+        ],
+        "material": "bedded-slab-separated-albedo-roughness-relief",
+        "mapping": "seam-free-object-space-triplanar",
+        "collisionRole": "static-solid-margin-slabs",
+        "distribution": "dry-glade-bowl-margin-bedding-exposure",
+        "transportClasses": [],
+        "presentFlowMobilities": [],
+        "longAxisRangeMeters": null,
+        "maximumBrookWidthFraction": null,
+        "minimumSupportClearance": -0.065,
+        "maximumSupportClearance": -0.0389,
+        "minimumContactVertexCount": 54
+      },
+      {
+        "family": "angular-talus",
+        "instances": 6,
+        "geometry": "joint-bounded-angular-talus-block",
+        "silhouetteModel": null,
+        "topology": null,
+        "supportRingCount": null,
+        "collapsedSupportRingCount": null,
+        "supportNormalBoundary": null,
+        "minimumTriangleArea": 0.04524,
+        "beddingLedgeCount": 0,
+        "normalProfile": "faceted-fracture-and-bedding-normals",
+        "localDimensionsMeters": [
+          1.7692,
+          0.9,
+          1.6958
+        ],
+        "material": "angular-talus-separated-albedo-roughness-relief",
+        "mapping": "seam-free-object-space-triplanar",
+        "collisionRole": "non-solid-beyond-navigation-boundary",
+        "distribution": "ridge-apron-downslope-talus-beyond-route",
+        "transportClasses": [],
+        "presentFlowMobilities": [],
+        "longAxisRangeMeters": null,
+        "maximumBrookWidthFraction": null,
+        "minimumSupportClearance": -0.09,
+        "maximumSupportClearance": -0.0729,
+        "minimumContactVertexCount": 18
+      }
+    ]
+  },
+  "brookSedimentSorting": {
+    "model": "meander-energy-sorted-point-bar-floodplain-silt-and-cut-bank-exposure",
+    "processSource": "shared-brook-control-line-heightfield-and-bank-curvature",
+    "distribution": "gravity-flow-bed-load-and-inner-bend-point-bar-lag",
+    "contactModel": "terrain-normal-aligned-shallow-bed-and-bar-deposition",
+    "geometry": {
+      "profile": "weathered-fractured-rock-detail-1",
+      "topology": "single-support-ring-to-abraded-crown-with-closed-bottom-cap",
+      "supportRingCount": 1,
+      "collapsedSupportRingCount": 0,
+      "supportNormalBoundary": "split-side-course-and-downward-cap-vertices",
+      "supportVertexCount": 21,
+      "minimumTriangleArea": 0.025994
+    },
+    "material": {
+      "surface": "seam-free-vertex-mineral-varied-rough-dielectric-stream-stone",
+      "mapping": "no-spherical-uv-texture-sampling",
+      "colourMultiplier": "#858e89",
+      "roughness": 0.96,
+      "metalness": 0,
+      "envMapIntensity": 0.06
+    },
+    "activeBedCount": 36,
+    "pointBarLagCount": 20,
+    "maximumSupportClearance": -0.0118,
+    "minimumContactVertexCount": 21
+  },
+  "runtime": {
+    "loading": {
+      "timeToFirstFrameMs": 2176.6,
+      "domInteractiveMs": 53.6,
+      "loadEventMs": 89.1,
+      "resourceCount": 56,
+      "ui": {
+        "visible": false,
+        "phase": "runtime",
+        "status": "Opening the plateau\u2026"
+      }
+    },
+    "performance": {
+      "samples": 180,
+      "medianFrameMs": 16.7,
+      "medianFps": 59.9,
+      "onePercentLowFps": 39.2,
+      "worstFrameMs": 25.6
+    },
+    "minimalChecks": {
+      "launch": true,
+      "render": true,
+      "input": true,
+      "coreLoop": true,
+      "outcome": true,
+      "restart": true
+    },
+    "qa": {
+      "command": "npm run verify",
+      "exitCode": 0,
+      "completeRun": {
+        "terminal": "strong-field-record",
+        "restart": "clean-field-order"
+      },
+      "checks": {
+        "launch": "PASS",
+        "render": "PASS",
+        "input": "PASS",
+        "coreLoop": "PASS",
+        "outcome": "PASS",
+        "restart": "PASS"
+      }
+    },
+    "browserErrors": null
+  }
+}

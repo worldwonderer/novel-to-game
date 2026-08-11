@@ -1,0 +1,145 @@
+{
+  "pass": "brook-response-and-physical-deadwood",
+  "fixedFrameDelta": {
+    "21-review-ground-cover-detail": {
+      "meanAbsoluteRgb": 2.333,
+      "pixelsAbove3Percent": 7.32
+    },
+    "11-review-brook-detail": {
+      "meanAbsoluteRgb": 0.257,
+      "pixelsAbove3Percent": 2.33
+    },
+    "25-review-forest-floor-detritus": {
+      "meanAbsoluteRgb": 0.327,
+      "pixelsAbove3Percent": 2.81
+    }
+  },
+  "clusterCrop": {
+    "beforePaleCyanProxyPixels": 10874,
+    "afterPaleCyanProxyPixels": 105
+  },
+  "runtime": {
+    "loading": {
+      "timeToFirstFrameMs": 1901.3,
+      "domInteractiveMs": 48.9,
+      "loadEventMs": 83.4,
+      "resourceCount": 6,
+      "ui": {
+        "visible": false,
+        "phase": "runtime",
+        "status": "Opening the plateau\u2026"
+      }
+    },
+    "performance": {
+      "samples": 180,
+      "medianFrameMs": 16.7,
+      "medianFps": 59.9,
+      "onePercentLowFps": 39.4,
+      "worstFrameMs": 25.4
+    },
+    "minimalChecks": {
+      "launch": true,
+      "render": true,
+      "input": true,
+      "coreLoop": true,
+      "outcome": true,
+      "restart": true
+    }
+  },
+  "brookResponseStand": {
+    "loaded": true,
+    "fallbackVisible": false,
+    "response": null,
+    "instanceCount": 5,
+    "counts": [
+      5,
+      0,
+      0
+    ],
+    "activeDrawCalls": 2,
+    "placementRole": "brook-response-humid-brush-replacement",
+    "supportModel": "buried-rhizome-to-closed-rachis-to-attached-pinnate-leaflets",
+    "collisionRole": "non-solid-pliable-understory",
+    "dimensionSummary": {
+      "instanceCount": 5,
+      "maximumDiameterMeters": 0.9155,
+      "maximumHeightMeters": 0.2365,
+      "maxDiameterMeters": 1.12,
+      "maxHeightMeters": 0.46,
+      "envelopePassCount": 5
+    },
+    "supportEvidence": {
+      "supportVertexCount": 65,
+      "supportedVertexCount": 65,
+      "supportRatio": 1,
+      "minimumClearance": -0.0301,
+      "maximumClearance": -0.0299,
+      "burialDepth": 0.03
+    },
+    "windState": {
+      "time": 14.75,
+      "horizontalStrength": 0.055,
+      "verticalStrength": 0.012
+    }
+  },
+  "brookDriftwood": {
+    "instanceCount": 10,
+    "drawCalls": 3,
+    "supportModel": "gravity-settled-tangent-aligned-multipoint-deadfall",
+    "collisionRole": "non-solid-visual-accent",
+    "supportEvidence": {
+      "instanceCount": 10,
+      "supportSampleCount": 41,
+      "minimumClearance": -0.0342,
+      "maximumClearance": 0.008,
+      "maximumTerrainSlope": 0.136
+    },
+    "material": {
+      "surface": "water-darkened-furrowed-bark-and-broken-end-grain",
+      "energyModel": "opaque-non-emissive-dielectric-weathered-wood",
+      "moistureClass": "brook-bank-wet",
+      "textureChannels": {
+        "albedo": "world.material.bark-albedo",
+        "roughness": "world.material.bark-roughness",
+        "height": "world.material.bark-height"
+      },
+      "flatShading": false,
+      "envMapIntensity": 0.12
+    },
+    "geometry": [
+      {
+        "variant": "weathered-load-path-1",
+        "profile": "closed-curved-branched-deadwood-with-jagged-fibre-breaks",
+        "surface": "mapped-furrowed-bark-with-distinct-end-grain-and-splinters",
+        "triangleCount": 912,
+        "closedSegmentCount": 9,
+        "primaryBranchCount": 3,
+        "splinterCount": 5,
+        "supportPointCount": 2,
+        "loadPath": "closed-overlapping-trunk-to-branch-volumes-with-tapered-fibre-breaks"
+      },
+      {
+        "variant": "weathered-load-path-2",
+        "profile": "closed-curved-branched-deadwood-with-jagged-fibre-breaks",
+        "surface": "mapped-furrowed-bark-with-distinct-end-grain-and-splinters",
+        "triangleCount": 696,
+        "closedSegmentCount": 7,
+        "primaryBranchCount": 2,
+        "splinterCount": 4,
+        "supportPointCount": 7,
+        "loadPath": "closed-overlapping-trunk-to-branch-volumes-with-tapered-fibre-breaks"
+      },
+      {
+        "variant": "weathered-load-path-3",
+        "profile": "closed-curved-branched-deadwood-with-jagged-fibre-breaks",
+        "surface": "mapped-furrowed-bark-with-distinct-end-grain-and-splinters",
+        "triangleCount": 912,
+        "closedSegmentCount": 9,
+        "primaryBranchCount": 3,
+        "splinterCount": 5,
+        "supportPointCount": 4,
+        "loadPath": "closed-overlapping-trunk-to-branch-volumes-with-tapered-fibre-breaks"
+      }
+    ]
+  }
+}

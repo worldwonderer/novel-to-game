@@ -1,0 +1,1 @@
+Rejected: fork geometry is now structurally continuous and visible at crown bases, but the dominant leaf volume occludes the shoulder cohorts at field distance. The skyline still reads as repeated ovoids. Repair: narrow the main mass, expose flattened shoulders at fork endpoints, and widen biologically plausible age/height distribution.

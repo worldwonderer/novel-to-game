@@ -1,0 +1,119 @@
+{
+  "pass": "iguanodon-dry-skin-roughness",
+  "editorialParityEstimate": {
+    "beforePercent": 85,
+    "afterPercent": 86,
+    "boundary": "visual-direction estimate against the pinned Web Ocean reference, not a deterministic QA score"
+  },
+  "fixedFrameDelta": {
+    "10-review-glade": {
+      "meanAbsoluteRgb": 0.353,
+      "pixelsAbove3Percent": 3.79,
+      "pixelsAbove12Percent": 0.37
+    },
+    "24-review-iguanodon-skin": {
+      "meanAbsoluteRgb": 1.404,
+      "pixelsAbove3Percent": 10.02,
+      "pixelsAbove12Percent": 2.47
+    }
+  },
+  "dynamicPathDelta": {
+    "03-strong-glade-frames": {
+      "meanAbsoluteRgb": 1.126,
+      "pixelsAbove3Percent": 9.2,
+      "pixelsAbove12Percent": 1.72
+    }
+  },
+  "subjectPolygonLuma": {
+    "maskPixelCount": 194776,
+    "beforeMeanLuma255": 96.2,
+    "afterMeanLuma255": 89.63,
+    "beforeLuma95": 175.58,
+    "afterLuma95": 167.5,
+    "beforePixelsAbove220Percent": 1.35,
+    "afterPixelsAbove220Percent": 0.0,
+    "boundary": "fixed manually recorded subject-enclosing polygon; includes some background and is not object-ID segmentation"
+  },
+  "roughnessCalibration": {
+    "source": "authored packed metallic-roughness green channel",
+    "sourceGreenMean": 0.4301,
+    "sourceGreenObservedRange": [
+      0.0078,
+      0.902
+    ],
+    "configuredEffectiveRange": [
+      0.72,
+      0.94
+    ],
+    "observedTexelEffectiveRange": [
+      0.7217,
+      0.9184
+    ],
+    "model": "linear remap preserving authored relative variation",
+    "additionalTextures": 0,
+    "additionalMaterials": 0,
+    "additionalDrawCalls": 0,
+    "geometryChange": "none",
+    "animationChange": "none",
+    "collisionChange": "none"
+  },
+  "skinSnapshot": {
+    "model": "opaque-non-emissive-biological-dielectric",
+    "baseColourSource": "authored-hy3d-albedo-with-neutral-olive-calibration",
+    "albedoMultiplierLinear": [
+      0.7,
+      0.64,
+      0.52
+    ],
+    "roughnessSource": "authored-packed-map-green-channel",
+    "roughnessFactor": 1,
+    "roughnessRange": [
+      0.72,
+      0.94
+    ],
+    "roughnessRemap": "authored-green-linearly-remapped-into-dry-scaled-skin-range",
+    "approximateIndexOfRefraction": 1.42,
+    "specularIntensity": 0.92,
+    "environmentIntensity": 0.48,
+    "normalSource": "authored-tangent-space-map-with-restored-unit-strength",
+    "normalScale": [
+      1,
+      1
+    ],
+    "clearcoat": 0,
+    "transmission": 0,
+    "emission": 0,
+    "evidenceBoundary": "bounded-skin-optics-not-a-claim-about-extinct-species-pigmentation",
+    "normalContinuity": {
+      "model": "crease-bounded-coincident-position-average-across-uv-seams",
+      "creaseDegrees": 52,
+      "tolerance": 1e-05,
+      "duplicateGroups": 9902,
+      "smoothedVertices": 19797
+    }
+  },
+  "runtime": {
+    "loading": {
+      "timeToFirstFrameMs": 2106.3,
+      "domInteractiveMs": 60.4,
+      "loadEventMs": 89.2,
+      "resourceCount": 59
+    },
+    "performance": {
+      "samples": 180,
+      "medianFrameMs": 16.7,
+      "medianFps": 59.9,
+      "onePercentLowFps": 39,
+      "worstFrameMs": 25.8
+    },
+    "minimalChecks": {
+      "launch": true,
+      "render": true,
+      "input": true,
+      "coreLoop": true,
+      "outcome": true,
+      "restart": true
+    },
+    "applicationTests": "190/190 pass"
+  }
+}

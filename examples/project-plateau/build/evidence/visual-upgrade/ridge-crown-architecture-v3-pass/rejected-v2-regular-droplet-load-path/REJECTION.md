@@ -1,0 +1,1 @@
+Rejected: dominant leader removed the cauliflower union, but the canopy collapsed to repeated regular droplets. Long thin trunks still terminate at a leaf volume without a visible forked load path, so the skyline remains lollipop-like rather than biologically supported.

@@ -1,0 +1,209 @@
+{
+  "pass": "ridge-crown-microcohort-v4",
+  "editorialParityEstimate": {
+    "beforePercent": 91,
+    "afterPercent": 92,
+    "uncertaintyPercent": 3,
+    "boundary": "visual-direction estimate against pinned Web Ocean commit 6496c77d37c12e803108c8f932680a7710a62c1c, not a deterministic QA score"
+  },
+  "fixedFrameDelta": {
+    "01-strong-brook-frame": {
+      "meanAbsoluteRgb": 3.875,
+      "pixelsAbove3Percent": 27.07,
+      "pixelsAbove12Percent": 9.52
+    },
+    "03-strong-glade-frames": {
+      "meanAbsoluteRgb": 1.907,
+      "pixelsAbove3Percent": 13.95,
+      "pixelsAbove12Percent": 4.17
+    },
+    "08-review-brook": {
+      "meanAbsoluteRgb": 0.625,
+      "pixelsAbove3Percent": 5.66,
+      "pixelsAbove12Percent": 1.71
+    },
+    "13-review-ridge-volume": {
+      "meanAbsoluteRgb": 1.052,
+      "pixelsAbove3Percent": 8.6,
+      "pixelsAbove12Percent": 2.96
+    },
+    "14-review-gingko": {
+      "meanAbsoluteRgb": 0.59,
+      "pixelsAbove3Percent": 5.72,
+      "pixelsAbove12Percent": 1.15
+    },
+    "15-review-gingko-root": {
+      "meanAbsoluteRgb": 0.366,
+      "pixelsAbove3Percent": 3.33,
+      "pixelsAbove12Percent": 0.88
+    },
+    "23-review-canopy-tree-detail": {
+      "meanAbsoluteRgb": 0.483,
+      "pixelsAbove3Percent": 4.49,
+      "pixelsAbove12Percent": 0.93
+    },
+    "27-review-complete-boundary-forest": {
+      "meanAbsoluteRgb": 2.043,
+      "pixelsAbove3Percent": 11.8,
+      "pixelsAbove12Percent": 5.82
+    },
+    "29-review-riparian-cover": {
+      "meanAbsoluteRgb": 0.833,
+      "pixelsAbove3Percent": 6.79,
+      "pixelsAbove12Percent": 2.02
+    }
+  },
+  "ridgeForest": {
+    "profile": "terrain-cohort-and-understory-sourced-ridge-forest-v4",
+    "ridgeCount": 2,
+    "totalInstances": 598,
+    "totalUnderstoryCrowns": 220,
+    "totalCrowns": 818,
+    "totalDrawCalls": 6,
+    "allRootsSupported": true,
+    "ridges": [
+      {
+        "profile": "terrain-cohort-and-understory-sourced-ridge-forest-v4",
+        "ridge": "world.atmosphere.far-ridge",
+        "instanceCount": 266,
+        "broadCrownCount": 145,
+        "narrowCrownCount": 121,
+        "understoryCrownCount": 105,
+        "totalCrownCount": 371,
+        "drawCalls": 3,
+        "crownArchitectureCounts": {
+          "juvenile-pioneer": 206,
+          "layered-mature": 132,
+          "weathered-emergent": 33
+        },
+        "sourceDamagedCrownCount": 11,
+        "crownVariationAttribute": "ridgeCrownVariation",
+        "broadCrownComponentCount": 20,
+        "broadCrownFoliageCohortCount": 11,
+        "broadCrownStructuralBranchCount": 9,
+        "broadCrownTriangleCount": 520,
+        "narrowCrownComponentCount": 5,
+        "narrowCrownFoliageCohortCount": 4,
+        "narrowCrownStructuralBranchCount": 1,
+        "narrowCrownTriangleCount": 500,
+        "sourceModel": "ridge-slope-drainage-height-and-exposed-stone-tree-plus-gap-understory-establishment",
+        "supportEvidence": {
+          "rootCount": 266,
+          "supportedRootCount": 266,
+          "supportRatio": 1,
+          "maximumRootClearance": 0,
+          "maximumRootEmbedding": 0.06,
+          "interpolation": "barycentric-on-rendered-ridge-triangles"
+        },
+        "crownAttachment": "closed-crown-base-overlaps-load-bearing-trunk-top",
+        "understorySupport": {
+          "rootCount": 105,
+          "supportedRootCount": 105,
+          "supportRatio": 1,
+          "maximumRootClearance": 0,
+          "maximumRootEmbedding": 0.045,
+          "interpolation": "barycentric-on-rendered-ridge-triangles"
+        },
+        "crownSurface": "closed-branch-supported-leaf-cohort-and-whorl-crowns-with-age-asymmetry-and-source-damage",
+        "lighting": "fogged-non-emissive-opaque-dielectric",
+        "collisionRole": "non-solid-distant-background-vegetation",
+        "ridgeSurface": {
+          "version": "process-coupled-distant-ridge-surface-v1",
+          "sourceModel": "rendered-height-drainage-exposed-stone-and-height-fraction-fields",
+          "broadDetailPeriodMeters": 37,
+          "fineDetailPeriodMeters": 13,
+          "maximumHumusDarkening": 0.22,
+          "maximumStoneBlend": 0.28,
+          "temporalModel": "stable-world-space-no-camera-or-time-dependent-pattern",
+          "evidenceBoundary": "distant-surface-response-does-not-add-collision-or-claim-surveyed-geology"
+        }
+      },
+      {
+        "profile": "terrain-cohort-and-understory-sourced-ridge-forest-v4",
+        "ridge": "world.atmosphere.near-ridge",
+        "instanceCount": 332,
+        "broadCrownCount": 172,
+        "narrowCrownCount": 160,
+        "understoryCrownCount": 115,
+        "totalCrownCount": 447,
+        "drawCalls": 3,
+        "crownArchitectureCounts": {
+          "juvenile-pioneer": 182,
+          "layered-mature": 180,
+          "weathered-emergent": 85
+        },
+        "sourceDamagedCrownCount": 12,
+        "crownVariationAttribute": "ridgeCrownVariation",
+        "broadCrownComponentCount": 20,
+        "broadCrownFoliageCohortCount": 11,
+        "broadCrownStructuralBranchCount": 9,
+        "broadCrownTriangleCount": 520,
+        "narrowCrownComponentCount": 5,
+        "narrowCrownFoliageCohortCount": 4,
+        "narrowCrownStructuralBranchCount": 1,
+        "narrowCrownTriangleCount": 500,
+        "sourceModel": "ridge-slope-drainage-height-and-exposed-stone-tree-plus-gap-understory-establishment",
+        "supportEvidence": {
+          "rootCount": 332,
+          "supportedRootCount": 332,
+          "supportRatio": 1,
+          "maximumRootClearance": 0,
+          "maximumRootEmbedding": 0.06,
+          "interpolation": "barycentric-on-rendered-ridge-triangles"
+        },
+        "crownAttachment": "closed-crown-base-overlaps-load-bearing-trunk-top",
+        "understorySupport": {
+          "rootCount": 115,
+          "supportedRootCount": 115,
+          "supportRatio": 1,
+          "maximumRootClearance": 0,
+          "maximumRootEmbedding": 0.045,
+          "interpolation": "barycentric-on-rendered-ridge-triangles"
+        },
+        "crownSurface": "closed-branch-supported-leaf-cohort-and-whorl-crowns-with-age-asymmetry-and-source-damage",
+        "lighting": "fogged-non-emissive-opaque-dielectric",
+        "collisionRole": "non-solid-distant-background-vegetation",
+        "ridgeSurface": {
+          "version": "process-coupled-distant-ridge-surface-v1",
+          "sourceModel": "rendered-height-drainage-exposed-stone-and-height-fraction-fields",
+          "broadDetailPeriodMeters": 37,
+          "fineDetailPeriodMeters": 13,
+          "maximumHumusDarkening": 0.22,
+          "maximumStoneBlend": 0.28,
+          "temporalModel": "stable-world-space-no-camera-or-time-dependent-pattern",
+          "evidenceBoundary": "distant-surface-response-does-not-add-collision-or-claim-surveyed-geology"
+        }
+      }
+    ]
+  },
+  "runtime": {
+    "loading": {
+      "timeToFirstFrameMs": 2138.2,
+      "domInteractiveMs": 59.3,
+      "loadEventMs": 91.5,
+      "resourceCount": 56,
+      "ui": {
+        "visible": false,
+        "phase": "runtime",
+        "status": "Opening the plateau\u2026"
+      }
+    },
+    "performance": {
+      "samples": 180,
+      "medianFrameMs": 16.7,
+      "medianFps": 59.9,
+      "onePercentLowFps": 54.2,
+      "worstFrameMs": 18.5
+    },
+    "minimalChecks": {
+      "launch": true,
+      "render": true,
+      "input": true,
+      "coreLoop": true,
+      "outcome": true,
+      "restart": true
+    },
+    "applicationTests": "194/194 pass",
+    "browserErrors": null
+  }
+}
