@@ -44,7 +44,7 @@ Play the full expedition on desktop, or watch the 15-second gameplay preview on 
 
 The trailer follows [the verified same-take gameplay route](examples/project-plateau/build/media/remotion/LAUNCH_TRAILER.md) and uses Fish Audio synthetic narration. Captions preserve the complete story when muted.
 
-https://github.com/user-attachments/assets/edde9933-c932-4bd9-9b4c-4587bbc516f7
+https://github.com/user-attachments/assets/d2d49776-44be-448b-9f2f-b2364f91b29e
 
 **[Play in your browser — no install](https://plateau.vibecoco.ai)** · [Read the case study](examples/project-plateau/) · [Share feedback](https://github.com/worldwonderer/novel-to-game/discussions/7) · 1–3 min run · desktop WebGL2 · playable prototype
 
