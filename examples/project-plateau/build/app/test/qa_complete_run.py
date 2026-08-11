@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -21,6 +22,30 @@ EVIDENCE = Path(
 BASE_URL = os.environ.get("BASE_URL", "http://127.0.0.1:4173")
 CHROME = Path("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
 ROUTE_INPUT_CONTINUATION_MS = 250
+RUNTIME_FINGERPRINT_SCOPE = (
+    "interactive inputs: index/package manifests, src and public assets; "
+    "generated conversion-preview outputs excluded"
+)
+
+
+def runtime_source_fingerprint() -> str:
+    """Bind the evidence to the interactive files without hashing generated previews."""
+    excluded_prefix = "public/media/project-plateau-preview"
+    paths = [APP / "index.html", APP / "package.json", APP / "package-lock.json"]
+    paths += sorted((APP / "public").rglob("*"))
+    paths += sorted((APP / "src").rglob("*"))
+    digest = hashlib.sha256()
+    for path in paths:
+        if not path.is_file():
+            continue
+        relative = path.relative_to(APP).as_posix()
+        if relative.startswith(excluded_prefix):
+            continue
+        digest.update(relative.encode())
+        digest.update(b"\0")
+        digest.update(path.read_bytes())
+        digest.update(b"\0")
+    return digest.hexdigest()
 
 
 def route_input_calibration(key: str, continuation_ms: int) -> dict[str, object]:
@@ -2244,6 +2269,10 @@ def run() -> dict[str, object]:
     assert all(record["passed"] for record in image_health_records.values()), image_health_records
     return {
         "stage": "current-complete-run",
+        "runtimeSource": {
+            "sha256": runtime_source_fingerprint(),
+            "scope": RUNTIME_FINGERPRINT_SCOPE,
+        },
         "environment": {
             "browser": browser_version,
             "viewport": [1440, 900],

@@ -18,7 +18,7 @@
         "app/src/overhead-cloud-field.js",
         "app/src/main.js"
       ],
-      "provenance": "Project-original deterministic participating-medium cloud field. Balanced/high quality retains eleven bounded Beer-Lambert raymarched volumes in two anti-solar northern-horizon depth bands: six near and five far, with 12/18-step quality and a 56-puff low fallback. It now also uses one deterministic 256 x 256 density texture over a 2,048 m domain for a 620–840 m overhead layer. The visible deck and terrain direct-light attenuation sample that same advected world-space density along the approved sun vector; two sun-path samples use Beer-Lambert extinction 0.00155/m with minimum direct transmittance 0.58 while indirect sky/IBL remains unchanged. The overhead layer replaces the prior deck draw call, patches 200 materials, adds no draw call or collision authority, and disables visible/cloud-shadow influence on low quality. The accepted run records 59.9 median FPS and 39.4 FPS one-percent-low.",
+      "provenance": "Project-original deterministic participating-medium cloud field. Balanced/high quality retains eleven bounded Beer-Lambert raymarched volumes in two anti-solar northern-horizon depth bands: six near and five far, with 12/18-step quality and a 56-puff low fallback. It now also uses one deterministic 256 x 256 density texture over a 2,048 m domain for a 620–840 m overhead layer. The visible deck and terrain direct-light attenuation sample that same advected world-space density along the approved sun vector; two sun-path samples use Beer-Lambert extinction 0.00155/m with minimum direct transmittance 0.58 while indirect sky/IBL remains unchanged. The overhead layer replaces the prior deck draw call, patches 200 materials, adds no draw call or collision authority, and disables visible/cloud-shadow influence on low quality.",
       "rights": "Project-original code-authored output.",
       "fallback": "Low quality disables the overhead deck and its direct-light attenuation while retaining the eleven-bank system's 56 bounded lit cloud puffs; terrain lighting, navigation and collision remain authoritative."
     },
@@ -285,7 +285,7 @@
       "key": "tool.period_rifle",
       "status": "adopted",
       "source": [
-        "app/public/assets/expedition-rifle-hands-hy3d-v31-50k-v1-1k.glb",
+        "app/public/assets/expedition-rifle-hands-hy3d-v31-50k-1k.glb",
         "app/src/hy3d-rifle.js"
       ],
       "provenance": "Project-specific ImageGen reference reconstructed with Tencent Hunyuan 3D and locally optimized.",
@@ -305,7 +305,7 @@
       "key": "threat.pterodactyl",
       "status": "adopted",
       "source": [
-        "app/public/assets/pterodactyl-hy3d-v31.glb",
+        "app/public/assets/pterodactyl-hy3d-v35-stylized.glb",
         "app/src/hy3d-pterodactyl.js"
       ],
       "provenance": "Project-specific generated creature mesh with locally authored flight posing.",

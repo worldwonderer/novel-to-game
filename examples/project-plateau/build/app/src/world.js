@@ -9162,6 +9162,16 @@ function makeRifleMount(scene) {
   return group;
 }
 
+export async function loadOptionalAssetVisual({ load, attach, onLoadFailure }) {
+  let template;
+  try {
+    template = await load();
+  } catch (error) {
+    return onLoadFailure(error);
+  }
+  return attach(template);
+}
+
 export function createWorld(scene) {
   const terrain = makeTerrain(scene);
   const routeAndBrook = makeRouteAndBrook(scene);
@@ -9336,13 +9346,14 @@ export function createWorld(scene) {
           fieldCameraVisualError = error instanceof Error ? error.message : String(error);
           throw new Error(`Required HY3D field camera failed to load: ${fieldCameraVisualError}`);
         });
-      const heroGingkoTask = loadHeroGingkoTemplate()
-        .then((template) => {
+      const heroGingkoTask = loadOptionalAssetVisual({
+        load: loadHeroGingkoTemplate,
+        attach: (template) => {
           attachHeroGingkoVisual(heroGingko, template);
           heroGingkoVisualStatus = 'original-asset-ready';
           return { status: heroGingkoVisualStatus, attached: 1 };
-        })
-        .catch((error) => {
+        },
+        onLoadFailure: (error) => {
           heroGingkoVisualStatus = 'original-fallback';
           heroGingkoVisualError = error instanceof Error ? error.message : String(error);
           return {
@@ -9350,9 +9361,11 @@ export function createWorld(scene) {
             attached: 0,
             error: heroGingkoVisualError,
           };
-        });
-      const basaltShelfTask = loadBasaltShelfTemplate()
-        .then((template) => {
+        },
+      });
+      const basaltShelfTask = loadOptionalAssetVisual({
+        load: loadBasaltShelfTemplate,
+        attach: (template) => {
           const supportEvidence = basalt.assetAnchors.map((anchor) => {
             attachBasaltShelfVisual(anchor, template, basaltDetailTextures);
             return measureBasaltShelfSupport(anchor);
@@ -9364,8 +9377,8 @@ export function createWorld(scene) {
             attached: basalt.assetAnchors.length,
             supportEvidence,
           };
-        })
-        .catch((error) => {
+        },
+        onLoadFailure: (error) => {
           basalt.proceduralFallback.visible = true;
           basaltShelfVisualStatus = 'original-fallback';
           basaltShelfVisualError = error instanceof Error ? error.message : String(error);
@@ -9374,9 +9387,11 @@ export function createWorld(scene) {
             attached: 0,
             error: basaltShelfVisualError,
           };
-        });
-      const brookBoulderTask = loadBrookBoulderTemplate()
-        .then((template) => {
+        },
+      });
+      const brookBoulderTask = loadOptionalAssetVisual({
+        load: loadBrookBoulderTemplate,
+        attach: (template) => {
           attachBrookBoulderVisual(brookBoulder, template, rockTextures);
           settleBrookBoulderAsset(brookBoulder);
           const supportEvidence = measureBrookBoulderSupport(brookBoulder);
@@ -9386,8 +9401,8 @@ export function createWorld(scene) {
             attached: 1,
             supportEvidence,
           };
-        })
-        .catch((error) => {
+        },
+        onLoadFailure: (error) => {
           brookBoulder.userData.fallback.visible = true;
           brookBoulderVisualStatus = 'original-fallback';
           brookBoulderVisualError = error instanceof Error ? error.message : String(error);
@@ -9396,9 +9411,11 @@ export function createWorld(scene) {
             attached: 0,
             error: brookBoulderVisualError,
           };
-        });
-      const fernLibraryTask = loadFernLibraryTemplate()
-        .then((template) => {
+        },
+      });
+      const fernLibraryTask = loadOptionalAssetVisual({
+        load: loadFernLibraryTemplate,
+        attach: (template) => {
           const primaryVisual = attachFernLibraryVisual(
             vegetation.fernAssetAnchor,
             template,
@@ -9429,8 +9446,8 @@ export function createWorld(scene) {
               brookResponse: brookResponseVisual.userData.supportSummary,
             },
           };
-        })
-        .catch((error) => {
+        },
+        onLoadFailure: (error) => {
           for (const anchor of [
             vegetation.fernAssetAnchor,
             accentFernAssetAnchor,
@@ -9446,9 +9463,11 @@ export function createWorld(scene) {
             attached: 0,
             error: fernLibraryVisualError,
           };
-        });
-      const groundCoverLibraryTask = loadGroundCoverLibraryTemplate()
-        .then((template) => {
+        },
+      });
+      const groundCoverLibraryTask = loadOptionalAssetVisual({
+        load: loadGroundCoverLibraryTemplate,
+        attach: (template) => {
           const visual = attachGroundCoverLibraryVisual(
             environmentDensity.userData.groundCoverAssetAnchor,
             template,
@@ -9466,8 +9485,8 @@ export function createWorld(scene) {
             attached: visual.userData.instanceCount,
             supportEvidence: visual.userData.supportSummary,
           };
-        })
-        .catch((error) => {
+        },
+        onLoadFailure: (error) => {
           environmentDensity.userData.groundCoverMeshes.forEach((mesh) => { mesh.visible = true; });
           environmentDensity.userData.groundCoverActiveDrawCalls =
             environmentDensity.userData.groundCoverFallbackDrawCalls;
@@ -9481,9 +9500,11 @@ export function createWorld(scene) {
             attached: 0,
             error: groundCoverLibraryVisualError,
           };
-        });
-      const treeFernLibraryTask = loadTreeFernLibraryTemplate()
-        .then((template) => {
+        },
+      });
+      const treeFernLibraryTask = loadOptionalAssetVisual({
+        load: loadTreeFernLibraryTemplate,
+        attach: (template) => {
           const visual = attachTreeFernLibraryVisual(
             habitatAccents.treeFernAssetAnchor,
             template,
@@ -9496,8 +9517,8 @@ export function createWorld(scene) {
             attached: visual.userData.instanceCount,
             supportEvidence: visual.userData.supportSummary,
           };
-        })
-        .catch((error) => {
+        },
+        onLoadFailure: (error) => {
           habitatAccents.treeFernAssetAnchor.userData.fallbackMeshes.forEach((mesh) => {
             mesh.visible = true;
           });
@@ -9511,9 +9532,11 @@ export function createWorld(scene) {
             attached: 0,
             error: treeFernLibraryVisualError,
           };
-        });
-      const canopyTreeLibraryTask = loadCanopyTreeLibraryTemplate()
-        .then((template) => {
+        },
+      });
+      const canopyTreeLibraryTask = loadOptionalAssetVisual({
+        load: loadCanopyTreeLibraryTemplate,
+        attach: (template) => {
           const visual = attachCanopyTreeLibraryVisual(
             vegetation.canopyTreeAssetAnchor,
             template,
@@ -9526,8 +9549,8 @@ export function createWorld(scene) {
             attached: visual.userData.instanceCount,
             supportEvidence: visual.userData.supportSummary,
           };
-        })
-        .catch((error) => {
+        },
+        onLoadFailure: (error) => {
           vegetation.canopyTreeAssetAnchor.userData.fallbackMeshes.forEach((mesh) => {
             mesh.visible = true;
           });
@@ -9541,9 +9564,11 @@ export function createWorld(scene) {
             attached: 0,
             error: canopyTreeLibraryVisualError,
           };
-        });
-      const coverCanopyTask = loadCanopyTreeLibraryTemplate()
-        .then((template) => {
+        },
+      });
+      const coverCanopyTask = loadOptionalAssetVisual({
+        load: loadCanopyTreeLibraryTemplate,
+        attach: (template) => {
           const visual = attachCanopyTreeLibraryVisual(
             riparianCover.assetAnchor,
             template,
@@ -9558,8 +9583,8 @@ export function createWorld(scene) {
             attached: visual.userData.instanceCount,
             supportEvidence: visual.userData.supportSummary,
           };
-        })
-        .catch((error) => {
+        },
+        onLoadFailure: (error) => {
           riparianCover.assetAnchor.userData.fallbackMeshes.forEach((mesh) => {
             mesh.visible = true;
           });
@@ -9573,9 +9598,11 @@ export function createWorld(scene) {
             attached: 0,
             error: coverCanopyVisualError,
           };
-        });
-      const forestEdgeCanopyTask = loadCanopyTreeLibraryTemplate()
-        .then((template) => {
+        },
+      });
+      const forestEdgeCanopyTask = loadOptionalAssetVisual({
+        load: loadCanopyTreeLibraryTemplate,
+        attach: (template) => {
           const visual = attachCanopyTreeLibraryVisual(
             environmentDensity.userData.forestEdgeAssetAnchor,
             template,
@@ -9597,8 +9624,8 @@ export function createWorld(scene) {
             attached: visual.userData.instanceCount,
             supportEvidence: visual.userData.supportSummary,
           };
-        })
-        .catch((error) => {
+        },
+        onLoadFailure: (error) => {
           if (environmentDensity.userData.forestEdgeAssetAnchor.userData.assetVisual) {
             environmentDensity.userData.forestEdgeAssetAnchor.userData.assetVisual.visible = false;
           }
@@ -9614,7 +9641,8 @@ export function createWorld(scene) {
             attached: 0,
             error: forestEdgeCanopyVisualError,
           };
-        });
+        },
+      });
       assetVisualPromise = Promise.all([
         familyTask,
         pterodactylTask,

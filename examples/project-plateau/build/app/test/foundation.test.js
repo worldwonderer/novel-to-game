@@ -16,6 +16,7 @@ import {
   CANOPY_WIND_PROFILE,
   PTERODACTYL_ATTACK_CYCLE_SECONDS,
   createWorld,
+  loadOptionalAssetVisual,
   pterodactylAttackFlightState,
   pterodactylAttackPose,
   pterodactylWingBeat,
@@ -43,6 +44,33 @@ test('foundation exposes the locked viewport and performance budgets', () => {
   assert.equal(PRODUCT_BUDGET.medianFps, 45);
   assert.equal(PRODUCT_BUDGET.onePercentLowFps, 30);
   assert.equal(PRODUCT_BUDGET.ttiMs, 8000);
+});
+
+test('optional asset fallback handles load failure without swallowing attachment invariants', async () => {
+  let fallbackCalls = 0;
+  const fallback = await loadOptionalAssetVisual({
+    load: async () => { throw new Error('asset unavailable'); },
+    attach: () => { throw new Error('must not attach'); },
+    onLoadFailure(error) {
+      fallbackCalls += 1;
+      return { status: 'fallback', error: error.message };
+    },
+  });
+  assert.deepEqual(fallback, { status: 'fallback', error: 'asset unavailable' });
+  assert.equal(fallbackCalls, 1);
+
+  await assert.rejects(
+    loadOptionalAssetVisual({
+      load: async () => ({ name: 'valid-template' }),
+      attach: () => { throw new Error('support invariant failed'); },
+      onLoadFailure() {
+        fallbackCalls += 1;
+        return { status: 'fallback' };
+      },
+    }),
+    /support invariant failed/,
+  );
+  assert.equal(fallbackCalls, 1, 'attachment failures must fail closed');
 });
 
 test('procedural placement is deterministic for a recorded seed', () => {
