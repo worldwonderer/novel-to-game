@@ -445,6 +445,15 @@ function normalizedCrownGeometry(profile) {
   geometry.userData.profile = profile === 'broad'
     ? 'closed-branch-supported-eleven-leaf-cohort-broad-crown-v4'
     : 'closed-leader-supported-four-whorl-narrow-distant-crown-v4';
+  geometry.userData.closedVolume = true;
+  geometry.userData.closedComponentCount = profile === 'broad' ? 20 : 5;
+  geometry.userData.foliageCohortCount = profile === 'broad' ? 11 : 4;
+  geometry.userData.structuralBranchComponentCount = profile === 'broad' ? 9 : 1;
+  geometry.userData.componentOverlap = profile === 'broad'
+    ? 'nine-tapered-forks-overlap-trunk-or-parent-cohort-and-eleven-closed-leaf-cohorts'
+    : 'one-closed-tapered-leader-overlaps-trunk-and-four-closed-whorl-cohorts';
+  geometry.userData.surfaceModel = 'branch-supported-cohorts-with-age-asymmetry-and-damage';
+  geometry.userData.triangleCount = geometry.index.count / 3;
   return geometry;
 }
 

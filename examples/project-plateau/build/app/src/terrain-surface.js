@@ -196,6 +196,8 @@ function makeTerrain(scene) {
     new THREE.Float32BufferAttribute(colluviumWeights, 1),
   );
   geometry.rotateX(-Math.PI / 2);
+  geometry.userData.profile =
+    'named-process-heightfield-with-brook-glade-and-east-escarpment';
   const material = new THREE.MeshStandardMaterial({
     color: 0xffffff,
     vertexColors: true,
@@ -762,6 +764,7 @@ function makeTerrain(scene) {
       `);
   };
   material.customProgramCacheKey = () => 'terrain-ecological-geological-micro-surface-v13';
+  material.userData.surface = 'source-coupled-ecological-soil-and-basalt-weathering';
   const mesh = new THREE.Mesh(geometry, material);
   mesh.receiveShadow = true;
   mesh.name = 'world.connected_route.terrain';

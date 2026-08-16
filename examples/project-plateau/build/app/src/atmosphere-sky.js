@@ -468,6 +468,13 @@ function createCloudVolumeMaterial(variant, opacity) {
       }
     `,
   });
+  material.userData.surface = 'beer-lambert-single-scattering-cloud-volume';
+  material.userData.physics = Object.freeze({
+    medium: 'water-droplet-participating-medium',
+    extinctionLaw: 'Beer-Lambert',
+    lighting: 'height-ambient-plus-sun-ray-self-shadow',
+    condensationBase: 'shared-lifting-condensation-level',
+  });
   return material;
 }
 
