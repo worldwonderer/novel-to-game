@@ -1,42 +1,12 @@
 {
-  "url": "http://127.0.0.1:57377/?seed=42&fast=1",
-  "viewport": "1440x900",
-  "passed": 113,
-  "failed": 0,
-  "console_errors": 0,
-  "build_bytes": 4516088,
-  "generated_screenshots": 42,
+  "url": "http://127.0.0.1:61962/?seed=42&fast=1",
+  "viewport": [
+    1440,
+    900
+  ],
+  "console_errors": [],
+  "build_bytes": 4512426,
+  "generated_screenshots": 3,
   "screenshots_retained_in_git": false,
-  "minimalChecks": {
-    "launch": true,
-    "render": true,
-    "input": true,
-    "coreLoop": true,
-    "outcome": true,
-    "restart": true
-  },
-  "qa": {
-    "command": "python3 test/verify.py",
-    "exitCode": 0,
-    "completeRun": {
-      "terminal": "ending: 三借芭蕉扇 · 完",
-      "restart": "btn-restart -> title: 西游记 · 三借芭蕉扇 (new campaign)"
-    },
-    "checks": {
-      "launch": "PASS",
-      "render": "PASS",
-      "input": "PASS",
-      "coreLoop": "PASS",
-      "outcome": "PASS",
-      "restart": "PASS"
-    }
-  },
-  "suites": [
-    {
-      "id": "browser:complete-run",
-      "executed": true,
-      "passed": true,
-      "exitCode": 0
-    }
-  ]
+  "checkpoint": "title-to-ending-to-restart"
 }

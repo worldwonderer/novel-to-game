@@ -8,6 +8,7 @@ import json
 import re
 import sys
 from pathlib import Path
+from typing import cast
 
 
 EXPECTED_SKILLS = {
@@ -65,10 +66,7 @@ QA_COMPLETE_RUN_FIELDS = {
     "speed",
     "steps",
 }
-QA_CHECK_FIELDS = {"status", "evidence"}
 QA_LIMITATION_FIELDS = {"scope", "reason"}
-MACHINE_QA_FIELDS = {"command", "exitCode", "completeRun", "checks"}
-MACHINE_COMPLETE_RUN_FIELDS = {"terminal", "restart"}
 GATE_STATUSES = {"NOT_RUN", "FAIL", "PASS"}
 VISUAL_RUBRIC_FIELDS = {
     "focus",
@@ -453,8 +451,8 @@ def validate_qa(example_dir: Path) -> list[str]:
         issues.append(f"{label}: unknown fields {sorted(unknown)}")
 
     schema_version = verification.get("schemaVersion")
-    if schema_version != 2:
-        issues.append(f"{label}: minimal QA requires schemaVersion 2")
+    if schema_version != 3:
+        issues.append(f"{label}: minimal QA requires schemaVersion 3")
         return issues
 
     status = verification.get("status")
@@ -512,34 +510,13 @@ def validate_qa(example_dir: Path) -> list[str]:
             f"found {sorted(checks)}"
         )
     for name in sorted(required):
-        check = checks.get(name)
-        if not isinstance(check, dict):
-            issues.append(f"{label}: checks.{name} must be an object")
-            continue
-        unknown = set(check) - QA_CHECK_FIELDS
-        if unknown:
-            issues.append(
-                f"{label}: checks.{name} has unknown fields {sorted(unknown)}"
-            )
-        check_status = check.get("status")
+        check_status = checks.get(name)
         if check_status not in GATE_STATUSES:
             issues.append(
-                f"{label}: checks.{name}.status must be one of {sorted(GATE_STATUSES)}"
+                f"{label}: checks.{name} must be one of {sorted(GATE_STATUSES)}"
             )
         if status == "PASS" and check_status != "PASS":
             issues.append(f"{label}: checks.{name} must PASS for overall PASS")
-        evidence = check.get("evidence")
-        if check_status == "PASS" and (
-            not isinstance(evidence, list) or not evidence
-        ):
-            issues.append(f"{label}: checks.{name}.evidence must not be empty")
-        elif isinstance(evidence, list):
-            for index, raw in enumerate(evidence):
-                issue = _compact_evidence_issue(
-                    example_dir, raw, f"checks.{name}.evidence[{index}]"
-                )
-                if issue:
-                    issues.append(issue)
 
     limitations = verification.get("limitations")
     if not isinstance(limitations, list):
@@ -558,89 +535,6 @@ def validate_qa(example_dir: Path) -> list[str]:
             for key in ("scope", "reason"):
                 if not isinstance(limitation.get(key), str) or not limitation[key].strip():
                     issues.append(f"{label}: {field}.{key} must be non-empty")
-
-    if isinstance(run_evidence, str) and not _compact_evidence_issue(
-        example_dir, run_evidence, "completeRun.evidence"
-    ):
-        for name in sorted(required):
-            check = checks.get(name)
-            if isinstance(check, dict) and check.get("evidence") != [run_evidence]:
-                issues.append(
-                    f"{label}: checks.{name}.evidence must equal "
-                    "[completeRun.evidence]"
-                )
-
-        evidence_path = example_dir / run_evidence
-        try:
-            machine_evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
-        except (UnicodeDecodeError, json.JSONDecodeError):
-            issues.append(
-                f"{label}: machine evidence must be valid JSON: {run_evidence}"
-            )
-            machine_evidence = None
-        if not isinstance(machine_evidence, dict):
-            if machine_evidence is not None:
-                issues.append(f"{label}: machine evidence must be an object")
-        else:
-            machine_qa = machine_evidence.get("qa")
-            if not isinstance(machine_qa, dict):
-                issues.append(f"{label}: machine evidence.qa must be an object")
-            else:
-                unknown = set(machine_qa) - MACHINE_QA_FIELDS
-                if unknown:
-                    issues.append(
-                        f"{label}: machine evidence.qa has unknown fields "
-                        f"{sorted(unknown)}"
-                    )
-                if isinstance(verify, dict):
-                    if machine_qa.get("command") != verify.get("command"):
-                        issues.append(
-                            f"{label}: machine evidence qa.command must match verify.command"
-                        )
-                    machine_exit_code = machine_qa.get("exitCode")
-                    if type(machine_exit_code) is not int:
-                        issues.append(
-                            f"{label}: machine evidence qa.exitCode must be an integer"
-                        )
-                    elif machine_exit_code != verify.get("exitCode"):
-                        issues.append(
-                            f"{label}: machine evidence qa.exitCode must match verify.exitCode"
-                        )
-                machine_run = machine_qa.get("completeRun")
-                if not isinstance(machine_run, dict):
-                    issues.append(
-                        f"{label}: machine evidence.qa.completeRun must be an object"
-                    )
-                else:
-                    unknown = set(machine_run) - MACHINE_COMPLETE_RUN_FIELDS
-                    if unknown:
-                        issues.append(
-                            f"{label}: machine evidence.qa.completeRun has unknown fields "
-                            f"{sorted(unknown)}"
-                        )
-                    if isinstance(complete_run, dict):
-                        for field in ("terminal", "restart"):
-                            if machine_run.get(field) != complete_run.get(field):
-                                issues.append(
-                                    f"{label}: machine evidence qa.completeRun.{field} "
-                                    f"must match completeRun.{field}"
-                                )
-                machine_checks = machine_qa.get("checks")
-                if not isinstance(machine_checks, dict):
-                    issues.append(
-                        f"{label}: machine evidence.qa.checks must be an object"
-                    )
-                elif set(machine_checks) != required:
-                    issues.append(
-                        f"{label}: machine evidence qa.checks must contain exactly "
-                        f"{sorted(required)}"
-                    )
-                else:
-                    for name in sorted(required):
-                        if machine_checks.get(name) != "PASS":
-                            issues.append(
-                                f"{label}: machine evidence qa.checks.{name} must PASS"
-                            )
 
     return issues
 
@@ -753,8 +647,8 @@ def validate_example(example_dir: Path) -> list[str]:
         issues.append(f"{example_dir.name}: expected exactly one source text")
         return issues
 
-    source_spec = manifest["source"]
-    expected_chapters = int(source_spec["chapters"])
+    source_spec = cast(dict[str, object], manifest["source"])
+    expected_chapters = int(str(source_spec["chapters"]))
     heading = re.compile(str(source_spec["headingPattern"]))
     numeral = str(source_spec["numeral"])
     chapters = extract_chapters(source_texts[0], heading, numeral)

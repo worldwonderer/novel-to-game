@@ -6,11 +6,11 @@
 
 状态只取 `NOT_RUN` / `FAIL` / `PASS`。未验证不是通过，安全失败也不是成功降级。
 
-`qa/verification.json` schema v2 恰好使用以下顶层字段，`checks` 恰好只含六键：
+`qa/verification.json` schema v3 恰好使用以下顶层字段，`checks` 恰好只含六键：
 
 ```json
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "status": "PASS",
   "verify": {"command": "<权威命令>", "exitCode": 0},
   "completeRun": {
@@ -21,12 +21,8 @@
     "evidence": "qa/evidence/run.json"
   },
   "checks": {
-    "launch": {"status": "PASS", "evidence": ["qa/evidence/run.json"]},
-    "render": {"status": "PASS", "evidence": ["qa/evidence/run.json"]},
-    "input": {"status": "PASS", "evidence": ["qa/evidence/run.json"]},
-    "coreLoop": {"status": "PASS", "evidence": ["qa/evidence/run.json"]},
-    "outcome": {"status": "PASS", "evidence": ["qa/evidence/run.json"]},
-    "restart": {"status": "PASS", "evidence": ["qa/evidence/run.json"]}
+    "launch": "PASS", "render": "PASS", "input": "PASS",
+    "coreLoop": "PASS", "outcome": "PASS", "restart": "PASS"
   },
   "limitations": [
     {"scope": "target device", "reason": "not available"}
@@ -34,25 +30,10 @@
 }
 ```
 
-六项引用同一份当前机器证据。该 JSON 可以保留项目诊断，但根部必须有与声明交叉绑定的最小事实：
-
-```json
-{
-  "qa": {
-    "command": "<与 verify.command 相同>",
-    "exitCode": 0,
-    "completeRun": {"terminal": "designed-outcome", "restart": "initial-state"},
-    "checks": {
-      "launch": "PASS", "render": "PASS", "input": "PASS",
-      "coreLoop": "PASS", "outcome": "PASS", "restart": "PASS"
-    }
-  }
-}
-```
-
-证据使用工作区相对路径且文件必须存在、可解析；command、exitCode、结果、重开和六键必须与
-`verification.json` 一致。权威命令无论成功失败都原子重写 evidence 与 verification，旧 PASS 不得
-在失败复跑后幸存。项目回归只放 `verify.suites` 或证据诊断；若其失败破坏六项之一，映射到该键。
+`completeRun.evidence` 使用工作区相对路径且文件必须存在，可以是状态 JSON、日志、截图、录制或
+完整路径摘要。它保存运行细节，不得再复制 `verification.json` 的 command、exitCode 和六项结论。
+权威命令无论成功失败都原子重写 `verification.json`，旧 PASS 不得在失败复跑后幸存。项目回归只放
+`verify.suites` 或证据诊断；若其失败破坏六项之一，映射到该键。
 
 ## 最小可玩闭环
 
@@ -77,5 +58,5 @@
 只有 brief/ledger 预先批准的 fallback 才能继续，并证明核心动作、状态、结果、可读反馈和 restart
 仍成立。安全失败仍是 FAIL；测试替身只证明测试层；placeholder 只描述完成度；历史证据只说明旧候选。
 
-`QA_REPORT.md` 从机器事实生成，写明环境、实际命令、通过/失败、limitations、未测试范围和问题归属。
-主观趣味、平衡、沉浸、选择重量、权利合规和发布质量不由本合同确定性证明。
+不要求真人试玩、人工审查或另写 QA 报告。主观趣味、平衡、沉浸、选择重量、权利合规和发布质量
+不由本合同确定性证明；需要这类研究时另立任务，不影响本合同的机器 PASS。

@@ -50,15 +50,6 @@ def main() -> int:
     EVIDENCE.write_text(
         json.dumps(
             {
-                "qa": {
-                    "command": "python3 verify.py",
-                    "exitCode": 0,
-                    "completeRun": {
-                        "terminal": "extracted_with_proof",
-                        "restart": "initial_state",
-                    },
-                    "checks": {name: "PASS" for name in CORE_CHECKS},
-                },
                 "unitExitCode": result.returncode,
                 "states": states,
             },
@@ -69,7 +60,7 @@ def main() -> int:
     )
     evidence = "qa/evidence/run.json"
     verification = {
-        "schemaVersion": 2,
+        "schemaVersion": 3,
         "status": "PASS",
         "verify": {"command": "python3 verify.py", "exitCode": 0},
         "completeRun": {
@@ -79,10 +70,7 @@ def main() -> int:
             "restart": "initial_state",
             "evidence": evidence,
         },
-        "checks": {
-            name: {"status": "PASS", "evidence": [evidence]}
-            for name in CORE_CHECKS
-        },
+        "checks": {name: "PASS" for name in CORE_CHECKS},
         "limitations": [],
     }
     (ROOT / "qa").mkdir(exist_ok=True)

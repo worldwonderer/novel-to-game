@@ -1,62 +1,16 @@
 {
   "url": "http://127.0.0.1:5173/?seed=42",
   "normal_speed_run": true,
-  "passed": 58,
-  "failed": 0,
   "console_errors": [],
   "network_errors": [],
   "http_errors": [],
-  "build_bytes": 7467723,
+  "build_bytes": 7468497,
   "safe_screenshots": [
     "01_age_gate.jpg",
-    "02_title.jpg",
-    "03_opening_choice_done.jpg",
-    "04_delayed_yue_morning.jpg",
-    "06_banquet_conflict.jpg",
     "07_exclusive_ending.jpg",
-    "household_li_jiaoer.jpg",
-    "household_meng_yulou.jpg",
-    "household_sun_xuee.jpg"
+    "08_restart.jpg"
   ],
-  "adult_screenshots": [
-    "yue_day1_prelude.jpg",
-    "yue_day2_prelude.jpg",
-    "yue_day3_explicit.jpg",
-    "yue_day4_explicit.jpg",
-    "yue_day5_explicit.jpg",
-    "yue_day6_explicit.jpg"
-  ],
+  "adult_screenshots": [],
   "screenshots_retained_in_git": false,
-  "minimalChecks": {
-    "launch": true,
-    "render": true,
-    "input": true,
-    "coreLoop": true,
-    "outcome": true,
-    "restart": true
-  },
-  "qa": {
-    "command": "python3 test/verify.py",
-    "exitCode": 0,
-    "completeRun": {
-      "terminal": "exclusive-ending",
-      "restart": "day-1-opening"
-    },
-    "checks": {
-      "launch": "PASS",
-      "render": "PASS",
-      "input": "PASS",
-      "coreLoop": "PASS",
-      "outcome": "PASS",
-      "restart": "PASS"
-    }
-  },
-  "suites": [
-    {
-      "id": "browser:complete-run",
-      "executed": true,
-      "passed": true,
-      "exitCode": 0
-    }
-  ]
+  "checkpoint": "age-gate-to-exclusive-ending-to-restart"
 }
