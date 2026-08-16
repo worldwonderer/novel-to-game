@@ -75,10 +75,10 @@
         "player": {
           "position": {
             "x": 2.389,
-            "z": 62.022
+            "z": 62
           },
-          "remainingLight": 100.524,
-          "distanceTravelled": 133.814,
+          "remainingLight": 100.366,
+          "distanceTravelled": 133.982,
           "plateStatus": [
             "exposed",
             "exposed",
@@ -133,7 +133,7 @@
       ],
       "state": {
         "acceptedInputCount": 15,
-        "distanceTravelled": 133.814
+        "distanceTravelled": 133.982
       }
     },
     "coreLoop": {
@@ -163,10 +163,10 @@
         "player": {
           "position": {
             "x": 2.389,
-            "z": 62.022
+            "z": 62
           },
-          "remainingLight": 100.524,
-          "distanceTravelled": 133.814,
+          "remainingLight": 100.366,
+          "distanceTravelled": 133.982,
           "plateStatus": [
             "exposed",
             "exposed",

@@ -1,12 +1,15 @@
 import { planarAxesForHeading } from './controller.js';
 import {
   FAMILY_BEHAVIOR_CYCLE_SECONDS,
+  MAX_STEADY_DRIFT_RADIANS,
+  cameraDriftFromExposure,
   familyMomentForState,
   frameForState,
 } from './field-photography.js';
 import { integrateMovement } from './simulation-movement.js';
 export {
   FAMILY_BEHAVIOR_CYCLE_SECONDS,
+  MAX_STEADY_DRIFT_RADIANS,
   familyMomentForState,
   frameForState,
 };
@@ -54,7 +57,7 @@ export const RESULT_BANDS = Object.freeze([
     copy: 'Living form, more than one angle. The argument can begin again.',
   }),
   Object.freeze({
-    key: 'strong-field-record', min: 6, max: 7,
+    key: 'strong-field-record', min: 6, max: 8,
     title: 'Strong field record',
     copy: 'Scale. Living form. Behavior. The field record holds.',
   }),
@@ -64,6 +67,7 @@ const SPEED = Object.freeze({ walk: 4.2, sprint: 6.8, crouch: 2.2 });
 const ACCELERATION = Object.freeze({ walk: 18, sprint: 18, crouch: 16 });
 const DECELERATION = 18;
 const REVERSAL_ACCELERATION = 30;
+const KEYBOARD_LOOK_RADIANS_PER_SECOND = Object.freeze({ horizontal: 1.2, vertical: 1 });
 const CROUCH_COVER_RECOVERY_MULTIPLIER = 1.8;
 const THREAT_STATES = Object.freeze(['distant', 'watch', 'search', 'attack']);
 
@@ -95,6 +99,8 @@ function emptyPlate(index) {
     lostPoints: 0,
     label: null,
     frameKey: null,
+    sourceFrameKey: null,
+    stability: null,
     composition: null,
     subject: null,
     behavior: null,
@@ -229,7 +235,7 @@ export function abandonPromptDue(state) {
 }
 
 export function resultBandForEvidence(points) {
-  const bounded = Math.max(0, Math.min(7, points));
+  const bounded = Math.max(0, Math.min(8, points));
   return RESULT_BANDS.find((band) => bounded >= band.min && bounded <= band.max);
 }
 
@@ -260,6 +266,11 @@ export function startExposure(state) {
       plateIndex,
       remainingSeconds: EXPOSURE_SECONDS,
       zone: state.zone,
+      startHeading: state.heading,
+      startPitch: state.pitch,
+      maxCameraDrift: 0,
+      braced: state.stance === 'crouch' || state.inCover,
+      driftLimit: MAX_STEADY_DRIFT_RADIANS * ((state.stance === 'crouch' || state.inCover) ? 1.8 : 1),
     },
     previewSeconds: 0,
     velocity: { x: 0, z: 0 },
@@ -449,6 +460,12 @@ function commitReturnRoute(state, zone) {
 function submitAtFort(state) {
   const evidence = intactEvidence(state);
   const band = resultBandForEvidence(evidence);
+  const aerialEvidence = state.plates.some(
+    (plate) => plate.status === 'exposed' && plate.behavior === 'predatory-dive',
+  );
+  const gunshotCallback = state.gunshotFired
+    ? 'The report carried. Something answered by the brook.'
+    : null;
   return copyState(state, {
     runStatus: 'result',
     cameraRaised: false,
@@ -468,9 +485,12 @@ function submitAtFort(state) {
       remainingLight: Number(state.remainingLight.toFixed(1)),
       caseAbandoned: state.caseAbandoned,
       abandonedPlates: state.abandonedPlates,
-      gunshotCallback: state.gunshotFired
-        ? 'The report carried. Something answered by the brook.'
-        : null,
+      aerialEvidence,
+      gunshotCallback,
+      recordCallback: [
+        aerialEvidence ? 'The plate fixes the wing at the instant it commits to the dive.' : null,
+        gunshotCallback,
+      ].filter(Boolean).join(' ') || null,
     },
     lastEvent: `result:${band.key}`,
   });
@@ -539,16 +559,30 @@ function updateThreatState(state, zone, stance, deltaSeconds, travelled) {
 }
 
 function finalizeExposure(state, pending, threat) {
+  const shaken = pending.maxCameraDrift > (pending.driftLimit ?? MAX_STEADY_DRIFT_RADIANS);
+  const proof = shaken
+    ? {
+      key: 'shaken-frame',
+      points: pending.points > 0 ? 1 : 0,
+      label: 'SMEARED — camera drift erased the decisive detail.',
+      composition: 'shaken',
+      subject: pending.subject,
+      behavior: null,
+      stability: 'shaken',
+    }
+    : { ...pending, stability: 'steady' };
   const plates = state.plates.map(clonePlate);
   plates[pending.plateIndex] = {
     ...plates[pending.plateIndex],
     status: 'exposed',
-    points: pending.points,
-    label: pending.label,
-    frameKey: pending.key,
-    composition: pending.composition,
-    subject: pending.subject,
-    behavior: pending.behavior,
+    points: proof.points,
+    label: proof.label,
+    frameKey: proof.key,
+    sourceFrameKey: pending.key,
+    stability: proof.stability,
+    composition: proof.composition,
+    subject: proof.subject,
+    behavior: proof.behavior,
   };
   const awareness = Math.min(3, threat.awareness + pending.exposure);
   return {
@@ -561,13 +595,15 @@ function finalizeExposure(state, pending, threat) {
     lastThreatEvent: pending.exposure > 0 ? `plate-exposure:+${pending.exposure}` : threat.event,
     lastProofEvent: {
       plateIndex: pending.plateIndex,
-      frameKey: pending.key,
-      points: pending.points,
-      label: pending.label,
+      frameKey: proof.key,
+      sourceFrameKey: pending.key,
+      stability: proof.stability,
+      points: proof.points,
+      label: proof.label,
       zone: pending.zone,
-      composition: pending.composition,
-      subject: pending.subject,
-      behavior: pending.behavior,
+      composition: proof.composition,
+      subject: proof.subject,
+      behavior: proof.behavior,
       familyMoment: pending.familyMoment,
     },
     lastEvent: `plate:${pending.plateIndex + 1}:exposed`,
@@ -578,8 +614,13 @@ export function stepPlayer(state, input = {}, rawDeltaSeconds = 0) {
   const deltaSeconds = Math.max(0, Math.min(rawDeltaSeconds, 1));
   if (state.paused || state.runStatus !== 'active') return copyState(state);
 
-  const heading = Number.isFinite(input.heading) ? input.heading : state.heading;
-  const pitch = Number.isFinite(input.pitch) ? input.pitch : state.pitch;
+  const heading = (Number.isFinite(input.heading) ? input.heading : state.heading)
+    + (input.lookHorizontal ?? 0) * KEYBOARD_LOOK_RADIANS_PER_SECOND.horizontal * deltaSeconds;
+  const pitch = Math.max(-1.15, Math.min(
+    1.1,
+    (Number.isFinite(input.pitch) ? input.pitch : state.pitch)
+      + (input.lookVertical ?? 0) * KEYBOARD_LOOK_RADIANS_PER_SECOND.vertical * deltaSeconds,
+  ));
   const forward = Math.max(-1, Math.min(1, input.forward ?? 0));
   const right = Math.max(-1, Math.min(1, input.right ?? 0));
   const magnitude = Math.hypot(forward, right);
@@ -627,7 +668,14 @@ export function stepPlayer(state, input = {}, rawDeltaSeconds = 0) {
   });
   const zoneHistory = zone === state.zone ? [...state.zoneHistory] : [...state.zoneHistory, zone];
   const pendingExposure = state.pendingExposure
-    ? { ...state.pendingExposure, remainingSeconds: Math.max(0, state.pendingExposure.remainingSeconds - deltaSeconds) }
+    ? {
+      ...state.pendingExposure,
+      remainingSeconds: Math.max(0, state.pendingExposure.remainingSeconds - deltaSeconds),
+      maxCameraDrift: Math.max(
+        state.pendingExposure.maxCameraDrift ?? 0,
+        cameraDriftFromExposure(state.pendingExposure, heading, pitch),
+      ),
+    }
     : null;
   let next = copyState(state, {
     position: clonePosition(resolved.position),

@@ -28,10 +28,11 @@ Three pillars govern every system:
    but worsens the direct brook return.
 
 The photography precedent is behaviour-led field observation rather than a passive photo
-mode: behaviour rarity and composition are separate reads, while the source novel makes the
-physical plate and its safe return part of the same decision. The prototype therefore rejects
-a photograph when the living subject is outside the actual view and rewards two distinct,
-undisturbed family behaviours rather than repeated zone visits.
+mode: behaviour rarity, composition and steadiness are separate reads, while the source novel
+makes the physical plate and its safe return part of the same decision. The prototype therefore
+rejects a photograph when the living subject is outside the actual view, smears a high-value
+exposure if the scout pans during the two-second commitment and rewards distinct behaviour
+rather than repeated zone visits.
 
 ## Core loop and action arc
 
@@ -51,11 +52,13 @@ move and inspect → choose a view → expose a plate → read the response
 ### Evidence
 
 The player carries four glass plates. Raising the field camera exposes the player;
-releasing the shutter spends one plate after a live commitment. A plate earns visible
-cues for subject visibility, scale, ecological context or a distinct behaviour, up to seven
-total authored points across the run. The camera reads the scout's live view: turning away
-records an empty plate, an edge frame records form only, and a clear view can record context
-or behaviour. Repeating the same behaviour cannot replace observing the second one. The
+releasing the shutter spends one plate after a live two-second commitment. A plate earns visible
+cues for subject visibility, scale, ecological context or a distinct behaviour, up to eight
+total authored points across the run. The camera reads both axes of the scout's live view:
+turning or pitching away records an empty plate, an edge frame records form only, and a clear
+view can record context or behaviour. Panning during the exposure smears decisive detail down
+to at most one cue and removes behaviour proof; crouching before the shutter braces the camera
+and widens the stable tolerance. Repeating the same behaviour cannot replace a new angle. The
 preview shows the actual composition and named evidence captured, not an abstract quality bar.
 
 ### Wildlife awareness
@@ -65,8 +68,10 @@ the scout reads the group. Posture plus directional sound announce each short wi
 threat the family shifts to alarm, closing the undisturbed behaviour opportunity until the
 scout restores distance. The pterodactyl moves through distant, watch, search and attack
 behaviour. Its numeric state is hidden; silhouette, call, shadow and flight path communicate
-it. Dense canopy breaks a dive but obstructs photography. The family withdraws rather than
-becoming combat targets.
+it. During the committed part of a dive, looking up and holding the wing in frame can earn two
+behaviour cues, creating a genuine camera-versus-rifle decision with only a short tool-swap
+window before contact. Dense canopy breaks a dive but obstructs photography. The family
+withdraws rather than becoming combat targets.
 
 ### Route and defense
 
@@ -83,7 +88,8 @@ returns the player to stable ground rather than causing an invisible death.
 |---|---|
 | Light | 180 seconds; expiry outside Fort fails the run |
 | Plates | Four physical slots; each becomes unexposed, recorded, cracked or lost |
-| Evidence | 0–7 visible cues derived from captured conditions |
+| Evidence | 0–8 visible cues derived from captured conditions |
+| Exposure stability | Live angular drift; bracing widens tolerance, smear removes decisive detail |
 | Body margin | One recoverable contact; a second unblocked hit fails |
 | Rifle | Two cartridges; firing changes threat and return conditions |
 | Behaviour cycle | Routine, young play, branch pull or alarm; the live moment determines the plate |
@@ -95,7 +101,7 @@ pending consumption. Restart restores one clean initial state.
 ## Results and failure
 
 Alive results are **No record** (0), **Insufficient** (1–3), **Corroborating**
-(4–5) and **Strong field record** (6–7). Results first place the surviving physical
+(4–5) and **Strong field record** (6–8). Results first place the surviving physical
 plates, then state what they support. Cracked or lost plates cannot contribute.
 
 Failure occurs through deadline expiry outside Fort or a second unblocked contact. The
@@ -107,7 +113,8 @@ held beneath the cause card. Restart is the only reset.
 1. **Fort threshold:** a sunlit three-toed track teaches movement and examination.
 2. **Brook blind:** water and cover establish the return relation; the first partial
    plate makes framing consequences visible.
-3. **Canopy/basalt fork:** safety and evidence quality become incompatible.
+3. **Canopy/basalt fork:** safety and evidence quality become incompatible. A basalt exposure
+   can provoke a committed dive; photograph it and swap tools, or defend immediately.
 4. **Glade:** reading the family starts two short, audible behaviour windows. Framing one,
    retreating under cover and returning for the other combines every learned rule.
 5. **Altered return:** the player chooses covered thorns or exposed creek under the
@@ -122,7 +129,9 @@ threat information stays in the world.
 - Camera raise narrows attention without freezing the world; the plate preview retains
   the captured composition.
 - The viewfinder states whether the family is absent, at the plate edge, in routine, at play,
-  pulling the branch or alarmed; it never guarantees the shutter will remain safe.
+  pulling the branch or alarmed, and whether an overhead dive is clear, edged or missed.
+- The exposure line changes when the camera is braced, steady or already smeared; it never
+  rewinds a committed plate or guarantees the shutter will remain safe.
 - Calls, wing shadow and flight path carry threat escalation; colour is redundant.
 - Edge UI shows plates, remaining light and cartridges. It never exposes awareness as a
   number or turns the centre into a dashboard.
@@ -139,9 +148,11 @@ objective messages and claims that London now believes.
 A representative Strong path leaves Fort, records the brook and basalt scale, reads the
 family, aims at and captures young play, breaks the dive by crouching under cover, returns
 for the later branch pull, then takes the covered route and restarts cleanly. Looking away,
-shooting the same behaviour twice and photographing the alarm state must all produce weaker
-records. A fired-shot path must show the downstream route cost. Exact inputs and current
-evidence belong to the build verifier, not this design document.
+moving during exposure, shooting the same behaviour twice and photographing the alarm state
+must all produce weaker records. An alternate Strong path can combine basalt scale, one family
+behaviour and a committed pterodactyl dive, but requires finishing the exposure and swapping to
+the rifle before contact; firing then carries the downstream route cost. Exact inputs and
+current evidence belong to the build verifier, not this design document.
 
 The prototype includes one connected route, four plates, one family, one threat, cover,
 two defensive shots, four alive result bands, two failures and restart. It excludes a

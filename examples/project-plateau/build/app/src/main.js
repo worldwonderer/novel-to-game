@@ -26,6 +26,7 @@ import {
 import {
   ABANDON_HOLD_SECONDS,
   EXPOSURE_SECONDS,
+  MAX_STEADY_DRIFT_RADIANS,
   abandonPromptDue,
   createPlayerState,
   examine,
@@ -315,18 +316,30 @@ function emitCue(cue, duration) {
 const ABANDON_PROMPT_COPY = 'Drop the case and run [Hold G] — the plates stay in the basin.';
 
 function contextualCopy() {
-  if (player.pendingExposure) return 'Hold steady.';
+  if (player.pendingExposure) {
+    return player.pendingExposure.maxCameraDrift
+      > (player.pendingExposure.driftLimit ?? MAX_STEADY_DRIFT_RADIANS)
+      ? 'Plate moved — decisive detail will smear.'
+      : player.pendingExposure.braced ? 'Braced exposure — hold the frame.' : 'Hold steady.';
+  }
   if (player.cameraRaised) {
     const frame = frameForState(player);
+    if (frame.key === 'empty-sky') return 'The dive crossed outside the plate. Track the wing.';
+    if (player.threatState === 'attack' && frame.subject !== 'pterodactyl') {
+      return 'Wing overhead — look up, or lower the camera for the rifle.';
+    }
     if (frame.composition === 'empty') return 'No living subject. Turn toward the family.';
+    if (frame.key === 'pterodactyl-dive') return 'Dive committed · hold the plate or reach for the rifle.';
     if (frame.key === 'glade-form') return 'The family is between behaviors. Hold or save the plate.';
-    if (frame.key.endsWith('-repeat')) return 'Already recorded. Save the plate for the other behavior.';
+    if (frame.key.endsWith('-repeat')) return 'Already recorded. Save the plate for another proof angle.';
     return 'Hold steady. Release the shutter [Left Mouse]';
   }
   if (player.threatState === 'attack' && player.inCover) {
     return 'Stay under cover · Crouch [C] to let the wing pass faster';
   }
-  if (player.threatState === 'attack') return 'Hold rifle [F] · Fire before contact [Left Mouse]';
+  if (player.threatState === 'attack') {
+    return 'Dive committed · risk the camera [Right Mouse] or raise rifle [F]';
+  }
   // A held release must always show its progress, even where the prompt is not due.
   if (!player.caseAbandoned && player.abandonHoldSeconds > 0) return ABANDON_PROMPT_COPY;
   if (abandonPromptDue(player)) return ABANDON_PROMPT_COPY;
@@ -363,6 +376,11 @@ function frameConditionCopy(frame) {
     'glade-young-repeat': 'FAMILY // YOUNG PLAY ALREADY RECORDED',
     'glade-branch-repeat': 'FAMILY // BRANCH PULL ALREADY RECORDED',
     'glade-alarm': 'FAMILY // DISTURBED ALARM',
+    'pterodactyl-dive': 'AERIAL BEHAVIOR // COMMITTED DIVE',
+    'pterodactyl-repeat': 'AERIAL DIVE // ALREADY RECORDED',
+    'pterodactyl-edge': 'DIVING WING AT PLATE EDGE // ADJUST',
+    'empty-sky': 'EMPTY SKY // TRACK THE DIVE',
+    'shaken-frame': 'CAMERA DRIFT // DECISIVE DETAIL SMEARED',
     'family-edge': 'SUBJECT AT PLATE EDGE // ADJUST',
     'empty-subject': 'NO LIVING SUBJECT // TURN TOWARD CALL',
     'return-occluded': 'THORN // BODY PARTLY OCCLUDED',
@@ -389,6 +407,10 @@ function updateFieldHud(now) {
   controlHint.hidden = player.zone === 'brook-blind' || controlsLearned;
 
   cameraOverlay.hidden = !player.cameraRaised;
+  cameraOverlay.dataset.stability = player.pendingExposure
+    ? player.pendingExposure.maxCameraDrift
+      > (player.pendingExposure.driftLimit ?? MAX_STEADY_DRIFT_RADIANS) ? 'shaken' : 'steady'
+    : player.stance === 'crouch' || player.inCover ? 'braced' : 'ready';
   frameCondition.textContent = frameConditionCopy(currentFrame);
   const commitProgress = player.pendingExposure
     ? ((EXPOSURE_SECONDS - player.pendingExposure.remainingSeconds) / EXPOSURE_SECONDS) * 100
@@ -525,6 +547,8 @@ function inputSnapshot() {
     jump: jumpQueued,
     heading: player.heading,
     pitch: player.pitch,
+    lookHorizontal: Number(pressed.has('ArrowLeft')) - Number(pressed.has('ArrowRight')),
+    lookVertical: Number(pressed.has('ArrowUp')) - Number(pressed.has('ArrowDown')),
   };
   jumpQueued = false;
   return snapshot;
@@ -588,8 +612,8 @@ function presentTerminal() {
     terminalDetail.textContent = player.result.caseAbandoned
       ? `${player.result.evidence} evidence cues · ${player.result.survivingPlates} recorded plates · ${player.result.abandonedPlates} exposed plate${player.result.abandonedPlates === 1 ? '' : 's'} left in the basin · ${player.result.route} return · ${Math.ceil(player.result.remainingLight)}s light`
       : `${player.result.evidence} evidence cues · ${player.result.survivingPlates} recorded plates · ${player.result.route} return · ${Math.ceil(player.result.remainingLight)}s light`;
-    terminalCallback.hidden = !player.result.gunshotCallback;
-    terminalCallback.textContent = player.result.gunshotCallback ?? '';
+    terminalCallback.hidden = !(player.result.recordCallback ?? player.result.gunshotCallback);
+    terminalCallback.textContent = player.result.recordCallback ?? player.result.gunshotCallback ?? '';
   } else {
     terminalEyebrow.textContent = 'FIELD WORK ENDED';
     terminalTitle.textContent = player.result.title;
