@@ -29,12 +29,14 @@ export const ASSET_PATHS = Object.freeze({
   'cg/pinger/prelude': 'assets/cg/pinger/prelude.webp',
   'cg/pinger/explicit': 'assets/cg/pinger/explicit.webp',
   'cg/group/banquet_conflict': 'assets/cg/group/banquet_conflict.webp',
+  'cg/group/inner_court_accord': 'assets/cg/group/inner_court_accord.webp',
 });
 
 export const CRITICAL_CG_KEYS = Object.freeze([
   'cover', 'heroine/yue/close', 'heroine/pan/close', 'heroine/pinger/close',
   'cg/yue/prelude', 'cg/yue/explicit', 'cg/pan/prelude', 'cg/pan/explicit',
   'cg/pinger/prelude', 'cg/pinger/explicit', 'cg/group/banquet_conflict',
+  'cg/group/inner_court_accord',
 ]);
 
 const loaded = new Map();
