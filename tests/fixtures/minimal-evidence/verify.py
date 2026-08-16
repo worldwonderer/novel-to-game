@@ -12,6 +12,7 @@ from game import Expedition
 
 ROOT = Path(__file__).resolve().parent
 EVIDENCE = ROOT / "qa/evidence/run.json"
+VISUAL = ROOT / "qa/evidence/frame.ppm"
 CORE_CHECKS = ("launch", "render", "input", "coreLoop", "outcome", "restart")
 
 
@@ -47,11 +48,50 @@ def main() -> int:
     assert states["restart"] == states["initial"]
 
     EVIDENCE.parent.mkdir(parents=True, exist_ok=True)
+    VISUAL.write_text("P3\n1 1\n255\n0 0 0\n", encoding="utf-8")
     EVIDENCE.write_text(
         json.dumps(
             {
-                "unitExitCode": result.returncode,
-                "states": states,
+                "schemaVersion": 1,
+                "runId": "complete_run_01",
+                "environment": {"runtime": "python-state-fixture"},
+                "inputTrace": ["launch", "observe", "extract", "restart"],
+                "observations": {
+                    "launch": {
+                        "id": "initial",
+                        "inputs": ["construct Expedition"],
+                        "state": states["initial"],
+                    },
+                    "render": {
+                        "id": "render-artifact",
+                        "inputs": ["capture deterministic fixture frame"],
+                        "state": {"frame": "visible"},
+                        "visual": "qa/evidence/frame.ppm",
+                    },
+                    "input": {
+                        "id": "observe",
+                        "inputs": ["observe"],
+                        "state": states["observed"],
+                    },
+                    "coreLoop": {
+                        "id": "extract",
+                        "inputs": ["extract"],
+                        "state": states["outcome"],
+                    },
+                    "outcome": {
+                        "id": "outcome",
+                        "inputs": ["extract"],
+                        "state": states["outcome"],
+                    },
+                    "restart": {
+                        "id": "restart",
+                        "inputs": ["restart"],
+                        "state": {
+                            **states["restart"],
+                            "restart": "initial_state",
+                        },
+                    },
+                },
             },
             indent=2,
         )

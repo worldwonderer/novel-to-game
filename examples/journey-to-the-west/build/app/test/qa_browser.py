@@ -178,9 +178,23 @@ class BrowserPath:
         self.page.wait_for_selector("#modal-victory #btn-victory-ok", timeout=30000)
 
 
-def run_path() -> tuple[dict[str, bool], list[str], int]:
+def run_path() -> tuple[
+    dict[str, bool],
+    list[str],
+    dict[str, object],
+    list[str],
+    str,
+]:
     checks = {name: False for name in CHECK_NAMES}
     errors: list[str] = []
+    observations: dict[str, object] = {}
+    input_trace = [
+        "start a new campaign",
+        "interact with the Earth God and Princess Iron Fan",
+        "complete six command battles and story decisions",
+        "reach the designed ending",
+        "restart to a clean title campaign",
+    ]
 
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch()
@@ -196,12 +210,23 @@ def run_path() -> tuple[dict[str, bool], list[str], int]:
         page.goto(URL)
         page.wait_for_selector("#btn-start", timeout=10000)
         checks["launch"] = page.evaluate("__game.phase()") == "title"
-        path.shot("title")
+        title_shot = path.shot("title")
+        observations["launch"] = {
+            "id": "title-ready",
+            "inputs": ["navigate to the seeded title"],
+            "state": {"phase": page.evaluate("__game.phase()")},
+            "visual": title_shot.relative_to(PROJECT).as_posix(),
+        }
 
         page.click("#btn-start")
         path.wait_dialog_then_clear()
         page.wait_for_selector("#overworld-canvas", timeout=5000)
         checks["input"] = page.evaluate("__game.phase()") == "overworld"
+        observations["input"] = {
+            "id": "overworld-input-accepted",
+            "inputs": ["click start", "advance dialogue"],
+            "state": {"phase": page.evaluate("__game.phase()")},
+        }
 
         for actor in ("tudi", "luosha"):
             position = page.evaluate(f"__game.npcScreenPos('{actor}')")
@@ -428,10 +453,37 @@ def run_path() -> tuple[dict[str, bool], list[str], int]:
         checks["coreLoop"] = page.evaluate("__game.phase()") == "ending"
         checks["outcome"] = "三借芭蕉扇 · 完" in ending_text
         checks["render"] = ending_shot.is_file() and not errors
+        ending_visual = ending_shot.relative_to(PROJECT).as_posix()
+        observations["render"] = {
+            "id": "ending-rendered",
+            "inputs": ["complete the final battle"],
+            "state": {
+                "phase": page.evaluate("__game.phase()"),
+                "consoleErrors": errors,
+            },
+            "visual": ending_visual,
+        }
+        observations["coreLoop"] = {
+            "id": "campaign-loop-complete",
+            "inputs": ["complete the authored campaign path"],
+            "state": {
+                "phase": page.evaluate("__game.phase()"),
+                "battlesWon": page.evaluate("__game.campaign().battlesWon"),
+            },
+        }
+        observations["outcome"] = {
+            "id": "designed-ending",
+            "inputs": ["resolve the final victory"],
+            "state": {
+                "terminal": "ending: 三借芭蕉扇 · 完",
+                "phase": page.evaluate("__game.phase()"),
+            },
+            "visual": ending_visual,
+        }
 
         page.click("#btn-restart")
         page.wait_for_selector("#btn-start", timeout=10000)
-        path.shot("restart_title")
+        restart_shot = path.shot("restart_title")
         checks["restart"] = bool(
             page.evaluate(
                 "__game.phase() === 'title' && "
@@ -439,9 +491,21 @@ def run_path() -> tuple[dict[str, bool], list[str], int]:
                 "__game.campaign().battlesWon === 0"
             )
         )
+        observations["restart"] = {
+            "id": "clean-restart",
+            "inputs": ["click restart"],
+            "state": {
+                "restart": "new campaign title",
+                "phase": page.evaluate("__game.phase()"),
+                "stage": page.evaluate("__game.campaign().stage"),
+                "battlesWon": page.evaluate("__game.campaign().battlesWon"),
+            },
+            "visual": restart_shot.relative_to(PROJECT).as_posix(),
+        }
+        browser_version = browser.version
         browser.close()
 
-    return checks, errors, path.screenshot_count
+    return checks, errors, observations, input_trace, browser_version
 
 
 def main() -> int:
@@ -449,7 +513,7 @@ def main() -> int:
     SHOTS.mkdir(parents=True, exist_ok=True)
     server = ensure_server()
     try:
-        checks, errors, screenshot_count = run_path()
+        checks, errors, observations, input_trace, browser_version = run_path()
     finally:
         if server:
             server.terminate()
@@ -462,13 +526,16 @@ def main() -> int:
     )
     EVIDENCE.mkdir(parents=True, exist_ok=True)
     evidence = {
-        "url": URL,
-        "viewport": [1440, 900],
-        "console_errors": errors,
-        "build_bytes": build_bytes,
-        "generated_screenshots": screenshot_count,
-        "screenshots_retained_in_git": False,
-        "checkpoint": "title-to-ending-to-restart",
+        "schemaVersion": 1,
+        "runId": "journey-to-the-west-main-path",
+        "environment": {
+            "browser": browser_version,
+            "viewport": [1440, 900],
+            "url": URL,
+            "buildBytes": build_bytes,
+        },
+        "inputTrace": input_trace,
+        "observations": observations,
     }
     (EVIDENCE / "automated.json").write_text(
         json.dumps(evidence, ensure_ascii=False, indent=2) + "\n",
@@ -481,7 +548,7 @@ def main() -> int:
         print("browser errors:")
         for error in errors[:10]:
             print(f"- {error[:300]}")
-    print(f"screenshots: {screenshot_count}; build: {build_bytes / 1048576:.2f} MB")
+    print(f"screenshots: {len(list(SHOTS.glob('*.jpg')))}; build: {build_bytes / 1048576:.2f} MB")
     return 0 if all(checks.values()) else 1
 
 

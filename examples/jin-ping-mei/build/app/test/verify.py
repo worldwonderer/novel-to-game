@@ -8,7 +8,6 @@ import os
 from pathlib import Path
 import subprocess
 import sys
-import tempfile
 
 
 APP = Path(__file__).resolve().parent.parent
@@ -65,21 +64,16 @@ def main() -> int:
     if len(sys.argv) != 1:
         print("usage: python3 test/verify.py", file=sys.stderr)
         return 2
-    with tempfile.TemporaryDirectory(prefix="jpm-qa-") as shots:
-        environment = os.environ.copy()
-        environment["JPM_QA_SHOTS"] = shots
-        environment["QA_SLOW"] = "1"
-        result = subprocess.run(
-            [sys.executable, "test/qa_browser.py"], cwd=APP, env=environment
-        )
-        staged = Path(shots) / "evidence-normal.json"
-        passed = result.returncode == 0 and staged.is_file()
-        if passed:
-            evidence = json.loads(staged.read_text(encoding="utf-8"))
-            if not isinstance(evidence, dict):
-                passed = False
-            else:
-                atomic_json(EVIDENCE, evidence)
+    environment = os.environ.copy()
+    environment["JPM_QA_SHOTS"] = str(EVIDENCE.parent)
+    environment["QA_SLOW"] = "1"
+    result = subprocess.run(
+        [sys.executable, "test/qa_browser.py"], cwd=APP, env=environment
+    )
+    passed = result.returncode == 0 and EVIDENCE.is_file()
+    if passed:
+        evidence = json.loads(EVIDENCE.read_text(encoding="utf-8"))
+        passed = isinstance(evidence, dict)
     write_verification(passed)
     print(f"authoritative verification: {'PASS' if passed else 'FAIL'}")
     return 0 if passed else 1

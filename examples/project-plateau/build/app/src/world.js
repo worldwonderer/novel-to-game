@@ -9,6 +9,7 @@ import { applyBrookObstacleFlowField } from './brook-material.js';
 import { createBrookSceneCapture } from './brook-scene-capture.js';
 import { createWorldAnimationController } from './world-animation.js';
 import { createWorldAssetVisualLoader } from './world-asset-visuals.js';
+import { createWorldAssetSnapshot } from './world-snapshot.js';
 import { makeRouteAndBrook, makeTerrain } from './world-terrain.js';
 import {
   makeDegradableGroundAccents,
@@ -39,6 +40,7 @@ import {
 } from './world-subjects.js';
 
 export { terrainHeight } from './terrain.js';
+export { CANOPY_WIND_PROFILE } from './vegetation-leaf-materials.js';
 export {
   PTERODACTYL_ATTACK_CYCLE_SECONDS,
   pterodactylAttackFlightState,
@@ -178,6 +180,28 @@ export function createWorld(scene) {
     },
     update: animationController.update,
     threatSnapshot: animationController.threatSnapshot,
+    brookResponseSnapshot: animationController.brookResponseSnapshot,
     familySnapshot: animationController.familySnapshot,
+    assetSnapshot() {
+      return createWorldAssetSnapshot({
+        basalt,
+        brookBoulder,
+        brookSceneCapture,
+        coverArches,
+        degradableGroundAccents,
+        environmentDensity,
+        family,
+        fieldCamera,
+        habitatAccents,
+        heroGingko,
+        nonColumnarRockFamilies,
+        pterodactyls,
+        rifle,
+        riparianCover,
+        routeAndBrook,
+        terrain,
+        vegetation,
+      });
+    },
   };
 }

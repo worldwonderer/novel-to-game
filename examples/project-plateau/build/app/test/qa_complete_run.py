@@ -227,23 +227,54 @@ def run() -> dict[str, Any]:
         browser_version = browser.version
         browser.close()
 
+    clean_observation, outcome_observation, restart_observation = checkpoints
+    outcome_observation = {
+        **outcome_observation,
+        "state": {
+            **outcome_observation["state"],
+            "terminal": outcome["player"]["result"]["band"],
+        },
+    }
+    restart_observation = {
+        **restart_observation,
+        "state": {
+            **restart_observation["state"],
+            "restart": "clean-field-order",
+        },
+    }
     return {
-        "stage": "current-complete-run",
+        "schemaVersion": 1,
+        "runId": "project-plateau-main-path",
         "environment": {
             "browser": browser_version,
             "viewport": [1440, 900],
             "baseUrl": BASE_URL,
         },
-        "path": {
-            "terminal": outcome["player"]["result"]["band"],
-            "restart": "clean-field-order",
-            "distanceTravelled": outcome["player"]["distanceTravelled"],
-            "evidencePoints": sum(
-                plate["points"] for plate in outcome["player"]["plates"]
-            ),
-        },
         "inputTrace": input_trace,
-        "checkpoints": checkpoints,
+        "observations": {
+            "launch": clean_observation,
+            "render": outcome_observation,
+            "input": {
+                "id": "field-input-trace",
+                "inputs": input_trace,
+                "state": {
+                    "acceptedInputCount": len(input_trace),
+                    "distanceTravelled": outcome["player"]["distanceTravelled"],
+                },
+            },
+            "coreLoop": {
+                "id": "completed-field-loop",
+                "inputs": ["record four plates", "return to Fort"],
+                "state": {
+                    "runStatus": outcome["player"]["runStatus"],
+                    "evidencePoints": sum(
+                        plate["points"] for plate in outcome["player"]["plates"]
+                    ),
+                },
+            },
+            "outcome": outcome_observation,
+            "restart": restart_observation,
+        },
     }
 
 

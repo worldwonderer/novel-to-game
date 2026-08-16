@@ -689,6 +689,16 @@ export function createWorldAnimationController({
         anchorModel: 'fixed-world-orbit-latched-attack-origin',
       };
     },
+    brookResponseSnapshot() {
+      return {
+        state: brookResponse.userData.response,
+        position: {
+          x: Number(brookResponse.position.x.toFixed(2)),
+          y: Number(brookResponse.position.y.toFixed(2)),
+          z: Number(brookResponse.position.z.toFixed(2)),
+        },
+      };
+    },
     familySnapshot() {
       const pullingAdult = family.find((animal) => animal.userData.behaviorRole === 'branch-pull');
       const jawPosition = pullingAdult.userData.rig.jawPivot.getWorldPosition(new THREE.Vector3());

@@ -67,6 +67,14 @@ QA_COMPLETE_RUN_FIELDS = {
     "steps",
 }
 QA_LIMITATION_FIELDS = {"scope", "reason"}
+QA_EVIDENCE_FIELDS = {
+    "schemaVersion",
+    "runId",
+    "environment",
+    "inputTrace",
+    "observations",
+}
+QA_OBSERVATION_FIELDS = {"id", "inputs", "state", "visual"}
 GATE_STATUSES = {"NOT_RUN", "FAIL", "PASS"}
 VISUAL_RUBRIC_FIELDS = {
     "focus",
@@ -416,7 +424,7 @@ def _read_json_object(path: Path, label: str) -> tuple[dict[str, object] | None,
     return value, []
 
 
-def _compact_evidence_issue(
+def _workspace_file_issue(
     example_dir: Path, raw: object, field: str
 ) -> str | None:
     label = f"{example_dir.name}/qa/verification.json"
@@ -432,7 +440,116 @@ def _compact_evidence_issue(
         return f"{label}: {field} leaves the example workspace: {raw}"
     if not resolved.is_file():
         return f"{label}: {field} does not exist: {raw}"
+    if resolved.stat().st_size == 0:
+        return f"{label}: {field} must not be empty: {raw}"
     return None
+
+
+def _contains_json_value(value: object, expected: str) -> bool:
+    if value == expected:
+        return True
+    if isinstance(value, dict):
+        return any(_contains_json_value(item, expected) for item in value.values())
+    if isinstance(value, list):
+        return any(_contains_json_value(item, expected) for item in value)
+    return False
+
+
+def _validate_complete_run_evidence(
+    example_dir: Path,
+    raw_path: object,
+    run_id: object,
+    terminal: object,
+    restart: object,
+) -> list[str]:
+    label = f"{example_dir.name}/qa/verification.json"
+    field = "completeRun.evidence"
+    issue = _workspace_file_issue(example_dir, raw_path, field)
+    if issue:
+        return [issue]
+    assert isinstance(raw_path, str)
+    evidence_path = example_dir / raw_path
+    evidence, issues = _read_json_object(evidence_path, f"{label}: {field}")
+    if evidence is None:
+        return issues
+
+    unknown = set(evidence) - QA_EVIDENCE_FIELDS
+    missing = QA_EVIDENCE_FIELDS - set(evidence)
+    if unknown:
+        issues.append(f"{label}: {field} has unknown fields {sorted(unknown)}")
+    if missing:
+        issues.append(f"{label}: {field} missing fields {sorted(missing)}")
+    if evidence.get("schemaVersion") != 1:
+        issues.append(f"{label}: {field}.schemaVersion must be 1")
+    if evidence.get("runId") != run_id:
+        issues.append(f"{label}: {field}.runId must match completeRun.id")
+    environment = evidence.get("environment")
+    if not isinstance(environment, dict) or not environment:
+        issues.append(f"{label}: {field}.environment must be a non-empty object")
+    input_trace = evidence.get("inputTrace")
+    if (
+        not isinstance(input_trace, list)
+        or not input_trace
+        or not all(isinstance(item, str) and item.strip() for item in input_trace)
+    ):
+        issues.append(f"{label}: {field}.inputTrace must contain non-empty steps")
+
+    observations = evidence.get("observations")
+    required = set(MINIMAL_QA_CHECKS)
+    if not isinstance(observations, dict):
+        issues.append(f"{label}: {field}.observations must be an object")
+        return issues
+    if set(observations) != required:
+        issues.append(
+            f"{label}: {field}.observations must contain exactly {sorted(required)}; "
+            f"found {sorted(observations)}"
+        )
+    for name in sorted(required):
+        observation = observations.get(name)
+        observation_field = f"{field}.observations.{name}"
+        if not isinstance(observation, dict):
+            issues.append(f"{label}: {observation_field} must be an object")
+            continue
+        unknown = set(observation) - QA_OBSERVATION_FIELDS
+        if unknown:
+            issues.append(
+                f"{label}: {observation_field} has unknown fields {sorted(unknown)}"
+            )
+        if not isinstance(observation.get("id"), str) or not observation["id"].strip():
+            issues.append(f"{label}: {observation_field}.id must be non-empty")
+        inputs = observation.get("inputs")
+        if (
+            not isinstance(inputs, list)
+            or not inputs
+            or not all(isinstance(item, str) and item.strip() for item in inputs)
+        ):
+            issues.append(f"{label}: {observation_field}.inputs must contain steps")
+        state = observation.get("state")
+        if not isinstance(state, dict) or not state:
+            issues.append(f"{label}: {observation_field}.state must be non-empty")
+        visual = observation.get("visual")
+        if name == "render" and visual is None:
+            issues.append(f"{label}: {observation_field}.visual is required")
+        if visual is not None:
+            visual_issue = _workspace_file_issue(
+                example_dir, visual, f"{observation_field}.visual"
+            )
+            if visual_issue:
+                issues.append(visual_issue)
+
+    outcome_state = observations.get("outcome", {})
+    restart_state = observations.get("restart", {})
+    if isinstance(terminal, str) and not _contains_json_value(
+        outcome_state.get("state") if isinstance(outcome_state, dict) else None,
+        terminal,
+    ):
+        issues.append(f"{label}: outcome observation must record completeRun.terminal")
+    if isinstance(restart, str) and not _contains_json_value(
+        restart_state.get("state") if isinstance(restart_state, dict) else None,
+        restart,
+    ):
+        issues.append(f"{label}: restart observation must record completeRun.restart")
+    return issues
 
 
 def validate_qa(example_dir: Path) -> list[str]:
@@ -493,11 +610,13 @@ def validate_qa(example_dir: Path) -> list[str]:
         if run_evidence is None:
             issues.append(f"{label}: completeRun.evidence is required")
         else:
-            issue = _compact_evidence_issue(
-                example_dir, run_evidence, "completeRun.evidence"
-            )
-            if issue:
-                issues.append(issue)
+            issues.extend(_validate_complete_run_evidence(
+                example_dir,
+                run_evidence,
+                complete_run.get("id"),
+                complete_run.get("terminal"),
+                complete_run.get("restart"),
+            ))
 
     checks = verification.get("checks")
     if not isinstance(checks, dict):

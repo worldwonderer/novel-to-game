@@ -17,7 +17,3 @@ examples/*/build/app/node_modules/
 .idea/
 .vscode/
 *.iml
-
-# 浏览器验收会重建这些检查点截图；版本库只保留紧凑机器记录。
-examples/jin-ping-mei/qa/evidence/browser/safe/
-examples/journey-to-the-west/qa/evidence/browser/

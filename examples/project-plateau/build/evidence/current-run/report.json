@@ -1,5 +1,6 @@
 {
-  "stage": "current-complete-run",
+  "schemaVersion": 1,
+  "runId": "project-plateau-main-path",
   "environment": {
     "browser": "151.0.7922.138",
     "viewport": [
@@ -7,12 +8,6 @@
       900
     ],
     "baseUrl": "http://127.0.0.1:4173"
-  },
-  "path": {
-    "terminal": "strong-field-record",
-    "restart": "clean-field-order",
-    "distanceTravelled": 134.008,
-    "evidencePoints": 7
   },
   "inputTrace": [
     "KeyW: reach the brook",
@@ -31,8 +26,8 @@
     "hold position: prepare the covered return",
     "KeyS: return to Fort"
   ],
-  "checkpoints": [
-    {
+  "observations": {
+    "launch": {
       "id": "00-clean-start",
       "inputs": [
         "Enter the basin"
@@ -68,7 +63,7 @@
       },
       "visual": "build/evidence/current-run/00-clean-start.jpg"
     },
-    {
+    "render": {
       "id": "01-designed-outcome",
       "inputs": [
         "complete the covered route"
@@ -79,11 +74,11 @@
         "triangles": 1,
         "player": {
           "position": {
-            "x": 2.32,
-            "z": 62.022
+            "x": 2.379,
+            "z": 62.008
           },
-          "remainingLight": 93.405,
-          "distanceTravelled": 134.008,
+          "remainingLight": 93.493,
+          "distanceTravelled": 133.707,
           "plateStatus": [
             "exposed",
             "exposed",
@@ -100,11 +95,84 @@
           "returnRoute": "covered",
           "runStatus": "result",
           "resultBand": "strong-field-record"
-        }
+        },
+        "terminal": "strong-field-record"
       },
       "visual": "build/evidence/current-run/01-designed-outcome.jpg"
     },
-    {
+    "input": {
+      "id": "field-input-trace",
+      "inputs": [
+        "KeyW: reach the brook",
+        "Right Mouse + Left Mouse: record the brook",
+        "KeyW: reach the basalt shelf",
+        "Right Mouse + Left Mouse: record basalt scale",
+        "KeyA: enter canopy cover",
+        "hold position: let the attack widen",
+        "KeyW: reach the glade",
+        "Right Mouse + Left Mouse: record young at play",
+        "KeyS: protect the first behavior plate",
+        "hold position: break the dive",
+        "KeyW: return for the second behavior plate",
+        "Right Mouse + Left Mouse: record branch pulling",
+        "KeyS: retreat into cover",
+        "hold position: prepare the covered return",
+        "KeyS: return to Fort"
+      ],
+      "state": {
+        "acceptedInputCount": 15,
+        "distanceTravelled": 133.707
+      }
+    },
+    "coreLoop": {
+      "id": "completed-field-loop",
+      "inputs": [
+        "record four plates",
+        "return to Fort"
+      ],
+      "state": {
+        "runStatus": "result",
+        "evidencePoints": 7
+      }
+    },
+    "outcome": {
+      "id": "01-designed-outcome",
+      "inputs": [
+        "complete the covered route"
+      ],
+      "state": {
+        "mode": "terminal",
+        "sceneChildren": 72,
+        "triangles": 1,
+        "player": {
+          "position": {
+            "x": 2.379,
+            "z": 62.008
+          },
+          "remainingLight": 93.493,
+          "distanceTravelled": 133.707,
+          "plateStatus": [
+            "exposed",
+            "exposed",
+            "exposed",
+            "exposed"
+          ],
+          "platePoints": [
+            1,
+            2,
+            2,
+            2
+          ],
+          "bodyMargin": 1,
+          "returnRoute": "covered",
+          "runStatus": "result",
+          "resultBand": "strong-field-record"
+        },
+        "terminal": "strong-field-record"
+      },
+      "visual": "build/evidence/current-run/01-designed-outcome.jpg"
+    },
+    "restart": {
       "id": "02-clean-restart",
       "inputs": [
         "Take the route again"
@@ -136,9 +204,10 @@
           "returnRoute": null,
           "runStatus": "active",
           "resultBand": null
-        }
+        },
+        "restart": "clean-field-order"
       },
       "visual": "build/evidence/current-run/02-clean-restart.jpg"
     }
-  ]
+  }
 }

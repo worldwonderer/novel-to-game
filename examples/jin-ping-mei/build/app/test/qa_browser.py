@@ -109,11 +109,27 @@ def route_night(page: Page, route: str, night: str) -> None:
         click(page, "#btn-scene-close")
 
 
-def run_path() -> tuple[dict[str, bool], list[str], list[str], list[str]]:
+def run_path() -> tuple[
+    dict[str, bool],
+    list[str],
+    list[str],
+    list[str],
+    dict[str, object],
+    list[str],
+    str,
+]:
     checks = {name: False for name in CHECK_NAMES}
     console_errors: list[str] = []
     network_errors: list[str] = []
     http_errors: list[str] = []
+    observations: dict[str, object] = {}
+    input_trace = [
+        "confirm the 18+ age gate",
+        "start a new ledger and choose the respectful opening",
+        "complete six household and relationship days",
+        "reach the exclusive ending",
+        "restart to the day-one opening",
+    ]
 
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch()
@@ -144,12 +160,26 @@ def run_path() -> tuple[dict[str, bool], list[str], list[str], list[str]]:
             and page.locator("#scene-image,.title-art").count() == 0
         )
         age_gate_shot = shot(page, "01_age_gate")
+        observations["launch"] = {
+            "id": "age-gate-ready",
+            "inputs": ["navigate to the seeded run"],
+            "state": {"ageGateReady": age_gate_ready, "url": page.url},
+            "visual": age_gate_shot.relative_to(PROJECT).as_posix(),
+        }
         click(page, "#btn-age-yes")
         checks["launch"] = age_gate_ready and bool(page.locator(".title-screen").count())
 
         click(page, "#btn-start")
         click(page, '[data-opening="respect_yue"]')
         checks["input"] = state(page)["history"][0]["choice"] == "respect_yue"
+        observations["input"] = {
+            "id": "opening-choice-accepted",
+            "inputs": ["click start", "choose respect_yue"],
+            "state": {
+                "phase": phase(page),
+                "choice": state(page)["history"][0]["choice"],
+            },
+        }
 
         routes = (
             "yue_share_shortfall",
@@ -169,6 +199,7 @@ def run_path() -> tuple[dict[str, bool], list[str], list[str], list[str]]:
             page.locator("#ending-view").get_attribute("data-ending") == "exclusive"
         )
         ending_shot = shot(page, "07_exclusive_ending")
+        ending_visual = ending_shot.relative_to(PROJECT).as_posix()
         checks["render"] = bool(
             age_gate_shot.is_file()
             and ending_shot.is_file()
@@ -177,6 +208,28 @@ def run_path() -> tuple[dict[str, bool], list[str], list[str], list[str]]:
             and not network_errors
             and not http_errors
         )
+        observations["render"] = {
+            "id": "exclusive-ending-rendered",
+            "inputs": ["complete the sixth day"],
+            "state": {
+                "phase": phase(page),
+                "consoleErrors": console_errors,
+                "networkErrors": network_errors,
+                "httpErrors": http_errors,
+            },
+            "visual": ending_visual,
+        }
+        observations["coreLoop"] = {
+            "id": "six-day-loop-complete",
+            "inputs": ["complete six day and night decisions"],
+            "state": {"phase": phase(page), "day": state(page)["day"]},
+        }
+        observations["outcome"] = {
+            "id": "exclusive-ending",
+            "inputs": ["resolve the sixth night"],
+            "state": {"terminal": "exclusive-ending", "phase": phase(page)},
+            "visual": ending_visual,
+        }
 
         click(page, "#btn-restart")
         restart_shot = shot(page, "08_restart")
@@ -186,10 +239,29 @@ def run_path() -> tuple[dict[str, bool], list[str], list[str], list[str]]:
             and restarted["phase"] == "opening"
             and restart_shot.is_file()
         )
+        observations["restart"] = {
+            "id": "clean-day-one-restart",
+            "inputs": ["click restart"],
+            "state": {
+                "restart": "day-1-opening",
+                "day": restarted["day"],
+                "phase": restarted["phase"],
+            },
+            "visual": restart_shot.relative_to(PROJECT).as_posix(),
+        }
+        browser_version = browser.version
         context.close()
         browser.close()
 
-    return checks, console_errors, network_errors, http_errors
+    return (
+        checks,
+        console_errors,
+        network_errors,
+        http_errors,
+        observations,
+        input_trace,
+        browser_version,
+    )
 
 
 def main() -> int:
@@ -197,7 +269,15 @@ def main() -> int:
     SAFE.mkdir(parents=True, exist_ok=True)
     server = ensure_server()
     try:
-        checks, console_errors, network_errors, http_errors = run_path()
+        (
+            checks,
+            console_errors,
+            network_errors,
+            http_errors,
+            observations,
+            input_trace,
+            browser_version,
+        ) = run_path()
     finally:
         if server:
             server.terminate()
@@ -209,16 +289,17 @@ def main() -> int:
         if path.is_file() and ".vercel" not in path.parts and "test" not in path.parts
     )
     evidence = {
-        "url": URL,
-        "normal_speed_run": SLOW,
-        "console_errors": console_errors,
-        "network_errors": network_errors,
-        "http_errors": http_errors,
-        "build_bytes": build_bytes,
-        "safe_screenshots": sorted(path.name for path in SAFE.glob("*.jpg")),
-        "adult_screenshots": [],
-        "screenshots_retained_in_git": False,
-        "checkpoint": "age-gate-to-exclusive-ending-to-restart",
+        "schemaVersion": 1,
+        "runId": "jin-ping-mei-main-path",
+        "environment": {
+            "browser": browser_version,
+            "viewport": [1280, 800],
+            "url": URL,
+            "normalSpeedRun": SLOW,
+            "buildBytes": build_bytes,
+        },
+        "inputTrace": input_trace,
+        "observations": observations,
     }
     if SLOW:
         (SHOTS / "evidence-normal.json").write_text(
@@ -232,7 +313,7 @@ def main() -> int:
         "browser errors: "
         f"console={len(console_errors)}, network={len(network_errors)}, http={len(http_errors)}"
     )
-    print(f"screenshots: {len(evidence['safe_screenshots'])}; build: {build_bytes / 1048576:.2f} MB")
+    print(f"screenshots: {len(list(SAFE.glob('*.jpg')))}; build: {build_bytes / 1048576:.2f} MB")
     return 0 if all(checks.values()) else 1
 
 

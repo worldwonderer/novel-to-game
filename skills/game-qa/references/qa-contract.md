@@ -30,8 +30,12 @@
 }
 ```
 
-`completeRun.evidence` 使用工作区相对路径且文件必须存在，可以是状态 JSON、日志、截图、录制或
-完整路径摘要。它保存运行细节，不得再复制 `verification.json` 的 command、exitCode 和六项结论。
+`completeRun.evidence` 指向非空的 JSON 观察清单。清单只保存事实，不复制 command、exitCode 或
+六项 PASS/FAIL：`schemaVersion: 1`、与 `completeRun.id` 相同的 `runId`、非空 `environment`、
+非空 `inputTrace`，以及恰好包含六键的 `observations`。每项观察含非空 `id`、实际 `inputs` 和
+`state`；`render.visual` 必须指向工作区内非空画面，`outcome.state` 与 `restart.state` 分别记录
+`completeRun.terminal` 和 `completeRun.restart`。其他观察也可引用同次运行的画面。
+
 权威命令无论成功失败都原子重写 `verification.json`，旧 PASS 不得在失败复跑后幸存。项目回归只放
 `verify.suites` 或证据诊断；若其失败破坏六项之一，映射到该键。
 

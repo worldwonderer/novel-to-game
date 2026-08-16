@@ -65,8 +65,53 @@ class RepositoryValidationTests(unittest.TestCase):
         (example / "build/app/index.html").write_text(
             "<!doctype html><title>fixture</title>\n", encoding="utf-8"
         )
-        evidence = example / "qa/evidence/run.txt"
-        evidence.write_text("complete run captured\n", encoding="utf-8")
+        visual = example / "qa/evidence/frame.ppm"
+        visual.write_text("P3\n1 1\n255\n0 0 0\n", encoding="utf-8")
+        evidence = example / "qa/evidence/run.json"
+        evidence.write_text(
+            json.dumps(
+                {
+                    "schemaVersion": 1,
+                    "runId": "fixture-complete-run",
+                    "environment": {"runtime": "fixture"},
+                    "inputTrace": ["launch", "observe", "finish", "restart"],
+                    "observations": {
+                        "launch": {
+                            "id": "launch",
+                            "inputs": ["launch fixture"],
+                            "state": {"phase": "initial"},
+                        },
+                        "render": {
+                            "id": "render",
+                            "inputs": ["capture frame"],
+                            "state": {"frame": "visible"},
+                            "visual": "qa/evidence/frame.ppm",
+                        },
+                        "input": {
+                            "id": "input",
+                            "inputs": ["observe"],
+                            "state": {"accepted": True},
+                        },
+                        "coreLoop": {
+                            "id": "core-loop",
+                            "inputs": ["finish route"],
+                            "state": {"phase": "complete"},
+                        },
+                        "outcome": {
+                            "id": "outcome",
+                            "inputs": ["finish route"],
+                            "state": {"terminal": "fixture-outcome"},
+                        },
+                        "restart": {
+                            "id": "restart",
+                            "inputs": ["restart fixture"],
+                            "state": {"restart": "fixture-initial-state"},
+                        },
+                    },
+                }
+            ),
+            encoding="utf-8",
+        )
         checks = {
             name: "PASS"
             for name in (
@@ -92,7 +137,7 @@ class RepositoryValidationTests(unittest.TestCase):
                         "cleanContext": True,
                         "terminal": "fixture-outcome",
                         "restart": "fixture-initial-state",
-                        "evidence": "qa/evidence/run.txt",
+                        "evidence": "qa/evidence/run.json",
                     },
                     "checks": checks,
                     "limitations": [],
@@ -143,10 +188,19 @@ class RepositoryValidationTests(unittest.TestCase):
 
             self.assertTrue(any("unknown fields" in issue for issue in issues), issues)
 
-    def test_minimal_qa_accepts_non_json_evidence_without_duplicate_qa_payload(self) -> None:
+    def test_minimal_qa_rejects_placeholder_or_non_json_evidence(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             example = self.make_compact_verification_fixture(Path(temporary))
-            self.assertEqual(validate_qa(example), [])
+            evidence = example / "qa/evidence/run.json"
+            evidence.write_text("complete run captured\n", encoding="utf-8")
+
+            issues = validate_qa(example)
+
+            self.assertTrue(any("invalid JSON" in issue for issue in issues), issues)
+
+            evidence.write_text("", encoding="utf-8")
+            issues = validate_qa(example)
+            self.assertTrue(any("must not be empty" in issue for issue in issues), issues)
 
     def test_minimal_qa_rejects_non_integer_zero_exit_codes(self) -> None:
         for fake_zero in (False, 0.0, "0"):
@@ -171,11 +225,25 @@ class RepositoryValidationTests(unittest.TestCase):
     def test_minimal_qa_rejects_missing_complete_run_evidence(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             example = self.make_compact_verification_fixture(Path(temporary))
-            (example / "qa/evidence/run.txt").unlink()
+            (example / "qa/evidence/run.json").unlink()
 
             issues = validate_qa(example)
 
             self.assertTrue(any("completeRun.evidence does not exist" in issue for issue in issues), issues)
+
+    def test_minimal_qa_rejects_unbound_or_incomplete_observations(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            example = self.make_compact_verification_fixture(Path(temporary))
+            path = example / "qa/evidence/run.json"
+            evidence = json.loads(path.read_text(encoding="utf-8"))
+            del evidence["observations"]["input"]
+            evidence["observations"]["outcome"]["state"] = {"terminal": "other"}
+            path.write_text(json.dumps(evidence), encoding="utf-8")
+
+            issues = validate_qa(example)
+
+            self.assertTrue(any("observations must contain exactly" in issue for issue in issues), issues)
+            self.assertTrue(any("must record completeRun.terminal" in issue for issue in issues), issues)
 
     def test_minimal_qa_rejects_fake_status_and_bad_limitation(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -352,8 +420,14 @@ class RepositoryValidationTests(unittest.TestCase):
             evidence = project / complete_run["evidence"]
             self.assertTrue(evidence.is_file())
             run = json.loads(evidence.read_text(encoding="utf-8"))
-            self.assertEqual(run["states"]["outcome"]["outcome"], "extracted_with_proof")
-            self.assertEqual(run["states"]["restart"], run["states"]["initial"])
+            self.assertEqual(
+                run["observations"]["outcome"]["state"]["outcome"],
+                "extracted_with_proof",
+            )
+            self.assertEqual(
+                run["observations"]["restart"]["state"]["phase"],
+                "arrival",
+            )
 
     def test_native_plugins_expose_one_shared_skill_bundle(self) -> None:
         for relative_path in PLUGIN_MANIFESTS:
@@ -584,24 +658,52 @@ class RepositoryValidationTests(unittest.TestCase):
 
         self.assertEqual([], missing_targets)
 
+    def test_generated_plateau_assets_keep_minimal_provenance(self) -> None:
+        ledger = json.loads(
+            (ROOT / "examples/project-plateau/build/asset-ledger.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        generated = [
+            entry
+            for entry in ledger["entries"]
+            if "Project-generated" in entry.get("rights", "")
+        ]
+
+        self.assertEqual(4, len(generated))
+        self.assertTrue(
+            all(isinstance(entry.get("provenance"), str) and entry["provenance"].strip()
+                for entry in generated)
+        )
+
     def test_plateau_machine_evidence_stays_compact(self) -> None:
         build = ROOT / "examples/project-plateau/build"
         report_path = build / "evidence/current-run/report.json"
         report_text = report_path.read_text(encoding="utf-8")
         report = json.loads(report_text)
         self.assertEqual(
-            {"stage", "environment", "path", "inputTrace", "checkpoints"},
+            {"schemaVersion", "runId", "environment", "inputTrace", "observations"},
             set(report),
         )
-        self.assertEqual(3, len(report["checkpoints"]))
+        self.assertEqual(
+            {"launch", "render", "input", "coreLoop", "outcome", "restart"},
+            set(report["observations"]),
+        )
         self.assertLessEqual(len(report["inputTrace"]), 15)
         self.assertTrue(all(isinstance(item, str) for item in report["inputTrace"]))
-        self.assertLessEqual(report_text.count("\n"), 160)
+        visuals = {
+            observation["visual"]
+            for observation in report["observations"].values()
+            if "visual" in observation
+        }
+        self.assertLessEqual(len(visuals), 3)
+        self.assertLessEqual(report_text.count("\n"), 260)
 
     def test_plateau_world_is_split_by_responsibility(self) -> None:
         source = ROOT / "examples/project-plateau/build/app/src"
         budgets = {
             "world.js": 250,
+            "world-snapshot.js": 150,
             "world-animation.js": 780,
             "world-asset-visuals.js": 350,
             "world-subjects.js": 600,
@@ -644,6 +746,7 @@ class RepositoryValidationTests(unittest.TestCase):
         self.assertIn("from './brook-scene-capture.js'", contents["world.js"])
         self.assertIn("from './world-subjects.js'", contents["world.js"])
         self.assertIn("from './world-landmarks.js'", contents["world.js"])
+        self.assertIn("from './world-snapshot.js'", contents["world.js"])
         self.assertIn("from './world-asset-visuals.js'", contents["world.js"])
         self.assertIn("from './world-animation.js'", contents["world.js"])
         self.assertIn("export function createWorldAnimationController", contents["world-animation.js"])
@@ -795,6 +898,21 @@ class RepositoryValidationTests(unittest.TestCase):
         links = tuple(f'css/{path.name}' for path in stylesheets)
         self.assertEqual(tuple(sorted(index.index(link) for link in links)), tuple(index.index(link) for link in links))
 
+    def test_journey_design_contract_is_independent_and_executable(self) -> None:
+        project = ROOT / "examples/journey-to-the-west"
+        verifier = project / "qa/verify_design_contract.mjs"
+        source = verifier.read_text(encoding="utf-8")
+
+        self.assertNotIn("battle.mjs", source)
+        result = subprocess.run(
+            ["node", str(verifier)],
+            cwd=project,
+            capture_output=True,
+            text=True,
+            timeout=30,
+        )
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+
     def test_example_verification_does_not_repeat_the_complete_run_as_a_suite(self) -> None:
         for path in (ROOT / "examples").glob("*/qa/verification.json"):
             with self.subTest(path=path):
@@ -808,7 +926,6 @@ class RepositoryValidationTests(unittest.TestCase):
             ROOT / "examples/project-plateau/build/evidence/current-run/report.json",
         )
         verdict_fields = {
-            "schemaVersion",
             "status",
             "verify",
             "completeRun",
@@ -822,15 +939,29 @@ class RepositoryValidationTests(unittest.TestCase):
             with self.subTest(path=path):
                 evidence = json.loads(path.read_text(encoding="utf-8"))
                 self.assertTrue(verdict_fields.isdisjoint(evidence))
+                self.assertEqual(
+                    {"schemaVersion", "runId", "environment", "inputTrace", "observations"},
+                    set(evidence),
+                )
 
         jin_ping_mei = json.loads(evidence_paths[0].read_text(encoding="utf-8"))
         journey = json.loads(evidence_paths[1].read_text(encoding="utf-8"))
         self.assertLessEqual(
-            len(jin_ping_mei["safe_screenshots"])
-            + len(jin_ping_mei["adult_screenshots"]),
+            len({
+                item["visual"]
+                for item in jin_ping_mei["observations"].values()
+                if "visual" in item
+            }),
             3,
         )
-        self.assertLessEqual(journey["generated_screenshots"], 3)
+        self.assertLessEqual(
+            len({
+                item["visual"]
+                for item in journey["observations"].values()
+                if "visual" in item
+            }),
+            3,
+        )
 
     def test_skill_validator_rejects_chinese_first_description(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

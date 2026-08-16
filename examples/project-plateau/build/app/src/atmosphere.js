@@ -27,7 +27,34 @@ export function createAtmosphere(scene) {
     createMistLayer('world.atmosphere.mist-mid', -82, 0.062, 0x759695, 517),
     createMistLayer('world.atmosphere.mist-far', -116, 0.092, 0x72969b, 881),
   );
+  group.userData.environmentLighting = 'bounded-pmrem-physical-sky-dielectric-response';
   group.userData.applyCloudShadowsTo = (targetScene) => overheadCloudField.applyTo(targetScene);
+  group.userData.cloudFieldSnapshot = () => ({
+    ...cloudBanks.userData.snapshot(),
+    overheadCoupling: overheadCloudField.snapshot(),
+  });
+  group.userData.ridgeForestSnapshot = () => {
+    const ridges = ['far-ridge', 'near-ridge'].map((ridge) => {
+      const object = group.getObjectByName(`world.atmosphere.${ridge}`);
+      return object?.userData.forest ?? null;
+    }).filter(Boolean);
+    return {
+      profile: 'terrain-cohort-and-understory-sourced-ridge-forest-v5',
+      ridgeCount: ridges.length,
+      totalInstances: ridges.reduce((total, ridge) => total + ridge.instanceCount, 0),
+      totalUnderstoryCrowns: ridges.reduce(
+        (total, ridge) => total + ridge.understoryCrownCount,
+        0,
+      ),
+      totalCrowns: ridges.reduce((total, ridge) => total + ridge.totalCrownCount, 0),
+      totalDrawCalls: ridges.reduce((total, ridge) => total + ridge.drawCalls, 0),
+      allRootsSupported: ridges.every(
+        (ridge) => ridge.supportEvidence.supportRatio === 1
+          && ridge.supportEvidence.maximumRootClearance === 0,
+      ),
+      ridges,
+    };
+  };
   group.userData.update = (elapsed, reducedMotion = false, quality = 'balanced') => {
     const normalizedQuality = ['low', 'balanced', 'high'].includes(quality) ? quality : 'balanced';
     const cloudTime = reducedMotion ? 0 : elapsed;

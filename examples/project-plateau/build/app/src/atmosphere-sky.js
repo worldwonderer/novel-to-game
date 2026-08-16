@@ -579,8 +579,20 @@ function createCloudBanks() {
   cloudSystem.add(volumeGroup, fallbackBanks);
   cloudSystem.name = 'world.atmosphere.cloud-banks';
   cloudSystem.userData.profile = 'raymarched-cumulus-volumes-with-puff-fallback';
+  cloudSystem.userData.volumeCount = volumeLayouts.length;
+  cloudSystem.userData.puffCount = puffCount;
   cloudSystem.userData.volumes = volumeGroup;
   cloudSystem.userData.fallback = fallbackBanks;
+  cloudSystem.userData.snapshot = () => ({
+    profile: cloudSystem.userData.profile,
+    volumeCount: cloudSystem.userData.volumeCount,
+    puffCount: cloudSystem.userData.puffCount,
+    stepCounts: {
+      balanced: 12,
+      high: 18,
+    },
+    physics: { ...volumeGroup.children[0].material.userData.physics },
+  });
   cloudSystem.userData.updateVolumes = (elapsed, reducedMotion, quality) => {
     const normalizedQuality = ['low', 'balanced', 'high'].includes(quality)
       ? quality
