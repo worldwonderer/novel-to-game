@@ -15,12 +15,13 @@
     ],
     "url": "http://127.0.0.1:5173/?seed=42",
     "normalSpeedRun": true,
-    "buildBytes": 7877738
+    "buildBytes": 8943524
   },
   "inputTrace": [
     "use keyboard Enter to confirm the 18+ age gate",
     "use keyboard only to start and choose the respectful opening",
     "hear Yue's order term, Pan's truth term, and Pinger's safety term",
+    "complete joint_yue_pan and joint_yue_pinger as visible two-woman scenes",
     "balance the public banquet and invite all three women on night six",
     "choose shared_divide_roles, view inner_court_accord, and reach 三院同灯",
     "restart and confirm the earned group page persists in the gallery"
@@ -40,8 +41,8 @@
     "input": {
       "id": "opening-choice-accepted",
       "inputs": [
-        "click start",
-        "choose respect_yue"
+        "focus start and press Enter",
+        "focus respect_yue and press Enter"
       ],
       "state": {
         "phase": "day",
@@ -49,26 +50,32 @@
       }
     },
     "render": {
-      "id": "inner-court-accord-rendered-at-both-target-viewports",
+      "id": "pair-action-and-inner-court-rendered-at-both-target-viewports",
       "inputs": [
         "complete three accords",
+        "complete two pair actions",
         "choose shared_divide_roles"
       ],
       "state": {
         "phase": "ending",
         "accordSealsVisible": true,
+        "dayPanelFits1280x800": true,
+        "jointResultScenes": [
+          "joint_yue_pan",
+          "joint_yue_pinger"
+        ],
         "groupSceneReady": true,
         "viewport1920x1080Fits": true,
         "consoleErrors": [],
         "networkErrors": [],
         "httpErrors": []
       },
-      "visual": "qa/evidence/browser/safe/07_inner_court_accord.jpg"
+      "visual": "qa/evidence/browser/safe/04_joint_yue_pan.jpg"
     },
     "coreLoop": {
       "id": "six-day-loop-complete",
       "inputs": [
-        "complete five personal nights and the sixth shared night"
+        "complete three agreement nights, two pair-action days, two personal nights, and the sixth shared night"
       ],
       "state": {
         "phase": "ending",
@@ -78,6 +85,10 @@
           "truth": true,
           "safety": true
         },
+        "jointActions": [
+          "joint_yue_pan",
+          "joint_yue_pinger"
+        ],
         "sharedNightChoice": "shared_divide_roles"
       }
     },
@@ -97,7 +108,7 @@
     "restart": {
       "id": "clean-day-one-restart",
       "inputs": [
-        "click restart"
+        "focus restart and press Enter"
       ],
       "state": {
         "restart": "day-1-opening",

@@ -87,8 +87,25 @@ def resolve_morning(page: Page) -> None:
     page.wait_for_timeout(80)
 
 
-def choose_day(page: Page) -> None:
-    activate(page, '[data-day-action="ledger"]')
+def choose_day(
+    page: Page,
+    joint_action: str | None = None,
+    capture_name: str | None = None,
+) -> str | None:
+    joint_result = None
+    if joint_action:
+        activate(page, f'[data-joint-action="{joint_action}"]:not([disabled])')
+        if phase(page) != "joint_result":
+            raise RuntimeError(f"联院差事没有进入结果画面：{joint_action}")
+        result = page.locator(f'[data-joint-result="{joint_action}"]')
+        if result.count() != 1 or not result.is_visible():
+            raise RuntimeError(f"联院结果画面没有渲染：{joint_action}")
+        joint_result = result.get_attribute("data-joint-result")
+        if capture_name:
+            shot(page, capture_name)
+        activate(page, '[data-joint-continue="1"]')
+    else:
+        activate(page, '[data-day-action="ledger"]')
     if phase(page) == "household":
         option = page.locator("button[data-household]:not([disabled])").first
         option.focus()
@@ -97,6 +114,7 @@ def choose_day(page: Page) -> None:
     if phase(page) == "banquet":
         activate(page, '[data-banquet="banquet_balance"]:not([disabled])')
         activate(page, "#btn-scene-close")
+    return joint_result
 
 
 def route_night(page: Page, heroine: str, route: str, night: str = "talk") -> None:
@@ -130,6 +148,7 @@ def run_path() -> tuple[
         "use keyboard Enter to confirm the 18+ age gate",
         "use keyboard only to start and choose the respectful opening",
         "hear Yue's order term, Pan's truth term, and Pinger's safety term",
+        "complete joint_yue_pan and joint_yue_pinger as visible two-woman scenes",
         "balance the public banquet and invite all three women on night six",
         "choose shared_divide_roles, view inner_court_accord, and reach 三院同灯",
         "restart and confirm the earned group page persists in the gallery",
@@ -178,25 +197,36 @@ def run_path() -> tuple[
         checks["input"] = state(page)["history"][0]["choice"] == "respect_yue"
         observations["input"] = {
             "id": "opening-choice-accepted",
-            "inputs": ["click start", "choose respect_yue"],
+            "inputs": ["focus start and press Enter", "focus respect_yue and press Enter"],
             "state": {
                 "phase": phase(page),
                 "choice": state(page)["history"][0]["choice"],
             },
         }
 
-        visits = (
-            ("wu_yueniang", "accord_yue_order"),
-            ("pan_jinlian", "accord_pan_truth"),
-            ("li_pinger", "accord_pinger_key"),
-            ("wu_yueniang", "yue_share_shortfall"),
-            ("pan_jinlian", "pan_take_cup"),
+        day_panel_fits = page.evaluate(
+            "(() => { const p=document.querySelector('.day-panel'); const s=document.querySelector('.phase-stage'); "
+            "if(!p||!s) return false; const a=p.getBoundingClientRect(), b=s.getBoundingClientRect(); "
+            "return a.top>=b.top && a.bottom<=b.bottom; })()"
         )
-        for heroine, route in visits:
+        visits = (
+            ("wu_yueniang", "accord_yue_order", None),
+            ("pan_jinlian", "accord_pan_truth", None),
+            ("li_pinger", "accord_pinger_key", "joint_yue_pan"),
+            ("wu_yueniang", "yue_share_shortfall", "joint_yue_pinger"),
+            ("pan_jinlian", "pan_take_cup", None),
+        )
+        joint_results: list[str] = []
+        for heroine, route, joint_action in visits:
             resolve_morning(page)
-            choose_day(page)
+            result = choose_day(
+                page,
+                joint_action,
+                "04_joint_yue_pan" if joint_action == "joint_yue_pan" else None,
+            )
+            if result:
+                joint_results.append(result)
             route_night(page, heroine, route)
-
         resolve_morning(page)
         choose_day(page)
         hub_state = state(page)
@@ -213,7 +243,6 @@ def run_path() -> tuple[
         shared_option.focus()
         page.keyboard.press("Enter")
         page.wait_for_timeout(120)
-        accord_shot = shot(page, "07_inner_court_accord")
         accord_scene = state(page)
         group_scene_ready = bool(
             phase(page) == "scene"
@@ -236,9 +265,11 @@ def run_path() -> tuple[
         ending_visual = ending_shot.relative_to(PROJECT).as_posix()
         checks["render"] = bool(
             age_gate_shot.is_file()
-            and accord_shot.is_file()
+            and (SAFE / "04_joint_yue_pan.jpg").is_file()
             and ending_shot.is_file()
             and accord_visible
+            and day_panel_fits
+            and joint_results == ["joint_yue_pan", "joint_yue_pinger"]
             and group_scene_ready
             and large_viewport_fits
             and page.locator("#ending-view").is_visible()
@@ -247,26 +278,37 @@ def run_path() -> tuple[
             and not http_errors
         )
         observations["render"] = {
-            "id": "inner-court-accord-rendered-at-both-target-viewports",
-            "inputs": ["complete three accords", "choose shared_divide_roles"],
+            "id": "pair-action-and-inner-court-rendered-at-both-target-viewports",
+            "inputs": [
+                "complete three accords",
+                "complete two pair actions",
+                "choose shared_divide_roles",
+            ],
             "state": {
                 "phase": phase(page),
                 "accordSealsVisible": accord_visible,
+                "dayPanelFits1280x800": day_panel_fits,
+                "jointResultScenes": joint_results,
                 "groupSceneReady": group_scene_ready,
                 "viewport1920x1080Fits": large_viewport_fits,
                 "consoleErrors": console_errors,
                 "networkErrors": network_errors,
                 "httpErrors": http_errors,
             },
-            "visual": accord_shot.relative_to(PROJECT).as_posix(),
+            "visual": (SAFE / "04_joint_yue_pan.jpg")
+            .relative_to(PROJECT)
+            .as_posix(),
         }
         observations["coreLoop"] = {
             "id": "six-day-loop-complete",
-            "inputs": ["complete five personal nights and the sixth shared night"],
+            "inputs": [
+                "complete three agreement nights, two pair-action days, two personal nights, and the sixth shared night"
+            ],
             "state": {
                 "phase": phase(page),
                 "day": state(page)["day"],
                 "accords": hub_state["accords"],
+                "jointActions": hub_state["jointActions"],
                 "sharedNightChoice": state(page)["sharedNightChoice"],
             },
         }
@@ -292,7 +334,7 @@ def run_path() -> tuple[
         )
         observations["restart"] = {
             "id": "clean-day-one-restart",
-            "inputs": ["click restart"],
+            "inputs": ["focus restart and press Enter"],
             "state": {
                 "restart": "day-1-opening",
                 "day": restarted["day"],

@@ -337,6 +337,18 @@ button:focus-visible { outline: 3px solid var(--gold-bright); outline-offset: 3p
 .courtyard-caption { position: absolute; z-index: 2; inset: 12% 11% auto; display: flex; justify-content: space-between; color: #3b3026; font-weight: 700; letter-spacing: .2em; text-shadow: 0 1px #eadcbf; }
 .day-panel { left: 4%; right: 4%; bottom: 3.5%; padding: 1.2rem 1.4rem; }
 .day-actions { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: .65rem; }
+.joint-offers { margin-top: .75rem; padding-top: .65rem; border-top: 1px solid rgba(220,188,127,.2); }
+.joint-offers > header { display: flex; align-items: center; justify-content: space-between; margin-bottom: .5rem; color: #d6bd8e; font: .7rem var(--sans); letter-spacing: .1em; }
+.joint-offers > header span { color: #8f8271; font-size: .62rem; letter-spacing: .04em; }
+.joint-actions { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: .65rem; }
+.joint-actions .choice-button { min-height: 62px; }
+
+/* 双人合办结果：先让人物在同一画面完成一件事，再回到原有白日流转。 */
+.joint-result-stage::before { background-position: center; filter: saturate(.82) brightness(.86) contrast(1.03); }
+.joint-result-stage::after { background: linear-gradient(0deg, rgba(12,8,7,.94), rgba(12,8,7,.12) 76%); }
+.joint-result-panel { left: 4%; right: 4%; bottom: 4%; padding: 1.1rem 1.35rem; }
+.joint-result-panel .phase-header > p:last-child { max-width: 64rem; }
+.joint-payoff { display: inline-block; margin: .75rem 1rem .75rem 0; padding: .45rem .65rem; border-left: 2px solid var(--gold); color: #c8b38f; font: .72rem var(--sans); }
 
 /* 宅中短线 */
 .household-stage::after { background: linear-gradient(90deg, rgba(16,11,9,.88) 0%, rgba(16,11,9,.18) 58%, rgba(16,11,9,.1)); }
@@ -439,6 +451,7 @@ button:focus-visible { outline: 3px solid var(--gold-bright); outline-offset: 3p
 .shared-panel { left: 3%; right: 3%; bottom: 3%; padding: 1rem 1.25rem; }
 .shared-panel .phase-header > p:last-child { max-width: 58rem; }
 .shared-panel .shared-seals { max-width: 42rem; margin: .65rem 0; }
+.shared-proof { margin: -.2rem 0 .65rem; color: #c8b38f; font: .68rem var(--sans); }
 .shared-panel .choice-grid { grid-template-columns: repeat(3,minmax(0,1fr)); }
 .shared-panel .choice-button { min-height: 68px; }
 
@@ -515,6 +528,9 @@ button:focus-visible { outline: 3px solid var(--gold-bright); outline-offset: 3p
   .phase-header > p:last-child { font-size: .88rem; line-height: 1.55; }
   .choice-button { min-height: 58px; padding: .58rem .68rem; }
   .choice-button b { font-size: .82rem; }
+  .joint-offers { margin-top: .5rem; padding-top: .45rem; }
+  .joint-actions .choice-button { min-height: 52px; }
+  .joint-result-panel { padding: .8rem 1rem; }
   .dialogue-panel { top: 3%; bottom: 3%; padding: 1.1rem; }
   .heroine-doors { top: 23%; }
   .evening.has-shared .heroine-doors { top: 34%; }

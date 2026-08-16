@@ -97,6 +97,49 @@ export const ACCORD_CHOICES = Object.freeze({
   ),
 });
 
+// 联院差事是院约的即时读点：每组只做一次，不靠重复刷数值。
+export const JOINT_ACTIONS = Object.freeze([
+  {
+    id: 'joint_yue_pan', participants: ['wu_yueniang', 'pan_jinlian'], asset: 'cg/joint/yue_pan',
+    requires: ['order', 'truth'], label: '正堂问口供',
+    hint: '月娘对账，金莲追话；势 +1，露 +7',
+    text: '月娘把账页翻到缺数那行。金莲没坐，倚着桌角把掌柜方才的话一字字问回去。两个人一对，假账当场露了口。',
+    effects: {
+      power: 1, exposure: 7, house: 2,
+      relAll: {
+        wu_yueniang: { qing: 5, du: -4 },
+        pan_jinlian: { qing: 5, du: -4 },
+      },
+    },
+  },
+  {
+    id: 'joint_yue_pinger', participants: ['wu_yueniang', 'li_pinger'], asset: 'cg/joint/yue_pinger',
+    requires: ['order', 'safety'], label: '公账接货单',
+    hint: '月娘核数，瓶儿调货；银 +32，宅 +5',
+    text: '瓶儿自己开箱取出货单，月娘照公账一笔笔核过。该借的写明归期，该留的仍锁回瓶儿箱里；货车午后便进了门。',
+    effects: {
+      silver: 32, house: 5,
+      relAll: {
+        wu_yueniang: { qing: 5, du: -4 },
+        li_pinger: { qing: 5, du: -4 },
+      },
+    },
+  },
+  {
+    id: 'joint_pan_pinger', participants: ['pan_jinlian', 'li_pinger'], asset: 'cg/joint/pan_pinger',
+    requires: ['truth', 'safety'], label: '顺话验货车',
+    hint: '金莲套话，瓶儿验货；银 +18，势 +1，露 +5',
+    text: '金莲在门房笑着问出车夫前后两套说辞，瓶儿当面拆封验货。少的那箱没进私院，也没混进公账，车主只得照数补来。',
+    effects: {
+      silver: 18, power: 1, exposure: 5,
+      relAll: {
+        pan_jinlian: { qing: 5, du: -4 },
+        li_pinger: { qing: 5, du: -4 },
+      },
+    },
+  },
+]);
+
 export const SHARED_NIGHT_CHOICES = Object.freeze([
   route(
     'shared_divide_roles', '三人各管一头', '月娘主账、金莲追人、瓶儿调货；三条院约缺一不可',

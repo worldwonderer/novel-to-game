@@ -30,6 +30,9 @@ export const ASSET_PATHS = Object.freeze({
   'cg/pinger/explicit': 'assets/cg/pinger/explicit.webp',
   'cg/group/banquet_conflict': 'assets/cg/group/banquet_conflict.webp',
   'cg/group/inner_court_accord': 'assets/cg/group/inner_court_accord.webp',
+  'cg/joint/yue_pan': 'assets/cg/joint/yue_pan.webp',
+  'cg/joint/yue_pinger': 'assets/cg/joint/yue_pinger.webp',
+  'cg/joint/pan_pinger': 'assets/cg/joint/pan_pinger.webp',
 });
 
 export const CRITICAL_CG_KEYS = Object.freeze([
@@ -37,6 +40,7 @@ export const CRITICAL_CG_KEYS = Object.freeze([
   'cg/yue/prelude', 'cg/yue/explicit', 'cg/pan/prelude', 'cg/pan/explicit',
   'cg/pinger/prelude', 'cg/pinger/explicit', 'cg/group/banquet_conflict',
   'cg/group/inner_court_accord',
+  'cg/joint/yue_pan', 'cg/joint/yue_pinger', 'cg/joint/pan_pinger',
 ]);
 
 const loaded = new Map();

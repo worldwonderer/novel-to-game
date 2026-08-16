@@ -1,7 +1,7 @@
 import { TEXT } from './text.js';
 import {
   HEROINES, HEROINE_IDS, HOUSEHOLD, HOUSEHOLD_IDS, HOUSEHOLD_EVENTS,
-  OPENING_CHOICES, ROUTE_CHOICES, ACCORD_CHOICES, SHARED_NIGHT_CHOICES,
+  OPENING_CHOICES, ROUTE_CHOICES, ACCORD_CHOICES, JOINT_ACTIONS, SHARED_NIGHT_CHOICES,
   BANQUET_CHOICES, NIGHT_TEXT, SCENES,
 } from './data.js';
 import * as E from './engine.js';
@@ -103,7 +103,7 @@ function restart() {
 
 function sfxForPhase() {
   if (!state) return;
-  const map = { day: 'wang', household: 'paper', visit: 'paper', night: 'watch', morning: 'plank', scene: 'qing', banquet: 'submit', shared_night: 'submit', ending: 'qing' };
+  const map = { day: 'wang', joint_result: 'submit', household: 'paper', visit: 'paper', night: 'watch', morning: 'plank', scene: 'qing', banquet: 'submit', shared_night: 'submit', ending: 'qing' };
   audio.sfx(map[state.phase] ?? 'click');
 }
 
@@ -285,6 +285,10 @@ function ledgerLine(entry) {
       if (gain) return `翻账追回${gain[1]}两`;
       return { office: '走官面递话', listen: '问口风', banquet: '整席面' }[entry.action] ?? '白日办事';
     }
+    case 'joint_action': {
+      const label = JOINT_ACTIONS.find((item) => item.id === entry.action)?.label ?? '联院差事';
+      return cap(label, 7);
+    }
     case 'household': {
       const event = Object.values(HOUSEHOLD_EVENTS).find((item) => item.id === entry.event);
       const label = event?.choices.find((item) => item.id === entry.choice)?.label ?? '廊下一句';
@@ -348,6 +352,7 @@ function renderPhase() {
   switch (state.phase) {
     case 'opening': return renderOpening();
     case 'day': return renderDay();
+    case 'joint_result': return renderJointResult();
     case 'household': return renderHousehold();
     case 'banquet': return renderBanquet();
     case 'choose_visit': return renderVisitHub();
@@ -379,6 +384,8 @@ function renderOpening() {
 
 function renderDay() {
   const def = E.dayDef(state);
+  const jointOptions = E.jointActionOptions(state);
+  const jointDone = Math.min(E.jointActionCount(state), E.JOINT_ACTION_TARGET);
   return `
     <div class="hub-stage visual-stage" style="--scene-bg:url('${urlFor('compound')}')">
       <div class="courtyard-caption"><span>正堂</span><span>花园角门</span><span>瓶儿私院</span></div>
@@ -386,6 +393,23 @@ function renderDay() {
         ${phaseHeader(`第 ${state.day} 日 · 白日`, def.name, def.pressure)}
         <p class="phase-lead">${TEXT.dayLead}</p>
         <div class="day-actions">${E.dayOptions(state).map((choice) => choiceButton(choice, 'day-action')).join('')}</div>
+        <section class="joint-offers" aria-label="联院差事">
+          <header><b>联院差事</b><span>终局协力 ${jointDone}/${E.JOINT_ACTION_TARGET} · 每组只做一次</span></header>
+          <div class="joint-actions">${jointOptions.map((choice) => choiceButton(choice, 'joint-action')).join('')}</div>
+        </section>
+      </div>
+    </div>`;
+}
+
+function renderJointResult() {
+  const choice = E.currentJointAction(state);
+  if (!choice) return '<div class="fatal-card">这桩联院差事断了页。</div>';
+  return `
+    <div class="joint-result-stage visual-stage" style="--scene-bg:url('${urlFor(choice.asset)}')" data-joint-result="${choice.id}">
+      <div class="decision-panel joint-result-panel">
+        ${phaseHeader(`联院差事 · ${choice.participants.map((id) => HEROINES[id].short).join('与')}`, choice.label, choice.text)}
+        <p class="joint-payoff">${choice.hint}</p>
+        <button class="ink-button primary" data-joint-continue="1">把这笔记进总账</button>
       </div>
     </div>`;
 }
@@ -414,7 +438,7 @@ function renderVisitHub() {
       <div class="visit-prompt">
         <div>${phaseHeader(`第 ${state.day} 日 · 黄昏`, '院门亮了灯', TEXT.chooseVisit)}</div>
         <aside class="accord-panel" aria-label="三院共约">
-          <div class="accord-heading"><b>三院共约</b><span>${status.complete}/${status.total}</span></div>
+          <div class="accord-heading"><b>三院共约</b><span>院约 ${status.complete}/${status.total} · 协力 ${status.jointComplete}/${status.jointTotal}</span></div>
           <div class="accord-seals">${accordRows.map((row) => `<span class="accord-seal ${row.complete ? 'complete' : ''}" data-accord="${row.key}"><i>${row.glyph}</i>${row.label}</span>`).join('')}</div>
           ${status.visible ? `<button class="shared-invite" data-shared-start="1"><b>请三人一同留席</b><span>${status.ready ? '三条约都在，今夜可以把事做成。' : status.reason}</span></button>` : '<small>分别听完三个人的边界，第六夜才可同席。</small>'}
         </aside>
@@ -442,6 +466,7 @@ function renderSharedNight() {
       <div class="decision-panel shared-panel">
         ${phaseHeader('第六夜 · 三人同席', '一张桌，三条院约', TEXT.sharedNightLead)}
         <div class="accord-seals shared-seals">${rows.map((row) => `<span class="accord-seal ${row.complete ? 'complete' : ''}" data-accord="${row.key}"><i>${row.glyph}</i>${row.label}</span>`).join('')}</div>
+        <p class="shared-proof">白日联院差事：${Math.min(E.jointActionCount(state), E.JOINT_ACTION_TARGET)}/${E.JOINT_ACTION_TARGET}</p>
         <div class="choice-grid">${E.sharedNightOptions(state).map((choice) => choiceButton(choice, 'shared-night')).join('')}</div>
       </div>
     </div>`;
@@ -652,6 +677,8 @@ app.addEventListener('click', (event) => {
   else if (button.id === 'btn-scene-close') act(() => E.closeScene(state));
   else if (button.dataset.opening) act(() => E.chooseOpening(state, button.dataset.opening));
   else if (button.dataset.dayAction) act(() => E.chooseDayAction(state, button.dataset.dayAction));
+  else if (button.dataset.jointAction) act(() => E.chooseJointAction(state, button.dataset.jointAction));
+  else if (button.dataset.jointContinue) act(() => E.continueJointAction(state));
   else if (button.dataset.household) act(() => E.resolveHouseholdEvent(state, button.dataset.household));
   else if (button.dataset.banquet) act(() => E.chooseBanquet(state, button.dataset.banquet));
   else if (button.dataset.sharedStart) act(() => E.startSharedNight(state));
@@ -679,6 +706,8 @@ window.__game = Object.freeze({
   restart,
   chooseOpening: (id) => act(() => E.chooseOpening(state, id)),
   chooseDay: (id) => act(() => E.chooseDayAction(state, id)),
+  chooseJointAction: (id) => act(() => E.chooseJointAction(state, id)),
+  continueJointAction: () => act(() => E.continueJointAction(state)),
   household: (id) => act(() => E.resolveHouseholdEvent(state, id)),
   chooseBanquet: (id) => act(() => E.chooseBanquet(state, id)),
   startSharedNight: () => act(() => E.startSharedNight(state)),

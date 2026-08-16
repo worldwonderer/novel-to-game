@@ -3,12 +3,14 @@
 import {
   HEROINE_IDS, HEROINES, HOUSEHOLD_IDS, HOUSEHOLD, HOUSEHOLD_EVENTS,
   DAY_NAMES, DAY_PRESSURE, DAY_ACTIONS,
-  OPENING_CHOICES, ROUTE_CHOICES, ACCORD_CHOICES, SHARED_NIGHT_CHOICES,
+  OPENING_CHOICES, ROUTE_CHOICES, ACCORD_CHOICES, JOINT_ACTIONS, SHARED_NIGHT_CHOICES,
   BANQUET_CHOICES, SCENES, ENDINGS,
 } from './data.js';
 
-export const SAVE_VERSION = 8;
+export const SAVE_VERSION = 9;
 export const ACCORD_KEYS = Object.freeze(['order', 'truth', 'safety']);
+export const JOINT_ACTION_TARGET = 2;
+const JOINT_ACTION_IDS = new Set(JOINT_ACTIONS.map((choice) => choice.id));
 
 // 破裂规则(GAME_DESIGN 第 5 节「拒绝／破裂」):公开越过她两次、或宅门 house<30,
 // 路线冷却一天。此前实现用单次失信旗标永久锁死明确场景,既漏了计数与 house 触发,
@@ -88,6 +90,7 @@ export function newGame(seed = 42) {
     // 轮换顺序不再把任何人的好选项锁死(设计评审 §3)。
     visits: Object.fromEntries(HEROINE_IDS.map((id) => [id, 0])),
     accords: { order: false, truth: false, safety: false },
+    jointActions: [],
     history: [],
     log: [],
     currentHeroine: null,
@@ -97,6 +100,7 @@ export function newGame(seed = 42) {
     pendingScene: null,
     sceneReturnPhase: null,
     sharedNightChoice: null,
+    currentJointAction: null,
     unlocked: [],
     ending: null,
     over: false,
@@ -327,6 +331,11 @@ export function chooseDayAction(state, actionId) {
   state.selectedDayAction = actionId;
   record(state, 'day_action', { action: actionId, text });
   state.log.push(text);
+  advanceAfterDayAction(state);
+  return { ok: true, text };
+}
+
+function advanceAfterDayAction(state) {
   const householdEvent = HOUSEHOLD_EVENTS[state.day];
   if (householdEvent) {
     state.currentHouseholdEvent = householdEvent.id;
@@ -334,7 +343,59 @@ export function chooseDayAction(state, actionId) {
   } else {
     state.phase = state.day === 5 ? 'banquet' : 'choose_visit';
   }
-  return { ok: true, text };
+}
+
+export function jointActionOptions(state) {
+  const completed = completedJointActions(state);
+  return JOINT_ACTIONS.map((choice) => {
+    const missing = choice.requires.filter((key) => !state.accords?.[key]);
+    const used = completed.has(choice.id);
+    return {
+      ...choice,
+      disabled: state.phase !== 'day' || used || missing.length > 0,
+      locked: used
+        ? '这一组已经合办过一桩，不再重复刷同一件事。'
+        : missing.length
+          ? `还缺院约：${missing.map((key) => accordStatus(state).find((row) => row.key === key)?.label).join('、')}。`
+          : '',
+    };
+  });
+}
+
+function completedJointActions(state) {
+  return new Set((state.jointActions ?? []).filter((id) => JOINT_ACTION_IDS.has(id)));
+}
+
+export function jointActionCount(state) {
+  return completedJointActions(state).size;
+}
+
+export function chooseJointAction(state, actionId) {
+  if (state.phase !== 'day') return { ok: false, error: '眼下不是合办差事的时候。' };
+  const choice = jointActionOptions(state).find((item) => item.id === actionId);
+  if (!choice) return { ok: false, error: '没有这桩联院差事。' };
+  if (choice.disabled) return { ok: false, error: choice.locked };
+  applyEffects(state, choice.effects, null, choice.text);
+  state.jointActions.push(choice.id);
+  state.selectedDayAction = choice.id;
+  state.currentJointAction = choice.id;
+  record(state, 'joint_action', { action: choice.id, participants: [...choice.participants] });
+  state.log.push(choice.text);
+  state.phase = 'joint_result';
+  return { ok: true, text: choice.text };
+}
+
+export function currentJointAction(state) {
+  return JOINT_ACTIONS.find((choice) => choice.id === state.currentJointAction) ?? null;
+}
+
+export function continueJointAction(state) {
+  if (state.phase !== 'joint_result' || !currentJointAction(state)) {
+    return { ok: false, error: '眼下没有待收的联院差事。' };
+  }
+  state.currentJointAction = null;
+  advanceAfterDayAction(state);
+  return { ok: true };
 }
 
 export function currentHouseholdEvent(state) {
@@ -411,9 +472,13 @@ export function accordStatus(state) {
 
 export function sharedNightStatus(state) {
   const missing = accordStatus(state).filter((row) => !row.complete);
+  const jointComplete = jointActionCount(state);
   let reason = '';
   if (!state.flags.banquet_balanced) reason = '中秋那三杯还没一同斟满。';
   else if (missing.length) reason = `还缺：${missing.map((row) => row.label).join('、')}。`;
+  else if (jointComplete < JOINT_ACTION_TARGET) {
+    reason = `还要让不同院门合办两桩事（${jointComplete}/${JOINT_ACTION_TARGET}）。`;
+  }
   else {
     const low = HEROINE_IDS.find((id) => state.relations[id].qing < 30);
     const angry = HEROINE_IDS.find((id) => state.relations[id].du >= 70);
@@ -427,6 +492,8 @@ export function sharedNightStatus(state) {
     reason,
     complete: ACCORD_KEYS.filter((key) => state.accords?.[key]).length,
     total: ACCORD_KEYS.length,
+    jointComplete: Math.min(jointComplete, JOINT_ACTION_TARGET),
+    jointTotal: JOINT_ACTION_TARGET,
   };
 }
 
@@ -866,6 +933,7 @@ export function determineEnding(state) {
   if (
     state.flags.harem_coalition
     && state.unlocked.includes('inner_court_accord')
+    && jointActionCount(state) >= JOINT_ACTION_TARGET
     && HEROINE_IDS.every((heroine) => qing[heroine] >= 30 && state.relations[heroine].du < 70)
     && state.resources.house >= 45
     && state.flags.banquet_balanced
@@ -970,8 +1038,14 @@ export function deserialize(raw) {
       state.accords = { order: false, truth: false, safety: false };
       state.sharedNightChoice = null;
     }
+    // v8 → v9:联院差事是新过程证据。旧档从 0/2 开始，不凭已经谈成的院约补做历史。
+    if (state.version === 8) {
+      state.version = 9;
+      state.jointActions = [];
+      state.currentJointAction = null;
+    }
     if (state.version !== SAVE_VERSION || !HOUSEHOLD_IDS.every((id) => state.household?.[id])) return null;
-    if (!state.publicOverrides || !state.routeReopensOn || !state.visits || !state.accords) return null;
+    if (!state.publicOverrides || !state.routeReopensOn || !state.visits || !state.accords || !Array.isArray(state.jointActions)) return null;
     return state;
   } catch {
     return null;
