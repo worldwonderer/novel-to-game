@@ -1,5 +1,15 @@
 import { planarAxesForHeading } from './controller.js';
+import {
+  FAMILY_BEHAVIOR_CYCLE_SECONDS,
+  familyMomentForState,
+  frameForState,
+} from './field-photography.js';
 import { integrateMovement } from './simulation-movement.js';
+export {
+  FAMILY_BEHAVIOR_CYCLE_SECONDS,
+  familyMomentForState,
+  frameForState,
+};
 export {
   JUMP,
   NAVIGATION,
@@ -54,6 +64,7 @@ const SPEED = Object.freeze({ walk: 4.2, sprint: 6.8, crouch: 2.2 });
 const ACCELERATION = Object.freeze({ walk: 18, sprint: 18, crouch: 16 });
 const DECELERATION = 18;
 const REVERSAL_ACCELERATION = 30;
+const CROUCH_COVER_RECOVERY_MULTIPLIER = 1.8;
 const THREAT_STATES = Object.freeze(['distant', 'watch', 'search', 'attack']);
 
 function clonePosition(position) {
@@ -84,6 +95,9 @@ function emptyPlate(index) {
     lostPoints: 0,
     label: null,
     frameKey: null,
+    composition: null,
+    subject: null,
+    behavior: null,
     recoverable: true,
   };
 }
@@ -120,6 +134,8 @@ export function createPlayerState() {
     attackSeconds: 0,
     examinedTrack: false,
     observedBehavior: false,
+    familyBehaviorSeconds: 0,
+    familyMoment: 'glade-routine',
     lastObservation: null,
     cameraRaised: false,
     plateRailRevealed: false,
@@ -184,43 +200,13 @@ export function examine(state) {
   if (state.zone === 'iguanodon-glade') {
     return copyState(state, {
       observedBehavior: true,
-      lastObservation: 'The young keep close while the adults feed.',
+      familyBehaviorSeconds: 0,
+      familyMoment: 'glade-routine',
+      lastObservation: 'The young shift first. The feeding adult reaches after them.',
       lastEvent: 'examined:behavior',
     });
   }
   return copyState(state, { lastEvent: 'examine:no-trace' });
-}
-
-export function frameForState(state) {
-  const hasYoungPlay = state.plates.some((plate) => (
-    plate.frameKey === 'glade-young-play' || plate.frameKey === 'glade-behavior'
-  ));
-  const frames = {
-    fort: {
-      key: 'empty-fort', points: 0, label: 'EMPTY — no living subject in frame.', exposure: 0,
-    },
-    'brook-blind': state.examinedTrack
-      ? { key: 'brook-partial', points: 1, label: 'PARTIAL — foliage hides the flank.', exposure: 1 }
-      : { key: 'brook-unread', points: 0, label: 'UNCLEAR — the track has not been read.', exposure: 1 },
-    'canopy-overlook': {
-      key: 'canopy-flank', points: 1, label: 'FORM — a full flank clears the fern.', exposure: 1,
-    },
-    'basalt-shelf': {
-      key: 'basalt-scale', points: 2, label: 'CONTEXT — basalt gives scale.', exposure: 2,
-    },
-    'iguanodon-glade': state.observedBehavior
-      ? hasYoungPlay
-        ? { key: 'glade-branch-pull', points: 2, label: 'BEHAVIOR — an adult pulls the branch down.', exposure: 2 }
-        : { key: 'glade-young-play', points: 2, label: 'BEHAVIOR — young play beside the adults.', exposure: 2 }
-      : { key: 'glade-form', points: 1, label: 'FORM — the family stands clear.', exposure: 2 },
-    'covered-return': {
-      key: 'return-occluded', points: 1, label: 'PARTIAL — thorn hides the body.', exposure: 1,
-    },
-    'exposed-creek': {
-      key: 'creek-scale', points: 2, label: 'CONTEXT — the open creek gives scale.', exposure: 2,
-    },
-  };
-  return { ...frames[state.zone] };
 }
 
 export function intactEvidence(state) {
@@ -513,7 +499,8 @@ function updateThreatState(state, zone, stance, deltaSeconds, travelled) {
   const entered = zone !== state.zone;
   const inCover = zone === 'canopy-overlook' || zone === 'covered-return';
   let awareness = state.threatAwareness;
-  let coverSeconds = inCover ? state.coverSeconds + deltaSeconds : 0;
+  const coverRecoveryRate = stance === 'crouch' ? CROUCH_COVER_RECOVERY_MULTIPLIER : 1;
+  let coverSeconds = inCover ? state.coverSeconds + deltaSeconds * coverRecoveryRate : 0;
   const sprintExposureSeconds = stance === 'sprint' && travelled > 0 && (zone === 'basalt-shelf' || zone === 'exposed-creek')
     ? state.sprintExposureSeconds + deltaSeconds
     : 0;
@@ -559,6 +546,9 @@ function finalizeExposure(state, pending, threat) {
     points: pending.points,
     label: pending.label,
     frameKey: pending.key,
+    composition: pending.composition,
+    subject: pending.subject,
+    behavior: pending.behavior,
   };
   const awareness = Math.min(3, threat.awareness + pending.exposure);
   return {
@@ -575,6 +565,10 @@ function finalizeExposure(state, pending, threat) {
       points: pending.points,
       label: pending.label,
       zone: pending.zone,
+      composition: pending.composition,
+      subject: pending.subject,
+      behavior: pending.behavior,
+      familyMoment: pending.familyMoment,
     },
     lastEvent: `plate:${pending.plateIndex + 1}:exposed`,
   };
@@ -622,6 +616,15 @@ export function stepPlayer(state, input = {}, rawDeltaSeconds = 0) {
   const reachedGlade = state.reachedGlade || resolved.position.z <= 3;
   const zone = zoneForPosition(resolved.position, reachedGlade);
   const threat = updateThreatState(state, zone, stance, deltaSeconds, travelled);
+  const familyBehaviorSeconds = state.observedBehavior && reachedGlade
+    ? (state.familyBehaviorSeconds + deltaSeconds) % FAMILY_BEHAVIOR_CYCLE_SECONDS
+    : state.familyBehaviorSeconds;
+  const familyMoment = familyMomentForState({
+    ...state,
+    reachedGlade,
+    threatAwareness: threat.awareness,
+    familyBehaviorSeconds,
+  });
   const zoneHistory = zone === state.zone ? [...state.zoneHistory] : [...state.zoneHistory, zone];
   const pendingExposure = state.pendingExposure
     ? { ...state.pendingExposure, remainingSeconds: Math.max(0, state.pendingExposure.remainingSeconds - deltaSeconds) }
@@ -654,6 +657,8 @@ export function stepPlayer(state, input = {}, rawDeltaSeconds = 0) {
     zone,
     zoneHistory,
     reachedGlade,
+    familyBehaviorSeconds,
+    familyMoment,
     inCover: threat.inCover,
     coverSeconds: threat.coverSeconds,
     sprintExposureSeconds: threat.sprintExposureSeconds,

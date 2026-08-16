@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
   CONTACT_SECONDS,
+  FAMILY_BEHAVIOR_CYCLE_SECONDS,
   EXPOSURE_SECONDS,
   INITIAL_LIGHT_SECONDS,
   INITIAL_PLAYER,
@@ -10,6 +11,7 @@ import {
   createPlayerState,
   examine,
   fireDefensiveShot,
+  familyMomentForState,
   frameForState,
   intactEvidence,
   resultBandForEvidence,
@@ -265,10 +267,47 @@ test('examining the brook makes context eligible without awarding evidence', () 
   assert.equal(frameForState(player).points, 1);
 });
 
-test('successive observed glade plates record young play and branch pull separately', () => {
-  const player = createPlayerState();
-  player.zone = 'iguanodon-glade';
-  player.observedBehavior = true;
+test('the live camera direction distinguishes a clear subject, an edge frame and empty forest', () => {
+  let player = createPlayerState();
+  player.position = { x: 8, z: 18 };
+  player.lastStablePosition = { ...player.position };
+  player = stepPlayer(player, { heading: 0 }, 0.1);
+
+  const clear = frameForState(player);
+  assert.equal(clear.key, 'basalt-scale');
+  assert.equal(clear.points, 2);
+  assert.equal(clear.composition, 'clear');
+
+  const edge = frameForState({ ...player, heading: 0.58 });
+  assert.equal(edge.key, 'family-edge');
+  assert.equal(edge.points, 1);
+  assert.equal(edge.composition, 'edge');
+
+  const empty = frameForState({ ...player, heading: Math.PI });
+  assert.equal(empty.key, 'empty-subject');
+  assert.equal(empty.points, 0);
+  assert.equal(empty.composition, 'empty');
+
+  let wastedPlate = startExposure(setCameraRaised({ ...player, heading: Math.PI }, true));
+  wastedPlate = stepPlayer(wastedPlate, {}, 1);
+  wastedPlate = stepPlayer(wastedPlate, {}, 1);
+  assert.equal(wastedPlate.plates[0].status, 'exposed');
+  assert.equal(wastedPlate.plates[0].frameKey, 'empty-subject');
+  assert.equal(wastedPlate.plates[0].points, 0);
+  assert.equal(wastedPlate.threatAwareness, player.threatAwareness);
+});
+
+test('reading the family opens timed young-play and branch-pull windows', () => {
+  let player = createPlayerState();
+  player.position = { x: 0, z: -8 };
+  player.lastStablePosition = { ...player.position };
+  player = stepPlayer(player, {}, 0.1);
+  player = examine(player);
+  assert.equal(player.familyMoment, 'glade-routine');
+
+  player = stepPlayer(player, {}, 1);
+  player = stepPlayer(player, {}, 1);
+  assert.equal(familyMomentForState(player), 'glade-young-play');
   const play = frameForState(player);
   assert.equal(play.key, 'glade-young-play');
   assert.match(play.label, /young play/i);
@@ -280,10 +319,56 @@ test('successive observed glade plates record young play and branch pull separat
     label: play.label,
     frameKey: play.key,
   };
+  const repeated = frameForState(player);
+  assert.equal(repeated.key, 'glade-young-repeat');
+  assert.equal(repeated.points, 1);
+
+  for (let second = 0; second < 6; second += 1) player = stepPlayer(player, {}, 1);
+  assert.ok(player.familyBehaviorSeconds < FAMILY_BEHAVIOR_CYCLE_SECONDS);
+  assert.equal(familyMomentForState(player), 'glade-branch-pull');
   const branch = frameForState(player);
   assert.equal(branch.key, 'glade-branch-pull');
   assert.match(branch.label, /branch/i);
   assert.equal(branch.points, 2);
+});
+
+test('an attacking wing alarms the family and closes the undisturbed behavior window', () => {
+  const player = createPlayerState();
+  player.zone = 'iguanodon-glade';
+  player.reachedGlade = true;
+  player.observedBehavior = true;
+  player.familyBehaviorSeconds = 2;
+  player.familyMoment = 'glade-young-play';
+  player.position = { x: 0, z: -8 };
+  player.lastStablePosition = { ...player.position };
+  player.threatAwareness = 3;
+  player.threatState = 'attack';
+
+  assert.equal(familyMomentForState(player), 'glade-alarm');
+  const alarm = frameForState(player);
+  assert.equal(alarm.key, 'glade-alarm');
+  assert.equal(alarm.points, 1);
+  assert.match(alarm.label, /alarm/i);
+});
+
+test('crouching under canopy actively widens the dive faster than passive waiting', () => {
+  const threatened = createPlayerState();
+  threatened.position = { x: 0, z: 18 };
+  threatened.lastStablePosition = { ...threatened.position };
+  threatened.reachedGlade = true;
+  threatened.zone = 'covered-return';
+  threatened.threatAwareness = 3;
+  threatened.threatState = 'attack';
+
+  let standing = threatened;
+  let crouching = threatened;
+  for (let second = 0; second < 4; second += 1) {
+    standing = stepPlayer(standing, {}, 1);
+    crouching = stepPlayer(crouching, { crouch: true }, 1);
+  }
+  assert.equal(standing.threatState, 'attack');
+  assert.equal(crouching.threatState, 'search');
+  assert.equal(crouching.lastThreatEvent, 'cover-deescalation');
 });
 
 test('camera raise slows movement and shutter commits one physical plate for two live seconds', () => {

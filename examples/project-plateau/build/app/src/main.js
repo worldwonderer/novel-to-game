@@ -316,7 +316,16 @@ const ABANDON_PROMPT_COPY = 'Drop the case and run [Hold G] — the plates stay 
 
 function contextualCopy() {
   if (player.pendingExposure) return 'Hold steady.';
-  if (player.cameraRaised) return 'Hold steady. Release the shutter [Left Mouse]';
+  if (player.cameraRaised) {
+    const frame = frameForState(player);
+    if (frame.composition === 'empty') return 'No living subject. Turn toward the family.';
+    if (frame.key === 'glade-form') return 'The family is between behaviors. Hold or save the plate.';
+    if (frame.key.endsWith('-repeat')) return 'Already recorded. Save the plate for the other behavior.';
+    return 'Hold steady. Release the shutter [Left Mouse]';
+  }
+  if (player.threatState === 'attack' && player.inCover) {
+    return 'Stay under cover · Crouch [C] to let the wing pass faster';
+  }
   if (player.threatState === 'attack') return 'Hold rifle [F] · Fire before contact [Left Mouse]';
   // A held release must always show its progress, even where the prompt is not due.
   if (!player.caseAbandoned && player.abandonHoldSeconds > 0) return ABANDON_PROMPT_COPY;
@@ -324,6 +333,15 @@ function contextualCopy() {
   if (player.zone === 'brook-blind' && !player.examinedTrack) return 'Examine the track [E]';
   if (player.zone === 'brook-blind') return 'Hold camera [Right Mouse]';
   if (player.zone === 'iguanodon-glade' && !player.observedBehavior) return 'Read the family [E]';
+  if (player.zone === 'iguanodon-glade' && player.familyMoment === 'glade-young-play') {
+    return 'The young break into play · Frame them [Right Mouse]';
+  }
+  if (player.zone === 'iguanodon-glade' && player.familyMoment === 'glade-branch-pull') {
+    return 'The adult reaches for the bough · Frame it [Right Mouse]';
+  }
+  if (player.zone === 'iguanodon-glade' && player.familyMoment === 'glade-alarm') {
+    return 'Family alarm · Break the dive before another plate';
+  }
   if (player.returnRoute) return 'Follow the Fort smoke through the gate.';
   if (player.zone !== 'fort' && player.plates.some((plate) => plate.status === 'unexposed')) {
     return 'Hold camera [Right Mouse]';
@@ -342,6 +360,11 @@ function frameConditionCopy(frame) {
     'glade-behavior': 'FAMILY // LIVING BEHAVIOR',
     'glade-young-play': 'FAMILY // YOUNG AT PLAY',
     'glade-branch-pull': 'FAMILY // BRANCH PULL',
+    'glade-young-repeat': 'FAMILY // YOUNG PLAY ALREADY RECORDED',
+    'glade-branch-repeat': 'FAMILY // BRANCH PULL ALREADY RECORDED',
+    'glade-alarm': 'FAMILY // DISTURBED ALARM',
+    'family-edge': 'SUBJECT AT PLATE EDGE // ADJUST',
+    'empty-subject': 'NO LIVING SUBJECT // TURN TOWARD CALL',
     'return-occluded': 'THORN // BODY PARTLY OCCLUDED',
     'creek-scale': 'OPEN SIGHT // CREEK SCALE',
   };
@@ -643,7 +666,7 @@ function worldRuntime(deltaSeconds = 0) {
     shotCount: player.shotCount,
     brookResponse: player.brookResponse,
     inCover: player.inCover,
-    familyMoment: player.pendingExposure?.key ?? null,
+    familyMoment: player.pendingExposure?.familyMoment ?? player.familyMoment,
     quality: presentationSettings.quality,
     deltaSeconds,
   };
@@ -654,6 +677,7 @@ function update(deltaSeconds, now) {
     const previousContacts = player.contactCount;
     const previousRunStatus = player.runStatus;
     const previousThreatState = player.threatState;
+    const previousFamilyMoment = player.familyMoment;
     const previousProofPlate = player.lastProofEvent?.plateIndex ?? -1;
     const previousRoute = player.returnRoute;
     const previousBrookResponse = player.brookResponse;
@@ -662,6 +686,10 @@ function update(deltaSeconds, now) {
     if (player.threatState !== previousThreatState) {
       fieldAudio.setThreatState(player.threatState);
       if (player.threatState !== 'distant') showCaption(player.threatState);
+    }
+    if (player.familyMoment !== previousFamilyMoment) {
+      if (player.familyMoment === 'glade-young-play') emitCue('family-play', 2600);
+      if (player.familyMoment === 'glade-branch-pull') emitCue('family-branch', 2600);
     }
     if ((player.lastProofEvent?.plateIndex ?? -1) !== previousProofPlate) {
       emitCue('plate-slide');
