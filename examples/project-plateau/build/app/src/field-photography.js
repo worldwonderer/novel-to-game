@@ -8,7 +8,7 @@ const EDGE_HEADING_RADIANS = 0.68;
 const CLEAR_FAMILY_PITCH_RADIANS = 0.38;
 const EDGE_FAMILY_PITCH_RADIANS = 0.75;
 const DIVE_PITCH_RADIANS = Object.freeze({ min: 0.16, max: 0.68, edgeMin: 0.06, edgeMax: 0.86 });
-const DIVE_SECONDS = Object.freeze({ min: 0.5, max: 2.24 });
+const DIVE_SECONDS = Object.freeze({ min: 0.5, max: 3 });
 
 const familyCenter = centerOf(FAMILY_LAYOUT);
 const youngPlayCenter = centerOf(

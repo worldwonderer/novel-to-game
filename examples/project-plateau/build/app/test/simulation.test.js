@@ -1,6 +1,11 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
+  createPendingExposure,
+  proofForExposure,
+  updatePendingExposure,
+} from '../src/field-photography.js';
+import {
   CONTACT_SECONDS,
   FAMILY_BEHAVIOR_CYCLE_SECONDS,
   EXPOSURE_SECONDS,
@@ -352,13 +357,45 @@ test('a tracked pterodactyl stays sharp while subject loss during exposure spend
     return player;
   };
 
+  const browserFrameSeconds = 1 / 60;
   let tracked = startExposure(setCameraRaised(diveState(), true));
-  tracked = stepPlayer(tracked, { heading: 0.38, pitch: 0.32 }, 1);
-  assert.ok(tracked.pendingExposure.maxCameraDrift > MAX_STEADY_DRIFT_RADIANS);
-  tracked = stepPlayer(tracked, { heading: 0.38, pitch: 0.32 }, 1);
+  let trackedMaxDrift = 0;
+  for (let frame = 0; frame < 180 && tracked.pendingExposure; frame += 1) {
+    tracked = stepPlayer(
+      tracked,
+      { heading: 0.38, pitch: 0.32 },
+      browserFrameSeconds,
+    );
+    trackedMaxDrift = Math.max(
+      trackedMaxDrift,
+      tracked.pendingExposure?.maxCameraDrift ?? 0,
+    );
+  }
+  assert.equal(tracked.pendingExposure, null);
+  assert.ok(trackedMaxDrift > MAX_STEADY_DRIFT_RADIANS);
   assert.equal(tracked.plates[0].frameKey, 'pterodactyl-dive');
   assert.equal(tracked.plates[0].stability, 'steady');
   assert.equal(tracked.plates[0].points, 2);
+
+  const lateDive = { ...diveState(), attackSeconds: 1.1 };
+  let sampledAttackSeconds = lateDive.attackSeconds;
+  let crossedWindow = createPendingExposure(lateDive, 0, EXPOSURE_SECONDS);
+  for (let frame = 0; frame < 180 && crossedWindow.remainingSeconds > 0; frame += 1) {
+    sampledAttackSeconds += browserFrameSeconds;
+    const liveState = { ...lateDive, attackSeconds: sampledAttackSeconds };
+    crossedWindow = updatePendingExposure(
+      crossedWindow,
+      frameForState(liveState),
+      liveState.heading,
+      liveState.pitch,
+      browserFrameSeconds,
+    );
+  }
+  assert.equal(crossedWindow.remainingSeconds, 0);
+  const lateProof = proofForExposure(crossedWindow);
+  assert.equal(lateProof.points, 0);
+  assert.equal(lateProof.behavior, null);
+  assert.match(lateProof.label, /left the plate/i);
 
   let lost = startExposure(setCameraRaised(diveState(), true));
   lost = stepPlayer(lost, { heading: 0.28, pitch: 0 }, 1);
