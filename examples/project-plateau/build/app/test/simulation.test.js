@@ -266,6 +266,9 @@ test('examining the brook makes context eligible without awarding evidence', () 
   assert.equal(player.lastObservation, 'Three toes. Fresh. The brook runs back to camp.');
   assert.equal(player.plates.reduce((total, plate) => total + plate.points, 0), 0);
   assert.equal(frameForState(player).points, 1);
+
+  assert.equal(frameForState({ ...player, heading: Math.PI }).key, 'empty-subject');
+  assert.equal(frameForState({ ...player, pitch: -1 }).key, 'empty-subject');
 });
 
 test('the live camera direction distinguishes a clear subject, an edge frame and empty forest', () => {
@@ -333,6 +336,73 @@ test('a committed pterodactyl dive is a risky alternate evidence subject', () =>
   const repeated = frameForState(player);
   assert.equal(repeated.key, 'pterodactyl-repeat');
   assert.equal(repeated.points, 1);
+});
+
+test('a tracked pterodactyl stays sharp while subject loss during exposure spends an empty plate', () => {
+  const diveState = () => {
+    const player = createPlayerState();
+    player.position = { x: 8, z: 18 };
+    player.lastStablePosition = { ...player.position };
+    player.zone = 'basalt-shelf';
+    player.heading = 0.28;
+    player.pitch = 0.32;
+    player.threatAwareness = 3;
+    player.threatState = 'attack';
+    player.attackSeconds = 0.7;
+    return player;
+  };
+
+  let tracked = startExposure(setCameraRaised(diveState(), true));
+  tracked = stepPlayer(tracked, { heading: 0.38, pitch: 0.32 }, 1);
+  assert.ok(tracked.pendingExposure.maxCameraDrift > MAX_STEADY_DRIFT_RADIANS);
+  tracked = stepPlayer(tracked, { heading: 0.38, pitch: 0.32 }, 1);
+  assert.equal(tracked.plates[0].frameKey, 'pterodactyl-dive');
+  assert.equal(tracked.plates[0].stability, 'steady');
+  assert.equal(tracked.plates[0].points, 2);
+
+  let lost = startExposure(setCameraRaised(diveState(), true));
+  lost = stepPlayer(lost, { heading: 0.28, pitch: 0 }, 1);
+  lost = stepPlayer(lost, { heading: 0.28, pitch: 0.32 }, 1);
+  assert.equal(lost.plates[0].frameKey, 'empty-subject');
+  assert.equal(lost.plates[0].points, 0);
+  assert.match(lost.plates[0].label, /left the plate/i);
+});
+
+test('behavior must remain valid through the exposure rather than only at shutter start', () => {
+  let player = createPlayerState();
+  player.position = { x: 0, z: -8 };
+  player.lastStablePosition = { ...player.position };
+  player = stepPlayer(player, {}, 0.1);
+  player = examine(player);
+  player.familyBehaviorSeconds = 4.4;
+  player.familyMoment = familyMomentForState(player);
+  assert.equal(frameForState(player).key, 'glade-young-play');
+
+  player = startExposure(setCameraRaised(player, true));
+  player = stepPlayer(player, {}, 1);
+  player = stepPlayer(player, {}, 1);
+  assert.equal(player.plates[0].points, 1);
+  assert.equal(player.plates[0].behavior, null);
+  assert.notEqual(player.plates[0].sourceFrameKey, 'glade-young-play');
+});
+
+test('repeated two-cue basalt and creek compositions degrade to one cue', () => {
+  let basalt = createPlayerState();
+  basalt.position = { x: 8, z: 18 };
+  basalt.lastStablePosition = { ...basalt.position };
+  basalt = stepPlayer(basalt, {}, 0.1);
+  basalt.plates[0] = {
+    ...basalt.plates[0], status: 'exposed', points: 2, frameKey: 'basalt-scale',
+  };
+  assert.equal(frameForState(basalt).key, 'basalt-scale-repeat');
+  assert.equal(frameForState(basalt).points, 1);
+
+  let creek = { ...basalt, reachedGlade: true, zone: 'exposed-creek' };
+  creek.plates = creek.plates.map((plate, index) => index === 0
+    ? { ...plate, frameKey: 'creek-scale', sourceFrameKey: 'creek-scale' }
+    : plate);
+  assert.equal(frameForState(creek).key, 'creek-scale-repeat');
+  assert.equal(frameForState(creek).points, 1);
 });
 
 test('camera drift during a live exposure smears high-value evidence', () => {
