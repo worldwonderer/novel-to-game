@@ -8,8 +8,7 @@ import * as E from './engine.js';
 import { loadAssets, assetReport, urlFor, assertCriticalAssetSchema } from './assets.js';
 import { audio } from './audio.js';
 
-const SAVE_KEY = 'jpm_fengyue_save_v4';
-const LEGACY_SAVE_KEY = 'jpm_fengyue_save_v3';
+const SAVE_KEY = 'jpm_fengyue_save_v5';
 const GALLERY_KEY = 'jpm_fengyue_gallery_v1';
 const AGE_KEY = 'jpm_fengyue_age_session';
 const params = new URLSearchParams(location.search);
@@ -63,15 +62,11 @@ function save() {
 }
 
 function loadSave() {
-  const raw = localStorage.getItem(SAVE_KEY) || localStorage.getItem(LEGACY_SAVE_KEY);
+  const raw = localStorage.getItem(SAVE_KEY);
   const loaded = E.deserialize(raw);
   if (!loaded) {
     localStorage.removeItem(SAVE_KEY);
     return null;
-  }
-  if (!localStorage.getItem(SAVE_KEY)) {
-    localStorage.setItem(SAVE_KEY, E.serialize(loaded));
-    localStorage.removeItem(LEGACY_SAVE_KEY);
   }
   return loaded;
 }
@@ -79,7 +74,6 @@ function loadSave() {
 function startNew() {
   state = E.newGame(SEED);
   localStorage.removeItem(SAVE_KEY);
-  localStorage.removeItem(LEGACY_SAVE_KEY);
   save();
   audio.playBGM('act1');
   render();
@@ -96,7 +90,6 @@ function continueGame() {
 function restart() {
   state = E.newGame(SEED);
   localStorage.removeItem(SAVE_KEY);
-  localStorage.removeItem(LEGACY_SAVE_KEY);
   save();
   render();
 }

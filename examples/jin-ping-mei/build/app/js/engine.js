@@ -7,7 +7,7 @@ import {
   BANQUET_CHOICES, SCENES, ENDINGS,
 } from './data.js';
 
-export const SAVE_VERSION = 9;
+export const SAVE_VERSION = 10;
 export const ACCORD_KEYS = Object.freeze(['order', 'truth', 'safety']);
 export const JOINT_ACTION_TARGET = 2;
 const JOINT_ACTION_IDS = new Set(JOINT_ACTIONS.map((choice) => choice.id));
@@ -996,55 +996,9 @@ export function deserialize(raw) {
   if (!raw) return null;
   try {
     const state = JSON.parse(raw);
+    if (state?.version !== SAVE_VERSION) return null;
     if (!HEROINE_IDS.every((id) => state?.relations?.[id])) return null;
-    // v3 → v4:补齐宅中人。
-    if (state.version === 3) {
-      state.version = 4;
-      state.household = makeHousehold();
-      state.currentHouseholdEvent = null;
-    }
-    // v4 → v5:破裂规则从单次永久旗标改为「公开越过计数 + 一天冷却」,
-    // 旧档按已置位的失信旗标反推计数,并从未冷却状态入局。
-    if (state.version === 4) {
-      state.version = 5;
-      state.publicOverrides = { wu_yueniang: 0, pan_jinlian: 0, li_pinger: 0 };
-      state.routeReopensOn = { wu_yueniang: 0, pan_jinlian: 0, li_pinger: 0 };
-      for (const [flag, heroine] of Object.entries(OVERRIDE_FLAG_TO_HEROINE)) {
-        if (state.flags?.[flag]) state.publicOverrides[heroine] = 1;
-      }
-    }
-    // v5 → v6:路线索引从日历天改为已结算的拜访次数。旧档按 history 里的
-    // visit_choice 回填；只有 visit_start 的中途存档不计次，继续显示当前一拍。
-    // 取不到历史就置 0——从第 1 拍重入,不许崩。
-    if (state.version === 5) {
-      state.version = 6;
-      state.visits = Object.fromEntries(HEROINE_IDS.map((id) => [id, 0]));
-      for (const entry of state.history ?? []) {
-        if (entry?.type === 'visit_choice' && HEROINE_IDS.includes(entry.heroine)) {
-          state.visits[entry.heroine] += 1;
-        }
-      }
-    }
-    // v6 → v7:晨间画面新增结转报条(notes)。旧档的在途晨间没有这页,补空报条,
-    // 已结转的用度与催账不重扣——报条只是呈现,账在结转当刻已经落清。
-    if (state.version === 6) {
-      state.version = 7;
-      if (state.morning && !Array.isArray(state.morning.notes)) state.morning.notes = [];
-    }
-    // v7 → v8:补齐三院共约。旧档没有谈过三条边界，不能凭旧数值直接拿到新结局；
-    // 从 0/3 继续，已经解锁的个人册页与关系数值原样保留。
-    if (state.version === 7) {
-      state.version = 8;
-      state.accords = { order: false, truth: false, safety: false };
-      state.sharedNightChoice = null;
-    }
-    // v8 → v9:联院差事是新过程证据。旧档从 0/2 开始，不凭已经谈成的院约补做历史。
-    if (state.version === 8) {
-      state.version = 9;
-      state.jointActions = [];
-      state.currentJointAction = null;
-    }
-    if (state.version !== SAVE_VERSION || !HOUSEHOLD_IDS.every((id) => state.household?.[id])) return null;
+    if (!HOUSEHOLD_IDS.every((id) => state.household?.[id])) return null;
     if (!state.publicOverrides || !state.routeReopensOn || !state.visits || !state.accords || !Array.isArray(state.jointActions)) return null;
     return state;
   } catch {
