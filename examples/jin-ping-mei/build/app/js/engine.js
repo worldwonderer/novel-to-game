@@ -11,6 +11,11 @@ export const SAVE_VERSION = 10;
 export const ACCORD_KEYS = Object.freeze(['order', 'truth', 'safety']);
 export const JOINT_ACTION_TARGET = 2;
 const JOINT_ACTION_IDS = new Set(JOINT_ACTIONS.map((choice) => choice.id));
+const SAVE_PHASES = new Set([
+  'opening', 'morning', 'day', 'joint_result', 'household', 'banquet',
+  'choose_visit', 'visit', 'night', 'scene', 'shared_night', 'ending',
+]);
+const RESOURCE_KEYS = Object.freeze(['silver', 'power', 'repute', 'exposure', 'strain', 'house']);
 
 // 破裂规则(GAME_DESIGN 第 5 节「拒绝／破裂」):公开越过她两次、或宅门 house<30,
 // 路线冷却一天。此前实现用单次失信旗标永久锁死明确场景,既漏了计数与 house 触发,
@@ -992,15 +997,51 @@ export function serialize(state) {
   return JSON.stringify(state);
 }
 
+const isRecord = (value) => !!value && typeof value === 'object' && !Array.isArray(value);
+const hasFiniteFields = (value, keys) => isRecord(value) && keys.every((key) => Number.isFinite(value[key]));
+
+function validCurrentSave(state) {
+  if (!isRecord(state) || state.version !== SAVE_VERSION) return false;
+  if (!Number.isFinite(state.seed) || !Number.isInteger(state.day) || state.day < 1 || state.day > MAX_DAY) return false;
+  if (!SAVE_PHASES.has(state.phase) || typeof state.over !== 'boolean') return false;
+  if (!hasFiniteFields(state.resources, RESOURCE_KEYS)) return false;
+  if (!isRecord(state.flags)) return false;
+  for (const key of ['secrets', 'secretsUsed', 'history', 'log', 'jointActions', 'unlocked']) {
+    if (!Array.isArray(state[key])) return false;
+  }
+  if (!HEROINE_IDS.every((id) => (
+    hasFiniteFields(state.relations?.[id], ['qing', 'yu', 'du', 'ignored'])
+    && Array.isArray(state.relations[id].reasons)
+    && Number.isFinite(state.publicOverrides?.[id])
+    && Number.isFinite(state.routeReopensOn?.[id])
+    && Number.isInteger(state.visits?.[id])
+  ))) return false;
+  if (!HOUSEHOLD_IDS.every((id) => (
+    hasFiniteFields(state.household?.[id], ['regard'])
+    && Array.isArray(state.household[id].reasons)
+  ))) return false;
+  if (!ACCORD_KEYS.every((key) => typeof state.accords?.[key] === 'boolean')) return false;
+  const completed = new Set(state.jointActions);
+  if (completed.size !== state.jointActions.length || [...completed].some((id) => !JOINT_ACTION_IDS.has(id))) return false;
+  if (state.unlocked.some((id) => !SCENES[id])) return false;
+  if (state.phase === 'joint_result' && (!JOINT_ACTION_IDS.has(state.currentJointAction) || !completed.has(state.currentJointAction))) return false;
+  if (state.phase !== 'joint_result' && state.currentJointAction !== null) return false;
+  if (state.phase === 'scene') {
+    if (!SCENES[state.pendingScene] || !['choose_visit', 'after_night', 'after_shared_night'].includes(state.sceneReturnPhase)) return false;
+  } else if (state.pendingScene !== null || state.sceneReturnPhase !== null) return false;
+  if (state.phase === 'morning' && (!isRecord(state.morning) || !Array.isArray(state.morning.notes))) return false;
+  if (state.phase === 'household' && state.currentHouseholdEvent !== HOUSEHOLD_EVENTS[state.day]?.id) return false;
+  if (state.phase === 'ending') {
+    if (!state.over || !isRecord(state.ending) || !ENDINGS[state.ending.id]) return false;
+  } else if (state.over || state.ending !== null) return false;
+  return true;
+}
+
 export function deserialize(raw) {
   if (!raw) return null;
   try {
     const state = JSON.parse(raw);
-    if (state?.version !== SAVE_VERSION) return null;
-    if (!HEROINE_IDS.every((id) => state?.relations?.[id])) return null;
-    if (!HOUSEHOLD_IDS.every((id) => state.household?.[id])) return null;
-    if (!state.publicOverrides || !state.routeReopensOn || !state.visits || !state.accords || !Array.isArray(state.jointActions)) return null;
-    return state;
+    return validCurrentSave(state) ? state : null;
   } catch {
     return null;
   }
