@@ -41,11 +41,16 @@ test('不同 seed 改变地块次序', () => {
   assert.notDeepEqual(a.layers, b.layers);
 });
 
-test('未掘地块只明示五行，不泄露藏物', () => {
+test('五行明牌只报倾向，不能精确锁定陷阱', () => {
   const state = createTreasureHunt(302, 'wukong');
   const visible = visibleTreasureState(state);
   assert.deepEqual(new Set(visible.tiles.map((tile) => tile.element)), new Set(['金', '木', '水', '火', '土']));
   assert.ok(visible.tiles.every((tile) => tile.kind === null && tile.name === null));
+  for (const layer of Object.values(state.layers)) {
+    for (const trap of layer.filter((tile) => tile.kind === 'trap')) {
+      assert.ok(layer.some((tile) => tile.element === trap.element && tile.kind !== 'trap'));
+    }
+  }
 });
 
 test('八戒每层第一掘免费翻开相邻地块', () => {
@@ -74,13 +79,54 @@ test('外层三掘后可见好就收，所得进入结算', () => {
   assert.equal(result.growth.skillPoints, 0);
 });
 
-test('悟空深入后标出两处妖穴，但不直接揭格', () => {
+test('妖气已聚时收手可凝成避火符，深入会放弃这份稳收', () => {
+  const state = createTreasureHunt(302, 'wukong');
+  digKinds(state, 'outer', ['trap'], 1);
+  digKinds(state, 'outer', ['supply', 'relic', 'empty'], 2);
+  assert.deepEqual(visibleTreasureState(state).safeSettleReward, { bihuofu: 1 });
+  const result = settleTreasureHunt(state);
+  assert.equal(result.items.bihuofu, 1);
+  assert.deepEqual(result.events.find((entry) => entry.type === 'safe_settle').reward, { bihuofu: 1 });
+
+  const deepState = createTreasureHunt(302, 'wukong');
+  digKinds(deepState, 'outer', ['trap'], 1);
+  digKinds(deepState, 'outer', ['supply', 'relic', 'empty'], 2);
+  enterTreasureDepth(deepState);
+  assert.deepEqual(visibleTreasureState(deepState).safeSettleReward, {});
+  assert.ok(!deepState.events.some((entry) => entry.type === 'safe_settle'));
+});
+
+test('妖气未聚时收手无额外奖励，深探保留额外大还丹与修炼收益', () => {
+  const state = createTreasureHunt(302, 'wukong');
+  digKinds(state, 'outer', ['supply', 'relic', 'empty'], 3);
+  assert.deepEqual(visibleTreasureState(state).safeSettleReward, {});
+  enterTreasureDepth(state);
+  digKinds(state, 'deep', ['supply', 'relic'], 2);
+  const result = finishTreasureDepth(state);
+  assert.equal(result.items.dahuandan, 1);
+  assert.equal(result.growth.skillPoints, 1);
+});
+
+test('悟空深入后补充公开五行无法推出的真妖穴情报', () => {
   const state = createTreasureHunt(302, 'wukong');
   digKinds(state, 'outer', ['supply', 'relic', 'empty'], 3);
   enterTreasureDepth(state);
   const visible = visibleTreasureState(state);
-  assert.equal(visible.tiles.filter((tile) => tile.dangerMarked).length, 2);
+  const marked = visible.tiles.filter((tile) => tile.dangerMarked);
+  assert.equal(marked.length, 2);
+  assert.deepEqual(
+    marked.map((tile) => tile.index).sort((a, b) => a - b),
+    state.layers.deep.filter((tile) => tile.kind === 'trap').map((tile) => tile.index).sort((a, b) => a - b),
+  );
   assert.ok(visible.tiles.every((tile) => tile.kind === null));
+  for (const markedTile of marked) {
+    assert.ok(visible.tiles.some((tile) => tile.element === markedTile.element && !tile.dangerMarked));
+  }
+
+  const publicState = createTreasureHunt(302, 'sha');
+  digKinds(publicState, 'outer', ['supply', 'relic', 'empty'], 3);
+  enterTreasureDepth(publicState);
+  assert.ok(visibleTreasureState(publicState).tiles.every((tile) => !tile.dangerMarked));
 });
 
 test('深层两掘成功必得大还丹与修炼心得', () => {

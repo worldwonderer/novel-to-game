@@ -53,6 +53,7 @@ const actual = {
     deepDigs: treasure.HUNT_RULES.deepDigs,
     maxThreat: treasure.HUNT_RULES.maxThreat,
     deepEntryThreat: treasure.HUNT_RULES.deepEntryThreat,
+    safeSettleThreat: treasure.HUNT_RULES.safeSettleThreat,
     guides: Object.keys(treasure.HUNT_GUIDES),
   },
   trueFan: {

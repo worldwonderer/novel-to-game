@@ -47,6 +47,7 @@
       "deepDigs": 2,
       "maxThreat": 4,
       "deepEntryThreat": 1,
+      "safeSettleThreat": 2,
       "guides": ["wukong", "bajie", "sha"]
     },
     "trueFan": {

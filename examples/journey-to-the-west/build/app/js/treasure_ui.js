@@ -15,11 +15,11 @@ import {
 } from './treasure.js';
 
 const ELEMENT_COPY = {
-  金: '遗珍',
-  木: '连脉',
-  水: '丹药',
-  火: '妖气',
-  土: '稳藏',
+  金: '遗珍偏多',
+  木: '连脉偏多',
+  水: '丹药偏多',
+  火: '躁脉难辨',
+  土: '稳藏偏多',
 };
 
 const KIND_COPY = {
@@ -111,12 +111,16 @@ export function startTreasureHunt(root, { seed, onState } = {}) {
   }
 
   function showDepthChoice() {
+    const visible = visibleTreasureState(state);
+    const settleReward = itemsText(visible.safeSettleReward);
     showModal(root, {
       id: 'modal-hunt-depth',
       title: '残图已明 · 收手还是深入',
       bodyNodes: [
         el('p', 'tutorial-line', `外层所得已在手：${itemsText({ ...state.bankedItems, ...state.carriedItems })}。`),
-        el('p', 'tutorial-line', '收手可保全当前所得；深入再掘两处，成功必得大还丹与修炼心得，但妖气满格会丢掉深层所得。外层所得不受牵连。'),
+        el('p', 'tutorial-line', Object.keys(visible.safeSettleReward).length
+          ? `此刻收手还能将聚起的妖气凝成${settleReward}；深入会放弃这份稳收，换取大还丹与修炼心得。外层所得仍已护住。`
+          : '收手可保全当前所得；深入再掘两处，成功必得大还丹与修炼心得，但妖气满格会丢掉深层所得。外层所得不受牵连。'),
       ],
       buttons: [
         { label: '见好就收', id: 'treasure-settle', onClick: () => finish(settleTreasureHunt(state)) },
@@ -204,9 +208,9 @@ export function startTreasureHunt(root, { seed, onState } = {}) {
     const grid = el('div', `treasure-grid ${visible.layer}`);
     for (const tile of visible.tiles) grid.append(tileButton(tile));
     const note = el('div', 'treasure-note', visible.layer === 'outer'
-      ? '五行是明牌：水找丹，金寻简，木会连掘，火藏妖气，土多稳藏。三掘后必须收手或深入。'
+      ? '五行只报倾向：同一火脉可能藏丹，也可能惊妖；不能仅凭明牌锁定陷阱。三掘后必须收手或深入。'
       : visible.guide === 'wukong'
-        ? '火眼已把妖穴盖上「识」印。避开它们，两掘后即可带回深探奖励。'
+        ? '火眼已从同类地脉里辨出真妖穴并盖上「识」印。这是五行明牌之外的新情报。'
         : '深层起步妖气一格；若涨满四格，只损失深层所得，外层宝物已经护住。');
 
     panel.append(head, status, legend, grid, note);

@@ -7,7 +7,7 @@ export const HUNT_GUIDES = {
   wukong: {
     key: 'wukong',
     name: '悟空 · 火眼金睛',
-    desc: '深入后标出妖气陷阱；看清风险，再下金箍棒。',
+    desc: '深入后辨出同类地脉里的真妖穴；这不能从五行明牌推出。',
   },
   bajie: {
     key: 'bajie',
@@ -26,27 +26,28 @@ export const HUNT_RULES = {
   deepDigs: 2,
   maxThreat: 4,
   deepEntryThreat: 1,
+  safeSettleThreat: 2,
 };
 
 const OUTER_TILES = [
   { kind: 'supply', element: '水', reward: { jinchuang: 1 }, name: '清泉药囊' },
-  { kind: 'supply', element: '水', reward: { falidan: 1 }, name: '凝露丹匣' },
+  { kind: 'supply', element: '火', reward: { falidan: 1 }, name: '暖泉丹匣' },
   { kind: 'supply', element: '土', reward: { xingshi: 1 }, name: '镇妖石匣' },
   { kind: 'relic', element: '金', relics: 1, name: '五行残简' },
   { kind: 'relic', element: '金', relics: 1, name: '鎏金残简' },
   { kind: 'vein', element: '木', name: '盘根连脉' },
   { kind: 'vein', element: '木', name: '藤纹连脉' },
-  { kind: 'trap', element: '火', threat: 1, name: '余火妖穴' },
+  { kind: 'trap', element: '火', threat: 2, name: '余火妖穴' },
   { kind: 'empty', element: '土', name: '旧炉空腔' },
 ];
 
 const DEEP_TILES = [
-  { kind: 'supply', element: '水', reward: { bihuofu: 1 }, name: '避火符匣' },
+  { kind: 'supply', element: '火', reward: { bihuofu: 1 }, name: '避火符匣' },
   { kind: 'supply', element: '土', reward: { wubaodan: 1 }, name: '五宝丹匣' },
   { kind: 'relic', element: '金', relics: 2, name: '炉砖铭简' },
   { kind: 'vein', element: '木', name: '地根暗脉' },
   { kind: 'trap', element: '火', threat: 2, name: '伏火妖窟' },
-  { kind: 'trap', element: '火', threat: 2, name: '赤焰妖窟' },
+  { kind: 'trap', element: '金', threat: 2, name: '赤金妖窟' },
 ];
 
 function cloneTiles(tiles) {
@@ -251,7 +252,9 @@ export function canFinishDepth(state) {
 
 export function settleTreasureHunt(state) {
   if (!canChooseDepth(state)) throw new Error('当前不可收手');
-  event(state, 'safe_settle');
+  const reward = state.threat >= HUNT_RULES.safeSettleThreat ? { bihuofu: 1 } : {};
+  mergeItems(state.carriedItems, reward);
+  event(state, 'safe_settle', { reward: { ...reward } });
   return finishResult(state, { deepSuccess: false });
 }
 
@@ -278,6 +281,9 @@ export function visibleTreasureState(state) {
     carriedItems: { ...state.carriedItems },
     bankedRelics: state.bankedRelics,
     carriedRelics: state.carriedRelics,
+    safeSettleReward: canChooseDepth(state) && state.threat >= HUNT_RULES.safeSettleThreat
+      ? { bihuofu: 1 }
+      : {},
     tiles: tiles.map((tile, index) => ({
       index,
       element: tile.element,

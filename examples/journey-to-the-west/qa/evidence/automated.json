@@ -7,8 +7,8 @@
       1440,
       900
     ],
-    "url": "http://127.0.0.1:52052/?seed=42&fast=1",
-    "buildBytes": 4541011
+    "url": "http://127.0.0.1:56221/?seed=42&fast=1",
+    "buildBytes": 4541376
   },
   "inputTrace": [
     "start a new campaign",
@@ -89,10 +89,11 @@
           "carriedItems": {},
           "bankedRelics": 4,
           "carriedRelics": 0,
+          "safeSettleReward": {},
           "tiles": [
             {
               "index": 0,
-              "element": "水",
+              "element": "火",
               "revealed": true,
               "kind": "supply",
               "name": "避火符匣",
@@ -132,7 +133,7 @@
             },
             {
               "index": 5,
-              "element": "火",
+              "element": "金",
               "revealed": false,
               "kind": null,
               "name": null,
@@ -252,7 +253,7 @@
                 "index": 0,
                 "source": "dig",
                 "kind": "supply",
-                "element": "水",
+                "element": "火",
                 "name": "避火符匣"
               },
               {
