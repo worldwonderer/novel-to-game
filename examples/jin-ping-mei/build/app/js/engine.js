@@ -15,6 +15,7 @@ const SAVE_PHASES = new Set([
   'opening', 'morning', 'day', 'joint_result', 'household', 'banquet',
   'choose_visit', 'visit', 'night', 'scene', 'shared_night', 'ending',
 ]);
+const MORNING_EVENT_IDS = new Set(['jealousy', 'pan_claim', 'yue_delayed', 'yue_help', 'pinger_help', 'quiet']);
 const RESOURCE_KEYS = Object.freeze(['silver', 'power', 'repute', 'exposure', 'strain', 'house']);
 
 // 破裂规则(GAME_DESIGN 第 5 节「拒绝／破裂」):公开越过她两次、或宅门 house<30,
@@ -1026,10 +1027,18 @@ function validCurrentSave(state) {
   if (state.unlocked.some((id) => !SCENES[id])) return false;
   if (state.phase === 'joint_result' && (!JOINT_ACTION_IDS.has(state.currentJointAction) || !completed.has(state.currentJointAction))) return false;
   if (state.phase !== 'joint_result' && state.currentJointAction !== null) return false;
+  if (['visit', 'night'].includes(state.phase) && !HEROINE_IDS.includes(state.currentHeroine)) return false;
   if (state.phase === 'scene') {
     if (!SCENES[state.pendingScene] || !['choose_visit', 'after_night', 'after_shared_night'].includes(state.sceneReturnPhase)) return false;
+    if (state.sceneReturnPhase === 'after_night' && !HEROINE_IDS.includes(state.currentHeroine)) return false;
   } else if (state.pendingScene !== null || state.sceneReturnPhase !== null) return false;
-  if (state.phase === 'morning' && (!isRecord(state.morning) || !Array.isArray(state.morning.notes))) return false;
+  if (state.phase === 'morning') {
+    if (!isRecord(state.morning)
+      || !MORNING_EVENT_IDS.has(state.morning.id)
+      || !HEROINE_IDS.includes(state.morning.actor)
+      || !['tone', 'title', 'text'].every((key) => typeof state.morning[key] === 'string')
+      || !Array.isArray(state.morning.notes)) return false;
+  } else if (state.morning !== null) return false;
   if (state.phase === 'household' && state.currentHouseholdEvent !== HOUSEHOLD_EVENTS[state.day]?.id) return false;
   if (state.phase === 'ending') {
     if (!state.over || !isRecord(state.ending) || !ENDINGS[state.ending.id]) return false;
