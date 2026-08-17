@@ -26,7 +26,7 @@ export const HUNT_RULES = {
   deepDigs: 2,
   maxThreat: 4,
   deepEntryThreat: 1,
-  safeSettleThreat: 2,
+  safeSettleItem: 'bihuofu',
 };
 
 const OUTER_TILES = [
@@ -42,7 +42,7 @@ const OUTER_TILES = [
 ];
 
 const DEEP_TILES = [
-  { kind: 'supply', element: '火', reward: { bihuofu: 1 }, name: '避火符匣' },
+  { kind: 'supply', element: '火', reward: { falidan: 1 }, name: '火候丹匣' },
   { kind: 'supply', element: '土', reward: { wubaodan: 1 }, name: '五宝丹匣' },
   { kind: 'relic', element: '金', relics: 2, name: '炉砖铭简' },
   { kind: 'vein', element: '木', name: '地根暗脉' },
@@ -252,7 +252,7 @@ export function canFinishDepth(state) {
 
 export function settleTreasureHunt(state) {
   if (!canChooseDepth(state)) throw new Error('当前不可收手');
-  const reward = state.threat >= HUNT_RULES.safeSettleThreat ? { bihuofu: 1 } : {};
+  const reward = { [HUNT_RULES.safeSettleItem]: 1 };
   mergeItems(state.carriedItems, reward);
   event(state, 'safe_settle', { reward: { ...reward } });
   return finishResult(state, { deepSuccess: false });
@@ -281,8 +281,8 @@ export function visibleTreasureState(state) {
     carriedItems: { ...state.carriedItems },
     bankedRelics: state.bankedRelics,
     carriedRelics: state.carriedRelics,
-    safeSettleReward: canChooseDepth(state) && state.threat >= HUNT_RULES.safeSettleThreat
-      ? { bihuofu: 1 }
+    safeSettleReward: canChooseDepth(state)
+      ? { [HUNT_RULES.safeSettleItem]: 1 }
       : {},
     tiles: tiles.map((tile, index) => ({
       index,

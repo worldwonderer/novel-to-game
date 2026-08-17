@@ -79,30 +79,31 @@ test('外层三掘后可见好就收，所得进入结算', () => {
   assert.equal(result.growth.skillPoints, 0);
 });
 
-test('妖气已聚时收手可凝成避火符，深入会放弃这份稳收', () => {
+test('任何局面收手都可凝成深探无法同时取得的避火符', () => {
   const state = createTreasureHunt(302, 'wukong');
-  digKinds(state, 'outer', ['trap'], 1);
-  digKinds(state, 'outer', ['supply', 'relic', 'empty'], 2);
+  digKinds(state, 'outer', ['supply', 'relic', 'empty'], 3);
+  assert.equal(state.threat, 0);
   assert.deepEqual(visibleTreasureState(state).safeSettleReward, { bihuofu: 1 });
   const result = settleTreasureHunt(state);
   assert.equal(result.items.bihuofu, 1);
   assert.deepEqual(result.events.find((entry) => entry.type === 'safe_settle').reward, { bihuofu: 1 });
 
   const deepState = createTreasureHunt(302, 'wukong');
-  digKinds(deepState, 'outer', ['trap'], 1);
-  digKinds(deepState, 'outer', ['supply', 'relic', 'empty'], 2);
+  digKinds(deepState, 'outer', ['supply', 'relic', 'empty'], 3);
   enterTreasureDepth(deepState);
   assert.deepEqual(visibleTreasureState(deepState).safeSettleReward, {});
   assert.ok(!deepState.events.some((entry) => entry.type === 'safe_settle'));
+  assert.ok(deepState.layers.deep.every((tile) => tile.reward?.bihuofu === undefined));
 });
 
-test('妖气未聚时收手无额外奖励，深探保留额外大还丹与修炼收益', () => {
+test('深入放弃收手避火符，保留独占的大还丹与修炼收益', () => {
   const state = createTreasureHunt(302, 'wukong');
   digKinds(state, 'outer', ['supply', 'relic', 'empty'], 3);
-  assert.deepEqual(visibleTreasureState(state).safeSettleReward, {});
+  assert.deepEqual(visibleTreasureState(state).safeSettleReward, { bihuofu: 1 });
   enterTreasureDepth(state);
   digKinds(state, 'deep', ['supply', 'relic'], 2);
   const result = finishTreasureDepth(state);
+  assert.equal(result.items.bihuofu, undefined);
   assert.equal(result.items.dahuandan, 1);
   assert.equal(result.growth.skillPoints, 1);
 });

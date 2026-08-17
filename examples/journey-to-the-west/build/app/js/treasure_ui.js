@@ -118,9 +118,7 @@ export function startTreasureHunt(root, { seed, onState } = {}) {
       title: '残图已明 · 收手还是深入',
       bodyNodes: [
         el('p', 'tutorial-line', `外层所得已在手：${itemsText({ ...state.bankedItems, ...state.carriedItems })}。`),
-        el('p', 'tutorial-line', Object.keys(visible.safeSettleReward).length
-          ? `此刻收手还能将聚起的妖气凝成${settleReward}；深入会放弃这份稳收，换取大还丹与修炼心得。外层所得仍已护住。`
-          : '收手可保全当前所得；深入再掘两处，成功必得大还丹与修炼心得，但妖气满格会丢掉深层所得。外层所得不受牵连。'),
+        el('p', 'tutorial-line', `此刻收手可把封炉余火凝成${settleReward}；深入会放弃这份独占稳收，换取大还丹与修炼心得。外层所得仍已护住。`),
       ],
       buttons: [
         { label: '见好就收', id: 'treasure-settle', onClick: () => finish(settleTreasureHunt(state)) },
