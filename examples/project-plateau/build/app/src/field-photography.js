@@ -139,8 +139,9 @@ export function createPendingExposure(state, plateIndex, durationSeconds) {
     driftLimit: MAX_STEADY_DRIFT_RADIANS * (braced ? 1.8 : 1),
     initialSubject: frame.subject,
     initialBehavior: frame.behavior,
+    maxExposureRisk: frame.exposure,
     continuousSubject: frame.subject !== null,
-    continuousBehavior: true,
+    continuousBehavior: frame.behavior !== null,
     worstComposition: frame.composition,
   };
 }
@@ -162,6 +163,10 @@ export function updatePendingExposure(pending, liveFrame, heading, pitch, deltaS
     driftLimit: pending.driftLimit,
     initialSubject: pending.initialSubject,
     initialBehavior: pending.initialBehavior,
+    maxExposureRisk: Math.max(
+      pending.maxExposureRisk ?? pending.exposure ?? 0,
+      liveFrame.exposure ?? 0,
+    ),
     continuousSubject: pending.continuousSubject
       && liveFrame.subject !== null
       && liveFrame.subject === pending.initialSubject,
@@ -198,7 +203,11 @@ export function proofForExposure(pending) {
       label: 'FORM — the living subject crossed the plate edge during exposure.',
       composition: 'edge', behavior: null,
     };
-  } else if (!pending.continuousBehavior && pending.initialBehavior && proof.points > 1) {
+  } else if (proof.behavior && (
+    !pending.initialBehavior
+    || !pending.continuousBehavior
+    || proof.behavior !== pending.initialBehavior
+  ) && proof.points > 1) {
     proof = {
       ...proof, key: 'behavior-lost', points: 1,
       label: 'FORM — the behavior did not hold through the exposure.', behavior: null,

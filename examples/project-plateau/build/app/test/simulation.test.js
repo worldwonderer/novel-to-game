@@ -423,6 +423,40 @@ test('behavior must remain valid through the exposure rather than only at shutte
   assert.notEqual(player.plates[0].sourceFrameKey, 'glade-young-play');
 });
 
+test('behavior must already be present at shutter start to earn behavior evidence', () => {
+  let player = createPlayerState();
+  player.position = { x: 0, z: -8 };
+  player.lastStablePosition = { ...player.position };
+  player = stepPlayer(player, {}, 0.1);
+  player = examine(player);
+  player.familyBehaviorSeconds = 0.5;
+  assert.equal(frameForState(player).key, 'glade-form');
+
+  player = startExposure(setCameraRaised(player, true));
+  for (let frame = 0; frame < 4; frame += 1) player = stepPlayer(player, {}, 0.5);
+
+  assert.equal(player.plates[0].points, 1);
+  assert.equal(player.plates[0].behavior, null);
+  assert.equal(player.plates[0].frameKey, 'behavior-lost');
+});
+
+test('exposure threat uses the riskiest sampled frame even when the final plate is empty', () => {
+  let player = createPlayerState();
+  player.position = { x: 8, z: 18 };
+  player.lastStablePosition = { ...player.position };
+  player = stepPlayer(player, {}, 0.1);
+  assert.equal(player.threatAwareness, 1);
+
+  player = startExposure(setCameraRaised(player, true));
+  player = stepPlayer(player, {}, 1);
+  player = stepPlayer(player, {}, 0.9);
+  player = stepPlayer(player, { pitch: 1 }, 0.1);
+
+  assert.equal(player.plates[0].frameKey, 'empty-subject');
+  assert.equal(player.threatAwareness, 3);
+  assert.equal(player.lastThreatEvent, 'plate-exposure:+2');
+});
+
 test('repeated two-cue basalt and creek compositions degrade to one cue', () => {
   let basalt = createPlayerState();
   basalt.position = { x: 8, z: 18 };

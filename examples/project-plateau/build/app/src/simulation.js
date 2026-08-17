@@ -552,6 +552,7 @@ function updateThreatState(state, zone, stance, deltaSeconds, travelled) {
 
 function finalizeExposure(state, pending, threat) {
   const proof = proofForExposure(pending);
+  const exposureRisk = pending.maxExposureRisk ?? pending.exposure;
   const plates = state.plates.map(clonePlate);
   plates[pending.plateIndex] = {
     ...plates[pending.plateIndex],
@@ -565,7 +566,7 @@ function finalizeExposure(state, pending, threat) {
     subject: proof.subject,
     behavior: proof.behavior,
   };
-  const awareness = Math.min(3, threat.awareness + pending.exposure);
+  const awareness = Math.min(3, threat.awareness + exposureRisk);
   return {
     plates,
     pendingExposure: null,
@@ -573,7 +574,7 @@ function finalizeExposure(state, pending, threat) {
     cameraRaised: false,
     threatAwareness: awareness,
     threatState: THREAT_STATES[awareness],
-    lastThreatEvent: pending.exposure > 0 ? `plate-exposure:+${pending.exposure}` : threat.event,
+    lastThreatEvent: exposureRisk > 0 ? `plate-exposure:+${exposureRisk}` : threat.event,
     lastProofEvent: {
       plateIndex: pending.plateIndex,
       frameKey: proof.key,
