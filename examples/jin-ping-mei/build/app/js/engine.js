@@ -1031,6 +1031,15 @@ function validCurrentSave(state) {
   if (state.phase === 'scene') {
     if (!SCENES[state.pendingScene] || !['choose_visit', 'after_night', 'after_shared_night'].includes(state.sceneReturnPhase)) return false;
     if (state.sceneReturnPhase === 'after_night' && !HEROINE_IDS.includes(state.currentHeroine)) return false;
+    if (state.sceneReturnPhase === 'after_night' && SCENES[state.pendingScene].heroine !== state.currentHeroine) return false;
+    if (state.sceneReturnPhase === 'choose_visit' && (state.day !== 5 || state.pendingScene !== 'banquet_conflict')) return false;
+    if (state.sceneReturnPhase === 'after_shared_night' && (
+      state.day !== MAX_DAY
+      || state.pendingScene !== 'inner_court_accord'
+      || state.sharedNightChoice !== 'shared_divide_roles'
+      || !state.flags.harem_coalition
+      || jointActionCount(state) < JOINT_ACTION_TARGET
+    )) return false;
   } else if (state.pendingScene !== null || state.sceneReturnPhase !== null) return false;
   if (state.phase === 'morning') {
     if (!isRecord(state.morning)
@@ -1040,8 +1049,12 @@ function validCurrentSave(state) {
       || !Array.isArray(state.morning.notes)) return false;
   } else if (state.morning !== null) return false;
   if (state.phase === 'household' && state.currentHouseholdEvent !== HOUSEHOLD_EVENTS[state.day]?.id) return false;
+  if (state.phase === 'opening' && state.day !== 1) return false;
+  if (state.phase === 'morning' && state.day < 2) return false;
+  if (state.phase === 'banquet' && state.day !== 5) return false;
+  if (state.phase === 'shared_night' && (state.day !== MAX_DAY || state.sharedNightChoice !== null)) return false;
   if (state.phase === 'ending') {
-    if (!state.over || !isRecord(state.ending) || !ENDINGS[state.ending.id]) return false;
+    if (state.day !== MAX_DAY || !state.over || !isRecord(state.ending) || !ENDINGS[state.ending.id]) return false;
   } else if (state.over || state.ending !== null) return false;
   return true;
 }
@@ -1050,7 +1063,9 @@ export function deserialize(raw) {
   if (!raw) return null;
   try {
     const state = JSON.parse(raw);
-    return validCurrentSave(state) ? state : null;
+    if (!validCurrentSave(state)) return null;
+    if (state.phase === 'ending') state.ending = determineEnding(state);
+    return state;
   } catch {
     return null;
   }
