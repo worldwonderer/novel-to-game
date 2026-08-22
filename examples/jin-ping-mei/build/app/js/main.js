@@ -419,7 +419,8 @@ function collapseSupportingContext(root) {
     '.pair-interlude-memory', '.household-memory', '.crisis-reply-ledger', '.pair-aftermath-transcript',
     '.route-resolution-transcript', '.aftermath-echo', '.aftermath-pair-memory', '.aftermath-route-stake',
     '.memory-thread', '.favor-thread', '.private-price-ledger', '.final-reckoning-cast',
-    '.public-followup-cast', '.external-witnesses',
+    '.public-followup-cast', '.external-witnesses', '.crisis-ledger', '.crisis-rule',
+    '.pair-trust', '.pair-rule', '.collapse-result-transcript',
   ].join(',');
   root.querySelectorAll('.decision-panel').forEach((panel) => {
     if (panel.closest('.roster-overlay, .gallery-overlay, .epilogue-overlay')) return;
@@ -1170,13 +1171,14 @@ function renderActAftermath() {
     : '';
   const rebuttalBlock = rebuttal && !story.resolved ? `
     <section class="external-rebuttal" data-external-rebuttal="${rebuttal.sourceResult}">
+      <details class="supporting-context external-rebuttal-context"><summary><b>三口复案的来路</b><span>三人证言，按需翻看</span></summary><div class="supporting-context-pages"><div class="external-rebuttal-context-pages">
       <header><div><small>第十五日原案</small><b>${escapeHtml(rebuttal.sourceOutcome.label)}</b></div><div><small>第十六日第一选择</small><b>${escapeHtml(rebuttal.actChoice.label)}</b></div><div><small>当时未递</small><b>${escapeHtml(rebuttal.missingEvidence?.label ?? '无')}</b></div></header>
       ${rebuttal.publicOpening ? `<aside class="act-source-echo day15-public-opening ${rebuttal.publicOpening.falseScapegoat ? 'is-contaminated' : ''}" data-day16-public-opening="${rebuttal.publicOpening.choice}"><span>${rebuttal.publicOpening.falseScapegoat ? '复案先拆错误预断' : '复案仍不得预填犯人'}</span><b>${escapeHtml(rebuttal.publicOpening.label)}</b><p>${escapeHtml(rebuttal.publicOpening.rebuttalText)}</p></aside>` : ''}
       ${rebuttal.hearingEcho ? `<aside class="council-external-echo external-hearing-echo" data-day15-hearing-echo="${rebuttal.hearingEcho.sourceAction}"><span>昨日白日经手留下的物件也在受问</span><b>${escapeHtml(rebuttal.hearingEcho.label)}</b><p>${escapeHtml(rebuttal.hearingEcho.rebuttalText)}</p><small>${escapeHtml(rebuttal.hearingEcho.object)}</small></aside>` : ''}
       <ol class="external-rebuttal-voices" aria-label="三名外部人物接成一线的反问">${rebuttal.voices.map((voice, index) => {
         const actor = rebuttal.actors.find((person) => person.id === voice.actor);
         return `<li data-external-rebuttal-actor="${voice.actor}"><i>${narrativeBeatMark(index)}</i><div><span>${escapeHtml(actor?.role ?? '')}</span><b>${escapeHtml(actor?.name ?? voice.actor)}</b><p>${escapeHtml(voice.line)}</p></div></li>`;
-      }).join('')}</ol>
+      }).join('')}</ol></div></div></details>
       <p class="external-rebuttal-question">${escapeHtml(rebuttal.question)}</p>
       <div class="choice-grid external-rebuttal-choices">${E.actAftermathOptions(state).map((choice) => choiceButton(choice, 'act-aftermath-choice')).join('')}</div>
     </section>` : '';
@@ -2132,7 +2134,8 @@ function renderFinalReckoning() {
     <div class="final-reckoning-stage visual-stage" data-final-reckoning="${event.id}" style="--scene-bg:url('${urlFor('cg/group/public_day15')}')">
       <div class="reckoning-ledgers" aria-hidden="true"><i>银</i><i>名</i></div>
       <div class="decision-panel final-reckoning-panel">
-        ${phaseHeader(event.kicker, event.title, event.body)}
+        ${phaseHeader(event.kicker, event.title, '外柜两本总账已经摊开。先决定外账怎样结清，再进入黄昏。')}
+        <aside class="council-external-echo final-reckoning-long-brief"><span>完整来路收入旧账</span><b>二十日外账怎样走到门槛</b><p>${escapeHtml(event.body)}</p></aside>
         ${priceLedger}
         ${event.dayPreparation ? `<aside class="council-external-echo final-day-preparation" data-day20-reckoning-preparation="${event.dayPreparation.sourceAction}"><span>第二十日白日准备仍在两本总账前</span><b>${escapeHtml(event.dayPreparation.label)}</b><p>${escapeHtml(event.dayPreparation.object)}</p></aside>` : ''}
         ${event.publicOpening ? `<aside class="council-external-echo day15-public-opening ${event.publicOpening.falseScapegoat ? 'is-contaminated' : ''}" data-final-day15-opening="${event.publicOpening.choice}"><span>${event.publicOpening.falseScapegoat ? '终局不能用强证洗掉先押' : '终局仍不预填承担全案的人'}</span><b>${escapeHtml(event.publicOpening.label)}</b><p>${escapeHtml(event.evidenceEcho)}</p></aside>` : ''}

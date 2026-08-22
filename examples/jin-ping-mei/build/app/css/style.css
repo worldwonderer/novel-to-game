@@ -1275,11 +1275,13 @@ button:focus-visible { outline: 3px solid var(--gold-bright); outline-offset: 3p
 .act-internal-practice b { margin: .18rem 0; color: #ddc29b; font: .68rem var(--serif); }
 .act-internal-practice p { margin: 0; color: #aa9a83; font: .61rem/1.5 var(--sans); }
 .external-rebuttal { margin-top: .7rem; }
-.external-rebuttal > header { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: .3rem; }
-.external-rebuttal > header div { min-width: 0; padding: .42rem .48rem; border: 1px solid rgba(201,144,81,.24); background: rgba(16,9,7,.58); }
-.external-rebuttal > header small, .external-rebuttal > header b { display: block; }
-.external-rebuttal > header small { color: #8f7b67; font: .49rem var(--sans); }
-.external-rebuttal > header b { overflow: hidden; margin-top: .12rem; color: #d6b27b; font: .58rem var(--serif); text-overflow: ellipsis; white-space: nowrap; }
+.external-rebuttal-context { margin-top: 0; }
+.external-rebuttal-context-pages { min-width: 0; }
+.external-rebuttal-context-pages > header { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: .3rem; }
+.external-rebuttal-context-pages > header div { min-width: 0; padding: .42rem .48rem; border: 1px solid rgba(201,144,81,.24); background: rgba(16,9,7,.58); }
+.external-rebuttal-context-pages > header small, .external-rebuttal-context-pages > header b { display: block; }
+.external-rebuttal-context-pages > header small { color: #8f7b67; font: .49rem var(--sans); }
+.external-rebuttal-context-pages > header b { overflow: hidden; margin-top: .12rem; color: #d6b27b; font: .58rem var(--serif); text-overflow: ellipsis; white-space: nowrap; }
 .external-rebuttal-voices { display: grid; gap: .3rem; margin: .5rem 0; padding: 0; list-style: none; }
 .external-rebuttal-voices li { display: grid; grid-template-columns: 22px minmax(0,1fr); gap: .45rem; padding: .46rem .52rem; border-left: 2px solid #8d4d37; background: linear-gradient(90deg,rgba(104,48,35,.22),rgba(0,0,0,.12)); }
 .external-rebuttal-voices i { display: grid; place-items: center; width: 20px; height: 20px; border: 1px solid rgba(214,153,91,.42); border-radius: 50%; color: #d3a260; font: .54rem var(--sans); }
@@ -1978,7 +1980,7 @@ img[alt="孙雪娥"] { --heroine-focus-x: 68%; }
   .door-forecast dt,.door-due { font-size:.53rem; }
   .door-forecast dd { font-size:.56rem; }
 
-  .dialogue-panel, .night-talk-panel, .aftermath-panel, .personal-afterglow-panel, .personal-afterglow-aftermath-panel, .house-crisis-panel, .pair-interlude-panel, .favor-reckoning-panel, .memory-reckoning-panel, .dusk-invitation-panel, .morning-panel, .household-panel, .afterglow-panel, .shared-dawn-panel { left: 3%; right: 3%; top: auto; bottom: 2%; width: auto; max-height: 70%; padding: .9rem; overflow-y: auto; }
+  .dialogue-panel, .night-talk-panel, .aftermath-panel, .personal-afterglow-panel, .personal-afterglow-aftermath-panel, .house-crisis-panel, .pair-interlude-panel, .favor-reckoning-panel, .memory-reckoning-panel, .dusk-invitation-panel, .morning-panel, .household-panel, .afterglow-panel, .shared-dawn-panel { left: 3%; right: 3%; top: auto; bottom: 2%; width: auto; max-height: 94%; padding: .9rem; overflow-y: auto; }
   .dialogue-panel { max-height: 94%; }
   .dialogue-panel > .choice-stack { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: .5rem; margin-top: .65rem; }
   .dialogue-panel > .choice-stack .choice-button { min-height: 88px; padding: .62rem .68rem; }
@@ -1998,7 +2000,7 @@ img[alt="孙雪娥"] { --heroine-focus-x: 68%; }
   .night-talk-panel .intimacy-memory p,
   .night-talk-panel .intimacy-memory em,
   .night-talk-result-panel .night-talk-stake p { display: none; }
-  .rivalry-panel { max-height: 70%; }
+  .rivalry-panel { max-height: 94%; }
   .rivalry-listener { top: 1.5%; right: 2.5%; width: min(122px,31vw); padding: .3rem; }
   .rivalry-listener figcaption { padding: .28rem .15rem .08rem; }
   .rivalry-listener figcaption small { display: none; }
@@ -2011,7 +2013,8 @@ img[alt="孙雪娥"] { --heroine-focus-x: 68%; }
   .aftermath-stage::after { background: linear-gradient(0deg, rgba(14,9,7,.98) 0%, rgba(14,9,7,.74) 56%, rgba(14,9,7,.08) 84%); }
   .aftermath-stage.milestone-chapter .aftermath-main { background-position: 70% 10%; }
   .aftermath-stage.milestone-chapter::after { background: linear-gradient(0deg,rgba(13,9,8,.99) 0%,rgba(13,9,8,.78) 57%,rgba(13,9,8,.05) 86%); }
-  .aftermath-story-panel { max-height: 72%; }
+  .aftermath-story-panel { max-height: 96%; }
+  .public-evidence-panel { max-height: 96%; }
   .personal-afterglow-stage::after { background: linear-gradient(0deg,rgba(14,9,7,.98) 0%,rgba(14,9,7,.77) 58%,rgba(14,9,7,.08) 86%); }
   .afterglow-close { inset: 0; mask-image: linear-gradient(0deg,transparent 0%,#000 24%,#000 100%); }
   .afterglow-memory { top: 1.5%; right: 2.5%; width: min(150px,38vw); padding: .35rem; }
@@ -2043,12 +2046,12 @@ img[alt="孙雪娥"] { --heroine-focus-x: 68%; }
   .pair-portraits { inset: 0 0 auto; height: 35%; }
   .pair-portraits figcaption { inset: auto .25rem 0; padding: 1.8rem .45rem .4rem; }
   .pair-portraits p { display: none; }
-  .pair-interlude-panel { max-height: 61%; }
+  .pair-interlude-panel { max-height: 94%; }
   .pair-trust { display: grid; gap: .25rem; }
   .pair-aftermath-cast { inset:0 0 auto; height:34%; padding-right:27%; }
   .pair-aftermath-witness { top:1%; right:2%; width:min(112px,27vw); padding:.28rem; }
   .pair-aftermath-witness small { display:none; }
-  .pair-aftermath-panel { max-height:63%; }
+  .pair-aftermath-panel { max-height:94%; }
   .personal-finale-stage::after { background: linear-gradient(0deg,rgba(13,9,8,.99) 0%,rgba(13,9,8,.83) 60%,rgba(13,9,8,.06) 89%); }
   .personal-finale-main { inset: 0; background-position: 70% 10%; }
   .personal-finale-panel { top: auto; max-height: 69%; }
@@ -2119,7 +2122,7 @@ img[alt="孙雪娥"] { --heroine-focus-x: 68%; }
   .collapse-cast figcaption,.collapse-result-cast figcaption { padding: 1.55rem .1rem .28rem; }
   .collapse-cast b,.collapse-result-cast b { font-size: .54rem; }
   .collapse-cast span,.collapse-result-cast span { display: none; }
-  .collapse-finale-panel,.collapse-result-panel { top: auto; max-height: 75%; }
+  .collapse-finale-panel,.collapse-result-panel { top: auto; max-height: 94%; }
   .collapse-final-choices,.collapse-result-voices { grid-template-columns: 1fr; gap: .26rem; }
   .collapse-result-voices blockquote:last-child { grid-column: auto; }
   .collapse-result-voices blockquote { padding: .42rem .48rem; }
@@ -2256,6 +2259,13 @@ img[alt="孙雪娥"] { --heroine-focus-x: 68%; }
   .opening-aftermath-voices blockquote { padding:.34rem .42rem; }
   .opening-aftermath-voices p { margin-top:.12rem; font-size:.54rem; line-height:1.32; }
   .opening-aftermath-continue { min-height:44px; padding:.55rem .65rem; }
+  .aftermath-panel { width:49%; padding:.9rem 1rem; }
+  .aftermath-story-quote { margin:.5rem 0; padding:.65rem .75rem; }
+  .aftermath-story-quote p { margin-top:.35rem; font-size:.72rem; line-height:1.6; }
+  .day-aftermath-panel { padding:.9rem 1rem; }
+  .day-speaker { margin:.45rem 0; padding:.52rem .62rem; font-size:.66rem; line-height:1.5; }
+  .collapse-result-panel { padding:.8rem 1rem; }
+  .collapse-result-current-voice { margin:.4rem 0; padding:.52rem .6rem; }
 }
 
 @media (min-width: 1800px) and (min-height: 1000px) {
@@ -2425,7 +2435,7 @@ img[alt="孙雪娥"] { --heroine-focus-x: 68%; }
   .close-cg::after, .morning-cg::after { background: linear-gradient(0deg, rgba(14,9,7,.98) 0%, rgba(14,9,7,.82) 46%, rgba(14,9,7,.06) 76%); }
   .day-aftermath-stage::after { background: linear-gradient(0deg,rgba(13,9,8,.99) 0%,rgba(13,9,8,.84) 57%,rgba(13,9,8,.05) 88%); }
   .day-aftermath-lead { inset: 0; background-position: 60% 10%; mask-image: linear-gradient(0deg,transparent 0%,#000 24%,#000 100%); }
-  .day-aftermath-panel { left: 3%; right: 3%; top: auto; bottom: 2%; width: auto; max-height: 60%; padding: .9rem; transform: none; }
+  .day-aftermath-panel { left: 3%; right: 3%; top: auto; bottom: 2%; width: auto; max-height: 94%; padding: .9rem; transform: none; }
   .day-aftermath-reactions { inset: 1.5% 2.5% auto; height: 35%; gap: .4rem; }
   .day-aftermath-reactions figure:only-child { width: 48%; }
   .day-aftermath-reactions figcaption { padding: 2.1rem .45rem .45rem; }
@@ -2447,7 +2457,7 @@ img[alt="孙雪娥"] { --heroine-focus-x: 68%; }
   .public-aftermath-cast figcaption { padding: 1.8rem .2rem .3rem; }
   .public-aftermath-cast figcaption span { display: none; }
   .public-aftermath-cast b { font-size: .56rem; }
-  .public-aftermath-panel { left: 3%; right: 3%; top: auto; bottom: 2%; width: auto; max-height: 70%; padding: .88rem; transform: none; }
+  .public-aftermath-panel { left: 3%; right: 3%; top: auto; bottom: 2%; width: auto; max-height: 94%; padding: .88rem; transform: none; }
   .public-aftermath-panel > .ink-button { min-width: 0; width: 100%; }
   .act-aftermath-stage::after { background: linear-gradient(0deg,rgba(11,8,7,.99) 0%,rgba(11,8,7,.84) 61%,rgba(11,8,7,.08) 91%); }
   .act-aftermath-cast { inset: 1.5% 2% auto; height: 34%; gap: .18rem; }
@@ -2455,11 +2465,11 @@ img[alt="孙雪娥"] { --heroine-focus-x: 68%; }
   .act-aftermath-cast figcaption { padding: 1.8rem .2rem .3rem; }
   .act-aftermath-cast figcaption span { display: none; }
   .act-aftermath-cast b { font-size: .56rem; }
-  .act-aftermath-panel { left: 3%; right: 3%; top: auto; bottom: 2%; width: auto; max-height: 70%; padding: .88rem; transform: none; }
+  .act-aftermath-panel { left: 3%; right: 3%; top: auto; bottom: 2%; width: auto; max-height: 94%; padding: .88rem; transform: none; }
   .act-aftermath-panel > .ink-button { min-width: 0; width: 100%; }
-  .external-rebuttal > header { grid-template-columns: 1fr; }
-  .external-rebuttal > header div { display: grid; grid-template-columns: 7rem minmax(0,1fr); align-items: baseline; gap: .35rem; padding: .3rem .4rem; }
-  .external-rebuttal > header b { margin: 0; white-space: normal; }
+  .external-rebuttal-context-pages > header { grid-template-columns: 1fr; }
+  .external-rebuttal-context-pages > header div { display: grid; grid-template-columns: 7rem minmax(0,1fr); align-items: baseline; gap: .35rem; padding: .3rem .4rem; }
+  .external-rebuttal-context-pages > header b { margin: 0; white-space: normal; }
   .external-rebuttal-voices li { padding: .34rem .4rem; }
   .external-rebuttal-voices p { font-size: .55rem; }
   .external-rebuttal-choices { grid-template-columns: 1fr; }
@@ -2469,7 +2479,7 @@ img[alt="孙雪娥"] { --heroine-focus-x: 68%; }
   .final-aftermath-cast figcaption { padding: 1.7rem .18rem .28rem; }
   .final-aftermath-cast figcaption span { display: none; }
   .final-aftermath-cast b { font-size: .55rem; }
-  .final-aftermath-panel { left: 3%; right: 3%; top: auto; bottom: 2%; width: auto; max-height: 72%; padding: .86rem; transform: none; }
+  .final-aftermath-panel { left: 3%; right: 3%; top: auto; bottom: 2%; width: auto; max-height: 94%; padding: .86rem; transform: none; }
   .final-aftermath-choices { grid-template-columns: 1fr; }
   .final-aftermath-panel > .ink-button { min-width: 0; width: 100%; }
   .final-aftermath-ledgers { top: 1%; right: 2%; gap: .15rem; }
@@ -2479,7 +2489,7 @@ img[alt="孙雪娥"] { --heroine-focus-x: 68%; }
   .jiaoer-aftermath-cast figure,.jiaoer-aftermath-cast figure.speaking { min-height:0; transform:none; }
   .jiaoer-aftermath-cast figcaption { padding:1.75rem .25rem .3rem; font-size:.57rem; }
   .jiaoer-aftermath-cast figcaption i { display:none; }
-  .jiaoer-aftermath-panel { left:3%; right:3%; top:auto; bottom:2%; width:auto; max-height:72%; padding:.86rem; transform:none; }
+  .jiaoer-aftermath-panel { left:3%; right:3%; top:auto; bottom:2%; width:auto; max-height:94%; padding:.86rem; transform:none; }
   .jiaoer-aftermath-ledger { grid-template-columns:repeat(3,minmax(0,1fr)); gap:.2rem; }
   .jiaoer-aftermath-ledger span { padding:.38rem .32rem; }
   .jiaoer-aftermath-ledger small { font-size:.52rem; }
@@ -2492,7 +2502,7 @@ img[alt="孙雪娥"] { --heroine-focus-x: 68%; }
   .invitation-aftermath-cast figcaption { padding:1.9rem .35rem .35rem; }
   .invitation-aftermath-cast figcaption small { display:none; }
   .invitation-aftermath-cast figcaption b { font-size:.66rem; }
-  .invitation-aftermath-panel { left:3%; right:3%; top:auto; bottom:2%; width:auto; max-height:70%; padding:.86rem; transform:none; }
+  .invitation-aftermath-panel { left:3%; right:3%; top:auto; bottom:2%; width:auto; max-height:94%; padding:.86rem; transform:none; }
   .invitation-aftermath-ledger { gap:.2rem; }
   .invitation-aftermath-ledger span { padding:.35rem .3rem; }
   .invitation-aftermath-ledger small { font-size:.48rem; }
@@ -2528,11 +2538,11 @@ img[alt="孙雪娥"] { --heroine-focus-x: 68%; }
   .day-aftermath-reactions figure:only-child { width: 48%; }
   .day-aftermath-reactions figcaption { padding: 2.1rem .45rem .45rem; }
   .day-aftermath-reactions p { display: -webkit-box; overflow: hidden; font-size: .6rem; line-height: 1.42; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
-  .day-aftermath-panel { left: 3%; right: 3%; top: auto; bottom: 2%; width: auto; max-height: 60%; padding: .9rem; transform: none; }
+  .day-aftermath-panel { left: 3%; right: 3%; top: auto; bottom: 2%; width: auto; max-height: 94%; padding: .9rem; transform: none; }
   .pair-portraits { inset: 0 0 auto; height: 35%; }
   .pair-portraits figcaption { inset: auto .25rem 0; padding: 1.8rem .45rem .4rem; }
   .pair-portraits p { display: none; }
-  .pair-interlude-panel { left: 3%; right: 3%; top: auto; bottom: 2%; width: auto; max-height: 61%; padding: .9rem; overflow-y: auto; }
+  .pair-interlude-panel { left: 3%; right: 3%; top: auto; bottom: 2%; width: auto; max-height: 80%; padding: .9rem; overflow-y: auto; }
   .pair-aftermath-cast { inset: 0 0 auto; height: 34%; padding-right: 27%; }
   .pair-aftermath-panel { max-height: 63%; }
 }
