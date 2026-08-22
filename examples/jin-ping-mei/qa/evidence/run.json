@@ -8,7 +8,7 @@
     },
     "seed": 42,
     "normalSpeedRun": true,
-    "durationMs": 61211,
+    "durationMs": 65495,
     "viewports": [
       [
         390,
@@ -43,11 +43,17 @@
   },
   "inputTrace": [
     "001. title-or-age | Enter | 我已成年 | title-or-age",
-    "110. choose_visit | Enter | 灶上暖阁\n去雪娥屋里\n劳作被看见，分配要有实据\n情 有话说 · 妒 平静\n第 1 次 · 路线续章\n同场\n瓶儿 · 能合办 +14\n明早\n玉楼最酸 · 约 +5 | visit",
+    "056. route_aftermath | Enter | 把这项处置带进今夜 | night",
+    "110. choose_visit | Enter | 灶上暖阁\n去雪娥屋里\n劳作被看见，分配要有实据\n情 有话说 · 妒 平静\n初次叩门 · 路线续章\n同场\n瓶儿 · 能合办\n明早\n玉楼会来追问这份偏爱\n可走\n共担 | visit",
+    "165. personal_afterglow_aftermath | Enter | 让这项安排带到天亮 | pair_interlude",
     "220. pair_interlude | Enter | 听她把这句话说完 | pair_interlude",
+    "275. night | Enter | 让她把话接下去 | night",
     "329. visit | Enter | 叫她把人名说三遍\n既接了她的酒，也接住她要追的真话\n共同承担 · 会抬高她与盟友的互信 · 顺着她已经相信的路 | route_aftermath",
-    "439. night | Enter | 请她逐人说工\n劳动按人、时辰与选择留下\n写下第一笔 · 由她定界 · 宅门更稳 · 耗损缓解 · 拒绝加更单独成页 · 耗-4 · 宅+2 | night",
-    "548. night | Enter | 承认曾把依赖当成爱\n把用得上与想靠近分开说\n改写上章 · 明说欲望 · 妒意下降 · 去处见光 · 三钥离开一人之手 · 势-1 · 宅+3 | night"
+    "384. day_aftermath | Enter | 看真正的缺口 | day_aftermath",
+    "439. night | Enter | 请她逐人说工\n劳动按人、时辰与选择留下\n写下第一笔 · 由她定界 · 宅门更稳 · 耗损缓解 · 拒绝加更单独成页 · 得以喘息 | night",
+    "494. route_aftermath | Enter | 让她们自己谈\n玉楼与金莲至少肯听完彼此一句，不由你代答\n两院更能互信 · 成功后增幅最大 · 先写离席再排主持 · 耗损加重 · 宅门更稳 | route_aftermath",
+    "548. night | Enter | 承认曾把依赖当成爱\n把用得上与想靠近分开说\n改写上章 · 明说欲望 · 妒意下降 · 去处见光 · 三钥离开一人之手 · 官面借势收窄 · 宅门更稳 | night",
+    "603. title-or-age | Enter | 离开 | title-or-age"
   ],
   "observations": {
     "launch": {
@@ -110,7 +116,7 @@
       "state": {
         "mode": "keyboard-only Enter activation",
         "acceptedInputCount": 603,
-        "inputTraceHash": "07ff006fd432eae7e63e2dc2d44078e703fd3d076246b2e1896a88ee98259f14",
+        "inputTraceHash": "c3573d5145f3907dba5ffc4a9aaeb33194d4c1d2c33e83e7b49fd44d5818cdfe",
         "midpointReloadMatched": true,
         "allFocusAuditsPassed": true
       }
