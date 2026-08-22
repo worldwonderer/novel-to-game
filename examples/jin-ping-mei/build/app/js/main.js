@@ -63,7 +63,10 @@ async function boot() {
 function scheduleSafePreload() {
   if (safePreloadStarted) return;
   safePreloadStarted = true;
-  const start = () => preloadSafeAssets().then((report) => { assets = report; });
+  const start = () => preloadSafeAssets().then((report) => {
+    assets = report;
+    if (report.missingCritical.length && params.get('dev') !== '1') renderAssetFailure(report.missingCritical);
+  });
   if ('requestIdleCallback' in window) window.requestIdleCallback(start, { timeout: 1800 });
   else setTimeout(start, 120);
 }
@@ -307,7 +310,8 @@ function act(fn, label = '') {
   if (fateCodaOpen) {
     const fate = E.currentFateCoda(state);
     focusSoon(fate?.awaitingChoice ? '[data-fate-coda]' : fate?.page === fate?.count - 1 ? '#btn-fate-coda-finish' : '[data-fate-coda-continue]');
-  } else if (['five_private_prices', 'portable_precedent'].includes(state.phase)) focusSoon('#phase-stage .phase-header h2');
+  } else if (state.phase === 'ending') focusSoon('#ending-view h1');
+  else if (['five_private_prices', 'portable_precedent'].includes(state.phase)) focusSoon('#phase-stage .phase-header h2');
   else if (state.phase === 'personal_finale_result' && E.currentPersonalFinaleResult(state)?.departure) focusSoon('#phase-stage .phase-header h2');
   else focusSoon(firstPhaseActionSelector());
 }
@@ -386,11 +390,14 @@ function renderGame() {
   const content = renderPhase();
   const obligations = E.activeObligations(state);
   const notice = hudNotice(obligations);
+  const noticeMarkup = notice.text
+    ? `<p class="hud-notice ${notice.tone}" aria-live="polite">${notice.text}</p>`
+    : '<p class="hud-notice quiet" aria-live="polite"></p>';
   app.innerHTML = `
     <main class="game-shell" id="game-shell" data-phase="${state.phase}" data-act="${Math.min(4, Math.ceil(state.day / 5))}">
       <header class="topbar">
-        <div class="day-mark"><b id="day-num">第 ${state.day} 日</b><span>${escapeHtml(day.act)} · ${escapeHtml(day.name)}</span></div>
-        <p class="hud-notice ${notice.tone}" aria-live="polite">${notice.text}</p>
+        <div class="day-mark"><b id="day-num">第 ${state.day} 日</b><span>${escapeHtml(day.act)}</span></div>
+        ${noticeMarkup}
         <div class="top-actions">
           <button class="plain-button roster-button" id="btn-roster" aria-label="打开完整账册${obligations.length ? '，有旧话待结' : ''}">账册${obligations.length ? ' · 待办' : ''}</button>
           <button class="plain-button" id="btn-gallery">${TEXT.gallery}</button>
@@ -420,7 +427,8 @@ function collapseSupportingContext(root) {
     '.route-resolution-transcript', '.aftermath-echo', '.aftermath-pair-memory', '.aftermath-route-stake',
     '.memory-thread', '.favor-thread', '.private-price-ledger', '.final-reckoning-cast',
     '.public-followup-cast', '.external-witnesses', '.crisis-ledger', '.crisis-rule',
-    '.pair-trust', '.pair-rule', '.collapse-result-transcript',
+    '.pair-trust', '.pair-rule', '.collapse-result-transcript', '.route-beat-archive',
+    '.public-evidence-long-brief', '.final-aftermath-long-brief',
   ].join(',');
   root.querySelectorAll('.decision-panel').forEach((panel) => {
     if (panel.closest('.roster-overlay, .gallery-overlay, .epilogue-overlay')) return;
@@ -428,16 +436,15 @@ function collapseSupportingContext(root) {
     if (!rows.length) return;
     const details = document.createElement('details');
     details.className = 'supporting-context';
-    const label = panel.classList.contains('dialogue-panel')
-      ? '此前关系史'
-      : panel.classList.contains('household-panel')
-        ? '影响这笔交易的旧账'
-        : panel.classList.contains('final-reckoning-panel') || panel.classList.contains('final-aftermath-panel')
-          ? '走到终局的旧账'
-          : panel.classList.contains('public-evidence-panel') || panel.classList.contains('public-followup-panel') || panel.classList.contains('public-aftermath-panel')
-            ? '影响本场裁决的前情'
-            : '前情与依据';
-    details.innerHTML = `<summary><b>${label}</b><span>${rows.length} 笔，按需翻看</span></summary><div class="supporting-context-pages"></div>`;
+    let label = '前情与依据';
+    if (rows.some((row) => row.matches('.route-beat-archive'))) label = '本拍完整叙述';
+    else if (rows.some((row) => row.matches('.public-evidence-long-brief'))) label = '完整案情与前证';
+    else if (rows.some((row) => row.matches('.final-aftermath-long-brief'))) label = '完整来路与旧账';
+    else if (panel.classList.contains('dialogue-panel')) label = '此前关系史';
+    else if (panel.classList.contains('household-panel')) label = '影响这笔交易的旧账';
+    else if (panel.classList.contains('final-reckoning-panel') || panel.classList.contains('final-aftermath-panel')) label = '走到终局的旧账';
+    else if (panel.classList.contains('public-evidence-panel') || panel.classList.contains('public-followup-panel') || panel.classList.contains('public-aftermath-panel')) label = '影响本场裁决的前情';
+    details.innerHTML = `<summary><b>${label}</b><span>${rows.length} 笔旧事</span></summary><div class="supporting-context-pages"></div>`;
     rows[0].before(details);
     details.querySelector('.supporting-context-pages').append(...rows);
   });
@@ -485,7 +492,7 @@ function hudNotice(obligations) {
   if (state.resources.house < 50) return { tone: 'urgent', text: '宅门正在动荡' };
   if (state.resources.exposure >= 45) return { tone: 'watch', text: '外头风声已紧' };
   if (state.resources.strain >= 45) return { tone: 'watch', text: '众人已经难支' };
-  return { tone: 'quiet', text: '今日无急报' };
+  return { tone: 'quiet', text: '' };
 }
 
 function resourceChip(glyph, value, key) {
@@ -823,6 +830,21 @@ function phaseHeader(kicker, title, body) {
   return `<header class="phase-header"><p class="eyebrow">${kicker}</p><h2 tabindex="-1">${title}</h2><p>${escapeHtml(body)}</p></header>`;
 }
 
+function narrativeExcerpt(value, limit = 150) {
+  const text = String(value ?? '').trim();
+  if (text.length <= limit) return { preview: text, full: '' };
+  const candidate = text.slice(0, limit + 1);
+  const stops = [...candidate.matchAll(/[。！？；]/g)].map((match) => match.index + 1);
+  const sentenceEnd = stops.filter((index) => index >= Math.floor(limit * .58)).at(-1);
+  const end = sentenceEnd || limit;
+  return { preview: `${text.slice(0, end).trim()}${sentenceEnd ? '' : '……'}`, full: text };
+}
+
+function narrativeArchive(copy, className, title) {
+  if (!copy.full) return '';
+  return `<aside class="council-external-echo ${className}"><span>完整叙述</span><b>${escapeHtml(title)}</b><p>${escapeHtml(copy.full)}</p></aside>`;
+}
+
 function renderPhase() {
   switch (state.phase) {
     case 'opening': return renderOpening();
@@ -898,14 +920,14 @@ function renderOpeningAftermath() {
   return `
     <div class="opening-aftermath-stage visual-stage opening-after-${story.choice}" data-opening-aftermath="${story.choice}:${story.beat}" style="--scene-bg:url('${urlFor('cover')}')">
       <div class="opening-aftermath-cast" aria-label="五个人正在回应你的第一笔选择">
-        ${HEROINE_IDS.map((id) => `<figure class="${active.has(id) ? 'speaking' : 'listening'}"><img src="${urlFor(HEROINES[id].portrait)}" alt="${HEROINES[id].name}"/><figcaption><i>${HEROINES[id].glyph}</i><b>${HEROINES[id].short}</b><small>${active.has(id) ? '这一拍由她留下自己的条件' : '她仍在桌边，下一拍会拿出自己的证物'}</small></figcaption></figure>`).join('')}
+        ${HEROINE_IDS.map((id) => `<figure class="${active.has(id) ? 'speaking' : 'listening'}"><img src="${urlFor(HEROINES[id].portrait)}" alt="${HEROINES[id].name}"/><figcaption><i>${HEROINES[id].glyph}</i><b>${HEROINES[id].short}</b></figcaption></figure>`).join('')}
       </div>
       <div class="decision-panel opening-aftermath-panel">
         ${phaseHeader(`第一日 · 正堂起手后章 · ${narrativeStep(story.beat + 1, story.count)}`, beat.title, beat.body)}
         <p class="opening-origin"><span>你刚才选择</span><b>${escapeHtml(source.label)}</b><small>${escapeHtml(source.text)}</small></p>
         ${story.previous.length ? `<ol class="opening-aftermath-transcript" aria-label="开局已经发生的回应">${story.previous.map((row, index) => `<li><span>${narrativeBeatMark(index)}</span><div><b>${escapeHtml(row.title)}</b><p>${escapeHtml(row.body)}</p></div></li>`).join('')}</ol>` : ''}
         <div class="opening-aftermath-voices">${beat.speakers.map((id) => `<blockquote data-opening-speaker="${id}"><span>${HEROINES[id].house}</span><b>${HEROINES[id].name}</b><p>${escapeHtml(beat.voices[id])}</p></blockquote>`).join('')}</div>
-        <button class="ink-button primary opening-aftermath-continue" data-opening-aftermath-continue="1">${last ? '带着五条线索进入第一日' : story.beat === 0 ? '听另外三院拿出证物' : '看五十两怎样分出三条去路'}</button>
+        <button class="ink-button story-continue opening-aftermath-continue" data-opening-aftermath-continue="1">${last ? '带着五条线索进入第一日' : story.beat === 0 ? '听另外三院拿出证物' : '看五十两怎样分出三条去路'}</button>
       </div>
     </div>`;
 }
@@ -924,7 +946,7 @@ function renderHouseCrisis() {
         <blockquote>${escapeHtml(currentReply.line)}</blockquote>
         <dl><div><dt>她处分的原物</dt><dd>${escapeHtml(currentReply.object)}</dd></div><div><dt>她实际会做</dt><dd>${escapeHtml(currentReply.action)}</dd></div></dl>
         <p>${escapeHtml(currentReply.reason)}</p>
-        <button class="ink-button primary crisis-reply-continue" data-house-crisis-reply="1">${event.replyBeat + 1 < event.responses.length ? '听下一人处分本人之物' : '把三份答复并到救法桌上'}</button>
+        <button class="ink-button story-continue crisis-reply-continue" data-house-crisis-reply="1">${event.replyBeat + 1 < event.responses.length ? '听下一人处分本人之物' : '把三份答复并到救法桌上'}</button>
       </section>`
     : `<p class="crisis-rule">三份本人答复已经落齐。现在只能从仍愿开放的原物与劳动里组成救法；撤回者不会因危局被重新算作同意。</p>
       <div class="choice-stack crisis-structure-choices">${E.houseCrisisOptions(state).map((choice) => choiceButton(choice, 'house-crisis')).join('')}</div>`;
@@ -950,7 +972,7 @@ function renderHouseCrisisAftermath() {
     : story.event.choices.find((choice) => choice.id === story.approach)?.label ?? '危机已止血';
   const action = story.awaitingChoice
     ? `<div class="choice-grid crisis-aftermath-choices">${E.houseCrisisAftermathOptions(state).map((choice) => choiceButton(choice, 'house-crisis-aftermath')).join('')}</div>`
-    : `<button class="ink-button primary" data-house-crisis-aftermath-continue="1">${story.beat === 3 ? '把新规带进这一日' : story.beat === 0 ? '看谁承担了救法的代价' : '把临时补救问成一条规矩'}</button>`;
+    : `<button class="ink-button story-continue" data-house-crisis-aftermath-continue="1">${story.beat === 3 ? '把新规带进这一日' : story.beat === 0 ? '看谁承担了救法的代价' : '把临时补救问成一条规矩'}</button>`;
   return `
     <div class="crisis-aftermath-stage visual-stage crisis-aftermath-${story.event.type} crisis-aftermath-beat-${story.beat + 1}" data-crisis-aftermath="${story.event.type}" data-crisis-aftermath-beat="${story.beat + 1}" style="--scene-bg:url('${urlFor('compound')}')">
       <div class="crisis-aftermath-cast" aria-label="危机后的三人现场">
@@ -996,7 +1018,7 @@ function renderPairInterlude() {
           <p class="pair-aftermath-origin"><span>你刚才选择</span><b>${escapeHtml(event.resolutionLabel)}</b><small>${escapeHtml(event.results[event.resolutionChoice])}</small></p>
           ${previousBeats.length ? `<ol class="pair-aftermath-transcript" aria-label="这次双院选择已经发生的动作">${previousBeats.map((beat, index) => `<li><span>${narrativeBeatMark(index)}</span><div><b>${escapeHtml(beat.title)}</b><p>${escapeHtml(beat.body)}</p></div></li>`).join('')}</ol>` : ''}
           <blockquote class="pair-aftermath-current ${witnessSpeaking ? 'witness-line' : 'pair-line'}"><span>${escapeHtml(event.resolutionBeat.speakerHouse)}</span><b>${escapeHtml(event.resolutionBeat.title)}</b><p>${escapeHtml(event.resolutionBeat.body)}</p></blockquote>
-          <button class="ink-button primary" data-pair-story="1">${event.resolution.beat === 0 ? `看${witness.short}怎样接住` : witnessSpeaking ? '听她们把异议写回原约' : '把这份关系带到次晨'}</button>
+          <button class="ink-button story-continue" data-pair-story="1">${event.resolution.beat === 0 ? `看${witness.short}怎样接住` : witnessSpeaking ? '听她们把异议写回原约' : '把这份关系带到次晨'}</button>
         </div>
       </div>`;
   }
@@ -1023,7 +1045,7 @@ function renderPairInterlude() {
         <div class="pair-trust"><span>她们不经你转述也能谈到这里</span><b>当前关系 · ${E.bondTier(event.trust)}</b></div>
         ${atChoice
           ? `<p class="pair-rule">支持她们形成横向关系，更容易出现双院、三院或五院结局；把话重新拉回你身边，则会提高个人情欲，却削弱她们彼此结盟的可能。</p><div class="choice-stack">${E.pairInterludeOptions(state).map((choice) => choiceButton(choice, 'pair-interlude')).join('')}</div>`
-          : '<button class="ink-button primary" data-pair-story="1">听她把这句话说完</button>'}
+          : '<button class="ink-button story-continue" data-pair-story="1">听她把这句话说完</button>'}
       </div>
     </div>`;
 }
@@ -1051,7 +1073,7 @@ function renderFavorReckoning() {
         <div class="favor-thread"><span>那天危局确实收住了，但不是免费收住</span><b>你没有顺着征兆，而是借${heroine.short}的“${escapeHtml(event.sourceLabel)}”先压住局面</b><small>${escapeHtml(event.sourceText)}</small><em>${event.daysLater} 日后，${observer.short}也到场；这次选择会同时改变个人情分与两院互信。</em></div>
         ${event.awaitingChoice
           ? `<div class="favor-verdict-note">两个人已经把来路和代价都说完。现在没有“什么都不做”：你必须决定这笔人情由谁、用什么方式偿还。</div><div class="choice-stack">${E.favorReckoningOptions(state).map((choice) => choiceButton(choice, 'favor-reckoning')).join('')}</div>`
-          : `<button class="ink-button primary favor-story-continue" data-favor-story="1">${continueLabel}</button>`}
+          : `<button class="ink-button story-continue favor-story-continue" data-favor-story="1">${continueLabel}</button>`}
       </div>
     </div>`;
 }
@@ -1084,7 +1106,7 @@ function renderMemoryReckoning() {
         <div class="memory-thread"><span>原话没有随那一夜结束</span><b>你先选了“${escapeHtml(event.sourceLabel)}”</b><small>${escapeHtml(event.sourceText)}</small><strong>当时实际执行 · ${escapeHtml(event.sourceStake.label)} · ${escapeHtml(narrativeChoiceMeta(event.sourceStake.resourceText))}</strong><small>${escapeHtml(event.sourceStake.text)}</small><strong>今日只追这一件</strong><small>${escapeHtml(event.sourceReturn.question)}</small><em>${promise} · ${event.daysLater} 日后，这件原物与代价一起回来追账。</em></div>
         ${event.awaitingChoice
           ? `<div class="memory-verdict-note">她们争的不是你还记不记得，而是这句话到了今日是否仍能约束你。兑现、重写或否认，都会成为以后她们判断你口头承诺的依据。</div><div class="choice-stack">${E.memoryReckoningOptions(state).map((choice) => choiceButton(choice, 'memory-reckoning')).join('')}</div>`
-          : `<button class="ink-button primary memory-story-continue" data-memory-story="1">${continueLabel}</button>`}
+          : `<button class="ink-button story-continue memory-story-continue" data-memory-story="1">${continueLabel}</button>`}
       </div>
     </div>`;
 }
@@ -1118,12 +1140,12 @@ function renderDuskInvitationAftermath() {
   const approachLabel = { accept:'赴她的约', open:'请她当面说完', decline:'诚实说明今夜不去' }[story.approach];
   const action = story.awaitingChoice
     ? `<div class="choice-grid invitation-aftermath-choices">${E.duskInvitationAftermathOptions(state).map((choice) => choiceButton(choice, 'dusk-invitation-aftermath')).join('')}</div>`
-    : `<button class="ink-button primary" data-dusk-invitation-aftermath-continue="1">${story.resolved ? (story.approach === 'accept' ? `随${heroine.short}真正进门` : '带着这句话回到五院岔口') : story.step === 0 ? `听${witness.short}把旁院代价问出来` : '让她把今夜的具体安排说清'}</button>`;
+    : `<button class="ink-button story-continue" data-dusk-invitation-aftermath-continue="1">${story.resolved ? (story.approach === 'accept' ? `随${heroine.short}真正进门` : '带着这句话回到五院岔口') : story.step === 0 ? `听${witness.short}把旁院代价问出来` : '让她把今夜的具体安排说清'}</button>`;
   return `
     <div class="invitation-aftermath-stage visual-stage invite-after-${story.heroine} ${story.resolved ? 'resolved' : ''}" data-dusk-invitation-aftermath="${story.approach}" data-invitation-aftermath-beat="${story.step + 1}">
       <div class="invitation-aftermath-cast" aria-label="${heroine.name}与${witness.name}把主动邀约说到底">
-        <figure class="${story.speaker === story.heroine ? 'speaking' : 'listening'}"><img src="${urlFor(heroine.close)}" alt="${heroine.name}"/><figcaption><span>主动邀约者</span><b>${heroine.name}</b><small>${story.speaker === story.heroine ? '这一拍由她说清自己的需要' : '她没有退场，也在听旁院怎样追问'}</small></figcaption></figure>
-        <figure class="${story.speaker === story.witness ? 'speaking' : 'listening'}"><img src="${urlFor(witness.close)}" alt="${witness.name}"/><figcaption><span>旁院见证者</span><b>${witness.name}</b><small>${story.speaker === story.witness ? '她把这次偏爱会伤到的地方问出来' : '她仍会承担这项安排的横向后果'}</small></figcaption></figure>
+        <figure class="${story.speaker === story.heroine ? 'speaking' : 'listening'}"><img src="${urlFor(heroine.close)}" alt="${heroine.name}"/><figcaption><span>主动邀约者</span><b>${heroine.name}</b></figcaption></figure>
+        <figure class="${story.speaker === story.witness ? 'speaking' : 'listening'}"><img src="${urlFor(witness.close)}" alt="${witness.name}"/><figcaption><span>旁院见证者</span><b>${witness.name}</b></figcaption></figure>
       </div>
       <div class="decision-panel invitation-aftermath-panel">
         ${phaseHeader(`主动邀约后续 · ${approachLabel} · ${narrativeStep(story.step + 1, story.count)}`, story.current.title, story.current.body)}
@@ -1171,7 +1193,7 @@ function renderActAftermath() {
     : '';
   const rebuttalBlock = rebuttal && !story.resolved ? `
     <section class="external-rebuttal" data-external-rebuttal="${rebuttal.sourceResult}">
-      <details class="supporting-context external-rebuttal-context"><summary><b>三口复案的来路</b><span>三人证言，按需翻看</span></summary><div class="supporting-context-pages"><div class="external-rebuttal-context-pages">
+      <details class="supporting-context external-rebuttal-context"><summary><b>三口复案的来路</b><span>三人证言</span></summary><div class="supporting-context-pages"><div class="external-rebuttal-context-pages">
       <header><div><small>第十五日原案</small><b>${escapeHtml(rebuttal.sourceOutcome.label)}</b></div><div><small>第十六日第一选择</small><b>${escapeHtml(rebuttal.actChoice.label)}</b></div><div><small>当时未递</small><b>${escapeHtml(rebuttal.missingEvidence?.label ?? '无')}</b></div></header>
       ${rebuttal.publicOpening ? `<aside class="act-source-echo day15-public-opening ${rebuttal.publicOpening.falseScapegoat ? 'is-contaminated' : ''}" data-day16-public-opening="${rebuttal.publicOpening.choice}"><span>${rebuttal.publicOpening.falseScapegoat ? '复案先拆错误预断' : '复案仍不得预填犯人'}</span><b>${escapeHtml(rebuttal.publicOpening.label)}</b><p>${escapeHtml(rebuttal.publicOpening.rebuttalText)}</p></aside>` : ''}
       ${rebuttal.hearingEcho ? `<aside class="council-external-echo external-hearing-echo" data-day15-hearing-echo="${rebuttal.hearingEcho.sourceAction}"><span>昨日白日经手留下的物件也在受问</span><b>${escapeHtml(rebuttal.hearingEcho.label)}</b><p>${escapeHtml(rebuttal.hearingEcho.rebuttalText)}</p><small>${escapeHtml(rebuttal.hearingEcho.object)}</small></aside>` : ''}
@@ -1189,10 +1211,10 @@ function renderActAftermath() {
     </section>` : '';
   const action = story.awaitingChoice
     ? ''
-    : `<button class="ink-button primary" data-act-aftermath-continue="1">${story.resolved ? '把复案结果带进第四幕' : last ? `真正进入第 ${story.act} 幕` : story.beat === 0 ? '让五院拿现实来验' : story.beat === 1 && state.day === 16 ? '听三人怎样接成反问' : '看她们怎样定下新做法'}</button>`;
+    : `<button class="ink-button story-continue" data-act-aftermath-continue="1">${story.resolved ? '把复案结果带进第四幕' : last ? `真正进入第 ${story.act} 幕` : story.beat === 0 ? '让五院拿现实来验' : story.beat === 1 && state.day === 16 ? '听三人怎样接成反问' : '看她们怎样定下新做法'}</button>`;
   return `
     <div class="act-aftermath-stage visual-stage act-aftermath-${story.act} act-beat-${story.beat + 1}" data-act-aftermath="${story.choice}" data-act-beat="${story.beat + 1}" style="--scene-bg:url('${urlFor(background)}')">
-      <div class="act-aftermath-cast" aria-label="一起验证下一幕真相的五个人">${story.participants.map((id) => `<figure class="${beat.speaker === id ? 'speaking' : 'listening'}"><img src="${urlFor(HEROINES[id].portrait)}" alt="${HEROINES[id].name}"/><figcaption><span>${beat.speaker === id ? '这一拍由她验证新局势' : '她在听，也会进入下一幕'}</span><b>${HEROINES[id].name}</b></figcaption></figure>`).join('')}</div>
+      <div class="act-aftermath-cast" aria-label="一起验证下一幕真相的五个人">${story.participants.map((id) => `<figure class="${beat.speaker === id ? 'speaking' : 'listening'}"><img src="${urlFor(HEROINES[id].portrait)}" alt="${HEROINES[id].name}"/><figcaption><b>${HEROINES[id].name}</b></figcaption></figure>`).join('')}</div>
       <div class="decision-panel act-aftermath-panel">
         ${phaseHeader(`第 ${story.act} 幕开启 · ${story.label} · ${narrativeStep(story.beat + 1, story.count)}`, beat.title, beat.body)}
         ${story.day5Opening ? `<aside class="act-source-echo day5-public-opening" data-act-aftermath-day5-opening="${story.day5Opening.choice}:${story.beat + 1}"><span>${story.day5Opening.choice === 'public_5_favor' ? '已认偏宠仍限制这一拍' : '逐手经办仍限制这一拍'}</span><b>${escapeHtml(story.day5Opening.label)}</b><p>${escapeHtml(story.day5Opening.text)}</p></aside>` : ''}
@@ -1209,10 +1231,8 @@ function renderActAftermath() {
 
 function renderDay() {
   const def = E.dayDef(state);
-  const momentum = E.pressureMomentum(state);
   const jointOptions = E.jointActionOptions(state);
   const jointDone = Math.min(E.jointActionCount(state), E.JOINT_ACTION_TARGET);
-  const focus = def.focus.map((id) => HEROINES[id]?.short).filter(Boolean);
   const opening = state.day === 1 ? E.openingMemory(state) : null;
   const contextRows = [
     opening ? `<aside class="opening-memory-slip" data-opening-memory="${opening.choice}"><span>正堂起手仍在影响这一日</span><b>${escapeHtml(opening.title)}</b><p>${escapeHtml(opening.memory)}</p></aside>` : '',
@@ -1231,7 +1251,7 @@ function renderDay() {
     def.nightLedger ? `<aside class="council-external-echo day-night-ledger" data-night-ledger-day13="${def.nightLedger.choice}" data-day5-opening-long="${def.nightLedger.publicOpeningChoice}"><span>行动权限，不是新增证物</span><b>${escapeHtml(def.nightLedger.title)}</b><p>${escapeHtml(def.nightLedger.text)}</p><small>${escapeHtml(def.nightLedger.permission)} · 第五日仍按“${escapeHtml(def.nightLedger.publicOpeningLabel)}”追责。</small></aside>` : '',
   ].filter(Boolean);
   const contextSection = contextRows.length
-    ? `<details class="day-context-details"><summary><b>旧事正在影响今日</b><span>${contextRows.length === 1 ? '一笔前情，按需翻看' : '数笔前情，按需翻看'}</span></summary><div>${contextRows.join('')}</div></details>`
+    ? `<details class="day-context-details"><summary><b>旧事正在影响今日</b><span>${contextRows.length} 笔旧事</span></summary><div>${contextRows.join('')}</div></details>`
     : '';
   const jointSection = state.day < 6
     ? ''
@@ -1241,11 +1261,9 @@ function renderDay() {
   const dayOptions = E.dayOptions(state);
   return `
     <div class="hub-stage visual-stage" style="--scene-bg:url('${urlFor('compound')}')">
-      <div class="courtyard-caption"><span>正堂</span><span>花园角门</span><span>瓶儿私院</span><span>玉楼书房</span><span>雪娥灶院</span></div>
       <div class="decision-panel day-panel">
-        ${phaseHeader(`第 ${state.day} 日 · 白日`, def.name, def.pressure)}
+        ${phaseHeader('白日', def.name, `${def.pressure} ${def.tell}`)}
         ${contextSection}
-        <div class="day-dilemma"><span>今日两难 · ${momentum.label}</span><b>${escapeHtml(def.dilemma)}</b><em>${focus.length ? `${focus.join('、')}正在看你先动哪一笔` : TEXT.dayLead}</em><small class="pressure-tell">门房征兆 · ${escapeHtml(def.tell)}</small></div>
         ${renderEvidenceBoard()}
         <div class="day-actions">${dayOptions.map((choice) => choiceButton({ ...choice, hint: `${choice.actor ? `${HEROINES[choice.actor].short} · ` : ''}${choice.hint}`, meta: '' }, 'day-action')).join('')}</div>
         ${jointSection}
@@ -1281,7 +1299,7 @@ function renderDayAftermath() {
         <div class="story-progress"><span>${narrativeStep(story.beat + 1, story.count)}</span><i></i><b>${['她先动手', '旁院接话', '危局回手'][story.beat]}</b></div>
         ${beat.speaker ? `<blockquote class="day-speaker"><span>${HEROINES[beat.speaker].name}</span>${escapeHtml(HEROINES[beat.speaker].voice)}</blockquote>` : ''}
         ${consequence}
-        <button class="ink-button primary day-aftermath-continue" data-day-aftermath-continue="1">${last ? '把后果记进总账' : story.beat === 0 ? '看另外两院怎么接' : '看真正的缺口'}</button>
+        <button class="ink-button story-continue day-aftermath-continue" data-day-aftermath-continue="1">${last ? '把后果记进总账' : story.beat === 0 ? '看另外两院怎么接' : '看真正的缺口'}</button>
       </div>
     </div>`;
 }
@@ -1296,7 +1314,7 @@ function renderJointResult() {
       <div class="decision-panel joint-result-panel">
         ${phaseHeader(`联院差事 · ${choice.participants.map((id) => HEROINES[id].short).join('与')} · ${narrativeStep(choice.beat + 1, choice.count)}`, beat.title, beat.body)}
         <div class="joint-story-row"><div class="joint-pair-voices">${choice.participants.map((id) => `<span class="${beat.speaker === id ? 'speaking' : ''}"><i>${HEROINES[id].glyph}</i>${HEROINES[id].short}</span>`).join('')}</div><p class="joint-payoff">${last ? `${choice.hint} · 两个人都把对方的方法写进自己的证链` : beat.speaker ? `${HEROINES[beat.speaker].short}主导这一幕，另一人仍保留反对与改手的权利` : '方法已经合流，但两人的边界没有被抹成同一种'}</p></div>
-        <button class="ink-button primary" data-joint-continue="1">${last ? '把这桩合办记进总账' : choice.beat === 0 ? `听${HEROINES[choice.participants[1]].short}怎么接` : '看两种法子怎样扣在一起'}</button>
+        <button class="ink-button story-continue" data-joint-continue="1">${last ? '把这桩合办记进总账' : choice.beat === 0 ? `听${HEROINES[choice.participants[1]].short}怎么接` : '看两种法子怎样扣在一起'}</button>
       </div>
     </div>`;
 }
@@ -1313,13 +1331,13 @@ function renderPortablePrecedent() {
   }).join('');
   let content = '';
   if (story.stage === 'opening') {
-    content = `<section class="precedent-object" aria-label="院外经手人与第二张契"><p><b>${escapeHtml(story.outsider.name)}</b> · ${escapeHtml(story.outsider.role)} · 成年经手人</p><span>他只为自己的交易、证言或工资来援引，不知道院门内的私物和关系史。</span></section><button class="ink-button primary" data-portable-precedent-continue="1">让两位原经手人分别答</button>`;
+    content = `<section class="precedent-object" aria-label="院外经手人与第二张契"><p><b>${escapeHtml(story.outsider.name)}</b> · ${escapeHtml(story.outsider.role)} · 成年经手人</p><span>他只为自己的交易、证言或工资来援引，不知道院门内的私物和关系史。</span></section><button class="ink-button story-continue" data-portable-precedent-continue="1">让两位原经手人分别答</button>`;
   } else if (story.stage === 'reply') {
-    content = `<blockquote class="precedent-reply"><span>${HEROINES[activeReply.heroine].name}自主作答 · ${escapeHtml(story.response.title)}</span>${escapeHtml(story.response.line)}</blockquote><ul class="precedent-reasons" aria-label="她这样回答的真实前史">${activeReply.reasons.map((reason) => `<li>${escapeHtml(reason)}</li>`).join('')}</ul><button class="ink-button primary" data-portable-precedent-continue="1">${story.beat === 1 ? `听${HEROINES[story.participants[1]].short}独立作答` : '两份答复都不许由你改口'}</button>`;
+    content = `<blockquote class="precedent-reply"><span>${HEROINES[activeReply.heroine].name}自主作答 · ${escapeHtml(story.response.title)}</span>${escapeHtml(story.response.line)}</blockquote><ul class="precedent-reasons" aria-label="她这样回答的真实前史">${activeReply.reasons.map((reason) => `<li>${escapeHtml(reason)}</li>`).join('')}</ul><button class="ink-button story-continue" data-portable-precedent-continue="1">${story.beat === 1 ? `听${HEROINES[story.participants[1]].short}独立作答` : '两份答复都不许由你改口'}</button>`;
   } else if (story.stage === 'decision') {
     content = `<section class="precedent-boundary" aria-label="两位原经手人的授权边界">${story.replies.map((reply) => `<article><b>${HEROINES[reply.heroine].name}</b><span>${({stand:'守原规',narrow:'只放窄界',withdraw:'撤回外推'})[reply.outcome]}</span><p>${escapeHtml(reply.reasons[2])}</p></article>`).join('')}</section><div class="choice-grid">${E.portablePrecedentOptions(state).map((choice) => choiceButton(choice, 'portable-precedent-choice')).join('')}</div>`;
   } else {
-    content = `<section class="precedent-scope"><span>实际适用范围</span><b>${escapeHtml(story.resolution.scopeLabel)}</b></section><ol class="precedent-steps" aria-label="第二张契实际执行">${(story.resolution.steps ?? []).map((step) => `<li>${escapeHtml(step)}</li>`).join('')}</ol><button class="ink-button primary" data-portable-precedent-continue="1">把第二张契的去处写进总账</button>`;
+    content = `<section class="precedent-scope"><span>实际适用范围</span><b>${escapeHtml(story.resolution.scopeLabel)}</b></section><ol class="precedent-steps" aria-label="第二张契实际执行">${(story.resolution.steps ?? []).map((step) => `<li>${escapeHtml(step)}</li>`).join('')}</ol><button class="ink-button story-continue" data-portable-precedent-continue="1">把第二张契的去处写进总账</button>`;
   }
   return `<div class="portable-precedent-stage visual-stage stage-${story.stage}" data-portable-precedent="${story.action}" data-portable-precedent-stage="${story.stage}" data-portable-precedent-beat="${story.beat + 1}" style="--scene-bg:url('${urlFor('compound')}')"><div class="precedent-cast" aria-label="两位原经手人">${cast}</div><div class="decision-panel portable-precedent-panel">${phaseHeader(`联院差事的院外回声 · ${narrativeStep(story.beat + 1, story.count)}`, story.current.title, story.current.body)}${content}</div></div>`;
 }
@@ -1357,7 +1375,7 @@ function renderHouseholdAftermath() {
   const ledger = E.jiaoerLedger(state);
   const action = story.awaitingChoice
     ? `<div class="choice-grid jiaoer-aftermath-choices">${E.householdAftermathOptions(state).map((choice) => choiceButton(choice, 'household-aftermath')).join('')}</div>`
-    : `<button class="ink-button primary" data-household-aftermath-continue="1">${story.beat === 3 ? '把这笔写进跨幕总账' : story.beat === 0 ? '让五院见证人看这笔价' : '听她们把隐含代价问完'}</button>`;
+    : `<button class="ink-button story-continue" data-household-aftermath-continue="1">${story.beat === 3 ? '把这笔写进跨幕总账' : story.beat === 0 ? '让五院见证人看这笔价' : '听她们把隐含代价问完'}</button>`;
   return `
     <div class="jiaoer-aftermath-stage visual-stage jiaoer-aftermath-beat-${story.beat + 1}" data-household-aftermath="${story.approach}" data-household-aftermath-beat="${story.beat + 1}" style="--scene-bg:url('${urlFor(HOUSEHOLD.li_jiaoer.portrait)}')">
       <div class="jiaoer-aftermath-cast" aria-label="交易现场人物">
@@ -1410,14 +1428,14 @@ function renderCouncilAftermath() {
   const last = story.beat === story.count - 1;
   return `
     <div class="council-aftermath-stage visual-stage council-resolution-${state.day}" data-council-aftermath="${story.choice}" data-council-beat="${story.beat + 1}" style="--scene-bg:url('${urlFor('compound')}')">
-      <div class="council-resolution-cast" aria-label="正在试用这条规矩的人">${story.participants.map((id) => `<figure class="${beat.speaker === id ? 'speaking' : 'listening'}"><img src="${urlFor(HEROINES[id].portrait)}" alt="${HEROINES[id].name}"/><figcaption><span>${beat.speaker === id ? '这一拍由她开口' : '她仍可提出异议'}</span><b>${HEROINES[id].name}</b></figcaption></figure>`).join('')}</div>
+      <div class="council-resolution-cast" aria-label="正在试用这条规矩的人">${story.participants.map((id) => `<figure class="${beat.speaker === id ? 'speaking' : 'listening'}"><img src="${urlFor(HEROINES[id].portrait)}" alt="${HEROINES[id].name}"/><figcaption><b>${HEROINES[id].name}</b></figcaption></figure>`).join('')}</div>
       <div class="decision-panel council-aftermath-panel">
         ${phaseHeader(`院议裁决 · ${story.label} · ${narrativeStep(story.beat + 1, story.count)}`, beat.title, beat.body)}
         ${story.day5Opening ? `<aside class="council-external-echo day5-public-opening" data-council-aftermath-day5-opening="${story.day5Opening.choice}:${story.beat + 1}"><span>${story.day5Opening.choice === 'public_5_favor' ? '已认偏宠仍限制这一拍' : '逐手经办仍限制这一拍'}</span><b>${escapeHtml(story.day5Opening.label)}</b><p>${escapeHtml(story.day5Opening.text)}</p></aside>` : ''}
         ${story.day10Opening ? `<aside class="council-external-echo day10-public-opening" data-council-aftermath-day10-opening="${story.day10Opening.choice}:${story.beat + 1}"><span>${story.day10Opening.choice === 'public_10_hide' ? '缺页仍不能被分钥复活' : '五份本人原页仍各守开封权'}</span><b>${escapeHtml(story.day10Opening.label)}</b><p>${escapeHtml(story.day10Opening.text)}</p></aside>` : ''}
         ${story.day15Opening ? `<aside class="council-external-echo day15-public-opening ${story.day15Opening.falseScapegoat ? 'is-contaminated' : ''}" data-council-aftermath-day15-opening="${story.day15Opening.choice}:${story.beat + 1}"><span>${story.day15Opening.falseScapegoat ? '错误归罪与撤回仍限制这一拍' : '没有预填犯人仍限制这一拍'}</span><b>${escapeHtml(story.day15Opening.label)}</b><p>${escapeHtml(story.day15Opening.text)}</p></aside>` : ''}
         <div class="council-rule-slip"><span>${story.beat === 0 ? '先说到明处' : story.beat === 1 ? '让受影响的人试用' : '写成能被追问的规矩'}</span><b>${last ? '这条规矩从今夜开始进入宅门日常；后面的选择会读取它，而不是只留一个旗标。' : '任何人都可以在下一拍指出它真正伤到谁，规矩还没有定稿。'}</b></div>
-        <button class="ink-button primary" data-council-aftermath-continue="1">${last ? '让这条规矩真正生效' : story.beat === 0 ? '听受影响的人怎么说' : '看她们怎样把边界写清'}</button>
+        <button class="ink-button story-continue" data-council-aftermath-continue="1">${last ? '让这条规矩真正生效' : story.beat === 0 ? '听受影响的人怎么说' : '看她们怎样把边界写清'}</button>
       </div>
     </div>`;
 }
@@ -1519,7 +1537,7 @@ function renderPersonalFinaleResult() {
         <blockquote class="personal-finale-response"><b>${respondent.name}</b><p>${escapeHtml(result.response.line)}</p></blockquote>
         ${reasonLedger}
         <div class="personal-finale-result-ledger"><span>${result.departure ? '本人决定' : '这一答'}</span><b>${escapeHtml(outcomeLabel ?? result.choice.label)}</b><em>${result.departure ? `她的回应走到${narrativeStep(result.departureIndex + 1, result.departureCount)} · 被选者不得代答` : `${result.choice.style === 'open' ? '明账相守' : '私门相守'} · 回应已走到${narrativeStep(result.index + 1, result.count)}`}</em></div>
-        <button class="ink-button primary personal-finale-result-continue" data-personal-finale-result-continue="1">${continueLabel}</button>
+        <button class="ink-button story-continue personal-finale-result-continue" data-personal-finale-result-continue="1">${continueLabel}</button>
       </div>
     </div>`;
 }
@@ -1563,7 +1581,7 @@ function renderAllianceAssembly() {
         ${replyBlock}
         ${summary}
         <p class="shared-proof">候选来自第十九夜真实有限互证；答复冻结在邀请发出前，不读取前一人的回答，也不按好感排序。</p>
-        <button class="ink-button primary" data-alliance-assembly-continue="1">${button}</button>
+        <button class="ink-button story-continue" data-alliance-assembly-continue="1">${button}</button>
       </div>
     </div>`;
 }
@@ -1612,7 +1630,7 @@ function renderAllianceNightResult() {
         ${memberReasonLedger}
         <div class="alliance-result-ledger"><span>刚才的安排</span><b>${escapeHtml(result.choice.label)}</b><em>${escapeHtml(result.choice.text)}</em></div>
         <div class="alliance-result-bonds">${result.bonds.map((row) => `<span>${HEROINES[row.left].short} ⇄ ${HEROINES[row.right].short}<b>${E.bondTier(row.trust)}</b></span>`).join('')}</div>
-        <button class="ink-button primary alliance-result-continue" data-alliance-result-continue="1">${result.final ? '让这份有限同盟落下' : '听她们继续谈下一件事'}</button>
+        <button class="ink-button story-continue alliance-result-continue" data-alliance-result-continue="1">${result.final ? '让这份有限同盟落下' : '听她们继续谈下一件事'}</button>
       </div>
     </div>`;
 }
@@ -1661,7 +1679,7 @@ function renderSharedAfterglowResult() {
         <div class="shared-result-voices">${result.members.map((id) => `<blockquote data-shared-speaker="${id}"><b>${HEROINES[id].short}</b><p>${escapeHtml(result.response.lines[id])}</p></blockquote>`).join('')}</div>
         ${reasonLedger}
         <div class="shared-result-choice"><span>这一拍</span><b>${escapeHtml(result.choice.label)}</b><em>${escapeHtml(result.choice.text)}</em></div>
-        <button class="ink-button primary shared-result-continue" data-shared-afterglow-result-continue="1">${result.final ? '让五个人一起走进余夜' : '听下一件事怎样落地'}</button>
+        <button class="ink-button story-continue shared-result-continue" data-shared-afterglow-result-continue="1">${result.final ? '让五个人一起走进余夜' : '听下一件事怎样落地'}</button>
       </div>
     </div>`;
 }
@@ -1672,11 +1690,11 @@ function renderCollapseFinale() {
   const current = story.current;
   const choicePanel = story.awaitingChoice
     ? `<div class="collapse-final-question"><span>最后一笔</span><b>圆满已经失去，你还要保住哪一种可执行的东西？</b><p>这项选择不会把坏局翻成好局。它决定天亮以后仍由谁掌握证据、钥匙、退路与追讨权。</p></div><div class="choice-grid collapse-final-choices">${E.collapseFinaleOptions(state).map((choice) => choiceButton(choice, 'collapse-choice')).join('')}</div>`
-    : `<blockquote class="collapse-current-voice" data-collapse-speaker="${current.speaker}"><b>${HEROINES[current.speaker].name}</b><p>${escapeHtml(current.text)}</p></blockquote><button class="ink-button primary collapse-continue" data-collapse-continue="1">${story.beat === 0 ? '让下一人把代价接上' : story.beat === 1 ? '看这局还压住了谁' : '亲手决定最后保住什么'}</button>`;
+    : `<blockquote class="collapse-current-voice" data-collapse-speaker="${current.speaker}"><b>${HEROINES[current.speaker].name}</b><p>${escapeHtml(current.text)}</p></blockquote><button class="ink-button story-continue collapse-continue" data-collapse-continue="1">${story.beat === 0 ? '让下一人把代价接上' : story.beat === 1 ? '看这局还压住了谁' : '亲手决定最后保住什么'}</button>`;
   return `
     <div class="collapse-finale-stage visual-stage collapse-cause-${story.cause}" data-collapse-cause="${story.cause}" data-collapse-step="${story.beat + 1}" style="--scene-bg:url('${urlFor('compound')}')">
       <div class="collapse-cast" aria-label="五个人正在清算这场破局">
-        ${HEROINE_IDS.map((id) => `<figure class="${current?.speaker === id ? 'speaking' : ''}"><img src="${urlFor(HEROINES[id].portrait)}" alt="${HEROINES[id].name}"/><figcaption><b>${HEROINES[id].short}</b><span>${current?.speaker === id ? '这一拍由她开口' : '她仍在清算自己的那一笔'}</span></figcaption></figure>`).join('')}
+        ${HEROINE_IDS.map((id) => `<figure class="${current?.speaker === id ? 'speaking' : ''}"><img src="${urlFor(HEROINES[id].portrait)}" alt="${HEROINES[id].name}"/><figcaption><b>${HEROINES[id].short}</b></figcaption></figure>`).join('')}
       </div>
       <div class="decision-panel collapse-finale-panel">
         ${phaseHeader(`${story.kicker} · 清算${narrativeStep(story.beat + 1, story.count)}`, current?.title ?? '最后还能留下什么', current ? story.title : '前面三笔已经说清。现在没有圆满可补，只能决定哪一项权利与事实不再被继续抵押。')}
@@ -1707,7 +1725,7 @@ function renderCollapseFinaleResult() {
         <blockquote class="collapse-result-current-voice" data-collapse-result-speaker="${result.heroine}"><b>${escapeHtml(heroine.short)}</b><p>${escapeHtml(result.line)}</p></blockquote>
         ${memoryLedger}
         <div class="collapse-result-ledger"><span>最后保住</span><b>${escapeHtml(result.choice.label)}</b><em>${escapeHtml(result.choice.text)}</em></div>
-        <button class="ink-button primary collapse-result-continue" data-collapse-result-continue="1">${result.index + 1 < result.count ? '听下一人处分本人这一笔' : '带着五份真实后果走到天亮'}</button>
+        <button class="ink-button story-continue collapse-result-continue" data-collapse-result-continue="1">${result.index + 1 < result.count ? '听下一人处分本人这一笔' : '带着五份真实后果走到天亮'}</button>
       </div>
     </div>`;
 }
@@ -1738,7 +1756,7 @@ function renderSharedDawnResult() {
         <div class="shared-dawn-result-voices">${result.members.map((id) => `<blockquote data-shared-dawn-speaker="${id}"><b>${HEROINES[id].short}</b><p>${escapeHtml(result.response.lines[id])}</p></blockquote>`).join('')}</div>
         ${reasonLedger}
         <div class="shared-dawn-result-ledger"><span>次晨安排</span><b>${escapeHtml(result.choice.label)}</b><em>${escapeHtml(result.response.future)}</em></div>
-        <button class="ink-button primary shared-dawn-result-continue" data-shared-dawn-result-continue="1">让这项白日安排进入五院结局</button>
+        <button class="ink-button story-continue shared-dawn-result-continue" data-shared-dawn-result-continue="1">让这项白日安排进入五院结局</button>
       </div>
     </div>`;
 }
@@ -1785,17 +1803,19 @@ function renderRouteAftermath() {
     const speaker = HEROINES[event.resolutionBeat.speaker];
     const listener = event.resolutionBeat.speaker === event.heroine ? observer : heroine;
     const previousBeats = event.resolutionBeats.slice(0, event.resolution.beat);
+    const beatCopy = narrativeExcerpt(event.resolutionBeat.text);
     return `
       <div class="aftermath-stage aftermath-resolution visual-stage dialogue-${event.resolutionBeat.speaker}" data-aftermath-resolution="${event.event}:${event.resolutionChoice}:${event.resolution.beat}">
         <div class="aftermath-main" style="background-image:url('${urlFor(event.asset || speaker.close)}')" role="img" aria-label="${speaker.name}正在把你的处置做完"></div>
-        <figure class="aftermath-observer"><img src="${urlFor(listener.portrait)}" alt="${listener.name}"/><figcaption><span>${listener.house}</span><b>${listener.name}</b><small>${event.resolution.beat ? '她正在说明自己接下来怎样办' : '她会亲自接住这项处置的后果'}</small></figcaption></figure>
+        <figure class="aftermath-observer"><img src="${urlFor(listener.portrait)}" alt="${listener.name}"/><figcaption><span>${listener.house}</span><b>${listener.name}</b></figcaption></figure>
         <div class="decision-panel aftermath-panel aftermath-resolution-panel">
-          ${phaseHeader(`第 ${state.day} 夜 · ${escapeHtml(event.resolutionChoiceLabel)} · 后续${narrativeStep(event.resolution.beat + 1, event.resolutionCount)}`, event.resolutionTitle, event.body)}
+          ${phaseHeader(`${escapeHtml(event.resolutionChoiceLabel)} · ${narrativeStep(event.resolution.beat + 1, event.resolutionCount)}`, event.resolutionTitle, event.body)}
           <p class="aftermath-echo"><span>这项处置从哪里来</span><b>${escapeHtml(event.sourceLabel)}</b><small>${escapeHtml(event.sourceText)}</small></p>
           <aside class="aftermath-route-stake" data-route-stake="${event.act}:${event.resolutionChoice}"><span>这一幕实际付出的后约成本</span><b>${escapeHtml(event.resolutionStake.label)} · ${escapeHtml(narrativeChoiceMeta(event.resolutionStake.resourceText))}</b><p>${escapeHtml(event.resolutionStake.text)}</p></aside>
           ${previousBeats.length ? `<ol class="route-resolution-transcript" aria-label="这项处置已经发生的动作">${previousBeats.map((beat, index) => `<li><span>${narrativeBeatMark(index)}</span><div><b>${escapeHtml(beat.speakerName)}</b><p>${escapeHtml(beat.text)}</p></div></li>`).join('')}</ol>` : ''}
-          <blockquote class="aftermath-story-quote route-resolution-quote"><span>${escapeHtml(event.resolutionBeat.speakerHouse)}</span><b>${escapeHtml(event.resolutionBeat.speakerName)}</b><p>${escapeHtml(event.resolutionBeat.text)}</p></blockquote>
-          <button class="ink-button primary aftermath-continue" data-route-story="1">${event.resolution.beat + 1 < event.resolutionCount ? `看${listener.short}怎样接住` : '把这项处置带进今夜'}</button>
+          ${narrativeArchive(beatCopy, 'route-beat-archive', `${event.resolutionBeat.speakerName}把这项处置说完`)}
+          <blockquote class="aftermath-story-quote route-resolution-quote"><span>${escapeHtml(event.resolutionBeat.speakerHouse)}</span><b>${escapeHtml(event.resolutionBeat.speakerName)}</b><p>${escapeHtml(beatCopy.preview)}</p></blockquote>
+          <button class="ink-button story-continue aftermath-continue" data-route-story="1">${event.resolution.beat + 1 < event.resolutionCount ? `看${listener.short}怎样接住` : '把这项处置带进今夜'}</button>
         </div>
       </div>`;
   }
@@ -1805,26 +1825,27 @@ function renderRouteAftermath() {
     const lead = event.beat === 0
       ? event.body
       : `${speaker.short}没有让刚才那句话停在漂亮处。她把自己真正会失去的东西摆了出来，等另一人听完。`;
+    const beatCopy = narrativeExcerpt(event.storyBeat.text);
     return `
       <div class="aftermath-stage aftermath-story ${event.milestone ? 'milestone-chapter' : ''} visual-stage dialogue-${event.storyBeat.speaker}" data-aftermath="${event.event}" data-story-beat="${event.beat}">
         <div class="aftermath-main" style="background-image:url('${urlFor(event.asset || speaker.close)}')" role="img" aria-label="${speaker.name}正在说话"></div>
-        <figure class="aftermath-observer"><img src="${urlFor(listener.portrait)}" alt="${listener.name}"/><figcaption><span>${listener.house}</span><b>${listener.name}</b><small>她没有退场，也会回应这一笔</small></figcaption></figure>
+        <figure class="aftermath-observer"><img src="${urlFor(listener.portrait)}" alt="${listener.name}"/><figcaption><span>${listener.house}</span><b>${listener.name}</b></figcaption></figure>
         <div class="decision-panel aftermath-panel aftermath-story-panel">
-          ${phaseHeader(event.milestone ? `第 ${state.day} 夜 · 再次进门的关键章` : `第 ${state.day} 夜 · 路线小章 · ${narrativeStep(event.act, 4)}`, event.title, lead)}
-          <p class="milestone-progress">${event.milestone ? '人物关键章' : '连续剧情'} · ${narrativeStep(event.beat + 1, event.beatCount)} · 她们会把这件事说完，再轮到你决定</p>
+          ${phaseHeader(event.milestone ? '再次进门的关键章' : `路线小章 · ${narrativeStep(event.act, 4)}`, event.title, lead)}
           <p class="aftermath-echo"><span>你的上一拍</span><b>${escapeHtml(event.sourceLabel)}</b><small>${escapeHtml(event.sourceHint)}</small></p>
           ${routeContinuityCard(event)}
-          <blockquote class="aftermath-story-quote"><span>${escapeHtml(event.storyBeat.speakerHouse)}</span><b>${escapeHtml(event.storyBeat.speakerName)}</b><p>${escapeHtml(event.storyBeat.text)}</p></blockquote>
-          <button class="ink-button primary aftermath-continue" data-route-story="1">${event.beat + 1 < event.beatCount ? '听另一人说完' : '轮到你回应'}</button>
+          ${narrativeArchive(beatCopy, 'route-beat-archive', `${event.storyBeat.speakerName}把这一拍说完`)}
+          <blockquote class="aftermath-story-quote"><span>${escapeHtml(event.storyBeat.speakerHouse)}</span><b>${escapeHtml(event.storyBeat.speakerName)}</b><p>${escapeHtml(beatCopy.preview)}</p></blockquote>
+          <button class="ink-button story-continue aftermath-continue" data-route-story="1">${event.beat + 1 < event.beatCount ? '听另一人说完' : '轮到你回应'}</button>
         </div>
       </div>`;
   }
   return `
     <div class="aftermath-stage ${event.milestone ? 'milestone-chapter' : ''} visual-stage dialogue-${event.heroine}" data-aftermath="${event.event}">
       <div class="aftermath-main" style="background-image:url('${urlFor(event.asset || heroine.close)}')" role="img" aria-label="${heroine.name}刚回应完你的选择"></div>
-      <figure class="aftermath-observer"><img src="${urlFor(observer.portrait)}" alt="${observer.name}"/><figcaption><span>${observer.house}</span><b>${observer.name}</b><small>她也听见了这件事的后果</small></figcaption></figure>
+      <figure class="aftermath-observer"><img src="${urlFor(observer.portrait)}" alt="${observer.name}"/><figcaption><span>${observer.house}</span><b>${observer.name}</b></figcaption></figure>
       <div class="decision-panel aftermath-panel">
-        ${phaseHeader(event.milestone ? `第 ${state.day} 夜 · 再次进门的关键章` : `第 ${state.day} 夜 · 路线小章 · ${narrativeStep(event.act, 4)}`, event.title, event.body)}
+        ${phaseHeader(event.milestone ? '再次进门的关键章' : `路线小章 · ${narrativeStep(event.act, 4)}`, event.title, event.body)}
         <p class="aftermath-echo"><span>上一拍</span><b>${escapeHtml(event.sourceLabel)}</b><small>${escapeHtml(event.sourceText)}</small></p>
         ${routeContinuityCard(event)}
         <p class="aftermath-question">这件事已经越过一扇院门。你现在决定它怎样进入另外一个人的生活。</p>
@@ -1849,7 +1870,7 @@ function renderNight() {
           ${intimacyMemory(id)}
           ${previousBeats.length ? `<ol class="night-coda-transcript" aria-label="今夜已经说过的话">${previousBeats.map((beat, index) => `<li><span>${narrativeBeatMark(index)}</span><div><b>${escapeHtml(beat.title)}</b><p>${escapeHtml(beat.body)}</p></div></li>`).join('')}</ol>` : ''}
           <p class="night-coda-context"><b>${h.name}</b><span>${coda.action === 'leave' ? '门停在她亲口划下的位置。今夜不欠下一步，明日却会照这个停处重新安排。' : '茶还温着，她要把这句话问到能见明日，再让你带出这扇门。'}</span></p>
-          <button class="ink-button primary night-talk-continue" data-night-coda-continue="1">${coda.beat + 1 < coda.count ? (coda.beat === 0 ? '让她把话接下去' : '听她说到天亮以后') : '把这句话带出门'}</button>
+          <button class="ink-button story-continue night-talk-continue" data-night-coda-continue="1">${coda.beat + 1 < coda.count ? (coda.beat === 0 ? '让她把话接下去' : '听她说到天亮以后') : '把这句话带出门'}</button>
         </div>
       </div>`;
   }
@@ -1878,7 +1899,7 @@ function renderNight() {
             listen: '边界由她决定 · 宅门与喘息都更稳',
             private: '门内亲近升温 · 旁院会记得这份私情',
           }[result.mode]}</p>` : ''}
-          <button class="ink-button primary night-talk-continue" data-night-conversation-result="1">${result.beat === 0 ? '看她怎样试这句话' : result.beat + 1 < result.count ? '把明早的做法说清' : '让这三幅话一起到天亮'}</button>
+          <button class="ink-button story-continue night-talk-continue" data-night-conversation-result="1">${result.beat === 0 ? '看她怎样试这句话' : result.beat + 1 < result.count ? '把明早的做法说清' : '让这三幅话一起到天亮'}</button>
         </div>
       </div>`;
   }
@@ -1893,7 +1914,7 @@ function renderNight() {
           ${conversation.memoryEcho ? `<aside class="night-talk-memory"><span>她记得上一章</span><p>${escapeHtml(conversation.memoryEcho)}</p></aside>` : ''}
           <blockquote class="night-talk-voice"><span>${h.house}</span><b>${h.name}</b><p>${escapeHtml(conversation.storyText)}</p></blockquote>
           ${conversation.beat === 0
-            ? '<button class="ink-button primary night-talk-continue" data-night-story="1">让她把真正的问题说完</button>'
+            ? '<button class="ink-button story-continue night-talk-continue" data-night-story="1">让她把真正的问题说完</button>'
             : `<p class="night-talk-question">这一夜不会由一条通用结果收尾。你现在的回答，会决定她把这段话当作明说、共同定界，还是只留门内的私情。</p><div class="choice-stack">${E.nightConversationOptions(state).map((choice) => choiceButton(choice, 'night-conversation')).join('')}</div>`}
         </div>
       </div>`;
@@ -1925,7 +1946,7 @@ function renderMorningSettlement() {
           <ol class="precedent-steps" aria-label="这项限制如何真正执行">
             ${story.steps.map((step) => `<li>${escapeHtml(step)}</li>`).join('')}
           </ol>
-          <button class="ink-button primary" data-morning-settlement-continue="1">把限制写上白日行动卡</button>
+          <button class="ink-button story-continue" data-morning-settlement-continue="1">把限制写上白日行动卡</button>
         </div>
       </div>`;
   }
@@ -1963,7 +1984,7 @@ function renderMorning() {
           ${phaseHeader(`第 ${state.day} 日 · 对峙结果收束`, resolution.title, resolution.text)}
           <p class="rivalry-consequence">${escapeHtml(resolution.consequence)}</p>
           <div class="rivalry-result-cast" aria-label="这次选择改变了两院关系"><span>${actor.short}</span><i>⇄</i><span>${visited.short}</span></div>
-          <button class="ink-button primary rivalry-continue" data-morning-resolution="1">收下这次站队的后果</button>
+          <button class="ink-button story-continue rivalry-continue" data-morning-resolution="1">收下这次站队的后果</button>
         </div>
       </div>`;
   }
@@ -1974,13 +1995,13 @@ function renderMorning() {
     return `
       <div class="morning-stage rivalry-stage visual-stage tone-rivalry" data-rivalry="${event.actor}:${event.visited}:${story.index}" style="--scene-bg:url('${urlFor('compound')}')">
         <div class="morning-cg rivalry-cg" style="background-image:url('${urlFor(speaker.close)}')" role="img" aria-label="${speaker.name}正在廊下说话"></div>
-        <figure class="rivalry-listener"><img src="${urlFor(listener.portrait)}" alt="${listener.name}"/><figcaption><span>${listener.house}</span><b>${listener.name}</b><small>${story.index === 1 ? '轮到她亲口回应' : '她没有退场，也听见这一句'}</small></figcaption></figure>
+        <figure class="rivalry-listener"><img src="${urlFor(listener.portrait)}" alt="${listener.name}"/><figcaption><span>${listener.house}</span><b>${listener.name}</b></figcaption></figure>
         <div class="decision-panel morning-panel rivalry-panel">
           ${phaseHeader(`第 ${state.day} 日 · 三人对峙 · ${narrativeStep(story.index + 1, story.count)}`, event.title, event.text)}
           ${story.index === 0 ? (event.notes ?? []).map((note) => `<p class="morning-note">${escapeHtml(note)}</p>`).join('') : ''}
           <blockquote class="rivalry-voice"><span>${speaker.house}</span><b>${speaker.name}</b><p>${escapeHtml(story.text)}</p></blockquote>
           ${story.index < story.count - 1
-            ? `<button class="ink-button primary rivalry-continue" data-morning-story="1">${story.index === 0 ? `听${listener.short}亲口回应` : '让这场问话说到底'}</button>`
+            ? `<button class="ink-button story-continue rivalry-continue" data-morning-story="1">${story.index === 0 ? `听${listener.short}亲口回应` : '让这场问话说到底'}</button>`
             : `<p class="rivalry-question">她们都已亲口说完。现在才轮到你决定，偏爱要见光、交还给她们，还是继续只留在一扇门内。</p><div class="choice-stack">${E.morningOptions(state).map((choice) => choiceButton(choice, 'morning')).join('')}</div>`}
         </div>
       </div>`;
@@ -2019,6 +2040,7 @@ function renderBanquet() {
 function renderPublicEvidence() {
   const chain = E.currentPublicEvidence(state);
   if (!chain) return '<div class="fatal-card">堂前的三步证链断了页。</div>';
+  const introCopy = narrativeExcerpt(chain.body, 110);
   const slots = Array.from({ length:chain.count }, (_, index) => {
     const picked = chain.selectedEvidence[index];
     const step = chain.steps[index];
@@ -2031,7 +2053,8 @@ function renderPublicEvidence() {
   return `
     <div class="public-evidence-stage visual-stage ${result ? `result-${result.id}` : ''}" data-public-evidence-step="${chain.step}" style="--scene-bg:url('${urlFor('cg/group/public_day15')}')">
       <div class="decision-panel public-evidence-panel">
-        ${phaseHeader(`第十五日 · 堂前举证 · ${narrativeStep(Math.min(chain.step + 1, chain.count), chain.count)}`, chain.title, chain.body)}
+        ${phaseHeader(`第十五日 · 堂前举证 · ${narrativeStep(Math.min(chain.step + 1, chain.count), chain.count)}`, chain.title, introCopy.preview)}
+        ${narrativeArchive(introCopy, 'public-evidence-long-brief', '三步成证的完整案情')}
         ${chain.publicOpening ? `<aside class="opening-public-echo day15-public-opening ${chain.publicOpening.falseScapegoat ? 'is-contaminated' : ''}" data-day15-public-opening="${chain.publicOpening.choice}"><span>${chain.publicOpening.falseScapegoat ? '公审已经先押了一个答案' : '公审没有预填罪名'}</span><b>${escapeHtml(chain.publicOpening.label)}</b><p>${escapeHtml(chain.publicOpening.evidenceText)}</p></aside>` : ''}
         ${chain.openingEvidence ? `<aside class="opening-public-echo day15-opening-evidence" data-day15-opening-evidence="${chain.openingEvidence.sourceAction}"><span>白日行动已经递出第一证，不再重选</span><b>${escapeHtml(chain.openingEvidence.label)}</b><p>${escapeHtml(chain.openingEvidence.openingText)}</p><small>${escapeHtml(chain.openingEvidence.object)}</small></aside>` : ''}
         ${chain.draftEcho ? `<aside class="opening-public-echo" data-day15-evidence-draft="${chain.draftEcho.aftermath}"><span>银票只能证明自己的那一段</span><b>${escapeHtml(chain.draftEcho.label)}</b><p>${escapeHtml(chain.draftEcho.evidenceText)}</p></aside>` : ''}
@@ -2039,8 +2062,8 @@ function renderPublicEvidence() {
         <ol class="evidence-chain-slots" aria-label="已经排出的证据次序">${slots}</ol>
         ${last && !result ? `<aside class="evidence-resistance"><span>这一手立刻遭到反问</span><p>${escapeHtml(last.resistance)}</p></aside>` : ''}
         ${result
-          ? `<section class="evidence-verdict" data-evidence-result="${result.id}"><small>${escapeHtml(result.label)} · ${chain.score >= 5 ? '证链稳固' : chain.score >= 3 ? '证链可用' : '证链仍显吃力'}</small><h3>${escapeHtml(result.title)}</h3><p>${escapeHtml(result.body)}</p><button class="ink-button primary" data-public-evidence-complete="1">带证链进入主签</button></section>`
-          : `<p class="public-evidence-rule">不能撤回重排：堂上每递出一份，对手就会按这个次序反问。${chain.openingEvidence ? '第一步由白日实际行动决定；现在只决定第二、三步怎样承接。' : chain.step ? '上一份已经落案；现在只能决定下一份怎样承接。' : '第一份若只是口供或自家账，后面会一直替它补理由。'}</p><div class="choice-grid public-evidence-choices">${E.publicEvidenceOptions(state).map((choice) => choiceButton(choice, 'public-evidence')).join('')}</div>`}
+          ? `<section class="evidence-verdict" data-evidence-result="${result.id}"><small>${escapeHtml(result.label)} · ${chain.score >= 5 ? '证链稳固' : chain.score >= 3 ? '证链可用' : '证链仍显吃力'}</small><h3>${escapeHtml(result.title)}</h3><p>${escapeHtml(result.body)}</p><button class="ink-button story-continue" data-public-evidence-complete="1">带证链进入主签</button></section>`
+          : `<p class="public-evidence-rule">${chain.openingEvidence ? '第一证已由白日行动落案；现在只决定第二、三证怎样承接。' : chain.step ? '上一证已经落案；现在只决定下一证怎样承接。' : '次序不能撤回；第一证若只有口供或自家账，后两证会一直替它补理由。'}</p><div class="choice-grid public-evidence-choices">${E.publicEvidenceOptions(state).map((choice) => choiceButton(choice, 'public-evidence')).join('')}</div>`}
       </div>
     </div>`;
 }
@@ -2079,7 +2102,7 @@ function renderPublicAftermath() {
   const last = story.beat === story.count - 1;
   return `
     <div class="public-aftermath-stage visual-stage public-day-${state.day} public-beat-${story.beat + 1}" data-public-aftermath="${story.choice}" data-public-beat="${story.beat + 1}" style="--scene-bg:url('${urlFor(scene.asset)}')">
-      <div class="public-aftermath-cast" aria-label="仍在承担这份公开决定的五个人">${story.participants.map((id) => `<figure class="${beat.speaker === id ? 'speaking' : 'listening'}"><img src="${urlFor(HEROINES[id].portrait)}" alt="${HEROINES[id].name}"/><figcaption><span>${beat.speaker === id ? '这一拍由她把后果说到底' : '她仍在场，也保留反驳权'}</span><b>${HEROINES[id].name}</b></figcaption></figure>`).join('')}</div>
+      <div class="public-aftermath-cast" aria-label="仍在承担这份公开决定的五个人">${story.participants.map((id) => `<figure class="${beat.speaker === id ? 'speaking' : 'listening'}"><img src="${urlFor(HEROINES[id].portrait)}" alt="${HEROINES[id].name}"/><figcaption><b>${HEROINES[id].name}</b></figcaption></figure>`).join('')}</div>
       <div class="decision-panel public-aftermath-panel">
         ${phaseHeader(`公开问责 · ${story.label} · ${narrativeStep(story.beat + 1, story.count)}`, beat.title, beat.body)}
         ${story.dayPreparation ? `<aside class="opening-public-echo public-day-preparation" data-public-aftermath-preparation="${story.dayPreparation.sourceDay}:${story.dayPreparation.sourceAction}:${story.beat + 1}"><span>白日原物仍限制这一拍</span><b>${escapeHtml(story.dayPreparation.label)}</b><p>${escapeHtml(story.dayPreparation.text)}</p><small>${escapeHtml(story.dayPreparation.object)}</small></aside>` : ''}
@@ -2088,7 +2111,7 @@ function renderPublicAftermath() {
         ${story.publicOpening ? `<aside class="opening-public-echo day15-public-opening ${story.publicOpening.falseScapegoat ? 'is-contaminated' : ''}" data-day15-aftermath-public-opening="${story.publicOpening.choice}:${story.beat + 1}"><span>${story.publicOpening.falseScapegoat ? '先押人的后果仍在这一拍' : '未预填罪名仍限制这一拍'}</span><b>${escapeHtml(story.publicOpening.label)}</b><p>${escapeHtml(story.publicOpening.text)}</p></aside>` : ''}
         ${story.openingEvidence ? `<aside class="opening-public-echo day15-opening-evidence" data-day15-aftermath-opening="${story.openingEvidence.sourceAction}:${story.beat + 1}"><span>第一证仍按真实次序留在这一拍</span><b>${escapeHtml(story.openingEvidence.label)}</b><p>${escapeHtml(story.openingEvidence.text)}</p><small>${escapeHtml(story.openingEvidence.object)}</small></aside>` : ''}
         <div class="public-aftermath-ledger"><span>${story.beat === 0 ? '公开决定已经落下' : story.beat === 1 ? '受影响的人开始追问' : '这份决定终于进入共同记录'}</span><b>${last ? '人名、证物、责任与撤回权都已写明；今晚以后，五院会按这份真实后果继续相处。' : '席面还没有散。下一拍会由另一院检查：这句话究竟保护了谁，又把代价留给了谁。'}</b></div>
-        <button class="ink-button primary" data-public-aftermath-continue="1">${last ? '把这场公议完整记入总账' : story.beat === 0 ? '让受影响的人接着说' : '看五院最后怎样收这份决定'}</button>
+        <button class="ink-button story-continue" data-public-aftermath-continue="1">${last ? '把这场公议完整记入总账' : story.beat === 0 ? '让受影响的人接着说' : '看五院最后怎样收这份决定'}</button>
       </div>
     </div>`;
 }
@@ -2106,20 +2129,20 @@ function renderFivePrivatePrices() {
     : '';
   let content = '';
   if (story.stage === 'overview') {
-    content = `<section class="private-price-offers" aria-label="五封分别开给五个人的价">${offers.map((offer) => `<article data-private-offer="${offer.id}"><img src="${urlFor(HEROINES[offer.target].portrait)}" alt="${HEROINES[offer.target].name}"/><div><span>${HEROINES[offer.target].short} · ${escapeHtml(offer.actor === 'dai_an' ? '玳安' : offer.actor === 'han_daoguo' ? '韩道国' : '应伯爵')}</span><b>${escapeHtml(offer.title)}</b><p>${escapeHtml(offer.offer)}</p></div></article>`).join('')}</section><button class="ink-button primary" data-five-price-continue="1">让五个人各自取回写着名字的信</button>`;
+    content = `<section class="private-price-offers" aria-label="五封分别开给五个人的价">${offers.map((offer) => `<article data-private-offer="${offer.id}"><img src="${urlFor(HEROINES[offer.target].portrait)}" alt="${HEROINES[offer.target].name}"/><div><span>${HEROINES[offer.target].short} · ${escapeHtml(offer.actor === 'dai_an' ? '玳安' : offer.actor === 'han_daoguo' ? '韩道国' : '应伯爵')}</span><b>${escapeHtml(offer.title)}</b><p>${escapeHtml(offer.offer)}</p></div></article>`).join('')}</section><button class="ink-button story-continue" data-five-price-continue="1">让五个人各自取回写着名字的信</button>`;
   } else if (story.stage === 'protocol') {
     content = `<p class="private-price-rule">这里只分配答复权，不替任何人选择接受、反价、拒绝或公开。</p><div class="choice-grid">${E.fivePrivatePriceOptions(state).map((choice) => choiceButton(choice, 'five-price-protocol')).join('')}</div>`;
   } else if (story.stage === 'reply') {
     content = `<section class="private-price-reply" data-private-reply="${story.reply.heroine}:${story.reply.outcome}">
       <figure><img src="${urlFor(HEROINES[story.reply.heroine].close)}" alt="${HEROINES[story.reply.heroine].name}"/><figcaption>${HEROINES[story.reply.heroine].house}</figcaption></figure>
       <article><span>${escapeHtml(story.offer.title)}</span><blockquote>${escapeHtml(story.outcome.line)}</blockquote><p>${escapeHtml(story.outcome.body)}</p><dl><dt>她为何这样答</dt>${story.reply.reasons.map((reason) => `<dd>${escapeHtml(reason)}</dd>`).join('')}</dl><small>${escapeHtml(protocol?.label ?? '')}只决定寄法，没有改掉她的答案。</small></article>
-    </section><button class="ink-button primary" data-five-price-continue="1">${story.beat < 6 ? '让下一封由本人作答' : '看外面怎样沿第十六日旧路反招'}</button>`;
+    </section><button class="ink-button story-continue" data-five-price-continue="1">${story.beat < 6 ? '让下一封由本人作答' : '看外面怎样沿第十六日旧路反招'}</button>`;
   } else if (story.stage === 'right') {
     content = `<section class="private-price-counter"><span>第十六日旧路回手 · ${escapeHtml(story.counter.actor === 'dai_an' ? '玳安' : story.counter.actor === 'han_daoguo' ? '韩道国' : '应伯爵')}</span><p>${escapeHtml(story.counter.body)}</p></section><p class="private-price-rule">三项都是真权利，也都会让另外两项在明日更难保全。</p><div class="choice-grid">${E.fivePrivatePriceOptions(state).map((choice) => choiceButton(choice, 'five-price-right')).join('')}</div>`;
   } else {
     const memberSet = new Set(story.coalition.members);
     const continueLabel = story.coalition.kind === 'full' ? '带着五封互证进入第十九夜' : story.coalition.kind === 'limited' ? '带着候选与缺口进入第十九夜' : '带着权利底线进入第十九夜';
-    content = `<section class="private-price-coalition" data-private-coalition="${story.coalition.kind}"><div>${HEROINE_IDS.map((id) => `<figure class="${memberSet.has(id) ? 'inside' : 'self-held'}"><img src="${urlFor(HEROINES[id].portrait)}" alt="${HEROINES[id].name}"/><figcaption>${memberSet.has(id) ? story.coalition.kind === 'limited' ? '候选互证' : '五院互证' : '本人自持'} · ${HEROINES[id].short}</figcaption></figure>`).join('')}</div><p>${story.coalition.kind === 'full' ? '五封答复互相可核，但正文仍各归本人。' : story.coalition.kind === 'limited' ? '候选间互证、非候选者自持；尚无人因一纸外账预签今夜同席。' : '只保权利底线，不伪造五院圆满。'}</p></section><button class="ink-button primary" data-five-price-continue="1">${continueLabel}</button>`;
+    content = `<section class="private-price-coalition" data-private-coalition="${story.coalition.kind}"><div>${HEROINE_IDS.map((id) => `<figure class="${memberSet.has(id) ? 'inside' : 'self-held'}"><img src="${urlFor(HEROINES[id].portrait)}" alt="${HEROINES[id].name}"/><figcaption>${memberSet.has(id) ? story.coalition.kind === 'limited' ? '候选互证' : '五院互证' : '本人自持'} · ${HEROINES[id].short}</figcaption></figure>`).join('')}</div><p>${story.coalition.kind === 'full' ? '五封答复互相可核，但正文仍各归本人。' : story.coalition.kind === 'limited' ? '候选间互证、非候选者自持；尚无人因一纸外账预签今夜同席。' : '只保权利底线，不伪造五院圆满。'}</p></section><button class="ink-button story-continue" data-five-price-continue="1">${continueLabel}</button>`;
   }
   return `<div class="five-private-prices-stage visual-stage stage-${story.stage}" data-five-price-stage="${story.stage}" data-five-price-beat="${story.beat + 1}" style="--scene-bg:url('${urlFor('compound')}')"><div class="decision-panel five-private-prices-panel">${phaseHeader(`${story.kicker} · ${narrativeStep(story.beat + 1, story.count)}`, story.current.title, story.current.body)}${dayPreparation}${jiaoerEcho}${content}</div></div>`;
 }
@@ -2153,14 +2176,16 @@ function renderFinalReckoningAftermath() {
   const story = E.currentFinalReckoningAftermath(state);
   const beat = story?.current;
   if (!story || !beat) return '<div class="fatal-card">终局外账的接管现场断了页。</div>';
+  const beatCopy = narrativeExcerpt(beat.body);
   const resolved = Boolean(story.resolution);
   const options = story.awaitingChoice ? E.finalReckoningAftermathOptions(state) : [];
   return `
     <div class="final-aftermath-stage visual-stage final-approach-${story.approach}" data-final-aftermath="${story.approach}" data-final-beat="${story.beat + 1}" style="--scene-bg:url('${urlFor('cg/group/public_day15')}')">
       <div class="final-aftermath-ledgers" aria-hidden="true"><i>银</i><i>名</i><i>证</i></div>
-      <div class="final-aftermath-cast" aria-label="正在接管终局外账的五个人">${story.participants.map((id) => `<figure class="${beat.speaker === id ? 'speaking' : 'listening'}"><img src="${urlFor(HEROINES[id].portrait)}" alt="${HEROINES[id].name}"/><figcaption><span>${beat.speaker === id ? '这一拍由她掌住账页' : '她仍保留自己的证据与撤回权'}</span><b>${HEROINES[id].name}</b></figcaption></figure>`).join('')}</div>
+      <div class="final-aftermath-cast" aria-label="正在接管终局外账的五个人">${story.participants.map((id) => `<figure class="${beat.speaker === id ? 'speaking' : 'listening'}"><img src="${urlFor(HEROINES[id].portrait)}" alt="${HEROINES[id].name}"/><figcaption><b>${HEROINES[id].name}</b></figcaption></figure>`).join('')}</div>
       <div class="decision-panel final-aftermath-panel">
-        ${phaseHeader(`第二十日 · 外账接管 · ${narrativeStep(story.beat + 1, story.count)}`, beat.title, beat.body)}
+        ${phaseHeader(`第二十日 · 外账接管 · ${narrativeStep(story.beat + 1, story.count)}`, beat.title, beatCopy.preview)}
+        ${narrativeArchive(beatCopy, 'final-aftermath-long-brief', '这一拍的完整来路')}
         ${story.dayPreparation ? `<aside class="council-external-echo final-aftermath-day-preparation" data-final-day-preparation="${story.dayPreparation.sourceAction}"><span>白日留下的物件仍限制这一拍</span><b>${escapeHtml(story.dayPreparation.label)}</b><p>${escapeHtml(story.dayPreparation.object)}</p></aside>` : ''}
         ${story.jiaoerEcho ? `<aside class="council-external-echo final-aftermath-jiaoer-echo" data-final-aftermath-jiaoer="${story.jiaoerEcho.aftermath}"><span>第十八日留下的物件没有被总账吞掉</span><b>${escapeHtml(story.jiaoerEcho.label)}</b><p>${escapeHtml(story.jiaoerEcho.object)}</p></aside>` : ''}
         ${story.publicOpening ? `<aside class="council-external-echo day15-public-opening ${story.publicOpening.falseScapegoat ? 'is-contaminated' : ''}" data-final-aftermath-day15-opening="${story.publicOpening.choice}:${story.beat + 1}"><span>${story.publicOpening.falseScapegoat ? '撤押页与证物页仍然分栏' : '空白罪名栏仍然保留'}</span><b>${escapeHtml(story.publicOpening.label)}</b><p>${escapeHtml(story.publicOpening.text)}</p></aside>` : ''}
@@ -2168,7 +2193,7 @@ function renderFinalReckoningAftermath() {
         <div class="final-custody-rule"><span>${story.beat === 0 ? '先执行你选定的大方向' : story.beat === 1 ? '外柜拿私话和单一主簿反扑' : story.beat === 2 ? '现在决定证据与保管权怎样落地' : '五个人已经把最后一项权力写清'}</span><b>${resolved ? '外账不再只是清掉一个数值。它已经明确谁能出证、谁能撤回、谁保管原件，以及任何共同查阅需要什么条件。' : story.awaitingChoice ? '两种办法都能成立，但保护隐私、共同查证与行动速度的代价不同；这一步会进入终局总账。' : '下一拍会有人用官面规则反咬这项决定，五院必须亲手守住各自的名字与证据。'}</b></div>
         ${story.awaitingChoice
           ? `<div class="choice-grid final-aftermath-choices">${options.map((choice) => choiceButton(choice, 'final-reckoning-aftermath')).join('')}</div>`
-          : `<button class="ink-button primary" data-final-aftermath-continue="1">${resolved ? '带着这份外账进入最后黄昏' : story.beat === 0 ? '看外柜怎样反咬' : '让五个人提出最后两种办法'}</button>`}
+          : `<button class="ink-button story-continue" data-final-aftermath-continue="1">${resolved ? '带着这份外账进入最后黄昏' : story.beat === 0 ? '看外柜怎样反咬' : '让五个人提出最后两种办法'}</button>`}
       </div>
     </div>`;
 }
@@ -2177,6 +2202,7 @@ function renderScene() {
   const scene = SCENES[state.pendingScene];
   const chapter = E.currentSceneChapter(state);
   if (!scene || !chapter) return '<div class="fatal-card">这段册页没有接上。</div>';
+  ensureNarrativeAsset(scene.asset);
   const adult = ['prelude', 'explicit', 'ensemble-intimate'].includes(scene.tier);
   const ensemble = scene.tier === 'ensemble';
   const allianceOverview = chapter.allianceTableau && !chapter.allianceTableauBeat
@@ -2213,7 +2239,7 @@ function renderScene() {
         ${tableauOverview}
         ${tableauEntry}
         <div class="scene-meta"><span>这一页留下了</span><span>${chapter.allianceTableau ? chapter.allianceTableau.members.map((id) => HEROINES[id].name).join('、') : scene.participants.length ? scene.participants.map((id) => HEROINES[id].name).join('、') : '中秋同席'}</span></div>
-        <button class="ink-button primary" id="btn-scene-close">${escapeHtml(chapter.button)}</button>
+        <button class="ink-button story-continue" id="btn-scene-close">${escapeHtml(chapter.button)}</button>
       </div>
     </article>`;
 }
@@ -2223,6 +2249,7 @@ function renderPersonalAfterglow() {
   if (!event) return '<div class="fatal-card">这段余夜没有接上。</div>';
   const heroine = HEROINES[event.heroine];
   const scene = SCENES[event.scene];
+  ensureNarrativeAsset(scene.asset);
   return `
     <div class="personal-afterglow-stage visual-stage dialogue-${event.heroine}" data-personal-afterglow="${event.event}" style="--scene-bg:url('${urlFor(heroine.close)}')">
       <div class="afterglow-close" style="background-image:url('${urlFor(heroine.close)}')" role="img" aria-label="${heroine.name}在余夜里的近景"></div>
@@ -2240,9 +2267,10 @@ function renderPersonalAfterglowAftermath() {
   if (!story) return '<div class="fatal-card">这段余夜后章没有接上。</div>';
   const heroine = HEROINES[story.heroine];
   const scene = SCENES[story.scene];
+  ensureNarrativeAsset(scene.asset);
   const action = story.awaitingChoice
     ? `<p class="afterglow-aftermath-question">亲近已经发生；现在才决定，它明日会成为旧凭据、共同制度，还是她仍可改口的一次选择。</p><div class="personal-afterglow-aftermath-choices">${E.personalAfterglowAftermathOptions(state).map((choice) => choiceButton(choice, 'personal-afterglow-aftermath')).join('')}</div>`
-    : `<button class="ink-button primary personal-afterglow-aftermath-continue" data-personal-afterglow-aftermath-continue="1">${story.resolved ? '让这项安排带到天亮' : '听她把最后一问说完'}</button>`;
+    : `<button class="ink-button story-continue personal-afterglow-aftermath-continue" data-personal-afterglow-aftermath-continue="1">${story.resolved ? '让这项安排带到天亮' : '听她把最后一问说完'}</button>`;
   return `
     <div class="personal-afterglow-aftermath-stage visual-stage dialogue-${story.heroine} ${story.resolved ? 'is-resolved' : ''}" data-personal-afterglow-aftermath="${story.event}" data-story-step="${story.step}">
       <div class="personal-afterglow-aftermath-close" style="background-image:url('${urlFor(heroine.close)}')" role="img" aria-label="${heroine.name}在亲近之后继续和你谈天亮后的安排"></div>
@@ -2299,7 +2327,7 @@ function renderEnding() {
       <div class="ending-art" style="background-image:linear-gradient(90deg,rgba(16,12,10,.9),rgba(16,12,10,.25)),url('${artUrl}')"></div>
       <div class="ending-copy">
         <p class="eyebrow">第 20 日 · 风月总账</p>
-        <h1>${end.title}</h1>
+        <h1 tabindex="-1">${end.title}</h1>
         <p class="ending-tag">${end.tag}${end.heroineName ? ` · ${end.heroineName}` : ''}${end.reckoningResult ? ` · ${end.reckoningResult}` : ''}${end.routeResult ? ` · ${end.routeResult}` : ''}</p>
         <p>${end.text}</p>
         <div class="ending-ledger">
@@ -2317,7 +2345,7 @@ function renderEnding() {
         ${collapseMemoryLedger}
         <div class="household-ending">${end.householdResults.map((item) => `<span><b>${item.name} · ${escapeHtml(item.result)}</b><small>${escapeHtml(item.detail)}</small></span>`).join('')}</div>
         <p class="ending-note">这一种共处方式已经记进结局总账，却还没有走到原著命数的尽头。可先读一个月后的五院生活，再翻开第 30—100 回不会被好感改写的三页余账。</p>
-        <div class="button-row"><button class="ink-button primary" id="btn-fate-coda">翻命数三页</button><button class="ink-button" id="btn-epilogue">读五封一月笺</button><button class="ink-button" id="btn-restart">换一套暗线</button><button class="ink-button" id="btn-replay-seed">重走同一局</button><button class="ink-button" id="btn-gallery">看结局总账</button></div>
+        <div class="button-row"><button class="ink-button story-continue" id="btn-fate-coda">翻命数三页</button><button class="ink-button" id="btn-epilogue">读五封一月笺</button><button class="ink-button" id="btn-restart">换一套暗线</button><button class="ink-button" id="btn-replay-seed">重走同一局</button><button class="ink-button" id="btn-gallery">看结局总账</button></div>
       </div>
     </article>`;
 }
@@ -2429,7 +2457,7 @@ function appendEpilogue() {
         ${pairMemoryLedger}
         <p class="epilogue-route-note">${escapeHtml(page.routeNote)}</p>
       </div>
-      <footer><button class="ink-button" id="btn-epilogue-prev" ${epilogueIndex === 0 ? 'disabled' : ''}>上一封</button><span>${pages.map((_, index) => `<i class="${index === epilogueIndex ? 'current' : ''}"></i>`).join('')}</span><button class="ink-button primary" id="btn-epilogue-next" ${epilogueIndex === pages.length - 1 ? 'disabled' : ''}>下一封</button></footer>
+      <footer><button class="ink-button" id="btn-epilogue-prev" ${epilogueIndex === 0 ? 'disabled' : ''}>上一封</button><span>${pages.map((_, index) => `<i class="${index === epilogueIndex ? 'current' : ''}"></i>`).join('')}</span><button class="ink-button story-continue" id="btn-epilogue-next" ${epilogueIndex === pages.length - 1 ? 'disabled' : ''}>下一封</button></footer>
     </article>
   </section>`;
   app.appendChild(overlay);
@@ -2477,12 +2505,12 @@ function appendFateCoda() {
     ? `<nav class="fate-coda-variants" aria-label="同一结局的命数处置版本"><span>本结局另有不同的命数处置</span><div>${archive.variants.map((fate, index) => `<button class="${index === archivedFateVariantIndex ? 'current' : ''}" data-fate-archive-variant="${index}"><b>${index === archivedFateVariantIndex ? '当前余账' : '另一余账'}</b><small>${escapeHtml(fate.combination?.title ?? fate.summary)}</small></button>`).join('')}</div></nav>`
     : '';
   const footerAction = archive
-    ? `<button class="ink-button" id="btn-fate-archive-prev" ${page.page === 0 ? 'disabled' : ''}>上一页</button><span>永久余账 · ${narrativeStep(page.page + 1, page.count)}</span><button class="ink-button primary" id="btn-fate-archive-next" ${isLast ? 'disabled' : ''}>下一页</button>`
+    ? `<button class="ink-button" id="btn-fate-archive-prev" ${page.page === 0 ? 'disabled' : ''}>上一页</button><span>永久余账 · ${narrativeStep(page.page + 1, page.count)}</span><button class="ink-button story-continue" id="btn-fate-archive-next" ${isLast ? 'disabled' : ''}>下一页</button>`
     : page.awaitingChoice
     ? '<span>这里没有能把死亡改成成功的选项</span>'
     : isLast
-      ? '<button class="ink-button primary" id="btn-fate-coda-finish">把余账留在这里</button>'
-      : '<button class="ink-button primary" data-fate-coda-continue="1">翻下一页</button>';
+      ? '<button class="ink-button story-continue" id="btn-fate-coda-finish">把余账留在这里</button>'
+      : '<button class="ink-button story-continue" data-fate-coda-continue="1">翻下一页</button>';
   const overlay = document.createElement('div');
   overlay.className = 'fate-coda-overlay';
   overlay.id = 'fate-coda-modal';
@@ -2539,6 +2567,7 @@ function appendGallery() {
   const endings = loadEndingArchive();
   const endingFamilies = new Set(endings.map((row) => row.family));
   const sceneRows = Object.values(SCENES);
+  sceneRows.filter((scene) => unlocked.has(scene.id)).forEach((scene) => ensureNarrativeAsset(scene.asset));
   const groups = [
     ...HEROINE_IDS.map((id) => [HEROINES[id].name, sceneRows.filter((scene) => scene.heroine === id).map((scene) => scene.id)]),
     ['公开问责', sceneRows.filter((scene) => scene.tier === 'public').map((scene) => scene.id)],
@@ -2638,7 +2667,7 @@ function galleryReplay(scene, variants = [], selectedIndex = 0) {
     <img id="gallery-replay-image" src="${urlFor(scene.asset)}" alt="${scene.title}"/>
     <div class="gallery-replay-copy">
       ${archivedCopy}
-      <button class="ink-button primary" id="btn-gallery-replay-close">合上这一页</button>
+      <button class="ink-button story-continue" id="btn-gallery-replay-close">合上这一页</button>
     </div>
   </article>`;
 }
