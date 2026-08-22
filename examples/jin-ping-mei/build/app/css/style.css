@@ -70,7 +70,7 @@
 .sr-only { position: fixed !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: -1px !important; overflow: hidden !important; clip: rect(0,0,0,0) !important; white-space: nowrap !important; border: 0 !important; }
 html, body { margin: 0; width: 100%; height: 100%; background: #100d0b; }
 body {
-  min-width: 1000px;
+  min-width: 0;
   overflow: hidden;
   color: var(--ink);
   font-family: var(--serif);
@@ -246,12 +246,12 @@ button:focus-visible { outline: 3px solid var(--gold-bright); outline-offset: 3p
 .save-note { color: #796f62; font: .72rem/1.6 var(--sans); }
 
 /* 游戏框架 */
-.game-shell { width: 100%; height: 100%; display: grid; grid-template-rows: 66px 1fr; background: var(--night); }
+.game-shell { width: 100%; height: 100%; display: grid; grid-template-rows: 60px 1fr; background: var(--night); }
 .topbar {
   position: relative;
   z-index: 50;
   display: grid;
-  grid-template-columns: 190px 1fr auto;
+  grid-template-columns: minmax(180px,auto) 1fr auto;
   align-items: stretch;
   border-bottom: 1px solid rgba(209,177,113,.35);
   color: #e9dcc6;
@@ -261,16 +261,18 @@ button:focus-visible { outline: 3px solid var(--gold-bright); outline-offset: 3p
 .day-mark { display: flex; flex-direction: column; justify-content: center; padding: 0 1.15rem; border-right: 1px solid rgba(209,177,113,.2); }
 .day-mark b { color: var(--gold-bright); letter-spacing: .13em; }
 .day-mark span { margin-top: .22rem; color: #9f907d; font: .72rem var(--sans); }
-.resources { display: flex; align-items: center; justify-content: center; gap: clamp(.35rem, 1vw, 1.1rem); padding: 0 .8rem; }
 .resource-chip { display: flex; align-items: center; gap: .36rem; min-width: 62px; font-family: var(--sans); }
 .resource-chip span { width: 25px; height: 25px; display: grid; place-content: center; border: 1px solid currentColor; transform: rotate(-2deg); font-size: .7rem; }
 .resource-chip b { font-size: .8rem; white-space: nowrap; }
 .resource-chip.silver, .resource-chip.repute { color: #d4b06c; }
 .resource-chip.power, .resource-chip.house { color: #8db2a5; }
 .resource-chip.exposure, .resource-chip.strain { color: #c46e60; }
+.hud-notice { align-self: center; justify-self: center; margin: 0; padding: .34rem .7rem; border-left: 2px solid rgba(202,169,107,.42); color: #9d8f7c; font: .7rem var(--sans); letter-spacing: .08em; }
+.hud-notice.watch { border-color: #9c7655; color: #c3a27e; }
+.hud-notice.urgent { border-color: #ad4e42; color: #d79280; background: rgba(115,43,34,.14); }
 .top-actions { display: flex; align-items: center; gap: .4rem; padding: 0 .85rem; }
-.roster-button { display: none; }
-.play-area { min-height: 0; display: grid; grid-template-columns: 254px 1fr; }
+.roster-button { display: inline-block; }
+.play-area { min-height: 0; display: grid; grid-template-columns: minmax(0,1fr); }
 
 /* 人物账 */
 .relation-rail {
@@ -414,7 +416,7 @@ button:focus-visible { outline: 3px solid var(--gold-bright); outline-offset: 3p
 .speaker-line { margin: .7rem 0 1rem; color: #bda98c; font: .8rem var(--sans); }
 .opening-aftermath-stage { overflow:hidden; background:radial-gradient(circle at 76% 24%,#49352c,#140d0b 72%); }
 .opening-aftermath-stage::after { background:linear-gradient(90deg,rgba(14,9,8,.99) 0%,rgba(14,9,8,.9) 50%,rgba(14,9,8,.12) 79%),linear-gradient(0deg,rgba(59,34,22,.28),transparent 64%); }
-.opening-aftermath-panel { z-index:5; left:3.5%; top:4%; bottom:4%; width:50%; padding:1.2rem 1.3rem; overflow-y:auto; border-color:rgba(203,164,103,.55); }
+.opening-aftermath-panel { z-index:5; left:3.5%; top:50%; bottom:auto; width:50%; max-height:92%; padding:1.2rem 1.3rem; overflow:clip; border-color:rgba(203,164,103,.55); transform:translateY(-50%); }
 .opening-aftermath-cast { position:absolute; z-index:3; inset:3% 2% 3% 55%; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); grid-template-rows:repeat(3,minmax(0,1fr)); gap:.36rem; }
 .opening-aftermath-cast figure { position:relative; min-width:0; min-height:0; margin:0; overflow:hidden; border:1px solid rgba(195,160,102,.24); background:#17100d; transition:filter .3s ease,transform .3s ease,opacity .3s ease; }
 .opening-aftermath-cast figure:last-child { grid-column:1/-1; }
@@ -455,16 +457,34 @@ button:focus-visible { outline: 3px solid var(--gold-bright); outline-offset: 3p
 .hub-stage::after { background: linear-gradient(180deg, rgba(16,12,8,.05), rgba(16,12,8,.2) 48%, rgba(16,12,8,.68)); }
 .hub-stage.evening::after { background: linear-gradient(180deg, rgba(25,12,13,.18), rgba(25,12,13,.34) 48%, rgba(10,7,6,.62)); }
 .courtyard-caption { position: absolute; z-index: 2; inset: 12% 11% auto; display: flex; justify-content: space-between; color: #3b3026; font-weight: 700; letter-spacing: .2em; text-shadow: 0 1px #eadcbf; }
-.day-panel { left: 4%; right: 4%; bottom: 3.5%; padding: 1.2rem 1.4rem; }
+.day-panel { left: 4%; right: 4%; bottom: 3.5%; padding: 1.2rem 1.4rem; overflow: clip; }
 .day-dilemma { display: grid; grid-template-columns: auto minmax(0,1fr) auto; align-items: center; gap: .55rem .75rem; margin: .7rem 0; padding: .52rem .65rem; border-left: 2px solid var(--cinnabar); color: #c6b292; background: rgba(8,6,5,.28); font: .7rem/1.5 var(--sans); }
 .day-dilemma span { color: #d86f5e; font-weight: 800; letter-spacing: .14em; }
 .day-dilemma b { min-width: 0; color: #e3d2b7; font-weight: 500; }
 .day-dilemma em { color: #968773; font-style: normal; white-space: nowrap; }
 .pressure-tell { grid-column: 2 / -1; color: #b9a98f; font: .62rem/1.45 var(--sans); letter-spacing: .03em; }
-.evidence-board { margin: -.15rem 0 .6rem; padding: .42rem .55rem; border: 1px solid rgba(101,145,132,.26); background: rgba(28,58,52,.18); font-family: var(--sans); }
-.evidence-board header { display: flex; justify-content: space-between; gap: .5rem; color: #aac2b8; font-size: .62rem; }
-.evidence-board header span { color: #897f70; font-size: .58rem; }
-.evidence-board > div { display: flex; gap: .4rem; margin-top: .38rem; overflow-x: auto; padding-bottom: .1rem; }
+.day-context-details, .evidence-board, .joint-offers { border: 1px solid rgba(220,188,127,.18); background: rgba(8,6,5,.22); font-family: var(--sans); }
+.day-context-details { margin: .6rem 0; border-color: rgba(194,151,86,.24); }
+.day-context-details > summary, .evidence-board > summary, .joint-offers > summary { display: flex; align-items: center; justify-content: space-between; gap: .75rem; padding: .42rem .55rem; color: #cbb790; cursor: pointer; list-style: none; font-size: .62rem; }
+.day-context-details > summary::-webkit-details-marker, .evidence-board > summary::-webkit-details-marker, .joint-offers > summary::-webkit-details-marker { display: none; }
+.day-context-details > summary::after, .evidence-board > summary::after, .joint-offers > summary::after { content: "展开"; flex: none; color: #8d7c66; font-size: .54rem; letter-spacing: .08em; }
+.day-context-details[open] > summary::after, .evidence-board[open] > summary::after, .joint-offers[open] > summary::after { content: "收起"; }
+.day-context-details > summary span, .evidence-board > summary span, .joint-offers > summary span { min-width: 0; margin-left: auto; color: #897f70; font-size: .58rem; text-align: right; }
+.day-context-details > div { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: .4rem; max-height: min(42vh,360px); padding: 0 .55rem .55rem; overflow-y: auto; }
+.day-context-details > div > aside { min-width: 0; margin: 0; }
+.supporting-context { margin: .55rem 0; border: 1px solid rgba(194,151,86,.26); color: #d6c19b; background: rgba(8,6,5,.24); font-family: var(--sans); }
+.supporting-context > summary { display: flex; align-items: center; justify-content: space-between; gap: .65rem; padding: .42rem .55rem; cursor: pointer; list-style: none; font-size: .62rem; }
+.supporting-context > summary::-webkit-details-marker { display: none; }
+.supporting-context > summary::after { content: "展开"; flex: none; color: #8d7c66; font-size: .54rem; letter-spacing: .08em; }
+.supporting-context[open] > summary::after { content: "收起"; }
+.supporting-context > summary span { min-width: 0; margin-left: auto; color: #8c7e6b; font-size: .57rem; text-align: right; }
+.supporting-context-pages { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: .4rem; max-height: min(56vh,520px); padding: 0 .55rem .55rem; overflow-y: auto; }
+.supporting-context-pages > * { min-width: 0; margin: 0; }
+.decision-panel:has(> .supporting-context) { overflow: clip; }
+.decision-panel:has(> .supporting-context[open]) > :not(.phase-header):not(.supporting-context):not(.favor-progress):not(.memory-progress) { display: none; }
+.evidence-board { margin: -.15rem 0 .6rem; border-color: rgba(101,145,132,.26); background: rgba(28,58,52,.18); }
+.evidence-board > summary { color: #aac2b8; }
+.evidence-board > div { display: flex; gap: .4rem; max-height: min(38vh,320px); padding: 0 .55rem .5rem; overflow: auto; }
 .evidence-slip { flex: 0 0 min(188px,42vw); display: grid; gap: .12rem; padding: .42rem .5rem; border: 1px solid rgba(121,166,151,.3); color: #d8ccba; text-align: left; background: rgba(8,18,16,.38); cursor: pointer; }
 .evidence-slip b { font-size: .68rem; }
 .evidence-slip span, .evidence-slip em { color: #8f9b91; font-size: .56rem; font-style: normal; }
@@ -506,14 +526,29 @@ button:focus-visible { outline: 3px solid var(--gold-bright); outline-offset: 3p
 .day-consequence.missed { border-color: rgba(183,75,58,.44); background: rgba(91,30,23,.2); }
 .day-consequence.missed span { color: #d18470; }
 .day-actions { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: .65rem; }
-.joint-offers { margin-top: .75rem; padding-top: .65rem; border-top: 1px solid rgba(220,188,127,.2); }
-.joint-offers > header { display: flex; align-items: center; justify-content: space-between; margin-bottom: .5rem; color: #d6bd8e; font: .7rem var(--sans); letter-spacing: .1em; }
-.joint-offers > header span { color: #8f8271; font-size: .62rem; letter-spacing: .04em; }
+.joint-offers { margin-top: .75rem; }
+.joint-offers > summary { color: #d6bd8e; letter-spacing: .08em; }
+.joint-offers > summary span { color: #8f8271; letter-spacing: .04em; }
 .joint-offers > p { margin: .25rem 0 0; color: #9b8e7b; font: .7rem/1.45 var(--sans); }
 .joint-offers.locked, .joint-offers.complete { padding: .65rem .72rem; border: 1px solid rgba(220,188,127,.16); background: rgba(22,17,14,.35); }
 .joint-offers.complete { border-color: rgba(103,151,131,.28); background: rgba(38,75,66,.13); }
 .joint-actions { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: .5rem; }
+.joint-offers > .joint-actions { max-height: min(48vh,380px); padding: 0 .55rem .55rem; overflow-y: auto; }
 .joint-actions .choice-button { min-height: 62px; }
+
+/* 白日只维持一个阅读焦点：展开前情、证据或联院差事时，暂时收起其余决策层。 */
+.day-panel:has(.day-context-details[open]) .day-dilemma,
+.day-panel:has(.day-context-details[open]) .evidence-board,
+.day-panel:has(.day-context-details[open]) .day-actions,
+.day-panel:has(.day-context-details[open]) .joint-offers,
+.day-panel:has(.evidence-board[open]) .day-context-details,
+.day-panel:has(.evidence-board[open]) .day-dilemma,
+.day-panel:has(.evidence-board[open]) .day-actions,
+.day-panel:has(.evidence-board[open]) .joint-offers,
+.day-panel:has(.joint-offers[open]) .day-context-details,
+.day-panel:has(.joint-offers[open]) .day-dilemma,
+.day-panel:has(.joint-offers[open]) .evidence-board,
+.day-panel:has(.joint-offers[open]) .day-actions { display: none; }
 
 /* 双人合办结果：先让人物在同一画面完成一件事，再回到原有白日流转。 */
 .joint-result-stage::before { background-position: center; filter: saturate(.82) brightness(.86) contrast(1.03); }
@@ -1812,7 +1847,7 @@ img[alt="孙雪娥"] { --heroine-focus-x: 68%; }
 .toast.show { opacity: 1; transform: translate(-50%,0); }
 
 /* 选择回响留在下一幕上，但不再抢焦点、锁背景、逼玩家每步按一次“接下去”。 */
-.result-feedback { position: fixed; z-index: 420; right: 2.4vw; bottom: 2.5vh; width: min(650px, calc(100vw - 340px)); pointer-events: none; }
+.result-feedback { position: fixed; z-index: 420; right: 2.4vw; bottom: 2.5vh; width: min(650px, calc(100vw - 4.8vw)); pointer-events: none; }
 .result-card { position: relative; padding: .78rem 3.4rem .8rem 1rem; border: 1px solid rgba(226,191,124,.5); color: #eadcc4; background: linear-gradient(135deg, rgba(35,23,18,.96), rgba(18,13,11,.96)); box-shadow: 0 16px 45px rgba(0,0,0,.58), inset 3px 0 #a43a31; }
 .result-card .eyebrow { margin-bottom: .15rem; font-size: .55rem; }
 .result-card h2 { margin: 0 0 .25rem; font-size: 1rem; letter-spacing: .08em; }
@@ -1824,10 +1859,17 @@ img[alt="孙雪娥"] { --heroine-focus-x: 68%; }
 .confirm-card h2 { margin: .1rem 0 .65rem; font-size: 1.8rem; }
 .confirm-card > p:not(.eyebrow) { color: #cbbba4; font: .9rem/1.8 var(--sans); }
 .roster-overlay { position: fixed; z-index: 610; inset: 0; display: grid; place-items: center; padding: 3vh 3vw; background: rgba(8,5,4,.9); backdrop-filter: blur(8px); }
-.roster-sheet { width: min(560px,94vw); max-height: 92vh; display: grid; grid-template-rows: auto minmax(0,1fr); overflow: hidden; border: 1px solid rgba(226,191,124,.55); color: #eadcc4; background: linear-gradient(145deg,#2a1c17,#120d0b); }
+.roster-sheet { width: min(760px,94vw); max-height: 92vh; display: grid; grid-template-rows: auto minmax(0,1fr); overflow: hidden; border: 1px solid rgba(226,191,124,.55); color: #eadcc4; background: linear-gradient(145deg,#2a1c17,#120d0b); }
 .roster-sheet > header { display: flex; align-items: center; justify-content: space-between; padding: 1rem; border-bottom: 1px solid rgba(226,191,124,.2); }
 .roster-sheet h2 { margin: 0; }
 .roster-scroll { min-height: 0; display: flex; flex-direction: column; gap: .45rem; padding: .8rem; overflow-y: auto; }
+.ledger-status { padding: .68rem .72rem; border: 1px solid rgba(205,168,104,.28); background: rgba(81,54,32,.16); }
+.ledger-status > header { display: flex; align-items: baseline; justify-content: space-between; gap: .75rem; color: #d5b67e; font: .7rem var(--sans); }
+.ledger-status > header span { color: #8f806d; font-size: .58rem; }
+.ledger-resources { display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); gap: .42rem; margin-top: .58rem; }
+.ledger-resources .resource-chip { justify-content: center; min-width: 0; padding: .42rem .28rem; border-top: 1px solid currentColor; background: rgba(0,0,0,.16); }
+.roster-relations { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: .45rem; }
+.roster-relations .relation-card:last-child { grid-column: 1 / -1; }
 
 /* 四幕不仅换题签：同一宅院在偏宠、证据合流、总账危机里逐幕改色。 */
 .game-shell .visual-stage::after { transition: box-shadow .55s ease, background-color .55s ease; }
@@ -1860,18 +1902,14 @@ img[alt="孙雪娥"] { --heroine-focus-x: 68%; }
   .title-actions .ink-button { flex: 1 1 8rem; min-width: 0; }
   .rating-line, .save-note { margin: .25rem 0; font-size: .68rem; }
 
-  .game-shell { grid-template-rows: 106px minmax(0,1fr); }
-  .topbar { grid-template-columns: minmax(0,1fr) auto; grid-template-rows: 48px 58px; }
+  .game-shell { grid-template-rows: 58px minmax(0,1fr); }
+  .topbar { grid-template-columns: minmax(0,1fr) auto; grid-template-rows: 58px; }
   .day-mark { min-width: 0; padding: 0 .65rem; border-right: 0; }
   .day-mark b { font-size: .78rem; }
   .day-mark span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .6rem; }
+  .hud-notice { display: none; }
   .top-actions { padding: 0 .45rem; gap: .25rem; }
   .top-actions .plain-button { padding: .38rem .48rem; font-size: .66rem; }
-  .roster-button { display: inline-block; }
-  .resources { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); gap: .15rem; padding: .25rem .38rem .42rem; border-top: 1px solid rgba(209,177,113,.16); }
-  .resource-chip { min-width: 0; justify-content: center; gap: .18rem; }
-  .resource-chip span { width: 21px; height: 21px; font-size: .6rem; }
-  .resource-chip b { font-size: .62rem; }
   .play-area { grid-template-columns: minmax(0,1fr); }
   .relation-rail { display: none; }
   .phase-stage { min-width: 0; min-height: 0; }
@@ -1887,17 +1925,34 @@ img[alt="孙雪娥"] { --heroine-focus-x: 68%; }
   .opening-aftermath-cast figcaption { padding:1.1rem .18rem .2rem; text-align:center; }
   .opening-aftermath-cast figcaption i,.opening-aftermath-cast figcaption small { display:none; }
   .opening-aftermath-cast figcaption b { font-size:.52rem; }
-  .opening-aftermath-panel { left:3%; right:3%; top:auto; bottom:2%; width:auto; max-height:72%; padding:.82rem; }
-  .opening-aftermath-voices { grid-template-columns:1fr; gap:.28rem; }
-  .opening-aftermath-voices blockquote { padding:.42rem .48rem; }
+  .opening-aftermath-panel { left:3%; right:3%; top:auto; bottom:2%; width:auto; max-height:72%; padding:.82rem; overflow:clip; transform:none; }
+  .opening-aftermath-panel .phase-header h2 { margin-bottom:.34rem; font-size:1.24rem; }
+  .opening-aftermath-panel .phase-header > p:last-child { font-size:.69rem; line-height:1.42; }
+  .opening-origin { gap:.08rem; margin:.34rem 0; padding:.34rem .46rem; }
+  .opening-origin small { display:none; }
+  .opening-aftermath-transcript { gap:.18rem; margin:.3rem 0; }
+  .opening-aftermath-transcript li { padding:.28rem .34rem; }
+  .opening-aftermath-transcript p { display:none; }
+  .opening-aftermath-voices { grid-template-columns:repeat(2,minmax(0,1fr)); gap:.24rem; margin:.38rem 0; }
+  .opening-aftermath-voices blockquote { padding:.32rem .4rem; }
+  .opening-aftermath-voices p { margin-top:.12rem; font-size:.54rem; line-height:1.32; }
+  .opening-aftermath-continue { min-height:44px; padding:.55rem .65rem; }
   .choice-grid { grid-template-columns: 1fr; }
+  .day-panel { overflow: clip; }
+  .day-context-details { margin: .42rem 0; }
+  .day-context-details > summary, .evidence-board > summary, .joint-offers > summary { gap: .35rem; padding: .36rem .44rem; }
+  .day-context-details > summary span, .evidence-board > summary span, .joint-offers > summary span { display: none; }
+  .day-context-details > div { grid-template-columns: 1fr; max-height: 54svh; padding: 0 .42rem .42rem; }
+  .evidence-board > div, .joint-offers > .joint-actions { max-height: 54svh; padding: 0 .42rem .42rem; }
+  .supporting-context { margin: .42rem 0; }
+  .supporting-context > summary { padding: .36rem .44rem; }
+  .supporting-context > summary span { display: none; }
+  .supporting-context-pages { grid-template-columns: 1fr; max-height: 54svh; padding: 0 .42rem .42rem; }
   .day-dilemma { grid-template-columns: auto minmax(0,1fr); align-items: start; }
   .day-dilemma em { grid-column: 1 / -1; white-space: normal; }
   .pressure-tell { grid-column: 1 / -1; }
   .day-actions { grid-template-columns: repeat(2,minmax(0,1fr)); }
-  .day-actions .choice-button { min-height: 94px; }
-  .joint-offers > header { align-items: flex-start; gap: .35rem; }
-  .joint-offers > header span { text-align: right; }
+  .day-actions .choice-button { min-height: 78px; }
   .joint-actions { grid-template-columns: repeat(2,minmax(0,1fr)); }
   .joint-actions .choice-button { min-height: 70px; }
   .choice-button { min-height: 68px; }
@@ -2158,11 +2213,15 @@ img[alt="孙雪娥"] { --heroine-focus-x: 68%; }
   .confirm-card { width: 100%; }
   .roster-overlay { padding: 0; }
   .roster-sheet { width: 100vw; height: 100svh; max-height: none; border: 0; }
+  .ledger-status > header { align-items: flex-start; flex-direction: column; gap: .18rem; }
+  .ledger-resources { grid-template-columns: repeat(3,minmax(0,1fr)); gap: .28rem; }
+  .roster-relations { grid-template-columns: 1fr; }
+  .roster-relations .relation-card:last-child { grid-column: auto; }
 }
 
 @media (max-height: 830px) {
   .game-shell { grid-template-rows: 60px 1fr; }
-  .play-area { grid-template-columns: 230px 1fr; }
+  .play-area { grid-template-columns: minmax(0,1fr); }
   .relation-rail { gap: .25rem; padding: .42rem .55rem; }
   .relation-card { padding: .38rem .52rem; }
   .relation-card p { min-height: 0; font-size: .6rem; }
@@ -2184,8 +2243,23 @@ img[alt="孙雪娥"] { --heroine-focus-x: 68%; }
   .accord-seal { padding: .28rem .35rem; }
 }
 
+@media (min-width: 901px) and (max-height: 830px) {
+  .opening-aftermath-panel { padding:.88rem 1rem; }
+  .opening-aftermath-panel .phase-header h2 { margin-bottom:.3rem; font-size:1.42rem; }
+  .opening-aftermath-panel .phase-header > p:last-child { font-size:.76rem; line-height:1.45; }
+  .opening-origin { gap:.08rem; margin:.35rem 0; padding:.38rem .48rem; }
+  .opening-origin small { display:none; }
+  .opening-aftermath-transcript { gap:.18rem; margin:.3rem 0; }
+  .opening-aftermath-transcript li { padding:.28rem .34rem; }
+  .opening-aftermath-transcript p { display:none; }
+  .opening-aftermath-voices { gap:.24rem; margin:.35rem 0; }
+  .opening-aftermath-voices blockquote { padding:.34rem .42rem; }
+  .opening-aftermath-voices p { margin-top:.12rem; font-size:.54rem; line-height:1.32; }
+  .opening-aftermath-continue { min-height:44px; padding:.55rem .65rem; }
+}
+
 @media (min-width: 1800px) and (min-height: 1000px) {
-  .play-area { grid-template-columns: 300px 1fr; }
+  .play-area { grid-template-columns: minmax(0,1fr); }
   .relation-rail { padding: 1.4rem 1rem; gap: 1rem; }
   .relation-card { padding: 1rem; }
   .relation-card p { font-size: .76rem; }

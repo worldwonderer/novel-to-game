@@ -302,6 +302,13 @@ export function haremOutlook(state) {
     };
   }).sort((left, right) => right.score - left.score);
   const top = pairs[0] ?? null;
+  const personalReadiness = !top
+    ? ''
+    : top.personalReady === 2
+      ? '两人的凭信都已备齐'
+      : top.personalReady === 1
+        ? '一人的凭信已经备齐，另一院仍在观望'
+        : '两人的凭信都还没有备齐';
   return {
     topPair: top,
     pairCount: pairs.filter((row) => row.ready).length,
@@ -309,7 +316,7 @@ export function haremOutlook(state) {
       ? '还没有形成可读的院间同盟。'
       : top.ready
         ? `${HEROINES[top.left].short}与${HEROINES[top.right].short}已经具备双院成盟的基础。`
-        : `${HEROINES[top.left].short}与${HEROINES[top.right].short}最接近成盟：个人凭信 ${top.personalReady}/2，互信 ${top.value >= 0 ? '+' : ''}${top.value}/10。`,
+        : `${HEROINES[top.left].short}与${HEROINES[top.right].short}最接近成盟：${personalReadiness}，两院${top.tier}。`,
   };
 }
 

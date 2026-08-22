@@ -385,43 +385,25 @@ function renderGame() {
   const day = E.dayDef(state);
   const content = renderPhase();
   const obligations = E.activeObligations(state);
+  const notice = hudNotice(obligations);
   app.innerHTML = `
     <main class="game-shell" id="game-shell" data-phase="${state.phase}" data-act="${Math.min(4, Math.ceil(state.day / 5))}">
       <header class="topbar">
         <div class="day-mark"><b id="day-num">第 ${state.day} 日</b><span>${escapeHtml(day.act)} · ${escapeHtml(day.name)}</span></div>
-        <div class="resources" aria-label="外账">
-          ${resourceChip('银', state.resources.silver, 'silver')}
-          ${resourceChip('势', state.resources.power, 'power')}
-          ${resourceChip('声', state.resources.repute, 'repute')}
-          ${resourceChip('宅', state.resources.house, 'house')}
-          ${resourceChip('露', state.resources.exposure, 'exposure')}
-          ${resourceChip('耗', state.resources.strain, 'strain')}
-        </div>
+        <p class="hud-notice ${notice.tone}" aria-live="polite">${notice.text}</p>
         <div class="top-actions">
-          <button class="plain-button roster-button" id="btn-roster">人物账${obligations.length ? ' · 有催账' : ''}</button>
+          <button class="plain-button roster-button" id="btn-roster" aria-label="打开完整账册${obligations.length ? '，有旧话待结' : ''}">账册${obligations.length ? ' · 待办' : ''}</button>
           <button class="plain-button" id="btn-gallery">${TEXT.gallery}</button>
           <button class="plain-button" id="btn-mute">${audio.muted ? TEXT.muteOn : TEXT.muteOff}</button>
         </div>
       </header>
       <div class="play-area">
-        <aside class="relation-rail" aria-label="人物账">
-          <p class="rail-kicker">人物账</p>
-          ${HEROINE_IDS.map(renderRelationCard).join('')}
-          ${renderObligationBoard(true)}
-          ${renderBondBoard()}
-          <section class="ledger-book" aria-label="风月账">
-            ${renderLedger()}
-          </section>
-          <section class="household-roster" aria-label="宅中人">
-            <p>宅中人</p>
-            ${HOUSEHOLD_IDS.map(renderHouseholdRow).join('')}
-          </section>
-        </aside>
         <section class="phase-stage" id="phase-stage">
           ${content}
         </section>
       </div>
     </main>`;
+  collapseSupportingContext(document.getElementById('phase-stage'));
   if (rosterOpen) appendRoster();
   if (resultCard && !rosterOpen && !galleryOpen && !epilogueOpen && !fateCodaOpen) appendResultCard();
   if (galleryOpen) appendGallery();
@@ -429,13 +411,57 @@ function renderGame() {
   if (fateCodaOpen) appendFateCoda();
 }
 
+function collapseSupportingContext(root) {
+  if (!root) return;
+  const selector = [
+    '.council-external-echo', '.opening-public-echo', '.act-source-echo', '.public-evidence-echo',
+    '.route-branch-memory', '.intimacy-memory', '.ordinary-night-memory', '.night-conversation-life-memory',
+    '.pair-interlude-memory', '.household-memory', '.crisis-reply-ledger', '.pair-aftermath-transcript',
+    '.route-resolution-transcript', '.aftermath-echo', '.aftermath-pair-memory', '.aftermath-route-stake',
+    '.memory-thread', '.favor-thread', '.private-price-ledger', '.final-reckoning-cast',
+    '.public-followup-cast', '.external-witnesses',
+  ].join(',');
+  root.querySelectorAll('.decision-panel').forEach((panel) => {
+    if (panel.closest('.roster-overlay, .gallery-overlay, .epilogue-overlay')) return;
+    const rows = [...panel.children].filter((child) => child.matches(selector));
+    if (!rows.length) return;
+    const details = document.createElement('details');
+    details.className = 'supporting-context';
+    const label = panel.classList.contains('dialogue-panel')
+      ? '此前关系史'
+      : panel.classList.contains('household-panel')
+        ? '影响这笔交易的旧账'
+        : panel.classList.contains('final-reckoning-panel') || panel.classList.contains('final-aftermath-panel')
+          ? '走到终局的旧账'
+          : panel.classList.contains('public-evidence-panel') || panel.classList.contains('public-followup-panel') || panel.classList.contains('public-aftermath-panel')
+            ? '影响本场裁决的前情'
+            : '前情与依据';
+    details.innerHTML = `<summary><b>${label}</b><span>${rows.length} 笔，按需翻看</span></summary><div class="supporting-context-pages"></div>`;
+    rows[0].before(details);
+    details.querySelector('.supporting-context-pages').append(...rows);
+  });
+}
+
 function appendRoster() {
   const overlay = document.createElement('div');
   overlay.className = 'roster-overlay';
   overlay.id = 'roster-modal';
   overlay.innerHTML = `<section class="roster-sheet" role="dialog" aria-modal="true" aria-labelledby="roster-title">
-    <header><div><p class="eyebrow">五院此刻如何看你</p><h2 id="roster-title">人物账</h2></div><button class="plain-button" id="btn-roster-close">合上</button></header>
-    <div class="roster-scroll">${HEROINE_IDS.map(renderRelationCard).join('')}${renderHaremOutlook()}${renderObligationBoard(false)}${renderBondBoard(true)}<section class="ledger-book">${renderLedger()}</section><section class="household-roster"><p>宅中人</p>${HOUSEHOLD_IDS.map(renderHouseholdRow).join('')}</section></div>
+    <header><div><p class="eyebrow">需要时再翻，不挤占正戏</p><h2 id="roster-title">宅门账册</h2></div><button class="plain-button" id="btn-roster-close">合上</button></header>
+    <div class="roster-scroll">
+      <section class="ledger-status" aria-label="外账风向"><header><b>外账风向</b><span>只记当前处境，不把数目压在戏上</span></header><div class="ledger-resources">
+        ${resourceChip('银', state.resources.silver, 'silver')}
+        ${resourceChip('势', state.resources.power, 'power')}
+        ${resourceChip('声', state.resources.repute, 'repute')}
+        ${resourceChip('宅', state.resources.house, 'house')}
+        ${resourceChip('露', state.resources.exposure, 'exposure')}
+        ${resourceChip('耗', state.resources.strain, 'strain')}
+      </div></section>
+      <section class="roster-relations" aria-label="五院人物账">${HEROINE_IDS.map(renderRelationCard).join('')}</section>
+      ${renderHaremOutlook()}${renderObligationBoard(false)}${renderBondBoard(true)}
+      <section class="ledger-book">${renderLedger()}</section>
+      <section class="household-roster"><p>宅中人</p>${HOUSEHOLD_IDS.map(renderHouseholdRow).join('')}</section>
+    </div>
   </section>`;
   app.appendChild(overlay);
   inertBackgroundExcept(overlay);
@@ -449,6 +475,16 @@ function resourceCondition(key, value) {
   if (key === 'house') return value < 25 ? '将散' : value < 50 ? '动荡' : value < 75 ? '尚稳' : '齐整';
   if (key === 'exposure') return value <= 0 ? '无风' : value < 20 ? '微闻' : value < 45 ? '风声起' : value < 70 ? '已见光' : '满城闻';
   return value <= 0 ? '从容' : value < 20 ? '尚轻' : value < 45 ? '劳累' : value < 70 ? '难支' : '将溃';
+}
+
+function hudNotice(obligations) {
+  if (obligations.some((row) => ['overdue', 'due'].includes(row.status))) return { tone: 'urgent', text: '有人今日等你还话' };
+  if (obligations.some((row) => row.status === 'locked')) return { tone: 'watch', text: '有一扇门暂不留话' };
+  if (state.resources.silver < 40) return { tone: 'urgent', text: '银钱已经告急' };
+  if (state.resources.house < 50) return { tone: 'urgent', text: '宅门正在动荡' };
+  if (state.resources.exposure >= 45) return { tone: 'watch', text: '外头风声已紧' };
+  if (state.resources.strain >= 45) return { tone: 'watch', text: '众人已经难支' };
+  return { tone: 'quiet', text: '今日无急报' };
 }
 
 function resourceChip(glyph, value, key) {
@@ -1176,33 +1212,40 @@ function renderDay() {
   const jointDone = Math.min(E.jointActionCount(state), E.JOINT_ACTION_TARGET);
   const focus = def.focus.map((id) => HEROINES[id]?.short).filter(Boolean);
   const opening = state.day === 1 ? E.openingMemory(state) : null;
+  const contextRows = [
+    opening ? `<aside class="opening-memory-slip" data-opening-memory="${opening.choice}"><span>正堂起手仍在影响这一日</span><b>${escapeHtml(opening.title)}</b><p>${escapeHtml(opening.memory)}</p></aside>` : '',
+    def.earlyEcho ? `<aside class="council-external-echo day-early-living-echo" data-early-day-source="${def.earlyEcho.sourceDay}:${def.earlyEcho.sourceAction}"><span>昨日手上留下的物件没有退场</span><b>${escapeHtml(def.earlyEcho.label)}</b><p>${escapeHtml(def.earlyEcho.text)}</p><small>${escapeHtml(def.earlyEcho.object)}</small></aside>` : '',
+    def.accountEcho ? `<aside class="council-external-echo day-account-living-echo" data-day6-account-echo="${def.accountEcho.sourceAction}"><span>昨日两本流水正在把食盒接到车路</span><b>${escapeHtml(def.accountEcho.label)}</b><p>${escapeHtml(def.accountEcho.text)}</p><small>${escapeHtml(def.accountEcho.object)}</small></aside>` : '',
+    def.driverEcho ? `<aside class="council-external-echo day-driver-living-echo" data-day7-driver-echo="${def.driverEcho.sourceAction}"><span>昨日车夫留下的物件正在拆分四次催火</span><b>${escapeHtml(def.driverEcho.label)}</b><p>${escapeHtml(def.driverEcho.text)}</p><small>${escapeHtml(def.driverEcho.object)}</small></aside>` : '',
+    def.stoveEcho ? `<aside class="council-external-echo day-stove-living-echo" data-day8-stove-echo="${def.stoveEcho.sourceAction}"><span>昨日停灶留下的物件正在把旧箱接回生活账</span><b>${escapeHtml(def.stoveEcho.label)}</b><p>${escapeHtml(def.stoveEcho.text)}</p><small>${escapeHtml(def.stoveEcho.object)}</small></aside>` : '',
+    def.saltEcho ? `<aside class="council-external-echo day-salt-living-echo" data-day11-salt-echo="${def.saltEcho.sourceAction}"><span>昨日一瓮盐正在改变今日箱路</span><b>${escapeHtml(def.saltEcho.label)}</b><p>${escapeHtml(def.saltEcho.text)}</p><small>${escapeHtml(def.saltEcho.object)}</small></aside>` : '',
+    def.emergencyEcho ? `<aside class="council-external-echo day-emergency-living-echo" data-day13-emergency-echo="${def.emergencyEcho.sourceAction}"><span>昨日五件急用决定今日银票会压住谁</span><b>${escapeHtml(def.emergencyEcho.label)}</b><p>${escapeHtml(def.emergencyEcho.text)}</p><small>${escapeHtml(def.emergencyEcho.object)}</small></aside>` : '',
+    def.hearingEcho ? `<aside class="council-external-echo day-hearing-living-echo" data-day15-hearing-echo="${def.hearingEcho.sourceAction}"><span>昨日堂前留下的实物正在拆分真债、雇声与饥饿</span><b>${escapeHtml(def.hearingEcho.label)}</b><p>${escapeHtml(def.hearingEcho.text)}</p><small>${escapeHtml(def.hearingEcho.object)}</small></aside>` : '',
+    def.crowdEcho ? `<aside class="council-external-echo day-crowd-living-echo" data-day16-crowd-echo="${def.crowdEcho.sourceAction}"><span>昨日拆围门留下的票、鞋与饭正在接出柜坊入口</span><b>${escapeHtml(def.crowdEcho.label)}</b><p>${escapeHtml(def.crowdEcho.text)}</p><small>${escapeHtml(def.crowdEcho.object)}</small></aside>` : '',
+    def.vaultEcho ? `<aside class="council-external-echo day-vault-living-echo" data-day17-vault-echo="${def.vaultEcho.sourceAction}"><span>昨夜柜坊留下的实物正在限制逃路报价</span><b>${escapeHtml(def.vaultEcho.label)}</b><p>${escapeHtml(def.vaultEcho.text)}</p><small>${escapeHtml(def.vaultEcho.object)}</small></aside>` : '',
+    def.externalPressure ? `<aside class="council-external-echo day-external-pressure" data-external-pressure="${def.externalPressure.sourceResult}"><span>昨日三口复案改变了今日要补的证</span><b>${escapeHtml(def.externalPressure.label)}</b><p>${escapeHtml(def.externalPressure.text)}</p></aside>` : '',
+    def.deedEcho ? `<aside class="council-external-echo day-deed-echo" data-day10-deed-echo="${def.deedEcho.aftermath}"><span>第九日旧契真的去了哪里</span><b>${escapeHtml(def.deedEcho.label)}</b><p>${escapeHtml(def.deedEcho.text)}</p></aside>` : '',
+    def.councilEcho ? `<aside class="council-external-echo day-council-echo" data-day13-council-echo="${def.councilEcho.choice}" data-day10-opening="${def.councilEcho.publicOpeningChoice ?? ''}"><span>第十二日院议先变成今日用度</span><b>${escapeHtml(def.councilEcho.label)}</b><p>${escapeHtml(def.councilEcho.text)}</p><small>${escapeHtml(def.councilEcho.materialText ?? '')}</small></aside>` : '',
+    def.nightLedger ? `<aside class="council-external-echo day-night-ledger" data-night-ledger-day13="${def.nightLedger.choice}" data-day5-opening-long="${def.nightLedger.publicOpeningChoice}"><span>行动权限，不是新增证物</span><b>${escapeHtml(def.nightLedger.title)}</b><p>${escapeHtml(def.nightLedger.text)}</p><small>${escapeHtml(def.nightLedger.permission)} · 第五日仍按“${escapeHtml(def.nightLedger.publicOpeningLabel)}”追责。</small></aside>` : '',
+  ].filter(Boolean);
+  const contextSection = contextRows.length
+    ? `<details class="day-context-details"><summary><b>旧事正在影响今日</b><span>${contextRows.length === 1 ? '一笔前情，按需翻看' : '数笔前情，按需翻看'}</span></summary><div>${contextRows.join('')}</div></details>`
+    : '';
   const jointSection = state.day < 6
-    ? '<section class="joint-offers locked" aria-label="联院差事"><header><b>联院差事</b><span>第六日开放</span></header><p>第一幕先听清五个人各自的边界。院约未齐时，不把她们提前拼成你的办事队。</p></section>'
+    ? ''
     : jointDone >= E.JOINT_ACTION_TARGET
-      ? '<section class="joint-offers complete" aria-label="联院差事"><header><b>五桩联办已成</b><span>搭档都真正共过事</span></header><p>五组搭档都真正共过一次事。余下白日回到今日危局，不再重复刷同一组奖励。</p></section>'
-      : `<section class="joint-offers" aria-label="联院差事"><header><b>联院差事</b><span>${narrativeProgress(state.resolvedPressures.length, E.PRESSURE_TARGET, ['危局仍压着', '危局渐渐回稳', '危局多已收住'])} · ${narrativeProgress(jointDone, E.JOINT_ACTION_TARGET, ['尚未合办', '已有搭档共事', '五组搭档都已共事'])}</span></header><div class="joint-actions">${jointOptions.map((choice) => choiceButton(choice, 'joint-action')).join('')}</div></section>`;
+      ? ''
+      : `<details class="joint-offers" aria-label="联院差事"><summary><b>改做一桩联院差事</b><span>${narrativeProgress(jointDone, E.JOINT_ACTION_TARGET, ['尚未合办', '已有搭档共事', '五组搭档都已共事'])}</span></summary><div class="joint-actions">${jointOptions.map((choice) => choiceButton({ ...choice, meta: '' }, 'joint-action')).join('')}</div></details>`;
+  const dayOptions = E.dayOptions(state);
   return `
     <div class="hub-stage visual-stage" style="--scene-bg:url('${urlFor('compound')}')">
       <div class="courtyard-caption"><span>正堂</span><span>花园角门</span><span>瓶儿私院</span><span>玉楼书房</span><span>雪娥灶院</span></div>
       <div class="decision-panel day-panel">
         ${phaseHeader(`第 ${state.day} 日 · 白日`, def.name, def.pressure)}
-        ${opening ? `<aside class="opening-memory-slip" data-opening-memory="${opening.choice}"><span>正堂起手仍在影响这一日</span><b>${escapeHtml(opening.title)}</b><p>${escapeHtml(opening.memory)}</p></aside>` : ''}
-        ${def.earlyEcho ? `<aside class="council-external-echo day-early-living-echo" data-early-day-source="${def.earlyEcho.sourceDay}:${def.earlyEcho.sourceAction}"><span>昨日手上留下的物件没有退场</span><b>${escapeHtml(def.earlyEcho.label)}</b><p>${escapeHtml(def.earlyEcho.text)}</p><small>${escapeHtml(def.earlyEcho.object)}</small></aside>` : ''}
-        ${def.accountEcho ? `<aside class="council-external-echo day-account-living-echo" data-day6-account-echo="${def.accountEcho.sourceAction}"><span>昨日两本流水正在把食盒接到车路</span><b>${escapeHtml(def.accountEcho.label)}</b><p>${escapeHtml(def.accountEcho.text)}</p><small>${escapeHtml(def.accountEcho.object)}</small></aside>` : ''}
-        ${def.driverEcho ? `<aside class="council-external-echo day-driver-living-echo" data-day7-driver-echo="${def.driverEcho.sourceAction}"><span>昨日车夫留下的物件正在拆分四次催火</span><b>${escapeHtml(def.driverEcho.label)}</b><p>${escapeHtml(def.driverEcho.text)}</p><small>${escapeHtml(def.driverEcho.object)}</small></aside>` : ''}
-        ${def.stoveEcho ? `<aside class="council-external-echo day-stove-living-echo" data-day8-stove-echo="${def.stoveEcho.sourceAction}"><span>昨日停灶留下的物件正在把旧箱接回生活账</span><b>${escapeHtml(def.stoveEcho.label)}</b><p>${escapeHtml(def.stoveEcho.text)}</p><small>${escapeHtml(def.stoveEcho.object)}</small></aside>` : ''}
-        ${def.saltEcho ? `<aside class="council-external-echo day-salt-living-echo" data-day11-salt-echo="${def.saltEcho.sourceAction}"><span>昨日一瓮盐正在改变今日箱路</span><b>${escapeHtml(def.saltEcho.label)}</b><p>${escapeHtml(def.saltEcho.text)}</p><small>${escapeHtml(def.saltEcho.object)}</small></aside>` : ''}
-        ${def.emergencyEcho ? `<aside class="council-external-echo day-emergency-living-echo" data-day13-emergency-echo="${def.emergencyEcho.sourceAction}"><span>昨日五件急用决定今日银票会压住谁</span><b>${escapeHtml(def.emergencyEcho.label)}</b><p>${escapeHtml(def.emergencyEcho.text)}</p><small>${escapeHtml(def.emergencyEcho.object)}</small></aside>` : ''}
-        ${def.hearingEcho ? `<aside class="council-external-echo day-hearing-living-echo" data-day15-hearing-echo="${def.hearingEcho.sourceAction}"><span>昨日堂前留下的实物正在拆分真债、雇声与饥饿</span><b>${escapeHtml(def.hearingEcho.label)}</b><p>${escapeHtml(def.hearingEcho.text)}</p><small>${escapeHtml(def.hearingEcho.object)}</small></aside>` : ''}
-        ${def.crowdEcho ? `<aside class="council-external-echo day-crowd-living-echo" data-day16-crowd-echo="${def.crowdEcho.sourceAction}"><span>昨日拆围门留下的票、鞋与饭正在接出柜坊入口</span><b>${escapeHtml(def.crowdEcho.label)}</b><p>${escapeHtml(def.crowdEcho.text)}</p><small>${escapeHtml(def.crowdEcho.object)}</small></aside>` : ''}
-        ${def.vaultEcho ? `<aside class="council-external-echo day-vault-living-echo" data-day17-vault-echo="${def.vaultEcho.sourceAction}"><span>昨夜柜坊留下的实物正在限制逃路报价</span><b>${escapeHtml(def.vaultEcho.label)}</b><p>${escapeHtml(def.vaultEcho.text)}</p><small>${escapeHtml(def.vaultEcho.object)}</small></aside>` : ''}
-        ${def.externalPressure ? `<aside class="council-external-echo day-external-pressure" data-external-pressure="${def.externalPressure.sourceResult}"><span>昨日三口复案改变了今日要补的证</span><b>${escapeHtml(def.externalPressure.label)}</b><p>${escapeHtml(def.externalPressure.text)}</p></aside>` : ''}
-        ${def.deedEcho ? `<aside class="council-external-echo day-deed-echo" data-day10-deed-echo="${def.deedEcho.aftermath}"><span>第九日旧契真的去了哪里</span><b>${escapeHtml(def.deedEcho.label)}</b><p>${escapeHtml(def.deedEcho.text)}</p></aside>` : ''}
-        ${def.councilEcho ? `<aside class="council-external-echo day-council-echo" data-day13-council-echo="${def.councilEcho.choice}" data-day10-opening="${def.councilEcho.publicOpeningChoice ?? ''}"><span>第十二日院议先变成今日用度</span><b>${escapeHtml(def.councilEcho.label)}</b><p>${escapeHtml(def.councilEcho.text)}</p><small>${escapeHtml(def.councilEcho.materialText ?? '')}</small></aside>` : ''}
+        ${contextSection}
         <div class="day-dilemma"><span>今日两难 · ${momentum.label}</span><b>${escapeHtml(def.dilemma)}</b><em>${focus.length ? `${focus.join('、')}正在看你先动哪一笔` : TEXT.dayLead}</em><small class="pressure-tell">门房征兆 · ${escapeHtml(def.tell)}</small></div>
-        ${def.nightLedger ? `<aside class="council-external-echo day-night-ledger" data-night-ledger-day13="${def.nightLedger.choice}" data-day5-opening-long="${def.nightLedger.publicOpeningChoice}"><span>行动权限，不是新增证物</span><b>${escapeHtml(def.nightLedger.title)}</b><p>${escapeHtml(def.nightLedger.text)}</p><small>${escapeHtml(def.nightLedger.permission)} · 第五日仍按“${escapeHtml(def.nightLedger.publicOpeningLabel)}”追责。</small></aside>` : ''}
         ${renderEvidenceBoard()}
-        <div class="day-actions">${E.dayOptions(state).map((choice) => choiceButton(choice, 'day-action')).join('')}</div>
+        <div class="day-actions">${dayOptions.map((choice) => choiceButton({ ...choice, hint: `${choice.actor ? `${HEROINES[choice.actor].short} · ` : ''}${choice.hint}`, meta: '' }, 'day-action')).join('')}</div>
         ${jointSection}
       </div>
     </div>`;
@@ -1210,8 +1253,8 @@ function renderDay() {
 
 function renderEvidenceBoard() {
   const rows = E.secretInventory(state);
-  if (!rows.length) return '<section class="evidence-board empty" aria-label="证据板"><header><b>证据板</b><span>问来的口风、她们交出的实物会留在这里</span></header></section>';
-  return `<section class="evidence-board" aria-label="证据板"><header><b>证据板</b><span>走官面前可自选一条；不选就按本幕行价付银</span></header><div>${rows.map((row) => `<button data-secret-select="${row.id}" class="evidence-slip ${row.selected ? 'selected' : ''}" aria-pressed="${row.selected}" ${row.expired ? 'disabled' : ''}><b>${escapeHtml(row.label)}</b><span>${escapeHtml(row.source)}</span><em>${row.confidence}${row.expiresOn ? ` · 第${row.expiresOn}日后失效` : ' · 不限日'}</em></button>`).join('')}</div>${state.selectedSecret ? '<button class="evidence-pay" id="btn-secret-clear">收回证据，改用现银</button>' : ''}</section>`;
+  if (!rows.length) return '';
+  return `<details class="evidence-board" aria-label="证据板"><summary><b>证据板 · ${rows.length} 条</b><span>${state.selectedSecret ? '已有一条压在官面选项上' : '走官面时再挑'}</span></summary><div>${rows.map((row) => `<button data-secret-select="${row.id}" class="evidence-slip ${row.selected ? 'selected' : ''}" aria-pressed="${row.selected}" ${row.expired ? 'disabled' : ''}><b>${escapeHtml(row.label)}</b><span>${escapeHtml(row.source)}</span><em>${row.confidence}${row.expiresOn ? ` · 第${row.expiresOn}日后失效` : ' · 不限日'}</em></button>`).join('')}</div>${state.selectedSecret ? '<button class="evidence-pay" id="btn-secret-clear">收回证据，改用现银</button>' : ''}</details>`;
 }
 
 function renderDayAftermath() {
@@ -2467,7 +2510,9 @@ function choiceButton(choice, dataName) {
   const ariaDisabled = focusableLock ? 'aria-disabled="true"' : '';
   const locked = choice.disabled ? (choice.locked || choice.hint || '前事未到') : (choice.hint || '');
   const meta = narrativeChoiceMeta(choice.meta);
-  return `<button class="choice-button" data-${dataName}="${id}" ${disabled} ${ariaDisabled}><b>${escapeHtml(choice.label || id)}</b><span>${escapeHtml(locked)}</span>${meta ? `<em class="choice-meta">${escapeHtml(meta)}</em>` : ''}</button>`;
+  const accessibleLabel = [choice.label || id, locked, meta].filter(Boolean).join('；');
+  const title = meta ? ` title="${escapeHtml(meta)}"` : '';
+  return `<button class="choice-button" data-${dataName}="${id}" ${disabled} ${ariaDisabled} aria-label="${escapeHtml(accessibleLabel)}"${title}><b>${escapeHtml(choice.label || id)}</b><span>${escapeHtml(locked)}</span></button>`;
 }
 
 function appendResultCard() {
