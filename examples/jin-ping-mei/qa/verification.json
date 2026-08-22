@@ -2,7 +2,7 @@
   "schemaVersion": 3,
   "status": "PASS",
   "verify": {
-    "command": "python3 test/verify.py",
+    "command": "临时外部验证器：账本测试 + Chromium 全键盘路径",
     "exitCode": 0
   },
   "completeRun": {
@@ -10,7 +10,7 @@
     "cleanContext": true,
     "terminal": "day-20-balanced-ending",
     "restart": "day-1-opening-five-maps-reset",
-    "evidence": "qa/evidence/browser/evidence-normal.json"
+    "evidence": "qa/evidence/run.json"
   },
   "checks": {
     "launch": "PASS",
@@ -23,7 +23,7 @@
   "limitations": [
     {
       "scope": "tested runtime",
-      "reason": "权威路径覆盖本机 Chromium 的 1280×800 与 1920×1080；未把主观趣味、所有结局、移动端或其他浏览器宣称为已验证。"
+      "reason": "权威路径覆盖本机 Chromium 的 390×844、768×1024、1024×768、1280×800 与 1920×1080；未把主观趣味、所有结局或其他浏览器宣称为已验证。"
     }
   ]
 }

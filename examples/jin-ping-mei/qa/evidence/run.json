@@ -1,0 +1,165 @@
+{
+  "schemaVersion": 1,
+  "runId": "jin-ping-mei-five-house-twenty-day-main-path",
+  "environment": {
+    "browser": {
+      "name": "Chromium",
+      "version": "145.0.7632.6"
+    },
+    "seed": 42,
+    "normalSpeedRun": true,
+    "durationMs": 61211,
+    "viewports": [
+      [
+        390,
+        844
+      ],
+      [
+        768,
+        1024
+      ],
+      [
+        1024,
+        768
+      ],
+      [
+        1280,
+        800
+      ],
+      [
+        1920,
+        1080
+      ]
+    ],
+    "errors": {
+      "console": [],
+      "page": [],
+      "network": [],
+      "http": []
+    },
+    "qaWorkspace": "temporary external workspace; harness and raw screenshots are not shipped with the example",
+    "ledgerContractCount": 320,
+    "ledgerFailures": 0
+  },
+  "inputTrace": [
+    "001. title-or-age | Enter | 我已成年 | title-or-age",
+    "110. choose_visit | Enter | 灶上暖阁\n去雪娥屋里\n劳作被看见，分配要有实据\n情 有话说 · 妒 平静\n第 1 次 · 路线续章\n同场\n瓶儿 · 能合办 +14\n明早\n玉楼最酸 · 约 +5 | visit",
+    "220. pair_interlude | Enter | 听她把这句话说完 | pair_interlude",
+    "329. visit | Enter | 叫她把人名说三遍\n既接了她的酒，也接住她要追的真话\n共同承担 · 会抬高她与盟友的互信 · 顺着她已经相信的路 | route_aftermath",
+    "439. night | Enter | 请她逐人说工\n劳动按人、时辰与选择留下\n写下第一笔 · 由她定界 · 宅门更稳 · 耗损缓解 · 拒绝加更单独成页 · 耗-4 · 宅+2 | night",
+    "548. night | Enter | 承认曾把依赖当成爱\n把用得上与想靠近分开说\n改写上章 · 明说欲望 · 妒意下降 · 去处见光 · 三钥离开一人之手 · 势-1 · 宅+3 | night"
+  ],
+  "observations": {
+    "launch": {
+      "id": "age-gate-and-title-ready",
+      "inputs": [
+        "navigate to seed=42 without fast mode",
+        "press Enter on the 18+ confirmation"
+      ],
+      "state": {
+        "adultContentAbsentBeforeConfirmation": true,
+        "ageNoNeverExposesAdultDom": true,
+        "titleVisible": true,
+        "preAgeTransferBytes": 653950
+      }
+    },
+    "render": {
+      "id": "five-door-and-terminal-rendered",
+      "inputs": [
+        "render the five-door hub",
+        "render the day-20 ending at both desktop viewports",
+        "audit all enabled controls at 390, 768, and 1024 pixels",
+        "verify four act cues and the terminal cue"
+      ],
+      "state": {
+        "assetCount": 46,
+        "allAssetsDecoded": true,
+        "responsiveViewports": [
+          [
+            390,
+            844
+          ],
+          [
+            768,
+            1024
+          ],
+          [
+            1024,
+            768
+          ],
+          [
+            1280,
+            800
+          ],
+          [
+            1920,
+            1080
+          ]
+        ],
+        "allResponsiveAuditsPassed": true
+      },
+      "visual": "screenshots/title.jpg"
+    },
+    "input": {
+      "id": "keyboard-path-and-save-reload-accepted",
+      "inputs": [
+        "activate every game decision with focused Enter",
+        "reload at day 10 and continue",
+        "trap focus in every modal and restore it on Escape"
+      ],
+      "state": {
+        "mode": "keyboard-only Enter activation",
+        "acceptedInputCount": 603,
+        "inputTraceHash": "07ff006fd432eae7e63e2dc2d44078e703fd3d076246b2e1896a88ee98259f14",
+        "midpointReloadMatched": true,
+        "allFocusAuditsPassed": true
+      }
+    },
+    "coreLoop": {
+      "id": "twenty-day-five-route-loop-complete",
+      "inputs": [
+        "complete days 1 through 20",
+        "touch all five heroine routes",
+        "complete five distinct joint actions and three public promises"
+      ],
+      "state": {
+        "days": 20,
+        "routes": 5,
+        "jointActions": 5,
+        "preterminalAssertions": 19,
+        "resolvedPressuresAtGate": 17
+      }
+    },
+    "outcome": {
+      "id": "day-20-balanced-ending",
+      "inputs": [
+        "choose shared_five_roles",
+        "complete three afterglow decisions",
+        "choose dawn_six_tea",
+        "read five daylight responses before the ending"
+      ],
+      "state": {
+        "terminal": "day-20-balanced-ending",
+        "day": 20,
+        "phase": "ending",
+        "endingId": "balanced",
+        "resolvedPressures": 17,
+        "jointActions": 5
+      }
+    },
+    "restart": {
+      "id": "day-1-clean-restart",
+      "inputs": [
+        "press Enter on restart",
+        "open the persistent gallery"
+      ],
+      "state": {
+        "restart": "day-1-opening-five-maps-reset",
+        "day": 1,
+        "phase": "opening",
+        "seedChanged": true,
+        "galleryPreserved": true
+      }
+    }
+  }
+}
