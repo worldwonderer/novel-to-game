@@ -16,8 +16,8 @@
 一次新跑。当前构建另做了 566 次可见控件的快速视觉烟测，重新到达第二十日结局；41 张运行图全部
 解码，1280×800、1600×800 与 390×844 的年龄门／首屏和桌面关键流程无水平溢出、控制台错误或请求
 失败。仓内 `final-screen.webp` 保留表现层复核前的终局基线；复核后的桌面角色抉择、桌面终局和
-390×844 终局分别见 `evidence/visual-review-dialogue-after.png`、
-`evidence/visual-review-ending-after.png` 与 `evidence/visual-review-ending-mobile-after.png`。权威正常速度
+390×844 终局分别见 `evidence/visual-review-dialogue-after.jpg`、
+`evidence/visual-review-ending-after.jpg` 与 `evidence/visual-review-ending-mobile-after.jpg`。权威正常速度
 完整路径仍明确属于上面的 2026-08-22 候选。
 
 仓内另提供一条不依赖浏览器的可执行改编合同：

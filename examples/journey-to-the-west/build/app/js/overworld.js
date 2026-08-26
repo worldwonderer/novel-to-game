@@ -283,7 +283,9 @@ export function runOverworld(ctx) {
     step(dt);
     const rect = canvas.getBoundingClientRect();
     const cssAspect = rect.width / Math.max(1, rect.height);
-    visualAspectX = Math.max(1, Math.min(2.45, (W / H) / cssAspect));
+    // Match the canvas' horizontal and vertical CSS scale so sprites, labels and
+    // landmarks retain their authored aspect ratio even on tall phone screens.
+    visualAspectX = Math.max(1, (W / H) / cssAspect);
     g.clearRect(0, 0, W, H);
     drawScenery();
     // 按 y 排序画,近处盖住远处
