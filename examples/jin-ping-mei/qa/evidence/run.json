@@ -157,7 +157,7 @@
         "browserErrors": 0,
         "visualRefreshTerminal": "day-20-ending"
       },
-      "visual": "qa/evidence/final-screen.webp"
+      "visual": "qa/evidence/visual-review-ending-after.png"
     },
     "input": {
       "id": "visible-keyboard-path-accepted",

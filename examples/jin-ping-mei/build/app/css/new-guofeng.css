@@ -516,6 +516,465 @@ body {
 
 .fast .scene-view > img { animation: none; filter: saturate(1.02) brightness(1.03); }
 
+/*
+ * 复合叙事页不能继续沿用旧主题的“黑底上叠半透明卡”结构。新插画本身已经
+ * 承担场景气氛；面板、旁听者和多人回应要成为彼此分开的纸面层，不能互相透图。
+ */
+#app :is(.opening-aftermath-stage, .day-aftermath-stage, .aftermath-stage, [class*="-aftermath-stage"]) {
+  background: #e8e4e7;
+}
+
+#app :is(
+  .day-aftermath-lead,
+  .aftermath-main,
+  .personal-afterglow-aftermath-close
+) {
+  filter: saturate(1.02) brightness(1.04) contrast(1.01);
+}
+
+#app .decision-panel :is(p:not(.eyebrow), li, dd, small, em) { color: #626574; }
+#app .decision-panel :is(h2, h3, h4, b, strong, dt) { color: #343746; }
+
+#app .decision-panel :is(
+  blockquote,
+  [class*="-origin"],
+  [class*="-echo"],
+  [class*="-memory"],
+  [class*="-stake"],
+  [class*="-ledger"],
+  [class*="-rule"],
+  [class*="-voice"],
+  [class*="-note"]
+) {
+  color: #515565;
+  border-color: rgba(75, 91, 120, .22);
+  background: rgba(255, 253, 250, .72);
+}
+
+#app .decision-panel :is(
+  [class*="-transcript"],
+  [class*="-archive"]
+) li,
+#app .supporting-context > summary,
+#app .supporting-context-pages > * {
+  color: #5f6271;
+  border-color: rgba(75, 91, 120, .18);
+  background: rgba(244, 240, 241, .82);
+}
+
+#app .decision-panel :is(
+  blockquote,
+  [class*="-origin"],
+  [class*="-echo"],
+  [class*="-memory"],
+  [class*="-stake"],
+  [class*="-ledger"],
+  [class*="-rule"],
+  [class*="-voice"],
+  [class*="-note"],
+  [class*="-transcript"] li,
+  [class*="-archive"] li
+) :is(p, small, em) { color: #626574; }
+
+#app .decision-panel :is(
+  blockquote,
+  [class*="-origin"],
+  [class*="-echo"],
+  [class*="-memory"],
+  [class*="-stake"],
+  [class*="-ledger"],
+  [class*="-rule"],
+  [class*="-voice"],
+  [class*="-note"],
+  [class*="-transcript"] li,
+  [class*="-archive"] li
+) :is(b, strong) { color: #3f4352; }
+
+#app .decision-panel :is(
+  blockquote,
+  [class*="-origin"],
+  [class*="-echo"],
+  [class*="-memory"],
+  [class*="-stake"],
+  [class*="-ledger"],
+  [class*="-rule"],
+  [class*="-voice"],
+  [class*="-note"],
+  [class*="-transcript"] li,
+  [class*="-archive"] li
+) > span { color: #91623f; }
+
+/* 多人卡不再悬浮在同一张人物图上：给卡组一张不透底的薄绢托纸。 */
+#app :is(
+  .opening-aftermath-cast,
+  .crisis-cast,
+  .crisis-aftermath-cast,
+  .pair-portraits,
+  .pair-aftermath-cast,
+  .jiaoer-aftermath-cast,
+  .invitation-aftermath-cast,
+  .council-resolution-cast,
+  .public-aftermath-cast,
+  .act-aftermath-cast,
+  .final-aftermath-cast,
+  .alliance-assembly-cast,
+  .alliance-result-cast,
+  .collapse-cast,
+  .collapse-result-cast,
+  .shared-result-cast,
+  .shared-dawn-result-cast
+) {
+  padding: .45rem;
+  border: 1px solid rgba(80, 95, 123, .18);
+  background: rgba(249, 246, 246, .94);
+  box-shadow: 0 18px 52px rgba(67, 63, 84, .14);
+  backdrop-filter: blur(12px) saturate(.9);
+}
+
+#app :is(
+  .opening-aftermath-cast,
+  .day-aftermath-reactions,
+  .crisis-cast,
+  .crisis-aftermath-cast,
+  .pair-portraits,
+  .pair-aftermath-cast,
+  .jiaoer-aftermath-cast,
+  .invitation-aftermath-cast,
+  .council-resolution-cast,
+  .public-aftermath-cast,
+  .act-aftermath-cast,
+  .final-aftermath-cast,
+  .alliance-assembly-cast,
+  .alliance-result-cast,
+  .collapse-cast,
+  .collapse-result-cast,
+  .shared-result-cast,
+  .shared-dawn-result-cast
+) figure {
+  border-color: rgba(80, 95, 123, .2);
+  background: #eee7e6;
+  filter: none;
+  transform: none;
+}
+
+#app :is(
+  .opening-aftermath-cast,
+  .day-aftermath-reactions,
+  .crisis-cast,
+  .crisis-aftermath-cast,
+  .pair-portraits,
+  .pair-aftermath-cast,
+  .jiaoer-aftermath-cast,
+  .invitation-aftermath-cast,
+  .council-resolution-cast,
+  .public-aftermath-cast,
+  .act-aftermath-cast,
+  .final-aftermath-cast,
+  .alliance-assembly-cast,
+  .alliance-result-cast,
+  .collapse-cast,
+  .collapse-result-cast,
+  .shared-result-cast,
+  .shared-dawn-result-cast
+) figure:not(.speaking):not(.is-responding) { opacity: .8; }
+
+#app :is(
+  .opening-aftermath-cast,
+  .day-aftermath-reactions,
+  .crisis-cast,
+  .crisis-aftermath-cast,
+  .pair-portraits,
+  .pair-aftermath-cast,
+  .jiaoer-aftermath-cast,
+  .invitation-aftermath-cast,
+  .council-resolution-cast,
+  .public-aftermath-cast,
+  .act-aftermath-cast,
+  .final-aftermath-cast,
+  .alliance-assembly-cast,
+  .alliance-result-cast,
+  .collapse-cast,
+  .collapse-result-cast,
+  .shared-result-cast,
+  .shared-dawn-result-cast
+) figure:is(.speaking, .is-responding) {
+  opacity: 1;
+  border-color: rgba(200, 79, 92, .54);
+  box-shadow: 0 10px 28px rgba(130, 66, 82, .14);
+}
+
+#app :is(
+  .opening-aftermath-cast,
+  .day-aftermath-reactions,
+  .crisis-cast,
+  .crisis-aftermath-cast,
+  .pair-portraits,
+  .pair-aftermath-cast,
+  .jiaoer-aftermath-cast,
+  .invitation-aftermath-cast,
+  .council-resolution-cast,
+  .public-aftermath-cast,
+  .act-aftermath-cast,
+  .final-aftermath-cast,
+  .alliance-assembly-cast,
+  .alliance-result-cast,
+  .collapse-cast,
+  .collapse-result-cast,
+  .shared-result-cast,
+  .shared-dawn-result-cast
+) img { filter: saturate(1.02) brightness(1.04) contrast(1.01); }
+
+#app :is(
+  .opening-aftermath-cast,
+  .day-aftermath-reactions,
+  .crisis-cast,
+  .crisis-aftermath-cast,
+  .pair-portraits,
+  .pair-aftermath-cast,
+  .jiaoer-aftermath-cast,
+  .invitation-aftermath-cast,
+  .council-resolution-cast,
+  .public-aftermath-cast,
+  .act-aftermath-cast,
+  .final-aftermath-cast,
+  .alliance-assembly-cast,
+  .alliance-result-cast,
+  .collapse-cast,
+  .collapse-result-cast,
+  .shared-result-cast,
+  .shared-dawn-result-cast
+) figcaption {
+  color: #444856;
+  background: linear-gradient(transparent, rgba(252, 248, 246, .98) 48%);
+}
+
+#app :is(
+  .opening-aftermath-cast,
+  .day-aftermath-reactions,
+  .crisis-cast,
+  .crisis-aftermath-cast,
+  .pair-portraits,
+  .pair-aftermath-cast,
+  .jiaoer-aftermath-cast,
+  .invitation-aftermath-cast,
+  .council-resolution-cast,
+  .public-aftermath-cast,
+  .act-aftermath-cast,
+  .final-aftermath-cast,
+  .alliance-assembly-cast,
+  .alliance-result-cast,
+  .collapse-cast,
+  .collapse-result-cast,
+  .shared-result-cast,
+  .shared-dawn-result-cast
+) figcaption :is(b, strong) { color: #353846; }
+
+#app :is(
+  .opening-aftermath-cast,
+  .day-aftermath-reactions,
+  .crisis-cast,
+  .crisis-aftermath-cast,
+  .pair-portraits,
+  .pair-aftermath-cast,
+  .jiaoer-aftermath-cast,
+  .invitation-aftermath-cast,
+  .council-resolution-cast,
+  .public-aftermath-cast,
+  .act-aftermath-cast,
+  .final-aftermath-cast,
+  .alliance-assembly-cast,
+  .alliance-result-cast,
+  .collapse-cast,
+  .collapse-result-cast,
+  .shared-result-cast,
+  .shared-dawn-result-cast
+) figcaption :is(span, small, em, p) { color: #666978; }
+
+.day-aftermath-reactions figure:only-child {
+  width: min(250px, 100%);
+  height: min(520px, 72%);
+  align-self: center;
+}
+
+.aftermath-observer {
+  padding: .38rem;
+  color: #3f4352;
+  border: 1px solid rgba(80, 95, 123, .2);
+  background: rgba(252, 248, 246, .94);
+  box-shadow: 0 14px 38px rgba(67, 63, 84, .14);
+  opacity: 1;
+}
+
+.aftermath-observer img {
+  mask-image: none;
+  filter: saturate(1.02) brightness(1.04) contrast(1.01);
+}
+
+.aftermath-observer figcaption span { color: #91623f; }
+.aftermath-observer figcaption b { color: #353846; }
+
+/* 单人抉择按内容收高，避免短段落被一整块空白纸面包到屏幕底。 */
+.dialogue-panel,
+.night-talk-panel {
+  top: 50%;
+  bottom: auto;
+  max-height: 88%;
+  overflow-y: auto;
+  transform: translateY(-50%);
+}
+
+/* 结局与后日谈也必须延续亮色叙事，不在最后一屏突然回到旧黑金主题。 */
+.ending-view {
+  color: var(--ink);
+  background: #eee7e6;
+}
+
+.ending-art,
+.ending-view[data-ending="exclusive"] .ending-art,
+.ending-view[data-ending="intrigue"] .ending-art,
+.ending-view[data-ending="unstable"] .ending-art {
+  filter: saturate(1.01) brightness(1.03) contrast(1.01);
+  background-blend-mode: screen;
+}
+
+.ending-copy {
+  border-left: 1px solid rgba(80, 95, 123, .16);
+  background:
+    radial-gradient(circle at 18% 12%, rgba(218, 113, 126, .08), transparent 35%),
+    linear-gradient(145deg, rgba(255, 253, 249, .985), rgba(240, 237, 243, .97));
+  box-shadow: -20px 0 54px rgba(67, 63, 84, .12);
+}
+
+.ending-copy h1 { color: #303342; }
+.ending-copy h1:focus-visible {
+  outline: 2px solid rgba(200, 79, 92, .54);
+  outline-offset: .3rem;
+}
+.ending-tag { color: #9a6834; }
+.ending-copy > p:not(.eyebrow):not(.ending-tag):not(.ending-note) { color: #5f6372; }
+.ending-note { color: #737584; }
+
+.ending-ledger span,
+.ending-habits,
+.ending-habits article,
+.household-ending span {
+  color: #626574;
+  border-color: rgba(80, 95, 123, .18);
+  background: rgba(255, 253, 250, .64);
+}
+
+.ending-ledger b,
+.ending-habits > header b,
+.ending-habits article b,
+.household-ending b { color: #454958; }
+
+.ending-habits > header,
+.ending-habits article span,
+.ending-habits article small,
+.household-ending small { color: #737584; }
+
+.epilogue-book,
+.fate-coda-book {
+  color: var(--ink);
+  border-color: rgba(80, 95, 123, .24);
+  background: #eee7e8;
+  box-shadow: 0 32px 90px rgba(67, 63, 84, .28);
+}
+
+.epilogue-art { background: #e8e2e3; }
+.epilogue-art::after { background: linear-gradient(90deg, transparent 62%, rgba(244, 239, 240, .9)); }
+.epilogue-art img { filter: saturate(1.02) brightness(1.03) contrast(1.01); }
+.epilogue-art > span { color: rgba(154, 104, 52, .22); }
+
+.epilogue-copy h2,
+.epilogue-body,
+.epilogue-progress,
+.epilogue-relations b,
+.epilogue-route-note,
+.epilogue-habit b,
+.epilogue-habit p,
+.epilogue-night-conversations header b,
+.epilogue-night-conversations li b,
+.epilogue-night-conversations li p { color: #4e5261; }
+
+.epilogue-relations span,
+.epilogue-route-note,
+.epilogue-habit,
+.epilogue-night-conversations,
+.epilogue-night-conversations li {
+  color: #666978;
+  border-color: rgba(80, 95, 123, .18);
+  background: rgba(255, 253, 250, .64);
+}
+
+.fate-coda-art { filter: saturate(1.01) brightness(1.03) contrast(1.01); }
+.fate-coda-art::after {
+  background: linear-gradient(90deg, rgba(242, 241, 246, .98) 0%, rgba(242, 241, 246, .9) 31%, rgba(242, 241, 246, .2) 55%, transparent 76%);
+}
+
+.fate-coda-copy {
+  color: #4e5261;
+  background: linear-gradient(90deg, rgba(248, 250, 252, .99), rgba(248, 250, 252, .9) 72%, transparent);
+}
+
+.fate-coda-copy > header p,
+.fate-coda-copy > header .eyebrow,
+.fate-coda-progress i,
+.fate-coda-variants > span { color: #6d7180; }
+
+.fate-coda-variants,
+.fate-coda-variants button {
+  color: #555968;
+  border-color: rgba(80, 95, 123, .2);
+  background: rgba(255, 253, 250, .7);
+}
+
+.fate-coda-variants button.current {
+  color: #8d4450;
+  border-color: rgba(200, 79, 92, .48);
+  background: rgba(200, 79, 92, .07);
+}
+
+.fate-coda-copy h2 { color: #303442; }
+.fate-coda-body,
+.fate-coda-decision > p,
+.fate-coda-result p,
+.fate-coda-combination > p { color: #5f6372; }
+
+.fate-coda-ledger-section,
+.fate-coda-ledger-section article,
+.fate-coda-result {
+  color: #555968;
+  border-color: rgba(80, 95, 123, .2);
+  background: rgba(255, 253, 250, .7);
+}
+
+.fate-coda-ledger-section > header span,
+.fate-coda-ledger-section article > span,
+.fate-coda-result span,
+.fate-coda-combination > span { color: #737786; }
+
+.fate-coda-ledger-section > header h3,
+.fate-coda-ledger-section article > b,
+.fate-coda-result b,
+.fate-coda-combination > b { color: #454958; }
+
+.fate-coda-ledger-section article > p { color: #626574; }
+
+.fate-coda-decision .choice-button {
+  color: #343745;
+  border-color: rgba(79, 91, 120, .2);
+  background: rgba(255, 253, 249, .82);
+}
+
+.fate-coda-decision .choice-button:hover,
+.fate-coda-decision .choice-button:focus-visible {
+  border-color: rgba(200, 79, 92, .5);
+  background: #fffaf7;
+}
+
+.fate-coda-copy > footer > span { color: #707483; }
+
 @media (max-width: 900px) {
   .age-gate {
     background:
@@ -550,6 +1009,65 @@ body {
   .title-copy::after { width: 13rem; margin-bottom: .65rem; }
   .visit-prompt { background: rgba(255,251,248,.94); }
 
+  /* 窄屏只保留一张主图；重复的人物卡会把画面和正文同时吃掉。 */
+  .opening-aftermath-cast,
+  .day-aftermath-reactions,
+  .aftermath-observer { display: none; }
+
+  .opening-aftermath-panel,
+  .aftermath-panel { max-height: 76%; overflow-y: auto; }
+
+  .dialogue-panel,
+  .night-talk-panel {
+    top: auto;
+    bottom: 2%;
+    max-height: 76%;
+    transform: none;
+  }
+
+  #app :is(
+    .crisis-cast,
+    .crisis-aftermath-cast,
+    .pair-portraits,
+    .pair-aftermath-cast,
+    .jiaoer-aftermath-cast,
+    .invitation-aftermath-cast,
+    .council-resolution-cast,
+    .public-aftermath-cast,
+    .act-aftermath-cast,
+    .final-aftermath-cast,
+    .alliance-assembly-cast,
+    .alliance-result-cast,
+    .collapse-cast,
+    .collapse-result-cast,
+    .shared-result-cast,
+    .shared-dawn-result-cast
+  ) {
+    top: 1.5%;
+    bottom: auto;
+    height: 22%;
+    padding: .2rem;
+  }
+
+  #app :is(
+    .crisis-cast,
+    .crisis-aftermath-cast,
+    .pair-portraits,
+    .pair-aftermath-cast,
+    .jiaoer-aftermath-cast,
+    .invitation-aftermath-cast,
+    .council-resolution-cast,
+    .public-aftermath-cast,
+    .act-aftermath-cast,
+    .final-aftermath-cast,
+    .alliance-assembly-cast,
+    .alliance-result-cast,
+    .collapse-cast,
+    .collapse-result-cast,
+    .shared-result-cast,
+    .shared-dawn-result-cast
+  ) figcaption :is(p, small, em) { display: none; }
+
   #app .scene-scrim {
     background: linear-gradient(0deg, rgba(246,242,246,.96), rgba(246,242,246,.16) 74%);
   }
@@ -566,6 +1084,13 @@ body {
   .fate-coda-copy {
     background: linear-gradient(0deg, rgba(248,250,252,.995), rgba(248,250,252,.91) 78%, transparent);
   }
+
+  .ending-art { opacity: .76; }
+  .ending-copy {
+    background: linear-gradient(0deg, rgba(250, 247, 245, .995) 0%, rgba(250, 247, 245, .95) 64%, rgba(250, 247, 245, .88) 100%);
+  }
+
+  .epilogue-art::after { background: linear-gradient(0deg, rgba(244, 239, 240, .94), transparent 62%); }
 }
 
 @media (prefers-reduced-motion: reduce) {
