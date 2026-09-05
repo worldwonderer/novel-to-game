@@ -11,10 +11,22 @@ input which previously passed belongs under `Changed`, not `Fixed`.
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-09-04
+
+### Added
+
+- Added default-brightness adjudication and high-risk historical-style calibration to the art-direction method, with the matching production rules in the build brief, so "cinematic" no longer licenses a globally dimmed screen and an era style is calibrated against one real target frame before batch asset production ([#41](https://github.com/zenstory-ai/novel-to-game/pull/41)).
+
 ### Changed
 
+- Refreshed the visuals of both Chinese examples: one luminous mature 2D neo-guofeng language across all 41 Jin Ping Mei runtime images, illustration separated from narrative UI so portraits, text, choices, overlays and endings stop competing for the same space, authored character proportions preserved on portrait mobile viewports, and both README screenshots retaken against the final UI ([#41](https://github.com/zenstory-ai/novel-to-game/pull/41)).
+- Migrated the repository namespace to `zenstory-ai`. Plugin manifests, the issue-template config, and both READMEs now point at `zenstory-ai/novel-to-game`; marketplace and install commands taken from earlier documentation no longer resolve.
 - Collapsed the repository validator's hand-written QA schema checks into shared object/field helpers, folded the duplicated `targetFinish` inheritance and JSON-loading paths, and moved the English-first check for plugin manifest descriptions into the validator. Plugin manifests must now declare `skills` as the `./skills` string; the single-element list form is no longer accepted. Example manifests and planning directories now permit additional project-owned metadata and supporting artifacts, and chapter coverage can span multiple source text files.
 - Trimmed within-skill restatements so each rule lives once per skill, in either its `SKILL.md` or the reference that skill already reads, and tightened prompt line budgets around the resulting package size.
+
+### Fixed
+
+- Fixed the deploy workflow invoking the Vercel CLI from each app directory. Every project already owns its Root Directory, so the CLI appended the same path a second time and failed before upload; deploys now run from the repository root, and a change to the workflow triggers all three production projects so a deployment fix can verify itself ([#42](https://github.com/zenstory-ai/novel-to-game/pull/42)).
 
 ### Removed
 
@@ -62,7 +74,8 @@ input which previously passed belongs under `Changed`, not `Fixed`.
 - Shipped the first playable Journey to the West and Jin Ping Mei examples.
 - Added native plugin manifests and Agent Skills installation for the supported coding-agent surfaces.
 
-[Unreleased]: https://github.com/zenstory-ai/novel-to-game/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/zenstory-ai/novel-to-game/compare/v0.3.1...HEAD
+[0.3.1]: https://github.com/zenstory-ai/novel-to-game/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/zenstory-ai/novel-to-game/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/zenstory-ai/novel-to-game/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/zenstory-ai/novel-to-game/releases/tag/v0.1.0
